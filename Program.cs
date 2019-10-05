@@ -19,8 +19,7 @@ namespace PingLogger
 		static void Main()
 		{
 			Log.Logger = new LoggerConfiguration()
-				.WriteTo.Console(theme: Serilog.Sinks.SystemConsole.Themes.AnsiConsoleTheme.Code)
-				.WriteTo.File("PingLogger-.log", rollingInterval: RollingInterval.Day)
+				.WriteTo.Console(theme: Serilog.Sinks.SystemConsole.Themes.AnsiConsoleTheme.Literate)
 				.CreateLogger();
 			Log.Information("PingLogger v0.2 by Jack Butler");
 			DoStartupTasks();
@@ -146,11 +145,18 @@ namespace PingLogger
 						Options.Hosts[selectedIndex].PacketSize);
 					Options.Hosts.RemoveAt(selectedIndex);
 				}
-				Console.Write("Do you want to remove another? (y/N) ");
-				var addMore = Console.ReadLine().ToLower();
-				if (addMore == string.Empty || addMore == "n" || addMore == "no")
+				if (Options.Hosts.Count > 0)
+				{
+					Console.Write("Do you want to remove another? (y/N) ");
+					var addMore = Console.ReadLine().ToLower();
+					if (addMore == string.Empty || addMore == "n" || addMore == "no")
+						done = true;
+					WriteConfig();
+				} else
+				{
 					done = true;
-				WriteConfig();
+					WriteConfig();
+				}
 			}
 		}
 		public static void EditHosts()

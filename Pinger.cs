@@ -25,7 +25,7 @@ namespace PingLogger
 			if (!Directory.Exists("./Logs"))
 				Directory.CreateDirectory("./Logs");
 			Logger = new LoggerConfiguration()
-				.WriteTo.Console()
+				.WriteTo.Console(theme: Serilog.Sinks.SystemConsole.Themes.AnsiConsoleTheme.Literate)
 				.WriteTo.File($"./Logs/{Host.HostName}-.log", rollingInterval: RollingInterval.Day)
 				.CreateLogger();
 			if (Host.PacketSize > 20000)
@@ -64,6 +64,12 @@ namespace PingLogger
 		public void Start()
 		{
 			RunThread = new Thread(new ThreadStart(StartLogging));
+			Logger.Information("Starting ping logging for host {0} ({1})", Host.HostName, Host.IP);
+			Logger.Information("Using the following options:");
+			Logger.Information("Threshold: {0}ms", Host.Threshold);
+			Logger.Information("Timeout: {0}ms", Host.Timeout);
+			Logger.Information("Interval: {0}ms", Host.Interval);
+			Logger.Information("Packet Size: {0} bytes", Host.PacketSize);
 			RunThread.Start();
 		}
 
@@ -88,7 +94,6 @@ namespace PingLogger
 				if (stopping)
 				{
 					Running = false;
-					Logger.Information("Ping stopped.");
 					pingSender.Dispose();
 				}
 				loops++;
@@ -105,6 +110,7 @@ namespace PingLogger
 		public void Stop()
 		{
 			stopping = true;
+			Logger.Information("Stopping ping logger for host {0} ({1})", Host.HostName, Host.IP);
 		}
 		private void SendPing(object sender, PingCompletedEventArgs e)
 		{
