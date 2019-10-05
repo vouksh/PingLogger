@@ -5,349 +5,267 @@ using System.Threading.Tasks;
 using System.Text;
 using System.IO;
 using System.Threading;
+using Serilog;
+using System.Text.Json;
+using System.Linq;
+using System.Collections.Generic;
 
 namespace PingLogger
 {
 	class Program
 	{
-		private static string fileName = string.Empty;
-		private static string hostName = string.Empty;
-		private static int pingCount = 0;
-		private static IPAddress IP;
-		private static LogWriter Log;
-		private static int WarnThreshold = 200;
+		private static Opts Options;
+		private static List<Pinger> Pingers = new List<Pinger>();
 		static void Main(string[] args)
 		{
-			Console.ForegroundColor = ConsoleColor.Green;
-			Console.WriteLine("PingLogger v0.1 by Jack Butler\n");
+			Log.Logger = new LoggerConfiguration()
+				.WriteTo.Console(theme: Serilog.Sinks.SystemConsole.Themes.AnsiConsoleTheme.Code)
+				.WriteTo.File("PingLogger-.log", rollingInterval: RollingInterval.Day)
+				.CreateLogger();
+			Log.Information("PingLogger v0.2 by Jack Butler");
 			Console.CancelKeyPress += new ConsoleCancelEventHandler(Closing);
-			Console.ResetColor();
-			var configured = ReadFromConfigFile();
-			var running = true;
-			var skip = false;
-			if(configured && args.Length > 0)
+
+			var configured = ReadJsonConfig();
+
+			if(configured)
 			{
-				Console.WriteLine("Configuration file used, ignoring command line arguments.");
-			}
-			if (!configured)
-			{
-				running = ProcessArgs(args);
-			}
-			if (hostName == string.Empty && running)
-			{
-				Console.ForegroundColor = ConsoleColor.DarkRed;
-				Console.WriteLine("No hostname or IP address specified.");
-				Console.ResetColor();
-				Console.Write("Please enter a hostname: ");
-				hostName = Console.ReadLine();
-				if (hostName == string.Empty)
+				if(Options.Hosts.Count > 0)
 				{
-					Console.WriteLine("No host specified.");
-					running = false;
-				}
-				else
+					Log.Information("Existing hosts detected.");
+					try
+					{
+						Console.Write("Do you want to add another host? (y/N) ");
+						string resp = WaitForInput.ReadLine(5000);
+						if(resp.ToLower() == "y")
+						{
+							AddNewHosts();
+						}
+					} catch(TimeoutException)
+					{
+						Console.WriteLine();
+						Log.Information("No input detected. Skipping addition of new hosts");
+					}
+				} else
 				{
-					Console.Write("Log file (leave blank to skip logging to file): ");
-					fileName = Console.ReadLine();
-					Console.Write("Ping count (enter 0 or press enter for infinite): ");
-					var cnt = Console.ReadLine();
-					if (cnt != string.Empty)
-					{
-						try
-						{
-							pingCount = Convert.ToInt32(cnt);
-						}
-						catch (Exception)
-						{
-							Console.ForegroundColor = ConsoleColor.Red;
-							Console.WriteLine("Invalid count entry, ignoring");
-							pingCount = 0;
-						}
-					}
-					Console.Write("Warning Threshold in MS (default 200): ");
-					var thresh = Console.ReadLine();
-					if(thresh != string.Empty)
-					{
-						try
-						{
-							WarnThreshold = Convert.ToInt32(thresh);
-						} catch(Exception)
-						{
-							Console.ForegroundColor = ConsoleColor.Red;
-							Console.WriteLine("Invalid threshold entry, ignoring");
-							WarnThreshold = 200;
-						}
-					}
+					AddNewHosts();
 				}
-			}
-			string resolved = string.Empty;
-			IPAddress[] iPs = Dns.GetHostAddresses(hostName);
-			IP = iPs[0];
-			if(pingCount > 0)
-			{
-				Console.WriteLine("Pinging {0} ({1}) {2} times", hostName, IP.ToString(), pingCount);
 			} else
 			{
-				Console.WriteLine("Pinging {0} ({1}), press Ctrl-C to quit.", hostName, IP.ToString());
+				Log.Information("No hosts configured.");
+				AddNewHosts();
 			}
-			int loops = 0;
-			Console.WriteLine();
-			if (fileName != string.Empty)
+			foreach (var host in Options.Hosts)
 			{
-				Log = new LogWriter(fileName);
-				Log.WriteLog("Running with the following options: ");
-				Log.WriteLog("Host: " + hostName + " (" + IP.ToString() + ")");
-				if (pingCount > 0)
-					Log.WriteLog("Ping Count: " + pingCount);
-				Log.WriteLog("Warning Threshold: " + WarnThreshold + "ms");
+				var pinger = new Pinger(host);
+				pinger.Start();
+				Pingers.Add(pinger);
 			}
-			while (running)
+			bool pingersRunning = true;
+			while (pingersRunning)
 			{
-				if (pingCount > 0)
-					loops++;
-				Ping pingSender = new Ping();
-				pingSender.PingCompleted += new PingCompletedEventHandler(WriteStatus);
-				PingOptions options = new PingOptions();
-				AutoResetEvent waiter = new AutoResetEvent(false);
-
-				options.DontFragment = true;
-
-				string data = "xxxxxxxpingloggerincsharpxxxxxxx";
-				byte[] buffer = Encoding.ASCII.GetBytes(data);
-				int timeout = 120;
-				pingSender.SendAsync(IP, timeout, buffer, options, waiter);
-				waiter.WaitOne();
-				Thread.Sleep(1000);
-				if (pingCount > 0 && loops > pingCount)
-					running = false;
-				pingSender.Dispose();
-			}
-			if (!skip)
-			{
-				if (fileName != string.Empty)
-					Log.WriteLog("CLOSELOG");
-				Console.WriteLine("\nPing logger closing...");
-				Console.WriteLine("Press any key to close.");
-				Console.ReadKey();
+				int running = 0;
+				foreach (var pinger in Pingers)
+				{
+					if (pinger.Running)
+						running++;
+					Log.Verbose(running.ToString());
+				}
+				if (running == 0)
+					pingersRunning = false;
 			}
 		}
-		public static bool ProcessArgs(string[] args)
+		public static bool CheckIfHostExists(string hostName)
 		{
-
-			for (int i = 0; i < args.Length; i++)
+			if (Options.Hosts?.Count > 0)
 			{
-				switch (args[i])
+				foreach (var host in Options.Hosts)
 				{
-					case "-H":
-					case "--host":
-						i++;
-						hostName = args[i];
-						break;
-					case "-f":
-					case "--file":
-						i++;
-						fileName = args[i];
-						break;
-					case "-c":
-					case "--count":
+					if (host.HostName == hostName)
+						return true;
+				}
+			}
+			return false;
+		}
+		public static void AddNewHosts()
+		{
+			bool done = false;
+			while(!done)
+			{
+				Host newHost = new Host();
+				//Get host name from console input
+				Console.Write("New host name (can be IP): ");
+				var hostName = Console.ReadLine();
+				if(CheckIfHostExists(hostName))
+				{
+					Console.WriteLine("Host already exists in configuration.");
+					continue;
+				}
+				try
+				{
+					IPAddress[] iPs = Dns.GetHostAddresses(hostName);
+					newHost.HostName = hostName;
+					if (iPs.Length < 1)
+						throw new Exception("Invalid host name.");
+					newHost.IP = iPs[0].ToString();
+				} catch (Exception)
+				{
+					Console.WriteLine("Invalid host name.");
+					continue;
+				}
+				//Get ping count. Defaults to 0, which means it pings indefinitely
+
+				Console.Write("Number of times to ping (0 means infinite): ");
+				var count = Console.ReadLine();
+				if (count == string.Empty)
+					newHost.Count = 0;
+				else
+				{
+					try
+					{
+						newHost.Count = Convert.ToInt32(count);
+					}
+					catch (Exception)
+					{
+						Console.WriteLine("Invalid count specified. Assuming 0.");
+					}
+				}
+
+				//Ask if we want to log to a file. Defaults to yes/true
+				Console.Write("Do you want to write to a file? (Y/n) ");
+				var writeFile = Console.ReadLine().ToLower();
+				if(writeFile == string.Empty || writeFile == "yes" || writeFile == "y")
+				{
+					newHost.WriteFile = true;
+				}
+
+				//See if user wants to set up advanced options. Otherwise we use the defaults in the Host class
+				Console.Write("Do you want to specify advanced options (threshold, packet size, interval)? (y/N) ");
+				var advOpts = Console.ReadLine().ToLower();
+				if(advOpts == "y" || advOpts == "yes")
+				{
+					//Sets the warning threshold. Defaults to 500ms;
+					Console.Write("Ping time warning threshold: (500ms) ");
+					var threshold = Console.ReadLine();
+					if (threshold == string.Empty)
+						newHost.Threshold = 500;
+					else
+					{
 						try
 						{
-							i++;
-							pingCount = Convert.ToInt32(args[i]);
+							//See if we can convert it, but strip the 'ms' off if the user specified it. 
+							newHost.Threshold = Convert.ToInt32(threshold.Replace("ms", ""));
+						} catch (Exception)
+						{
+							Console.WriteLine("Invalid threshold specified. Defaulting to 500ms");
+						}
+					}
+
+					//Sets the ping timeout. Defaults to 1000ms
+					Console.Write("Ping timeout: (1000ms) ");
+					var timeout = Console.ReadLine();
+					if (timeout == string.Empty)
+						newHost.Timeout = 1000;
+					else
+					{
+						try
+						{
+							//See if we can convert it, but strip the 'ms' off if the user specified it. 
+							newHost.Timeout = Convert.ToInt32(timeout.Replace("ms", ""));
 						}
 						catch (Exception)
 						{
-							Console.ForegroundColor = ConsoleColor.DarkRed;
-							Console.WriteLine("Invalid count specified. Please enter a number.");
-							Console.WriteLine("Exiting...");
-							Console.ResetColor();
-							return false;
+							Console.WriteLine("Invalid timeout specified. Defaulting to 1000ms");
 						}
-						break;
-					case "-t":
-					case "--threshold":
-						try
-						{
-							i++;
-							WarnThreshold = Convert.ToInt32(args[i]);
-						} catch(Exception)
-						{
-							Console.ForegroundColor = ConsoleColor.DarkRed;
-							Console.WriteLine("Invalid threshold specified. Please enter a number.");
-							Console.WriteLine("Exiting...");
-							Console.ResetColor();
-							return false;
-						}
-						break;
-					case "-h":
-					case "--help":
-						Console.WriteLine("Usage: PingLogger -H [hostname] -f [log file] -c [ping count]\n");
-
-						Console.ForegroundColor = ConsoleColor.Cyan;
-						Console.Write("-H or --host: ");
-						Console.ResetColor();
-						Console.Write(" IP address or host name of the remote pc you wish to ping.\n\n");
-
-						Console.ForegroundColor = ConsoleColor.Cyan;
-						Console.Write("-f or --file: ");
-						Console.ResetColor();
-						Console.Write(" File name that you wish to log the output to.\n");
-						Console.Write("               You may use either a full path or a relative one.\n\n");
-
-						Console.ForegroundColor = ConsoleColor.Cyan;
-						Console.Write("-c or --count: ");
-						Console.ResetColor();
-						Console.Write("Number of times you wish to ping the remote host.\n");
-						Console.Write("               Leave blank or set to negative number to constantly ping.\n\n");
-
-						Console.ForegroundColor = ConsoleColor.Cyan;
-						Console.Write("-t or --threshold: ");
-						Console.ResetColor();
-						Console.Write("Warning threshold for the roundtrip time in MS. \n");
-						Console.Write("               Defaults to 200ms\n\n");
-
-						Console.ForegroundColor = ConsoleColor.Cyan;
-						Console.Write("-h or --help: ");
-						Console.ResetColor();
-						Console.Write(" Prints this help.\n");
-						return false;
-				}
-			}
-			return true;
-		}
-		public static void WriteStatus(object sender, PingCompletedEventArgs e)
-		{
-			if(e.Cancelled)
-			{
-				Console.WriteLine("Ping canceled.");
-				if (fileName != string.Empty)
-					Log.WriteLog("Ping canceled.");
-				((AutoResetEvent)e.UserState).Set();
-			}
-			if (e.Error != null)
-			{
-				Console.WriteLine("Ping failed: {0}", e.Error.ToString());
-				if (fileName != string.Empty)
-					Log.WriteLog("Ping failed: " + e.Error.ToString());
-				((AutoResetEvent)e.UserState).Set();
-			}
-			var reply = e.Reply;
-			switch(reply.Status)
-			{
-				case IPStatus.Success:
-					Console.WriteLine("Ping time: {0}ms", reply.RoundtripTime);
-					if (fileName != string.Empty)
-						Log.WritePingLog(hostName, (int)reply.RoundtripTime, reply.Options.Ttl, WarnThreshold);
-					break;
-				case IPStatus.DestinationHostUnreachable:
-					Console.ForegroundColor = ConsoleColor.DarkRed;
-					Console.WriteLine("Destination host unreachable.");
-					if (fileName != string.Empty)
-						Log.WriteLog("Error: Desitination host unreachable");
-					Console.ResetColor();
-					break;
-				case IPStatus.DestinationNetworkUnreachable:
-					Console.ForegroundColor = ConsoleColor.DarkRed;
-					Console.WriteLine("Destination network unreachable.");
-					if (fileName != string.Empty)
-						Log.WriteLog("Error: Desitination network unreachable");
-					Console.ResetColor();
-					break;
-				case IPStatus.DestinationUnreachable:
-					Console.ForegroundColor = ConsoleColor.DarkRed;
-					Console.WriteLine("Destination unreachable, cause unknown.");
-					if (fileName != string.Empty)
-						Log.WriteLog("Error: Desitination unreachable, cause unknown.");
-					Console.ResetColor();
-					break;
-				case IPStatus.HardwareError:
-					Console.ForegroundColor = ConsoleColor.DarkRed;
-					Console.WriteLine("Ping failed due to hardware.");
-					if (fileName != string.Empty)
-						Log.WriteLog("Error: Failed due to hardware issues.");
-					Console.ResetColor();
-					break;
-			}
-			((AutoResetEvent)e.UserState).Set();
-		}
-		public static bool ReadFromConfigFile()
-		{
-			var cfgFile = "./plopts.cfg";
-			var readOk = false;
-			if(File.Exists(cfgFile))
-			{
-				Console.WriteLine("Configuration file detected.");
-				var cfg =  File.ReadAllLines(cfgFile);
-				var len = cfg.Length;
-				var comments = 0;
-				for (int i = 0; i < cfg.Length; i++)
-				{
-					if (!cfg[i].StartsWith('#'))
-					{
-						try
-						{
-							var split = cfg[i].Split('=');
-							switch (split[0])
-							{
-								case "host":
-									hostName = split[1];
-									break;
-								case "file":
-									fileName = split[1];
-									break;
-								case "count":
-									pingCount = Convert.ToInt32(split[1]);
-									break;
-								case "threshold":
-									WarnThreshold = Convert.ToInt32(split[1]);
-									break;
-							}
-
-						}
-						catch (Exception) {
-							Console.ForegroundColor = ConsoleColor.Red;
-							Console.WriteLine("You have an invalid line in your options file.");
-							Console.WriteLine("Line {0}: {1}", i, cfg[i]);
-							Console.ResetColor();
-							Console.WriteLine("Configuration file will be ignored.");
-						}
-					} else
-					{
-						comments++;
 					}
-				}
-				if (comments < len)
-				{
-					if (hostName == string.Empty)
-					{
-						Console.ForegroundColor = ConsoleColor.Yellow;
-						Console.WriteLine("Configuration file has no host data.\nSkipping.");
-						Console.ResetColor();
-					}
+
+					//Sets the packet size. Defaults to 64 bytes
+					Console.Write("Packet size in bytes: (64) ");
+					var packetSize = Console.ReadLine();
+					if (packetSize == string.Empty)
+						newHost.PacketSize = 64;
 					else
 					{
-						readOk = true;
-						Console.ForegroundColor = ConsoleColor.Green;
-						Console.WriteLine("File read OK.\nRunning with the following options:");
-						Console.WriteLine("Host: {0}", hostName);
-						if (fileName != string.Empty)
-							Console.WriteLine("File: {0}", fileName);
-						if (pingCount > 0)
-							Console.WriteLine("Count: {0}", pingCount);
-						if (WarnThreshold != 200)
-							Console.WriteLine("Warning Threshold: {0}", WarnThreshold);
-						Console.ResetColor();
+						try
+						{
+							newHost.PacketSize = Convert.ToInt32(packetSize);
+						}
+						catch (Exception)
+						{
+							Console.WriteLine("Invalid packet size specified. Defaulting to 64");
+						}
+					}
+
+					//Sets the ping interval. Defaults to 1000ms
+					Console.Write("Ping interval: (1000ms)");
+					var interval = Console.ReadLine();
+					if (interval == string.Empty)
+						newHost.Interval = 1000;
+					else
+					{
+						try
+						{
+							//See if we can convert it, but strip the 'ms' off if the user specified it. 
+							newHost.Interval = Convert.ToInt32(interval.Replace("ms", ""));
+						}
+						catch (Exception)
+						{
+							Console.WriteLine("Invalid interval specified. Defaulting to 1000ms");
+						}
 					}
 				}
+				//All done. Add it to the options, then ask if they want to add another. 
+				Options.Hosts.Add(newHost);
+				Console.Write("Do you want to add another? (y/N) ");
+				var addMore = Console.ReadLine().ToLower();
+				if (addMore == string.Empty || addMore == "n" || addMore == "no")
+					done = true;
+				WriteConfig();
 			}
-			return readOk;
+		}
+		public static bool ReadJsonConfig()
+		{
+			if(File.Exists("./opts.json"))
+			{
+				try
+				{
+					var fileContents = File.ReadAllText("./opts.json");
+					Options = JsonSerializer.Deserialize<Opts>(fileContents);
+					return true;
+				} catch (Exception)
+				{
+					Log.Error("Error loading configuration file");
+				}
+			}
+			Options = new Opts();
+			Options.Hosts = new List<Host>();
+			return false;
+		}
+		public static Task<bool> WriteConfig()
+		{
+			try
+			{
+				File.WriteAllText("./opts.json", JsonSerializer.Serialize(Options, new JsonSerializerOptions { WriteIndented = true }));
+			} catch (Exception e)
+			{
+				Log.Error("Error saving configuration file");
+				Log.Error(e.ToString());
+			}
+			return Task.FromResult(true);
+		}
+		public static void ShutdownAllPingers()
+		{
+			foreach(var pinger in Pingers)
+			{
+				pinger.Stop();
+			}
 		}
 		public static void Closing(object sender, ConsoleCancelEventArgs args)
 		{
-			if (fileName != string.Empty)
-				Log.WriteLog("CLOSELOG");
+			ShutdownAllPingers();
+			Log.Information("Closing logger.");
+			WriteConfig();
 			args.Cancel = true;
-			Console.WriteLine("\nPing logger closing...");
+			Console.ReadKey();
 			Environment.Exit(0);
 		}
 	}
