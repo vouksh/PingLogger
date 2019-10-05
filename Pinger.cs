@@ -16,7 +16,7 @@ namespace PingLogger
 		public Host Host;
 		public bool Running = false;
 		private bool stopping = false;
-		private ILogger Logger;
+		private readonly ILogger Logger;
 		public Pinger(Host host)
 		{
 			Host = host;
@@ -51,7 +51,7 @@ namespace PingLogger
 		{
 			return Host;
 		}
-		private Random random = new Random();
+		private readonly Random random = new Random();
 		public string RandomString(int length)
 		{
 			const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
@@ -60,11 +60,11 @@ namespace PingLogger
 		}
 		public void Start()
 		{
-			Thread thread = new Thread(new ThreadStart(startLogging));
+			Thread thread = new Thread(new ThreadStart(StartLogging));
 			thread.Start();
 		}
 
-		private async void startLogging()
+		private void StartLogging()
 		{
 			Ping pingSender = new Ping();
 			pingSender.PingCompleted += new PingCompletedEventHandler(SendPing);

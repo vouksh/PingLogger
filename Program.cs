@@ -15,40 +15,61 @@ namespace PingLogger
 	class Program
 	{
 		private static Opts Options;
-		private static List<Pinger> Pingers = new List<Pinger>();
-		static void Main(string[] args)
+		private static readonly List<Pinger> Pingers = new List<Pinger>();
+		static void Main()
 		{
 			Log.Logger = new LoggerConfiguration()
 				.WriteTo.Console(theme: Serilog.Sinks.SystemConsole.Themes.AnsiConsoleTheme.Code)
 				.WriteTo.File("PingLogger-.log", rollingInterval: RollingInterval.Day)
 				.CreateLogger();
 			Log.Information("PingLogger v0.2 by Jack Butler");
+			Console.CancelKeyPress += new ConsoleCancelEventHandler(Closing);
+			DoStartupTasks();
+		}
+		public static void DoStartupTasks()
+		{
 
 			var configured = ReadJsonConfig();
 
-			if(configured)
+			if (configured)
 			{
-				if(Options.Hosts.Count > 0)
+				if (Options.Hosts.Count > 0)
 				{
 					Log.Information("Existing hosts detected.");
 					try
 					{
-						Console.Write("Do you want to add another host? (y/N) ");
-						string resp = WaitForInput.ReadLine(5000);
-						if(resp.ToLower() == "y")
+						Console.Write("Do you want to remove, edit, or add another host? (r/e/y/N) ");
+						string resp = WaitForInput.ReadLine(5000).ToLower();
+						if (resp == "y" || resp == "yes")
 						{
 							AddNewHosts();
 						}
-					} catch(TimeoutException)
+						if (resp == "e" || resp == "edit")
+						{
+							EditHosts();
+						}
+						if (resp == "r" || resp == "remove")
+						{
+							RemoveHosts();
+							if (Options.Hosts.Count < 1)
+							{
+								Console.WriteLine("All hosts removed.");
+								AddNewHosts();
+							}
+						}
+					}
+					catch (TimeoutException)
 					{
 						Console.WriteLine();
 						Log.Information("No input detected. Skipping addition of new hosts");
 					}
-				} else
+				}
+				else
 				{
 					AddNewHosts();
 				}
-			} else
+			}
+			else
 			{
 				Log.Information("No hosts configured.");
 				AddNewHosts();
@@ -57,13 +78,12 @@ namespace PingLogger
 			{
 				Pingers.Add(new Pinger(host));
 			}
-			foreach(var pinger in Pingers)
+			foreach (var pinger in Pingers)
 			{
 				pinger.Start();
 			}
-
-			Console.CancelKeyPress += new ConsoleCancelEventHandler(Closing);
 			bool pingersRunning = true;
+
 			while (pingersRunning)
 			{
 				int running = 0;
@@ -89,16 +109,178 @@ namespace PingLogger
 			}
 			return false;
 		}
+		public static void RemoveHosts()
+		{
+			bool done = false;
+			while (!done)
+			{
+				Console.WriteLine("Which host would you like to remove?");
+				for (int i = 0; i < Options.Hosts.Count; i++)
+				{
+					Console.WriteLine($"[{i + 1}] {Options.Hosts[i].HostName} ({ Options.Hosts[i].IP})");
+				}
+				Console.Write("Enter the number you wish to edit: ");
+				var selectedHost = Console.ReadLine();
+				int selectedIndex = 0;
+				try
+				{
+					selectedIndex = Convert.ToInt32(selectedHost) - 1;
+				}
+				catch (Exception)
+				{
+					Console.WriteLine("Invalid number selected.");
+				}
+				Console.Write("Are you sure you want to remove host {0}? (y/N) ", Options.Hosts[selectedIndex].HostName);
+				var resp = Console.ReadLine().ToLower();
+				if (resp != string.Empty || resp == "y" || resp == "yes")
+				{
+					Log.Information("Removed host {0} with IP address {1}, Threshold {2}ms, Interval {3}ms, Packet Size {4}",
+						Options.Hosts[selectedIndex].HostName,
+						Options.Hosts[selectedIndex].IP,
+						Options.Hosts[selectedIndex].Threshold,
+						Options.Hosts[selectedIndex].Interval,
+						Options.Hosts[selectedIndex].PacketSize);
+					Options.Hosts.RemoveAt(selectedIndex);
+				}
+				Console.Write("Do you want to remove another? (y/N) ");
+				var addMore = Console.ReadLine().ToLower();
+				if (addMore == string.Empty || addMore == "n" || addMore == "no")
+					done = true;
+				WriteConfig();
+			}
+		}
+		public static void EditHosts()
+		{
+			bool done = false;
+			while (!done)
+			{
+				Console.WriteLine("Which host would you like to edit?");
+				for (int i = 0; i < Options.Hosts.Count; i++)
+				{
+					Console.WriteLine($"[{i + 1}] {Options.Hosts[i].HostName} ({ Options.Hosts[i].IP})");
+				}
+				Console.Write("Enter the number you wish to edit: ");
+				var selectedHost = Console.ReadLine();
+				int selectedIndex;
+				try
+				{
+					selectedIndex = Convert.ToInt32(selectedHost) - 1;
+				}
+				catch (Exception)
+				{
+					Console.WriteLine("Invalid number selected.");
+					continue;
+				}
+				Host newHost = Options.Hosts[selectedIndex];
+				//Get host name from console input
+				Console.Write("New host name (can be IP): ({0})", newHost.HostName);
+				var hostName = Console.ReadLine();
+				if (hostName != string.Empty)
+				{
+					try
+					{
+						IPAddress[] iPs = Dns.GetHostAddresses(hostName);
+						newHost.HostName = hostName;
+						if (iPs.Length < 1)
+							throw new Exception("Invalid host name.");
+						newHost.IP = iPs[0].ToString();
+						Console.WriteLine("Resolved to IP {0}", newHost.IP);
+					}
+					catch (Exception)
+					{
+						Console.WriteLine("Invalid host name.");
+						continue;
+					}
+				}
+				//See if user wants to set up advanced options. Otherwise we use the defaults in the Host class
+				Console.Write("Do you want to specify advanced options (threshold, packet size, interval)? (y/N) ");
+				var advOpts = Console.ReadLine().ToLower();
+				if (advOpts == "y" || advOpts == "yes")
+				{
+					//Sets the warning threshold. Defaults to 500ms;
+					Console.Write("Ping time warning threshold: ({0}ms) ", newHost.Threshold);
+					var threshold = Console.ReadLine();
+					if (threshold != string.Empty)
+					{
+						try
+						{
+							//See if we can convert it, but strip the 'ms' off if the user specified it. 
+							newHost.Threshold = Convert.ToInt32(threshold.Replace("ms", ""));
+						}
+						catch (Exception)
+						{
+							Console.WriteLine("Invalid threshold specified. Reverting back to {0}ms", newHost.Threshold);
+						}
+					}
+					//Sets the ping timeout. Defaults to 1000ms
+					Console.Write("Ping timeout: ({0}ms) ", newHost.Timeout);
+					var timeout = Console.ReadLine();
+					if (timeout != string.Empty)
+					{
+						try
+						{
+							//See if we can convert it, but strip the 'ms' off if the user specified it. 
+							newHost.Timeout = Convert.ToInt32(timeout.Replace("ms", ""));
+						}
+						catch (Exception)
+						{
+							Console.WriteLine("Invalid timeout specified. Reverting back to {0}ms", newHost.Timeout);
+						}
+					}
+
+					//Sets the packet size. Defaults to 64 bytes
+					Console.Write("Packet size in bytes: ({0}) ", newHost.PacketSize);
+					var packetSize = Console.ReadLine();
+					if (packetSize != string.Empty)
+					{
+						try
+						{
+							newHost.PacketSize = Convert.ToInt32(packetSize);
+						}
+						catch (Exception)
+						{
+							Console.WriteLine("Invalid packet size specified. Reverting back to {0}", newHost.PacketSize);
+						}
+					}
+
+					//Sets the ping interval. Defaults to 1000ms
+					Console.Write("Ping interval: ({0}ms) ", newHost.Interval);
+					var interval = Console.ReadLine();
+					if (interval != string.Empty)
+					{
+						try
+						{
+							//See if we can convert it, but strip the 'ms' off if the user specified it. 
+							newHost.Interval = Convert.ToInt32(interval.Replace("ms", ""));
+						}
+						catch (Exception)
+						{
+							Console.WriteLine("Invalid interval specified. Reverting back to {0}ms", newHost.Interval);
+						}
+					}
+				}
+				//All done. Add it to the options, then ask if they want to add another. 
+				Options.Hosts[selectedIndex] = newHost;
+
+				Log.Information("Edited host {0} with IP address {1}, Threshold {2}ms, Interval {3}ms, Packet Size {4}",
+					newHost.HostName, newHost.IP, newHost.Threshold, newHost.Interval, newHost.PacketSize);
+				Console.Write("Do you want to edit another? (y/N) ");
+				var addMore = Console.ReadLine().ToLower();
+				if (addMore == string.Empty || addMore == "n" || addMore == "no")
+					done = true;
+				WriteConfig();
+			}
+		}
 		public static void AddNewHosts()
 		{
 			bool done = false;
-			while(!done)
+			while (!done)
 			{
 				Host newHost = new Host();
 				//Get host name from console input
 				Console.Write("New host name (can be IP): ");
 				var hostName = Console.ReadLine();
-				if(CheckIfHostExists(hostName))
+				if (CheckIfHostExists(hostName))
 				{
 					Console.WriteLine("Host already exists in configuration.");
 					continue;
@@ -112,7 +294,9 @@ namespace PingLogger
 					if (iPs.Length < 1)
 						throw new Exception("Invalid host name.");
 					newHost.IP = iPs[0].ToString();
-				} catch (Exception)
+					Console.WriteLine("Resolved to IP {0}", newHost.IP);
+				}
+				catch (Exception)
 				{
 					Console.WriteLine("Invalid host name.");
 					continue;
@@ -121,7 +305,7 @@ namespace PingLogger
 				//See if user wants to set up advanced options. Otherwise we use the defaults in the Host class
 				Console.Write("Do you want to specify advanced options (threshold, packet size, interval)? (y/N) ");
 				var advOpts = Console.ReadLine().ToLower();
-				if(advOpts == "y" || advOpts == "yes")
+				if (advOpts == "y" || advOpts == "yes")
 				{
 					//Sets the warning threshold. Defaults to 500ms;
 					Console.Write("Ping time warning threshold: (500ms) ");
@@ -134,7 +318,8 @@ namespace PingLogger
 						{
 							//See if we can convert it, but strip the 'ms' off if the user specified it. 
 							newHost.Threshold = Convert.ToInt32(threshold.Replace("ms", ""));
-						} catch (Exception)
+						}
+						catch (Exception)
 						{
 							Console.WriteLine("Invalid threshold specified. Defaulting to 500ms");
 						}
@@ -195,6 +380,8 @@ namespace PingLogger
 				}
 				//All done. Add it to the options, then ask if they want to add another. 
 				Options.Hosts.Add(newHost);
+				Log.Information("Added a new host {0} with IP address {1}, Threshold {2}ms, Interval {3}ms, Packet Size {4}",
+					newHost.HostName, newHost.IP, newHost.Threshold, newHost.Interval, newHost.PacketSize);
 				Console.Write("Do you want to add another? (y/N) ");
 				var addMore = Console.ReadLine().ToLower();
 				if (addMore == string.Empty || addMore == "n" || addMore == "no")
@@ -204,20 +391,23 @@ namespace PingLogger
 		}
 		public static bool ReadJsonConfig()
 		{
-			if(File.Exists("./opts.json"))
+			if (File.Exists("./opts.json"))
 			{
 				try
 				{
 					var fileContents = File.ReadAllText("./opts.json");
 					Options = JsonSerializer.Deserialize<Opts>(fileContents);
 					return true;
-				} catch (Exception)
+				}
+				catch (Exception)
 				{
 					Log.Error("Error loading configuration file");
 				}
 			}
-			Options = new Opts();
-			Options.Hosts = new List<Host>();
+			Options = new Opts
+			{
+				Hosts = new List<Host>()
+			};
 			return false;
 		}
 		public static void WriteConfig()
@@ -225,7 +415,8 @@ namespace PingLogger
 			try
 			{
 				File.WriteAllText("./opts.json", JsonSerializer.Serialize(Options, new JsonSerializerOptions { WriteIndented = true }));
-			} catch (Exception e)
+			}
+			catch (Exception e)
 			{
 				Log.Error("Error saving configuration file");
 				Log.Error(e.ToString());
@@ -233,18 +424,33 @@ namespace PingLogger
 		}
 		public static void ShutdownAllPingers()
 		{
-			foreach(var pinger in Pingers)
+			foreach (var pinger in Pingers)
 			{
 				pinger.Stop();
 			}
 		}
-		public static void Closing(object sender, ConsoleCancelEventArgs args)
+		protected static void Closing(object sender, ConsoleCancelEventArgs args)
 		{
-			ShutdownAllPingers();
-			Log.Information("Closing logger.");
-			WriteConfig();
 			args.Cancel = true;
-			Environment.Exit(0);
+			ShutdownAllPingers();
+			WriteConfig();
+			try
+			{
+				Console.Write("Do you want to close the program? (Y/n) ");
+				string resp = WaitForInput.ReadLine(5000).ToLower();
+				if (resp == string.Empty || resp == "y" || resp == "yes")
+				{
+					Environment.Exit(0);
+				}
+				else
+				{
+					DoStartupTasks();
+				}
+			} catch(TimeoutException)
+			{
+				Console.WriteLine("No response received, closing application.");
+				Environment.Exit(0);
+			}
 		}
 	}
 }
