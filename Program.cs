@@ -2,9 +2,9 @@
 using System.Net;
 using System.Net.NetworkInformation;
 using System.Threading.Tasks;
+using System.Threading;
 using System.Text;
 using System.IO;
-using System.Threading;
 using Serilog;
 using System.Text.Json;
 using System.Linq;
@@ -23,11 +23,14 @@ namespace PingLogger
 				.WriteTo.File("PingLogger-.log", rollingInterval: RollingInterval.Day)
 				.CreateLogger();
 			Log.Information("PingLogger v0.2 by Jack Butler");
-			Console.CancelKeyPress += new ConsoleCancelEventHandler(Closing);
 			DoStartupTasks();
 		}
-		public static void DoStartupTasks()
+		public static bool DoStartupTasks(bool killPingers = false)
 		{
+			Console.CancelKeyPress += new ConsoleCancelEventHandler(Closing);
+			
+			if (killPingers)
+				ShutdownAllPingers();
 
 			var configured = ReadJsonConfig();
 
@@ -38,9 +41,9 @@ namespace PingLogger
 					Log.Information("Existing hosts detected.");
 					try
 					{
-						Console.Write("Do you want to remove, edit, or add another host? (r/e/y/N) ");
+						Console.Write("Do you want to remove, edit, or add another host? (r/e/a/N) ");
 						string resp = WaitForInput.ReadLine(5000).ToLower();
-						if (resp == "y" || resp == "yes")
+						if (resp == "a" || resp == "add")
 						{
 							AddNewHosts();
 						}
@@ -96,6 +99,7 @@ namespace PingLogger
 				if (running == 0)
 					pingersRunning = false;
 			}
+			return true;
 		}
 		public static bool CheckIfHostExists(string hostName)
 		{
@@ -429,28 +433,29 @@ namespace PingLogger
 				pinger.Stop();
 			}
 		}
+		public static void PauseAllPingers()
+		{
+			Log.Information("Pausing all ping loggers");
+			foreach (var pinger in Pingers)
+			{
+				pinger.Pause();
+			}
+		}
+		public static void ResumeAllPingers()
+		{
+			Log.Information("Resuming all ping loggers");
+			foreach (var pinger in Pingers)
+			{
+				pinger.Resume();
+			}
+		}
 		protected static void Closing(object sender, ConsoleCancelEventArgs args)
 		{
-			args.Cancel = true;
-			ShutdownAllPingers();
+			//args.Cancel = true;
 			WriteConfig();
-			try
-			{
-				Console.Write("Do you want to close the program? (Y/n) ");
-				string resp = WaitForInput.ReadLine(5000).ToLower();
-				if (resp == string.Empty || resp == "y" || resp == "yes")
-				{
-					Environment.Exit(0);
-				}
-				else
-				{
-					DoStartupTasks();
-				}
-			} catch(TimeoutException)
-			{
-				Console.WriteLine("No response received, closing application.");
-				Environment.Exit(0);
-			}
+			ShutdownAllPingers();
+			Console.WriteLine("Closing application.");
+			Environment.Exit(0);
 		}
 	}
 }
