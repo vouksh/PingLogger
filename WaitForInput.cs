@@ -5,20 +5,22 @@ namespace PingLogger
 {
 	class WaitForInput
 	{
-		private static Thread inputThread;
-		private static AutoResetEvent getInput, gotInput;
+		private readonly static Thread inputThread;
+		private readonly static AutoResetEvent getInput, gotInput;
 		private static string input;
 
 		static WaitForInput()
 		{
 			getInput = new AutoResetEvent(false);
 			gotInput = new AutoResetEvent(false);
-			inputThread = new Thread(reader);
-			inputThread.IsBackground = true;
+			inputThread = new Thread(Reader)
+			{
+				IsBackground = true
+			};
 			inputThread.Start();
 		}
 
-		private static void reader()
+		private static void Reader()
 		{
 			while (true)
 			{

@@ -19,12 +19,9 @@ namespace PingLogger
 			Log.Information("PingLogger v0.2 by Jack Butler");
 			DoStartupTasks();
 		}
-		public static bool DoStartupTasks(bool killPingers = false)
+		public static bool DoStartupTasks()
 		{
 			Console.CancelKeyPress += new ConsoleCancelEventHandler(Closing);
-			
-			if (killPingers)
-				ShutdownAllPingers();
 
 			var configured = ReadJsonConfig();
 
@@ -432,22 +429,6 @@ namespace PingLogger
 			foreach (var pinger in Pingers)
 			{
 				pinger.Stop();
-			}
-		}
-		public static void PauseAllPingers()
-		{
-			Log.Information("Pausing all ping loggers");
-			foreach (var pinger in Pingers)
-			{
-				pinger.Pause();
-			}
-		}
-		public static void ResumeAllPingers()
-		{
-			Log.Information("Resuming all ping loggers");
-			foreach (var pinger in Pingers)
-			{
-				pinger.Resume();
 			}
 		}
 		protected static void Closing(object sender, ConsoleCancelEventArgs args)

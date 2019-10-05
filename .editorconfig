@@ -1,0 +1,4 @@
+﻿[*.cs]
+
+# IDE0068: Use recommended dispose pattern
+dotnet_diagnostic.IDE0068.severity = none
