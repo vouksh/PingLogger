@@ -433,7 +433,6 @@ namespace PingLogger
 		}
 		protected static void Closing(object sender, ConsoleCancelEventArgs args)
 		{
-			//args.Cancel = true;
 			WriteConfig();
 			ShutdownAllPingers();
 			Console.WriteLine("Closing application.");
