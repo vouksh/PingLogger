@@ -15,39 +15,35 @@ namespace PingLogger
 	{
 		public Host Host;
 		public bool Running = false;
+		private bool stopping = false;
+		private ILogger Logger;
 		public Pinger(Host host)
 		{
 			Host = host;
-			if(Host.WriteFile)
-			{
-				Log.Logger = new LoggerConfiguration()
-					.WriteTo.Console()
-					.WriteTo.File(Host.HostName + ".log", rollingInterval: RollingInterval.Day)
-					.CreateLogger();
-			} else
-			{
-				Log.Logger = new LoggerConfiguration()
-					.WriteTo.Console()
-					.CreateLogger();
-			}
+			if (!Directory.Exists("./Logs"))
+				Directory.CreateDirectory("./Logs");
+			Logger = new LoggerConfiguration()
+				.WriteTo.Console()
+				.WriteTo.File($"./Logs/{Host.HostName}-.log", rollingInterval: RollingInterval.Day)
+				.CreateLogger();
 			if(Host.PacketSize > 20000)
 			{
-				Log.Error("Packet size too large. Resetting to 20000 bytes");
+				Logger.Error("Packet size too large. Resetting to 20000 bytes");
 				Host.PacketSize = 20000;
 			}
 			if(Host.Interval < 500)
 			{
-				Log.Error("Interval too short. Setting to 500ms");
+				Logger.Error("Interval too short. Setting to 500ms");
 				Host.Interval = 500;
 			}
-			Log.Information("Verifying IP address of hostname is current.");
+			Logger.Information("Verifying IP address of hostname is current.");
 			IPAddress[] iPs = Dns.GetHostAddresses(Host.HostName);
 			if(iPs[0].ToString() == Host.IP)
 			{
-				Log.Information("IP matches. Continuing");
+				Logger.Information("IP matches. Continuing");
 			} else
 			{
-				Log.Warning("IP address does not match last stored. Saving new IP address");
+				Logger.Warning("IP address does not match last stored. Saving new IP address");
 				Host.IP = iPs[0].ToString();
 			}
 		}
@@ -62,7 +58,13 @@ namespace PingLogger
 			return new string(Enumerable.Repeat(chars, length)
 			  .Select(s => s[random.Next(s.Length)]).ToArray());
 		}
-		public async Task Start()
+		public void Start()
+		{
+			Thread thread = new Thread(new ThreadStart(startLogging));
+			thread.Start();
+		}
+
+		private async void startLogging()
 		{
 			Ping pingSender = new Ping();
 			pingSender.PingCompleted += new PingCompletedEventHandler(SendPing);
@@ -79,27 +81,30 @@ namespace PingLogger
 			{
 				pingSender.SendAsync(Host.IP, Host.Threshold, buffer, options, waiter);
 				waiter.WaitOne();
-				await Task.Delay(Host.Interval);
-				if (Host.Count > 0 && loops >= Host.Count)
+				Thread.Sleep(Host.Interval);
+				if(stopping)
+				{
 					Running = false;
-				//pingSender.Dispose();
+					Logger.Information("Ping stopped.");
+					pingSender.Dispose();
+				}
 				loops++;
 			}
 		}
 		public void Stop()
 		{
-			Running = false;
+			stopping = true;
 		}
 		private void SendPing(object sender, PingCompletedEventArgs e)
 		{
 			if (e.Cancelled)
 			{
-				Log.Information("Ping canceled.");
+				Logger.Information("Ping canceled.");
 				((AutoResetEvent)e.UserState).Set();
 			}
 			if (e.Error != null)
 			{
-				Log.Error("Ping failed: {0}", e.Error.ToString());
+				Logger.Error("Ping failed: {0}", e.Error.ToString());
 				((AutoResetEvent)e.UserState).Set();
 			}
 			var reply = e.Reply;
@@ -108,26 +113,26 @@ namespace PingLogger
 				case IPStatus.Success:
 					if (reply.RoundtripTime > Host.Threshold)
 					{
-						Log.Warning("Pinged {0} RoundTrip: {1}ms TTL: {2}", Host.IP.ToString(), reply.RoundtripTime, reply.Options.Ttl);
+						Logger.Warning("Pinged {0} ({1}) RoundTrip: {2}ms TTL: {3}", Host.HostName, Host.IP.ToString(), reply.RoundtripTime, reply.Options.Ttl);
 					} else
 					{
-						Log.Information("Pinged {0} RoundTrip: {1}ms TTL: {2}", Host.IP.ToString(), reply.RoundtripTime, reply.Options.Ttl);
+						Logger.Information("Pinged {0} ({1}) RoundTrip: {2}ms TTL: {3}", Host.HostName, Host.IP.ToString(), reply.RoundtripTime, reply.Options.Ttl);
 					}
 					break;
 				case IPStatus.DestinationHostUnreachable:
-					Log.Error("Destination host unreachable.");
+					Logger.Error("Destination host unreachable.");
 					break;
 				case IPStatus.DestinationNetworkUnreachable:
-					Log.Error("Destination network unreachable.");
+					Logger.Error("Destination network unreachable.");
 					break;
 				case IPStatus.DestinationUnreachable:
-					Log.Error("Destination unreachable, cause unknown.");
+					Logger.Error("Destination unreachable, cause unknown.");
 					break;
 				case IPStatus.HardwareError:
-					Log.Error("Ping failed due to hardware.");
+					Logger.Error("Ping failed due to hardware.");
 					break;
 				case IPStatus.TimedOut:
-					Log.Warning("Ping timed out to host {0}", Host.IP.ToString());
+					Logger.Warning("Ping timed out to host {0} ({1}). Timeout is {2}ms", Host.HostName, Host.IP.ToString(), Host.Timeout);
 					break;
 			}
 			((AutoResetEvent)e.UserState).Set();

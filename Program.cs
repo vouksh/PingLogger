@@ -23,7 +23,6 @@ namespace PingLogger
 				.WriteTo.File("PingLogger-.log", rollingInterval: RollingInterval.Day)
 				.CreateLogger();
 			Log.Information("PingLogger v0.2 by Jack Butler");
-			Console.CancelKeyPress += new ConsoleCancelEventHandler(Closing);
 
 			var configured = ReadJsonConfig();
 
@@ -56,10 +55,14 @@ namespace PingLogger
 			}
 			foreach (var host in Options.Hosts)
 			{
-				var pinger = new Pinger(host);
-				pinger.Start();
-				Pingers.Add(pinger);
+				Pingers.Add(new Pinger(host));
 			}
+			foreach(var pinger in Pingers)
+			{
+				pinger.Start();
+			}
+
+			Console.CancelKeyPress += new ConsoleCancelEventHandler(Closing);
 			bool pingersRunning = true;
 			while (pingersRunning)
 			{
@@ -111,31 +114,6 @@ namespace PingLogger
 				{
 					Console.WriteLine("Invalid host name.");
 					continue;
-				}
-				//Get ping count. Defaults to 0, which means it pings indefinitely
-
-				Console.Write("Number of times to ping (0 means infinite): ");
-				var count = Console.ReadLine();
-				if (count == string.Empty)
-					newHost.Count = 0;
-				else
-				{
-					try
-					{
-						newHost.Count = Convert.ToInt32(count);
-					}
-					catch (Exception)
-					{
-						Console.WriteLine("Invalid count specified. Assuming 0.");
-					}
-				}
-
-				//Ask if we want to log to a file. Defaults to yes/true
-				Console.Write("Do you want to write to a file? (Y/n) ");
-				var writeFile = Console.ReadLine().ToLower();
-				if(writeFile == string.Empty || writeFile == "yes" || writeFile == "y")
-				{
-					newHost.WriteFile = true;
 				}
 
 				//See if user wants to set up advanced options. Otherwise we use the defaults in the Host class
@@ -196,7 +174,7 @@ namespace PingLogger
 					}
 
 					//Sets the ping interval. Defaults to 1000ms
-					Console.Write("Ping interval: (1000ms)");
+					Console.Write("Ping interval: (1000ms) ");
 					var interval = Console.ReadLine();
 					if (interval == string.Empty)
 						newHost.Interval = 1000;
@@ -240,7 +218,7 @@ namespace PingLogger
 			Options.Hosts = new List<Host>();
 			return false;
 		}
-		public static Task<bool> WriteConfig()
+		public static void WriteConfig()
 		{
 			try
 			{
@@ -250,7 +228,6 @@ namespace PingLogger
 				Log.Error("Error saving configuration file");
 				Log.Error(e.ToString());
 			}
-			return Task.FromResult(true);
 		}
 		public static void ShutdownAllPingers()
 		{
@@ -264,8 +241,8 @@ namespace PingLogger
 			ShutdownAllPingers();
 			Log.Information("Closing logger.");
 			WriteConfig();
+			_ = Console.ReadKey();
 			args.Cancel = true;
-			Console.ReadKey();
 			Environment.Exit(0);
 		}
 	}
