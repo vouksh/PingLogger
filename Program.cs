@@ -241,7 +241,6 @@ namespace PingLogger
 			ShutdownAllPingers();
 			Log.Information("Closing logger.");
 			WriteConfig();
-			_ = Console.ReadKey();
 			args.Cancel = true;
 			Environment.Exit(0);
 		}
