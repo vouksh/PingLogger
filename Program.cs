@@ -1,13 +1,8 @@
 ﻿using System;
 using System.Net;
-using System.Net.NetworkInformation;
-using System.Threading.Tasks;
-using System.Threading;
-using System.Text;
 using System.IO;
 using Serilog;
 using System.Text.Json;
-using System.Linq;
 using System.Collections.Generic;
 
 namespace PingLogger

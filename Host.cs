@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Net;
-using System.Text;
-
-namespace PingLogger
+﻿namespace PingLogger
 {
 	public class Host
 	{
