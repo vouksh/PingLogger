@@ -103,6 +103,8 @@ namespace PingLogger
 					Console.WriteLine("Host already exists in configuration.");
 					continue;
 				}
+				if (hostName == string.Empty)
+					break;
 				try
 				{
 					IPAddress[] iPs = Dns.GetHostAddresses(hostName);

@@ -79,7 +79,7 @@ namespace PingLogger
 			Running = true;
 			while (Running)
 			{
-				pingSender.SendAsync(Host.IP, Host.Threshold, buffer, options, waiter);
+				pingSender.SendAsync(Host.IP, Host.Timeout, buffer, options, waiter);
 				waiter.WaitOne();
 				Thread.Sleep(Host.Interval);
 				if(stopping)
