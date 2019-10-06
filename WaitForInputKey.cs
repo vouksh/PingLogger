@@ -4,7 +4,7 @@ using System.Threading;
 
 namespace PingLogger
 {
-	class WaitForInput
+	class WaitForInputKey
 	{
 		[DllImport("User32.Dll", EntryPoint = "PostMessageA")]
 		private static extern bool PostMessage(IntPtr hWnd, uint msg, int wParam, int lParam);
@@ -14,9 +14,9 @@ namespace PingLogger
 
 		private readonly static Thread inputThread;
 		private readonly static AutoResetEvent getInput, gotInput;
-		private static string input;
+		private static ConsoleKeyInfo input;
 
-		static WaitForInput()
+		static WaitForInputKey()
 		{
 			getInput = new AutoResetEvent(false);
 			gotInput = new AutoResetEvent(false);
@@ -32,13 +32,11 @@ namespace PingLogger
 			while (true)
 			{
 				getInput.WaitOne();
-				input = Console.ReadLine();
+				input = Console.ReadKey();
 				gotInput.Set();
 			}
 		}
-
-		// omit the parameter to read a line without a timeout
-		public static string ReadLine(int timeOutMillisecs = Timeout.Infinite)
+		public static ConsoleKeyInfo ReadKey(int timeOutMillisecs = Timeout.Infinite)
 		{
 			getInput.Set();
 			bool success = gotInput.WaitOne(timeOutMillisecs);

@@ -4,6 +4,7 @@ using System.IO;
 using Serilog;
 using System.Text.Json;
 using System.Collections.Generic;
+using System.Threading;
 
 namespace PingLogger
 {
@@ -19,10 +20,8 @@ namespace PingLogger
 			Log.Information("PingLogger v0.2 by Jack Butler");
 			DoStartupTasks();
 		}
-		public static bool DoStartupTasks()
+		public static void DoStartupTasks()
 		{
-			Console.CancelKeyPress += new ConsoleCancelEventHandler(Closing);
-
 			var configured = ReadJsonConfig();
 
 			if (configured)
@@ -32,34 +31,23 @@ namespace PingLogger
 					Log.Information("Existing hosts detected.");
 					try
 					{
-						Console.Write("Do you want to remove, edit, or add another host? (r/e/a/N) ");
+						Console.Write("Do you want to make changes? (y/N) ");
 						string resp = WaitForInput.ReadLine(5000).ToLower();
-						if (resp == "a" || resp == "add")
+						if (resp == "y" || resp == "yes")
 						{
-							AddNewHosts();
-						}
-						if (resp == "e" || resp == "edit")
-						{
-							EditHosts();
-						}
-						if (resp == "r" || resp == "remove")
-						{
-							RemoveHosts();
-							if (Options.Hosts.Count < 1)
-							{
-								Console.WriteLine("All hosts removed.");
-								AddNewHosts();
-							}
+							UpdateSettings();
 						}
 					}
 					catch (TimeoutException)
 					{
 						Console.WriteLine();
 						Log.Information("No input detected. Skipping addition of new hosts");
+						
 					}
 				}
 				else
 				{
+					Log.Information("No hosts configured.");
 					AddNewHosts();
 				}
 			}
@@ -68,29 +56,127 @@ namespace PingLogger
 				Log.Information("No hosts configured.");
 				AddNewHosts();
 			}
+
+			UpdatePingers();
+			StartAllPingers();
+			Console.TreatControlCAsInput = true;
+			ConsoleKeyInfo cki;
+			do
+			{
+				if(Options.AllSilent)
+					Console.Write(Options.SilentOutput);
+				try
+				{
+					cki = WaitForInputKey.ReadKey(2000);
+					if ((cki.Modifiers & ConsoleModifiers.Control) != 0 && cki.Key == ConsoleKey.C)
+					{
+						Console.TreatControlCAsInput = false;
+						ShutdownAllPingers();
+						UpdateSettings(true);
+						Console.TreatControlCAsInput = true;
+					}
+				} catch(TimeoutException)
+				{
+					//do nothing.
+				}
+			} while (true);
+		}
+		public static void UpdateSettings(bool interrupted = false)
+		{
+			Console.WriteLine("What would you like to do?");
+			Console.WriteLine("[1] Close Application");
+			Console.WriteLine("[2] Add a host");
+			Console.WriteLine("[3] Edit a host");
+			Console.WriteLine("[4] Remove a host");
+			Console.WriteLine("[5] Refresh silent output message");
+			Console.WriteLine("[6] Change silent output setting");
+			if(interrupted)
+				Console.WriteLine("[7] Restart logging");
+			Console.Write("Option: ");
+			var resp = Console.ReadLine().ToLower();
+			switch (resp)
+			{
+				case "1":
+				case "":
+					WriteConfig();
+					Log.Warning("Closing application.");
+					Thread.Sleep(200);
+					Environment.Exit(0);
+					break;
+				case "2":
+					AddNewHosts();
+					UpdatePingers();
+					StartAllPingers();
+					break;
+				case "3":
+					EditHosts();
+					UpdatePingers();
+					StartAllPingers();
+					break;
+				case "4":
+					RemoveHosts();
+					UpdatePingers();
+					StartAllPingers();
+					break;
+				case "5":
+					if (!File.Exists("./silent.txt"))
+					{
+						Console.WriteLine("No silent.txt found. Please create one in the same directory as this program and try again.");
+					}
+					else
+					{
+						Options.SilentOutput = File.ReadAllText("./silent.txt");
+					}
+					break;
+				case "6":
+					if (Options.AllSilent)
+					{
+						Console.WriteLine("Application is currently set to only log to files.");
+						Console.Write("Would you like to change this? (y/N) ");
+						var changeSilent = Console.ReadLine().ToLower();
+						if (changeSilent != string.Empty || changeSilent == "y" || changeSilent == "yes")
+						{
+							Options.AllSilent = false;
+						}
+					}
+					else
+					{
+						Console.WriteLine("Application is currently set to log to both the console and files");
+						Console.Write("Would you like to change this? (y/N) ");
+						var changeSilent = Console.ReadLine().ToLower();
+						if (changeSilent != string.Empty || changeSilent == "y" || changeSilent == "yes")
+						{
+							Options.AllSilent = true;
+						}
+					}
+					UpdatePingers();
+					StartAllPingers();
+					break;
+				case "7":
+					if (interrupted)
+					{
+						UpdatePingers();
+						StartAllPingers();
+					} else
+					{
+						Console.WriteLine("Invalid selection");
+						UpdateSettings(interrupted);
+					}
+					break;
+				default:
+					Console.WriteLine("Invalid selection");
+					UpdateSettings(interrupted);
+					break;
+			}
+		}
+		public static void UpdatePingers()
+		{
+			Pingers.Clear();
+
 			foreach (var host in Options.Hosts)
 			{
-				Pingers.Add(new Pinger(host));
+				Pingers.Add(new Pinger(host, Options.AllSilent));
 			}
-			foreach (var pinger in Pingers)
-			{
-				pinger.Start();
-			}
-			bool pingersRunning = true;
-
-			while (pingersRunning)
-			{
-				int running = 0;
-				foreach (var pinger in Pingers)
-				{
-					if (pinger.Running)
-						running++;
-					Log.Verbose(running.ToString());
-				}
-				if (running == 0)
-					pingersRunning = false;
-			}
-			return true;
 		}
 		public static bool CheckIfHostExists(string hostName)
 		{
@@ -144,7 +230,8 @@ namespace PingLogger
 					if (addMore == string.Empty || addMore == "n" || addMore == "no")
 						done = true;
 					WriteConfig();
-				} else
+				}
+				else
 				{
 					done = true;
 					WriteConfig();
@@ -194,6 +281,34 @@ namespace PingLogger
 						continue;
 					}
 				}
+
+			SilentPrompt:
+				Console.Write("Do you want this host to be silent? ({0})", newHost.Silent ? "yes" : "no");
+				var silentResp = Console.ReadLine();
+				if (silentResp != string.Empty)
+				{
+					try
+					{
+						if (silentResp == "y" || silentResp == "yes" || silentResp == "true")
+						{
+							newHost.Silent = true;
+						}
+						else if (silentResp == "h" || silentResp == "help")
+						{
+							Console.WriteLine("If this is set to 'yes', then the pings will only be logged to the file, not the console output.");
+							goto SilentPrompt;
+						}
+						else
+						{
+							newHost.Silent = false;
+						}
+					}
+					catch (Exception)
+					{
+						Console.WriteLine("Invalid response. Leaving setting at {0}", newHost.Silent ? "yes" : "no");
+					}
+				}
+
 				//See if user wants to set up advanced options. Otherwise we use the defaults in the Host class
 				Console.Write("Do you want to specify advanced options (threshold, packet size, interval)? (y/N) ");
 				var advOpts = Console.ReadLine().ToLower();
@@ -303,7 +418,24 @@ namespace PingLogger
 					Console.WriteLine("Invalid host name.");
 					continue;
 				}
-
+			SilentPrompt:
+				Console.Write("Do you want this host to be silent?: (y/N/h) ");
+				var silentResp = Console.ReadLine();
+				if (silentResp != string.Empty)
+				{
+					if (silentResp == "y" || silentResp == "yes" || silentResp == "true")
+					{
+						newHost.Silent = true;
+					} else if(silentResp == "h" || silentResp == "help")
+					{
+						Console.WriteLine("If this is set to 'yes', then the pings will only be logged to the file, not the console output.");
+						goto SilentPrompt;
+					}
+					else
+					{
+						newHost.Silent = false;
+					}
+				}
 				//See if user wants to set up advanced options. Otherwise we use the defaults in the Host class
 				Console.Write("Do you want to specify advanced options (threshold, packet size, interval)? (y/N) ");
 				var advOpts = Console.ReadLine().ToLower();
@@ -431,12 +563,12 @@ namespace PingLogger
 				pinger.Stop();
 			}
 		}
-		protected static void Closing(object sender, ConsoleCancelEventArgs args)
+		public static void StartAllPingers()
 		{
-			WriteConfig();
-			ShutdownAllPingers();
-			Console.WriteLine("Closing application.");
-			Environment.Exit(0);
+			foreach (var pinger in Pingers)
+			{
+				pinger.Start();
+			}
 		}
 	}
 }

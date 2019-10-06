@@ -15,17 +15,24 @@ namespace PingLogger
 		public bool Running = false;
 		private bool stopping = false;
 		private readonly ILogger Logger;
-		private bool Silent = false;
 		private Thread RunThread;
-		public Pinger(Host host)
+		public Pinger(Host host, bool defaultSilent = false)
 		{
 			Host = host;
 			if (!Directory.Exists("./Logs"))
 				Directory.CreateDirectory("./Logs");
-			Logger = new LoggerConfiguration()
-				.WriteTo.Console(theme: Serilog.Sinks.SystemConsole.Themes.AnsiConsoleTheme.Literate)
-				.WriteTo.File($"./Logs/{Host.HostName}-.log", rollingInterval: RollingInterval.Day)
-				.CreateLogger();
+			if (!Host.Silent && !defaultSilent)
+			{
+				Logger = new LoggerConfiguration()
+					.WriteTo.Console(theme: Serilog.Sinks.SystemConsole.Themes.AnsiConsoleTheme.Literate)
+					.WriteTo.File($"./Logs/{Host.HostName}-.log", rollingInterval: RollingInterval.Day)
+					.CreateLogger();
+			} else
+			{
+				Logger = new LoggerConfiguration()
+					.WriteTo.File($"./Logs/{Host.HostName}-.log", rollingInterval: RollingInterval.Day)
+					.CreateLogger();
+			}
 			if (Host.PacketSize > 20000)
 			{
 				Logger.Error("Packet size too large. Resetting to 20000 bytes");
@@ -97,14 +104,6 @@ namespace PingLogger
 				loops++;
 			}
 		}
-		public void Pause()
-		{
-			Silent = true;
-		}
-		public void Resume()
-		{
-			Silent = false;
-		}
 		public void Stop()
 		{
 			stopping = true;
@@ -112,49 +111,46 @@ namespace PingLogger
 		}
 		private void SendPing(object sender, PingCompletedEventArgs e)
 		{
-			if (!Silent)
+			if (e.Cancelled)
 			{
-				if (e.Cancelled)
-				{
-					Logger.Information("Ping canceled.");
-					((AutoResetEvent)e.UserState).Set();
-				}
-				if (e.Error != null)
-				{
-					Logger.Error("Ping failed: {0}", e.Error.ToString());
-					((AutoResetEvent)e.UserState).Set();
-				}
-				var reply = e.Reply;
-				switch (reply.Status)
-				{
-					case IPStatus.Success:
-						if (reply.RoundtripTime > Host.Threshold)
-						{
-							Logger.Warning("Pinged {0} ({1}) RoundTrip: {2}ms TTL: {3}", Host.HostName, Host.IP.ToString(), reply.RoundtripTime, reply.Options.Ttl);
-						}
-						else
-						{
-							Logger.Information("Pinged {0} ({1}) RoundTrip: {2}ms TTL: {3}", Host.HostName, Host.IP.ToString(), reply.RoundtripTime, reply.Options.Ttl);
-						}
-						break;
-					case IPStatus.DestinationHostUnreachable:
-						Logger.Error("Destination host unreachable.");
-						break;
-					case IPStatus.DestinationNetworkUnreachable:
-						Logger.Error("Destination network unreachable.");
-						break;
-					case IPStatus.DestinationUnreachable:
-						Logger.Error("Destination unreachable, cause unknown.");
-						break;
-					case IPStatus.HardwareError:
-						Logger.Error("Ping failed due to hardware.");
-						break;
-					case IPStatus.TimedOut:
-						Logger.Warning("Ping timed out to host {0} ({1}). Timeout is {2}ms", Host.HostName, Host.IP.ToString(), Host.Timeout);
-						break;
-				}
-			((AutoResetEvent)e.UserState).Set();
+				Logger.Information("Ping canceled.");
+				((AutoResetEvent)e.UserState).Set();
 			}
+			if (e.Error != null)
+			{
+				Logger.Error("Ping failed: {0}", e.Error.ToString());
+				((AutoResetEvent)e.UserState).Set();
+			}
+			var reply = e.Reply;
+			switch (reply.Status)
+			{
+				case IPStatus.Success:
+					if (reply.RoundtripTime > Host.Threshold)
+					{
+						Logger.Warning("Pinged {0} ({1}) RoundTrip: {2}ms TTL: {3}", Host.HostName, Host.IP.ToString(), reply.RoundtripTime, reply.Options.Ttl);
+					}
+					else
+					{
+						Logger.Information("Pinged {0} ({1}) RoundTrip: {2}ms TTL: {3}", Host.HostName, Host.IP.ToString(), reply.RoundtripTime, reply.Options.Ttl);
+					}
+					break;
+				case IPStatus.DestinationHostUnreachable:
+					Logger.Error("Destination host unreachable.");
+					break;
+				case IPStatus.DestinationNetworkUnreachable:
+					Logger.Error("Destination network unreachable.");
+					break;
+				case IPStatus.DestinationUnreachable:
+					Logger.Error("Destination unreachable, cause unknown.");
+					break;
+				case IPStatus.HardwareError:
+					Logger.Error("Ping failed due to hardware.");
+					break;
+				case IPStatus.TimedOut:
+					Logger.Warning("Ping timed out to host {0} ({1}). Timeout is {2}ms", Host.HostName, Host.IP.ToString(), Host.Timeout);
+					break;
+			}
+			((AutoResetEvent)e.UserState).Set();
 		}
 	}
 }
