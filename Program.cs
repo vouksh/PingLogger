@@ -20,6 +20,10 @@ namespace PingLogger
 			Log.Information("PingLogger v0.2 by Jack Butler");
 			DoStartupTasks();
 		}
+		/// <summary>
+		/// This is the bulk of the class.
+		/// It pulls the configuration, keeps the console thread alive, and waits for input from the user.
+		/// </summary>
 		public static void DoStartupTasks()
 		{
 			var configured = ReadJsonConfig();
@@ -59,25 +63,30 @@ namespace PingLogger
 
 			UpdatePingers();
 			StartAllPingers();
+			// Override the Ctrl-C input so that we can capture it. 
 			Console.TreatControlCAsInput = true;
 			ConsoleKeyInfo cki;
 			do
 			{
+				// If the user wants to have all ping loggers be silent, we'll print out the SilentOutput to the console instead. 
 				if(Options.AllSilent)
 					Console.Write(Options.SilentOutput);
 				try
 				{
+					//Use the WaitForInputKey class to have a timeout so that we can keep looping the silent output above. 
 					cki = WaitForInputKey.ReadKey(2000);
 					if ((cki.Modifiers & ConsoleModifiers.Control) != 0 && cki.Key == ConsoleKey.C)
 					{
+						// Change this back to false so that the user input functions like normal while going through the options.
 						Console.TreatControlCAsInput = false;
 						ShutdownAllPingers();
 						UpdateSettings(true);
+						// Then set it back so that it can be captured again.
 						Console.TreatControlCAsInput = true;
 					}
 				} catch(TimeoutException)
 				{
-					//do nothing.
+					// Do nothing. There's no consequence of the input timing out other than it gets looped back around.
 				}
 			} while (true);
 		}

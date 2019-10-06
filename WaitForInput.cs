@@ -4,6 +4,8 @@ using System.Threading;
 
 namespace PingLogger
 {
+	//Found this on Stack Overflow. https://stackoverflow.com/a/18342182/1659361
+	//Works well for what I need. 
 	class WaitForInput
 	{
 		[DllImport("User32.Dll", EntryPoint = "PostMessageA")]
@@ -37,7 +39,11 @@ namespace PingLogger
 			}
 		}
 
-		// omit the parameter to read a line without a timeout
+		/// <summary>
+		/// Read a console string input, with a timeout.
+		/// </summary>
+		/// <param name="timeOutMillisecs">Time to wait in milliseconds until giving up.</param>
+		/// <returns>Text entered.</returns>
 		public static string ReadLine(int timeOutMillisecs = Timeout.Infinite)
 		{
 			getInput.Set();
@@ -46,6 +52,9 @@ namespace PingLogger
 				return input;
 			else
 			{
+				//Ran into a problem where, if the input wasn't received, the console was technically still waiting for an input.
+				//So I found https://stackoverflow.com/a/9634477/1659361
+				//So now when it times out, it sends an enter key to this window. 
 				var hWnd = System.Diagnostics.Process.GetCurrentProcess().MainWindowHandle;
 				PostMessage(hWnd, WM_KEYDOWN, VK_RETURN, 0);
 				throw new TimeoutException("User did not provide input within the timelimit.");
