@@ -202,29 +202,16 @@ namespace PingLogger
 					Console.ForegroundColor = ConsoleColor.White;
 					Console.Write("Color: ({0}) ", Options.OutputColor);
 					var inputColor = Console.ReadLine();
-					switch (inputColor) {
-						case "1":
-							Options.OutputColor = ConsoleColor.White;
-							break;
-						case "2":
-							Options.OutputColor = ConsoleColor.Red;
-							break;
-						case "3":
-							Options.OutputColor = ConsoleColor.Blue;
-							break;
-						case "4":
-							Options.OutputColor = ConsoleColor.Green;
-							break;
-						case "5":
-							Options.OutputColor = ConsoleColor.Yellow;
-							break;
-						case "6":
-							Options.OutputColor = ConsoleColor.Gray;
-							break;
-						default:
-							Options.OutputColor = ConsoleColor.White;
-							break;
-					}
+					Options.OutputColor = inputColor switch
+					{
+						"1" => ConsoleColor.White,
+						"2" => ConsoleColor.Red,
+						"3" => ConsoleColor.Blue,
+						"4" => ConsoleColor.Green,
+						"5" => ConsoleColor.Yellow,
+						"6" => ConsoleColor.Gray,
+						_ => ConsoleColor.White,
+					};
 					Console.ForegroundColor = Options.OutputColor;
 					Console.WriteLine("Color set to {0}", Options.OutputColor);
 					WriteConfig();
