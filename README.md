@@ -9,10 +9,13 @@ Threshold: This is the time in milliseconds that, when hit, changes the log entr
 Timeout: This is the maximum time that the ping logger will wait for a response before giving up. 
 Interval: Specifies the time between each ping. 
 Packet Size: Specifies the size of the packet to be sent. 
+Silent: Only logs the output to a file, not the console.
 
-If you wish to edit these settings after the inital setup, they're stored in JSON format in the 'opts.json' file that is generated. 
+Also supports silencing all hosts and printing out a message to the console every 2 seconds. 
+To edit the message, create or change the silent.txt file, then trigger a refresh within the application (Ctrl-C, option 5) or close and re-open it.
 
-The application will then log to both the console output and individual log files. 
-
-Requires dotnet core 3.0 or above. 
+Requires dotnet core 3.0 or above to compile. 
+Resulting binary will have no requirements.
 Uses Serilog for actual file and console logging. 
+
+Download the binary + source from http://lexdysia.com/PingLogger.zip
