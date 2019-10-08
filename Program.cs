@@ -68,9 +68,6 @@ namespace PingLogger
 			ConsoleKeyInfo cki;
 			do
 			{
-				// If the user wants to have all ping loggers be silent, we'll print out the SilentOutput to the console instead. 
-				if(Options.AllSilent)
-					Console.Write(Options.SilentOutput);
 				try
 				{
 					//Use the WaitForInputKey class to have a timeout so that we can keep looping the silent output above. 
@@ -83,24 +80,51 @@ namespace PingLogger
 						UpdateSettings(true);
 						// Then set it back so that it can be captured again.
 						Console.TreatControlCAsInput = true;
+					} else
+					{
+						// If the user wants to have all ping loggers be silent, we'll print out the SilentOutput to the console instead. 
+						if (Options.AllSilent || AllHostsSilent())
+						{
+							Console.ForegroundColor = Options.OutputColor;
+							Console.Write(Options.SilentOutput);
+							Console.WriteLine();
+							Console.ForegroundColor = ConsoleColor.White;
+						}
 					}
 				} catch(TimeoutException)
-				{
-					// Do nothing. There's no consequence of the input timing out other than it gets looped back around.
+				{               
 				}
 			} while (true);
 		}
+		public static bool AllHostsSilent()
+		{
+			foreach(var host in Options.Hosts)
+			{
+				if (!host.Silent)
+					return false;
+			}
+			return true;
+		}
 		public static void UpdateSettings(bool interrupted = false)
 		{
+			// Discovered a bug where, if an additional Enter hasn't been sent, it will want an extra input.
+			// This is a bit hacky, but it works.
+			if (interrupted)
+			{
+				WaitForInputKey.DoEnter();
+				Thread.Sleep(100);
+			}
+
 			Console.WriteLine("What would you like to do?");
 			Console.WriteLine("[1] Close Application");
 			Console.WriteLine("[2] Add a host");
 			Console.WriteLine("[3] Edit a host");
 			Console.WriteLine("[4] Remove a host");
 			Console.WriteLine("[5] Refresh silent output message");
-			Console.WriteLine("[6] Change silent output setting");
+			Console.WriteLine("[6] Change silent output toggle");
+			Console.WriteLine("[7] Change silent output color");
 			if(interrupted)
-				Console.WriteLine("[7] Restart logging");
+				Console.WriteLine("[8] Restart logging");
 			Console.Write("Option: ");
 			var resp = Console.ReadLine().ToLower();
 			switch (resp)
@@ -143,7 +167,7 @@ namespace PingLogger
 						Console.WriteLine("Application is currently set to only log to files.");
 						Console.Write("Would you like to change this? (y/N) ");
 						var changeSilent = Console.ReadLine().ToLower();
-						if (changeSilent != string.Empty || changeSilent == "y" || changeSilent == "yes")
+						if (changeSilent == "y" || changeSilent == "yes")
 						{
 							Options.AllSilent = false;
 						}
@@ -153,15 +177,61 @@ namespace PingLogger
 						Console.WriteLine("Application is currently set to log to both the console and files");
 						Console.Write("Would you like to change this? (y/N) ");
 						var changeSilent = Console.ReadLine().ToLower();
-						if (changeSilent != string.Empty || changeSilent == "y" || changeSilent == "yes")
+						if (changeSilent == "y" || changeSilent == "yes")
 						{
 							Options.AllSilent = true;
 						}
 					}
+					WriteConfig();
 					UpdatePingers();
 					StartAllPingers();
 					break;
 				case "7":
+					Console.ForegroundColor = ConsoleColor.White;
+					Console.WriteLine("[1] White");
+					Console.ForegroundColor = ConsoleColor.Red;
+					Console.WriteLine("[2] Red");
+					Console.ForegroundColor = ConsoleColor.Blue;
+					Console.WriteLine("[3] Blue");
+					Console.ForegroundColor = ConsoleColor.Green;
+					Console.WriteLine("[4] Green");
+					Console.ForegroundColor = ConsoleColor.Yellow;
+					Console.WriteLine("[5] Yellow");
+					Console.ForegroundColor = ConsoleColor.Gray;
+					Console.WriteLine("[6] Grey");
+					Console.ForegroundColor = ConsoleColor.White;
+					Console.Write("Color: ({0}) ", Options.OutputColor);
+					var inputColor = Console.ReadLine();
+					switch (inputColor) {
+						case "1":
+							Options.OutputColor = ConsoleColor.White;
+							break;
+						case "2":
+							Options.OutputColor = ConsoleColor.Red;
+							break;
+						case "3":
+							Options.OutputColor = ConsoleColor.Blue;
+							break;
+						case "4":
+							Options.OutputColor = ConsoleColor.Green;
+							break;
+						case "5":
+							Options.OutputColor = ConsoleColor.Yellow;
+							break;
+						case "6":
+							Options.OutputColor = ConsoleColor.Gray;
+							break;
+						default:
+							Options.OutputColor = ConsoleColor.White;
+							break;
+					}
+					Console.ForegroundColor = Options.OutputColor;
+					Console.WriteLine("Color set to {0}", Options.OutputColor);
+					WriteConfig();
+					UpdatePingers();
+					StartAllPingers();
+					break;
+				case "8":
 					if (interrupted)
 					{
 						UpdatePingers();
@@ -291,6 +361,7 @@ namespace PingLogger
 					}
 				}
 
+				// Yes, yes, I know, goto is bad. But in this case, it's simpler and safer than looping back around to the top again. 
 			SilentPrompt:
 				Console.Write("Do you want this host to be silent? ({0})", newHost.Silent ? "yes" : "no");
 				var silentResp = Console.ReadLine();
@@ -427,6 +498,8 @@ namespace PingLogger
 					Console.WriteLine("Invalid host name.");
 					continue;
 				}
+
+			// Yes, yes, I know, goto is bad. But in this case, it's simpler and safer than looping back around to the top again. 
 			SilentPrompt:
 				Console.Write("Do you want this host to be silent?: (y/N/h) ");
 				var silentResp = Console.ReadLine();
@@ -558,6 +631,7 @@ namespace PingLogger
 			try
 			{
 				File.WriteAllText("./opts.json", JsonSerializer.Serialize(Options, new JsonSerializerOptions { WriteIndented = true }));
+				File.WriteAllText("./silent.txt", Options.SilentOutput);
 			}
 			catch (Exception e)
 			{
@@ -567,6 +641,7 @@ namespace PingLogger
 		}
 		public static void ShutdownAllPingers()
 		{
+			Log.Information("Shutting down all ping loggers.");
 			foreach (var pinger in Pingers)
 			{
 				pinger.Stop();
@@ -574,6 +649,7 @@ namespace PingLogger
 		}
 		public static void StartAllPingers()
 		{
+			Log.Information("Starting all ping loggers.");
 			foreach (var pinger in Pingers)
 			{
 				pinger.Start();

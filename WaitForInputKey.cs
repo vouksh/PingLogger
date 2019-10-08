@@ -38,7 +38,11 @@ namespace PingLogger
 				gotInput.Set();
 			}
 		}
-
+		public static void DoEnter()
+		{
+			var hWnd = System.Diagnostics.Process.GetCurrentProcess().MainWindowHandle;
+			PostMessage(hWnd, WM_KEYDOWN, VK_RETURN, 0);
+		}
 		/// <summary>
 		/// Read a console key input, with a timeout.
 		/// </summary>
@@ -49,7 +53,9 @@ namespace PingLogger
 			getInput.Set();
 			bool success = gotInput.WaitOne(timeOutMillisecs);
 			if (success)
+			{
 				return input;
+			}
 			else
 			{
 				//Ran into a problem where, if the input wasn't received, the console was technically still waiting for an input.

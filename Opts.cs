@@ -6,6 +6,8 @@ namespace PingLogger
 	{
 		public List<Host> Hosts { get; set; }
 		public bool AllSilent { get; set; } = false;
-		public string SilentOutput { get; set; } = "Testing in progress. Press Ctrl-C for options or to exit.";
+		public string SilentOutput { get; set; } = 
+			"...............................................................................\r\n.....xxxxxxxxxxxxx.....xxxxxxxxxxxxxx.....xxxxxxxxxxxxxx.....xxxxxxxxxxxxx.....\r\n.....xxxxxxxxxxxxx.....xxxxxxxxxxxxxx.....xxxxxxxxxxxxxx.....xxxxxxxxxxxxx.....\r\n.........xxxxx.........xxxxx..............xxxxx..................xxxxx.........\r\n.........xxxxx.........xxxxxxxxxxxxxx.....xxxxxxxxxxxxxx.........xxxxx.........\r\n.........xxxxx.........xxxxx.......................xxxxx.........xxxxx.........\r\n.........xxxxx.........xxxxxxxxxxxxxx.....xxxxxxxxxxxxxx.........xxxxx.........\r\n.........xxxxx.........xxxxxxxxxxxxxx.....xxxxxxxxxxxxxx.........xxxxx.........\r\n...............................................................................";
+		public System.ConsoleColor OutputColor { get; set; } = System.ConsoleColor.White;
 	}
 }
