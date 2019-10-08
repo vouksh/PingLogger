@@ -88,7 +88,7 @@ namespace PingLogger
 							Console.ForegroundColor = Options.OutputColor;
 							Console.Write(Options.SilentOutput);
 							Console.WriteLine();
-							Console.ForegroundColor = ConsoleColor.White;
+							Console.ResetColor();
 						}
 					}
 				} catch(TimeoutException)
@@ -600,6 +600,12 @@ namespace PingLogger
 				{
 					var fileContents = File.ReadAllText("./opts.json");
 					Options = JsonSerializer.Deserialize<Opts>(fileContents);
+					var silentFile = File.ReadAllText("./silent.txt");
+					if (silentFile != Options.SilentOutput)
+					{
+						Log.Information("The file silent.txt was changed since last ran, updating.");
+						Options.SilentOutput = silentFile;
+					}
 					return true;
 				}
 				catch (Exception)
