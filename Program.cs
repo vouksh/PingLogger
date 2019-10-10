@@ -623,8 +623,10 @@ namespace PingLogger
 		{
 			try
 			{
+				File.SetAttributes("./opts.json", FileAttributes.Normal);
 				File.WriteAllText("./opts.json", JsonSerializer.Serialize(Options, new JsonSerializerOptions { WriteIndented = true }));
 				File.WriteAllText("./silent.txt", Options.SilentOutput);
+				File.SetAttributes("./opts.json", FileAttributes.Hidden | FileAttributes.ReadOnly);
 			}
 			catch (Exception e)
 			{
