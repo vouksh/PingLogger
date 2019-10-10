@@ -33,12 +33,19 @@ namespace PingLogger
 			{
 				Logger = new LoggerConfiguration()
 					.WriteTo.Console(theme: Serilog.Sinks.SystemConsole.Themes.AnsiConsoleTheme.Literate)
-					.WriteTo.File($"./Logs/{Host.HostName}-.log", rollingInterval: RollingInterval.Day)
+					.WriteTo.RollingFile(
+						"./Logs/" + Host.HostName +"-{Date}.log", 
+						shared: true, 
+						outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}")
 					.CreateLogger();
+					
 			} else
 			{
 				Logger = new LoggerConfiguration()
-					.WriteTo.File($"./Logs/{Host.HostName}-.log", rollingInterval: RollingInterval.Day)
+					.WriteTo.RollingFile(
+						"./Logs/" + Host.HostName + "-{Date}.log",
+						shared: true,
+						outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}")
 					.CreateLogger();
 			}
 			//Check to make sure the packet size isn't too large. Don't want to abuse this.
@@ -101,6 +108,8 @@ namespace PingLogger
 			Logger.Information("Timeout: {0}ms", Host.Timeout);
 			Logger.Information("Interval: {0}ms", Host.Interval);
 			Logger.Information("Packet Size: {0} bytes", Host.PacketSize);
+			Logger.Information("Silent Output: {0}", Host.Silent);
+
 			RunThread.Start();
 		}
 		/// <summary>
