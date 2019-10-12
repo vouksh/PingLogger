@@ -46,7 +46,7 @@ namespace PingLogger
 					{
 						Console.WriteLine();
 						Log.Information("No input detected. Skipping addition of new hosts");
-						
+
 					}
 				}
 				else
@@ -80,7 +80,8 @@ namespace PingLogger
 						UpdateSettings(true);
 						// Then set it back so that it can be captured again.
 						Console.TreatControlCAsInput = true;
-					} else
+					}
+					else
 					{
 						// If the user wants to have all ping loggers be silent, we'll print out the SilentOutput to the console instead. 
 						if (Options.AllSilent || AllHostsSilent())
@@ -91,14 +92,15 @@ namespace PingLogger
 							Console.ResetColor();
 						}
 					}
-				} catch(TimeoutException)
-				{               
+				}
+				catch (TimeoutException)
+				{
 				}
 			} while (true);
 		}
 		public static bool AllHostsSilent()
 		{
-			foreach(var host in Options.Hosts)
+			foreach (var host in Options.Hosts)
 			{
 				if (!host.Silent)
 					return false;
@@ -114,125 +116,118 @@ namespace PingLogger
 				WaitForInputKey.DoEnter();
 				Thread.Sleep(100);
 			}
-
-			Console.WriteLine("What would you like to do?");
-			Console.WriteLine("[1] Close Application");
-			Console.WriteLine("[2] Add a host");
-			Console.WriteLine("[3] Edit a host");
-			Console.WriteLine("[4] Remove a host");
-			Console.WriteLine("[5] Refresh silent output message");
-			Console.WriteLine("[6] Change silent output toggle");
-			Console.WriteLine("[7] Change silent output color");
-			if(interrupted)
-				Console.WriteLine("[8] Restart logging");
-			Console.Write("Option: ");
-			var resp = Console.ReadLine().ToLower();
-			switch (resp)
+			var done = false;
+			while (!done)
 			{
-				case "1":
-				case "":
-					WriteConfig();
-					Log.Warning("Closing application.");
-					Thread.Sleep(200);
-					Environment.Exit(0);
-					break;
-				case "2":
-					AddNewHosts();
-					UpdatePingers();
-					StartAllPingers();
-					break;
-				case "3":
-					EditHosts();
-					UpdatePingers();
-					StartAllPingers();
-					break;
-				case "4":
-					RemoveHosts();
-					UpdatePingers();
-					StartAllPingers();
-					break;
-				case "5":
-					if (!File.Exists("./silent.txt"))
-					{
-						Console.WriteLine("No silent.txt found. Please create one in the same directory as this program and try again.");
-					}
-					else
-					{
-						Options.SilentOutput = File.ReadAllText("./silent.txt");
-					}
-					break;
-				case "6":
-					if (Options.AllSilent)
-					{
-						Console.WriteLine("Application is currently set to only log to files.");
-						Console.Write("Would you like to change this? (y/N) ");
-						var changeSilent = Console.ReadLine().ToLower();
-						if (changeSilent == "y" || changeSilent == "yes")
+				Console.ForegroundColor = Options.OutputColor;
+				Console.WriteLine("What would you like to do?");
+				Console.WriteLine("[1] Close Application");
+				Console.WriteLine("[2] Add a host");
+				Console.WriteLine("[3] Edit a host");
+				Console.WriteLine("[4] Remove a host");
+				Console.WriteLine("[5] Refresh silent output message");
+				Console.WriteLine("[6] Change silent output toggle");
+				Console.WriteLine("[7] Change silent output color");
+				if (interrupted)
+				{
+					Console.WriteLine("[8] Restart logging");
+				}
+				else
+				{
+					Console.WriteLine("[8] Start Logging");
+				}
+				Console.Write("Option: ");
+				var resp = Console.ReadLine().ToLower();
+				switch (resp)
+				{
+					case "1":
+					case "":
+						WriteConfig();
+						Log.Warning("Closing application.");
+						Thread.Sleep(200);
+						Environment.Exit(0);
+						break;
+					case "2":
+						AddNewHosts();
+						break;
+					case "3":
+						EditHosts();
+						break;
+					case "4":
+						RemoveHosts();
+						break;
+					case "5":
+						if (!File.Exists("./silent.txt"))
 						{
-							Options.AllSilent = false;
+							Console.WriteLine("No silent.txt found. Please create one in the same directory as this program and try again.");
 						}
-					}
-					else
-					{
-						Console.WriteLine("Application is currently set to log to both the console and files");
-						Console.Write("Would you like to change this? (y/N) ");
-						var changeSilent = Console.ReadLine().ToLower();
-						if (changeSilent == "y" || changeSilent == "yes")
+						else
 						{
-							Options.AllSilent = true;
+							Options.SilentOutput = File.ReadAllText("./silent.txt");
 						}
-					}
-					WriteConfig();
-					UpdatePingers();
-					StartAllPingers();
-					break;
-				case "7":
-					Console.ForegroundColor = ConsoleColor.White;
-					Console.WriteLine("[1] White");
-					Console.ForegroundColor = ConsoleColor.Red;
-					Console.WriteLine("[2] Red");
-					Console.ForegroundColor = ConsoleColor.Blue;
-					Console.WriteLine("[3] Blue");
-					Console.ForegroundColor = ConsoleColor.Green;
-					Console.WriteLine("[4] Green");
-					Console.ForegroundColor = ConsoleColor.Yellow;
-					Console.WriteLine("[5] Yellow");
-					Console.ForegroundColor = ConsoleColor.Gray;
-					Console.WriteLine("[6] Grey");
-					Console.ForegroundColor = ConsoleColor.White;
-					Console.Write("Color: ({0}) ", Options.OutputColor);
-					var inputColor = Console.ReadLine();
-					Options.OutputColor = inputColor switch
-					{
-						"1" => ConsoleColor.White,
-						"2" => ConsoleColor.Red,
-						"3" => ConsoleColor.Blue,
-						"4" => ConsoleColor.Green,
-						"5" => ConsoleColor.Yellow,
-						"6" => ConsoleColor.Gray,
-						_ => ConsoleColor.White,
-					};
-					Console.ForegroundColor = Options.OutputColor;
-					Console.WriteLine("Color set to {0}", Options.OutputColor);
-					WriteConfig();
-					UpdatePingers();
-					StartAllPingers();
-					break;
-				case "8":
-					if (interrupted)
-					{
+						break;
+					case "6":
+						if (Options.AllSilent)
+						{
+							Console.WriteLine("Application is currently set to only log to files.");
+							Console.Write("Would you like to change this? (y/N) ");
+							var changeSilent = Console.ReadLine().ToLower();
+							if (changeSilent == "y" || changeSilent == "yes")
+							{
+								Options.AllSilent = false;
+							}
+						}
+						else
+						{
+							Console.WriteLine("Application is currently set to log to both the console and files");
+							Console.Write("Would you like to change this? (y/N) ");
+							var changeSilent = Console.ReadLine().ToLower();
+							if (changeSilent == "y" || changeSilent == "yes")
+							{
+								Options.AllSilent = true;
+							}
+						}
+						WriteConfig();
+						break;
+					case "7":
+						Console.ForegroundColor = ConsoleColor.White;
+						Console.WriteLine("[1] White");
+						Console.ForegroundColor = ConsoleColor.Red;
+						Console.WriteLine("[2] Red");
+						Console.ForegroundColor = ConsoleColor.Blue;
+						Console.WriteLine("[3] Blue");
+						Console.ForegroundColor = ConsoleColor.Green;
+						Console.WriteLine("[4] Green");
+						Console.ForegroundColor = ConsoleColor.Yellow;
+						Console.WriteLine("[5] Yellow");
+						Console.ForegroundColor = ConsoleColor.Gray;
+						Console.WriteLine("[6] Grey");
+						Console.ForegroundColor = ConsoleColor.White;
+						Console.Write("Color: ({0}) ", Options.OutputColor);
+						var inputColor = Console.ReadLine();
+						Options.OutputColor = inputColor switch
+						{
+							"1" => ConsoleColor.White,
+							"2" => ConsoleColor.Red,
+							"3" => ConsoleColor.Blue,
+							"4" => ConsoleColor.Green,
+							"5" => ConsoleColor.Yellow,
+							"6" => ConsoleColor.Gray,
+							_ => ConsoleColor.White,
+						};
+						Console.ForegroundColor = Options.OutputColor;
+						Console.WriteLine("Color set to {0}", Options.OutputColor);
+						WriteConfig();
+						break;
+					case "8":
+						done = true;
 						UpdatePingers();
 						StartAllPingers();
-					} else
-					{
+						break;
+					default:
 						Console.WriteLine("Invalid selection");
-						UpdateSettings(interrupted);
-					}
-					break;
-				default:
-					Console.WriteLine("Invalid selection");
-					UpdateSettings(interrupted);
-					break;
+						break;
+				}
 			}
 		}
 		public static void UpdatePingers()
@@ -309,70 +304,85 @@ namespace PingLogger
 			bool done = false;
 			while (!done)
 			{
-				Console.WriteLine("Which host would you like to edit?");
-				for (int i = 0; i < Options.Hosts.Count; i++)
-				{
-					Console.WriteLine($"[{i + 1}] {Options.Hosts[i].HostName} ({ Options.Hosts[i].IP})");
-				}
-				Console.Write("Enter the number you wish to edit: ");
-				var selectedHost = Console.ReadLine();
 				int selectedIndex;
-				try
+				if (Options.Hosts.Count > 1)
 				{
-					selectedIndex = Convert.ToInt32(selectedHost) - 1;
+					Console.WriteLine("Which host would you like to edit?");
+					for (int i = 0; i < Options.Hosts.Count; i++)
+					{
+						Console.WriteLine($"[{i + 1}] {Options.Hosts[i].HostName} ({ Options.Hosts[i].IP})");
+					}
+					Console.Write("Enter the number you wish to edit: ");
+					var selectedHost = Console.ReadLine();
+					try
+					{
+						selectedIndex = Convert.ToInt32(selectedHost) - 1;
+					}
+					catch (Exception)
+					{
+						Console.WriteLine("Invalid number selected.");
+						continue;
+					}
 				}
-				catch (Exception)
+				else
 				{
-					Console.WriteLine("Invalid number selected.");
-					continue;
+					selectedIndex = 0;
 				}
-				Host newHost = Options.Hosts[selectedIndex];
-				//Get host name from console input
-				Console.Write("New host name (can be IP): ({0})", newHost.HostName);
-				var hostName = Console.ReadLine();
-				if (hostName != string.Empty)
+
+				Host editHost = Options.Hosts[selectedIndex];
+				var validHost = false;
+				while (!validHost)
 				{
+					//Get host name from console input
+					Console.Write("New host name (can be IP): ({0})", editHost.HostName);
+					var hostName = Console.ReadLine();
+					if (hostName == string.Empty)
+						break;
 					try
 					{
 						IPAddress[] iPs = Dns.GetHostAddresses(hostName);
-						newHost.HostName = hostName;
+						editHost.HostName = hostName;
 						if (iPs.Length < 1)
 							throw new Exception("Invalid host name.");
-						newHost.IP = iPs[0].ToString();
-						Console.WriteLine("Resolved to IP {0}", newHost.IP);
+						editHost.IP = iPs[0].ToString();
+						Console.WriteLine("Resolved to IP {0}", editHost.IP);
+						validHost = true;
 					}
 					catch (Exception)
 					{
 						Console.WriteLine("Invalid host name.");
-						continue;
 					}
 				}
 
-				// Yes, yes, I know, goto is bad. But in this case, it's simpler and safer than looping back around to the top again. 
-			SilentPrompt:
-				Console.Write("Do you want this host to be silent? ({0})", newHost.Silent ? "yes" : "no");
-				var silentResp = Console.ReadLine();
-				if (silentResp != string.Empty)
+				var silentDone = false;
+				while (!silentDone)
 				{
-					try
+					Console.Write("Do you want this host to be silent?: (y/N/h) ");
+					var silentResp = Console.ReadLine();
+					if (silentResp != string.Empty)
 					{
 						if (silentResp == "y" || silentResp == "yes" || silentResp == "true")
 						{
-							newHost.Silent = true;
+							editHost.Silent = true;
+							silentDone = true;
 						}
 						else if (silentResp == "h" || silentResp == "help")
 						{
 							Console.WriteLine("If this is set to 'yes', then the pings will only be logged to the file, not the console output.");
-							goto SilentPrompt;
+						}
+						else if (silentResp == "n" || silentResp == "no" || silentResp == "false")
+						{
+							editHost.Silent = false;
+							silentDone = true;
 						}
 						else
 						{
-							newHost.Silent = false;
+							Console.WriteLine("Invalid response");
 						}
 					}
-					catch (Exception)
+					else
 					{
-						Console.WriteLine("Invalid response. Leaving setting at {0}", newHost.Silent ? "yes" : "no");
+						silentDone = true;
 					}
 				}
 
@@ -381,73 +391,156 @@ namespace PingLogger
 				var advOpts = Console.ReadLine().ToLower();
 				if (advOpts == "y" || advOpts == "yes")
 				{
-					//Sets the warning threshold. Defaults to 500ms;
-					Console.Write("Ping time warning threshold: ({0}ms) ", newHost.Threshold);
-					var threshold = Console.ReadLine();
-					if (threshold != string.Empty)
+					var validThreshold = false;
+					while (!validThreshold)
 					{
-						try
+						//Sets the warning threshold. Defaults to 500ms;
+						Console.Write($"Ping time warning threshold: ({editHost.Threshold}ms) ");
+						var threshold = Console.ReadLine();
+						if (threshold != string.Empty)
 						{
-							//See if we can convert it, but strip the 'ms' off if the user specified it. 
-							newHost.Threshold = Convert.ToInt32(threshold.Replace("ms", ""));
+							try
+							{
+								//See if we can convert it, but strip the 'ms' off if the user specified it. 
+								editHost.Threshold = Convert.ToInt32(threshold.Replace("ms", ""));
+								if (editHost.Threshold <= 0 || editHost.Threshold >= int.MaxValue)
+								{
+									Console.ForegroundColor = ConsoleColor.Red;
+									Console.WriteLine("Invalid threshold specified.");
+									Console.ResetColor();
+									editHost.Threshold = 0;
+								}
+								else
+								{
+									validThreshold = true;
+								}
+							}
+							catch (Exception)
+							{
+								Console.ForegroundColor = ConsoleColor.Red;
+								Console.WriteLine("Invalid threshold specified.");
+								Console.ResetColor();
+							}
 						}
-						catch (Exception)
+						else
 						{
-							Console.WriteLine("Invalid threshold specified. Reverting back to {0}ms", newHost.Threshold);
-						}
-					}
-					//Sets the ping timeout. Defaults to 1000ms
-					Console.Write("Ping timeout: ({0}ms) ", newHost.Timeout);
-					var timeout = Console.ReadLine();
-					if (timeout != string.Empty)
-					{
-						try
-						{
-							//See if we can convert it, but strip the 'ms' off if the user specified it. 
-							newHost.Timeout = Convert.ToInt32(timeout.Replace("ms", ""));
-						}
-						catch (Exception)
-						{
-							Console.WriteLine("Invalid timeout specified. Reverting back to {0}ms", newHost.Timeout);
-						}
-					}
-
-					//Sets the packet size. Defaults to 64 bytes
-					Console.Write("Packet size in bytes: ({0}) ", newHost.PacketSize);
-					var packetSize = Console.ReadLine();
-					if (packetSize != string.Empty)
-					{
-						try
-						{
-							newHost.PacketSize = Convert.ToInt32(packetSize);
-						}
-						catch (Exception)
-						{
-							Console.WriteLine("Invalid packet size specified. Reverting back to {0}", newHost.PacketSize);
+							validThreshold = true;
 						}
 					}
 
-					//Sets the ping interval. Defaults to 1000ms
-					Console.Write("Ping interval: ({0}ms) ", newHost.Interval);
-					var interval = Console.ReadLine();
-					if (interval != string.Empty)
+					var validTimeout = false;
+					while (!validTimeout)
 					{
-						try
+						Console.Write("Ping timeout: ({0}ms) ", editHost.Timeout);
+						var timeout = Console.ReadLine();
+						if (timeout != string.Empty)
 						{
-							//See if we can convert it, but strip the 'ms' off if the user specified it. 
-							newHost.Interval = Convert.ToInt32(interval.Replace("ms", ""));
+							try
+							{
+								//See if we can convert it, but strip the 'ms' off if the user specified it. 
+								editHost.Timeout = Convert.ToInt32(timeout.Replace("ms", ""));
+								if (editHost.Timeout <= 0 || editHost.Timeout >= int.MaxValue)
+								{
+									Console.ForegroundColor = ConsoleColor.Red;
+									Console.WriteLine("Invalid timeout specified.");
+									Console.ResetColor();
+									editHost.Timeout = 0;
+								}
+								else
+								{
+									validTimeout = true;
+								}
+							}
+							catch (Exception)
+							{
+								Console.ForegroundColor = ConsoleColor.Red;
+								Console.WriteLine("Invalid timeout specified.");
+								Console.ResetColor();
+							}
 						}
-						catch (Exception)
+						else
 						{
-							Console.WriteLine("Invalid interval specified. Reverting back to {0}ms", newHost.Interval);
+							validTimeout = true;
+						}
+					}
+
+					var validPacketSize = false;
+					while (!validPacketSize)
+					{
+						//Sets the packet size. Defaults to 64 bytes
+						Console.Write("Packet size in bytes: ({0}) ", editHost.PacketSize);
+						var packetSize = Console.ReadLine();
+						if (packetSize != string.Empty)
+						{
+							try
+							{
+								editHost.PacketSize = Convert.ToInt32(packetSize);
+								// Maximum packet size is 65,535 bytes. Can't go higher than that.
+								if (editHost.PacketSize <= 0 || editHost.PacketSize >= 65535)
+								{
+									Console.ForegroundColor = ConsoleColor.Red;
+									Console.WriteLine("Invalid packet size specified.");
+									Console.ResetColor();
+									editHost.PacketSize = 0;
+								}
+								else
+								{
+									validPacketSize = true;
+								}
+							}
+							catch (Exception)
+							{
+								Console.ForegroundColor = ConsoleColor.Red;
+								Console.WriteLine("Invalid packet size specified.");
+								Console.ResetColor();
+							}
+						}
+						else
+						{
+							validPacketSize = true;
+						}
+					}
+
+					var validInterval = false;
+					while (!validInterval)
+					{
+						Console.Write("Ping interval: ({0}ms) ", editHost.Interval);
+						var interval = Console.ReadLine();
+						if (interval != string.Empty)
+						{
+							try
+							{
+								editHost.Interval = Convert.ToInt32(interval.Replace("ms", ""));
+								if (editHost.Interval <= 500 || editHost.Interval >= int.MaxValue)
+								{
+									Console.ForegroundColor = ConsoleColor.Red;
+									Console.WriteLine("Invalid interval specified.");
+									Console.ResetColor();
+									editHost.Interval = 0;
+								}
+								else
+								{
+									validInterval = true;
+								}
+							}
+							catch (Exception)
+							{
+								Console.ForegroundColor = ConsoleColor.Red;
+								Console.WriteLine("Invalid interval specified.");
+								Console.ResetColor();
+							}
+						}
+						else
+						{
+							validInterval = true;
 						}
 					}
 				}
 				//All done. Add it to the options, then ask if they want to add another. 
-				Options.Hosts[selectedIndex] = newHost;
+				Options.Hosts[selectedIndex] = editHost;
 
 				Log.Information("Edited host {0} with IP address {1}, Threshold {2}ms, Interval {3}ms, Packet Size {4}",
-					newHost.HostName, newHost.IP, newHost.Threshold, newHost.Interval, newHost.PacketSize);
+					editHost.HostName, editHost.IP, editHost.Threshold, editHost.Interval, editHost.PacketSize);
 				Console.Write("Do you want to edit another? (y/N) ");
 				var addMore = Console.ReadLine().ToLower();
 				if (addMore == string.Empty || addMore == "n" || addMore == "no")
@@ -461,48 +554,87 @@ namespace PingLogger
 			while (!done)
 			{
 				Host newHost = new Host();
-				//Get host name from console input
-				Console.Write("New host name (can be IP): ");
-				var hostName = Console.ReadLine();
-				if (CheckIfHostExists(hostName))
+				var validHost = false;
+				while (!validHost)
 				{
-					Console.WriteLine("Host already exists in configuration.");
-					continue;
-				}
-				if (hostName == string.Empty)
-					break;
-				try
-				{
-					IPAddress[] iPs = Dns.GetHostAddresses(hostName);
-					newHost.HostName = hostName;
-					if (iPs.Length < 1)
-						throw new Exception("Invalid host name.");
-					newHost.IP = iPs[0].ToString();
-					Console.WriteLine("Resolved to IP {0}", newHost.IP);
-				}
-				catch (Exception)
-				{
-					Console.WriteLine("Invalid host name.");
-					continue;
-				}
-
-			// Yes, yes, I know, goto is bad. But in this case, it's simpler and safer than looping back around to the top again. 
-			SilentPrompt:
-				Console.Write("Do you want this host to be silent?: (y/N/h) ");
-				var silentResp = Console.ReadLine();
-				if (silentResp != string.Empty)
-				{
-					if (silentResp == "y" || silentResp == "yes" || silentResp == "true")
+					//Get host name from console input
+					Console.Write("New host name (can be IP): ");
+					var hostName = Console.ReadLine();
+					if (CheckIfHostExists(hostName))
 					{
-						newHost.Silent = true;
-					} else if(silentResp == "h" || silentResp == "help")
+						Console.WriteLine("Host already exists in configuration.");
+						continue;
+					}
+					if (hostName != string.Empty)
 					{
-						Console.WriteLine("If this is set to 'yes', then the pings will only be logged to the file, not the console output.");
-						goto SilentPrompt;
+						try
+						{
+							IPAddress[] iPs = Dns.GetHostAddresses(hostName);
+							newHost.HostName = hostName;
+							if (iPs.Length < 1)
+								throw new Exception("Invalid host name.");
+							if (iPs.Length > 1)
+							{
+								foreach (var ip in iPs)
+								{
+									if (ip.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
+									{
+										newHost.IP = ip.ToString();
+										break;
+									}
+								}
+							}
+							else
+							{
+								newHost.IP = iPs[0].ToString();
+							}
+							Console.WriteLine("Resolved to IP {0}", newHost.IP);
+							validHost = true;
+						}
+						catch (Exception)
+						{
+							Console.ForegroundColor = ConsoleColor.Red;
+							Console.WriteLine("Invalid host name.");
+						}
 					}
 					else
 					{
-						newHost.Silent = false;
+						Console.ForegroundColor = ConsoleColor.Red;
+						Console.WriteLine("Invalid host name.");
+						Console.ResetColor();
+					}
+				}
+				var silentDone = false;
+				while (!silentDone)
+				{
+					Console.Write("Do you want this host to be silent?: (y/N/h) ");
+					var silentResp = Console.ReadLine();
+					if (silentResp != string.Empty)
+					{
+						if (silentResp == "y" || silentResp == "yes" || silentResp == "true")
+						{
+							newHost.Silent = true;
+							silentDone = true;
+						}
+						else if (silentResp == "h" || silentResp == "help")
+						{
+							Console.WriteLine("If this is set to 'yes', then the pings will only be logged to the file, not the console output.");
+						}
+						else if (silentResp == "n" || silentResp == "no" || silentResp == "false")
+						{
+							newHost.Silent = false;
+							silentDone = true;
+						}
+						else
+						{
+							Console.ForegroundColor = ConsoleColor.Red;
+							Console.WriteLine("Invalid response");
+							Console.ResetColor();
+						}
+					}
+					else
+					{
+						silentDone = true;
 					}
 				}
 				//See if user wants to set up advanced options. Otherwise we use the defaults in the Host class
@@ -510,74 +642,154 @@ namespace PingLogger
 				var advOpts = Console.ReadLine().ToLower();
 				if (advOpts == "y" || advOpts == "yes")
 				{
-					//Sets the warning threshold. Defaults to 500ms;
-					Console.Write("Ping time warning threshold: (500ms) ");
-					var threshold = Console.ReadLine();
-					if (threshold == string.Empty)
-						newHost.Threshold = 500;
-					else
+					var validThreshold = false;
+					while (!validThreshold)
 					{
-						try
+						//Sets the warning threshold. Defaults to 500ms;
+						Console.Write("Ping time warning threshold: (500ms) ");
+						var threshold = Console.ReadLine();
+						if (threshold == string.Empty)
 						{
-							//See if we can convert it, but strip the 'ms' off if the user specified it. 
-							newHost.Threshold = Convert.ToInt32(threshold.Replace("ms", ""));
+							newHost.Threshold = 500;
+							validThreshold = true;
 						}
-						catch (Exception)
+						else
 						{
-							Console.WriteLine("Invalid threshold specified. Defaulting to 500ms");
+							try
+							{
+								//See if we can convert it, but strip the 'ms' off if the user specified it. 
+								newHost.Threshold = Convert.ToInt32(threshold.Replace("ms", ""));
+								if (newHost.Threshold <= 0 || newHost.Threshold >= int.MaxValue)
+								{
+									Console.ForegroundColor = ConsoleColor.Red;
+									Console.WriteLine("Invalid threshold specified.");
+									Console.ResetColor();
+									newHost.Threshold = 0;
+								}
+								else
+								{
+									validThreshold = true;
+								}
+							}
+							catch (Exception)
+							{
+								Console.ForegroundColor = ConsoleColor.Red;
+								Console.WriteLine("Invalid threshold specified.");
+								Console.ResetColor();
+							}
 						}
 					}
 
-					//Sets the ping timeout. Defaults to 1000ms
-					Console.Write("Ping timeout: (1000ms) ");
-					var timeout = Console.ReadLine();
-					if (timeout == string.Empty)
-						newHost.Timeout = 1000;
-					else
+					var validTimeout = false;
+					while (!validTimeout)
 					{
-						try
+						//Sets the ping timeout. Defaults to 1000ms
+						Console.Write("Ping timeout: (1000ms) ");
+						var timeout = Console.ReadLine();
+						if (timeout == string.Empty)
 						{
-							//See if we can convert it, but strip the 'ms' off if the user specified it. 
-							newHost.Timeout = Convert.ToInt32(timeout.Replace("ms", ""));
+							newHost.Timeout = 1000;
+							validTimeout = true;
 						}
-						catch (Exception)
+						else
 						{
-							Console.WriteLine("Invalid timeout specified. Defaulting to 1000ms");
+							try
+							{
+								//See if we can convert it, but strip the 'ms' off if the user specified it. 
+								newHost.Timeout = Convert.ToInt32(timeout.Replace("ms", ""));
+								if (newHost.Timeout <= 0 || newHost.Timeout >= int.MaxValue)
+								{
+									Console.ForegroundColor = ConsoleColor.Red;
+									Console.WriteLine("Invalid timeout specified.");
+									Console.ResetColor();
+									newHost.Timeout = 0;
+								}
+								else
+								{
+									validTimeout = true;
+								}
+							}
+							catch (Exception)
+							{
+								Console.ForegroundColor = ConsoleColor.Red;
+								Console.WriteLine("Invalid timeout specified.");
+								Console.ResetColor();
+							}
 						}
 					}
 
-					//Sets the packet size. Defaults to 64 bytes
-					Console.Write("Packet size in bytes: (64) ");
-					var packetSize = Console.ReadLine();
-					if (packetSize == string.Empty)
-						newHost.PacketSize = 64;
-					else
+					var validPacketSize = false;
+					while (!validPacketSize)
 					{
-						try
+						//Sets the packet size. Defaults to 64 bytes
+						Console.Write("Packet size in bytes: (64) ");
+						var packetSize = Console.ReadLine();
+						if (packetSize == string.Empty)
 						{
-							newHost.PacketSize = Convert.ToInt32(packetSize);
+							newHost.PacketSize = 64;
+							validPacketSize = true;
 						}
-						catch (Exception)
+						else
 						{
-							Console.WriteLine("Invalid packet size specified. Defaulting to 64");
+							try
+							{
+								newHost.PacketSize = Convert.ToInt32(packetSize);
+								// Maximum packet size is 65,535 bytes. Can't go higher than that.
+								if (newHost.PacketSize <= 0 || newHost.PacketSize >= 65535)
+								{
+									Console.ForegroundColor = ConsoleColor.Red;
+									Console.WriteLine("Invalid packet size specified.");
+									Console.ResetColor();
+									newHost.PacketSize = 0;
+								}
+								else
+								{
+									validPacketSize = true;
+								}
+							}
+							catch (Exception)
+							{
+								Console.ForegroundColor = ConsoleColor.Red;
+								Console.WriteLine("Invalid packet size specified.");
+								Console.ResetColor();
+							}
 						}
 					}
-
-					//Sets the ping interval. Defaults to 1000ms
-					Console.Write("Ping interval: (1000ms) ");
-					var interval = Console.ReadLine();
-					if (interval == string.Empty)
-						newHost.Interval = 1000;
-					else
+					var validInterval = false;
+					while (!validInterval)
 					{
-						try
+						//Sets the ping interval. Defaults to 1000ms
+						Console.Write("Ping interval: (1000ms) ");
+						var interval = Console.ReadLine();
+						if (interval == string.Empty)
 						{
-							//See if we can convert it, but strip the 'ms' off if the user specified it. 
-							newHost.Interval = Convert.ToInt32(interval.Replace("ms", ""));
+							newHost.Interval = 1000;
+							validInterval = true;
 						}
-						catch (Exception)
+						else
 						{
-							Console.WriteLine("Invalid interval specified. Defaulting to 1000ms");
+							try
+							{
+								//See if we can convert it, but strip the 'ms' off if the user specified it. 
+								newHost.Interval = Convert.ToInt32(interval.Replace("ms", ""));
+								if (newHost.Interval <= 500 || newHost.Interval >= int.MaxValue)
+								{
+									Console.ForegroundColor = ConsoleColor.Red;
+									Console.WriteLine("Invalid interval specified.");
+									Console.ResetColor();
+									newHost.Interval = 0;
+								}
+								else
+								{
+									validInterval = true;
+								}
+							}
+							catch (Exception)
+							{
+								Console.ForegroundColor = ConsoleColor.Red;
+								Console.WriteLine("Invalid interval specified.");
+								Console.ResetColor();
+							}
 						}
 					}
 				}
@@ -623,7 +835,9 @@ namespace PingLogger
 		{
 			try
 			{
-				File.SetAttributes("./opts.json", FileAttributes.Normal);
+				if (File.Exists("./opts.json"))
+					File.SetAttributes("./opts.json", FileAttributes.Normal);
+
 				File.WriteAllText("./opts.json", JsonSerializer.Serialize(Options, new JsonSerializerOptions { WriteIndented = true }));
 				File.WriteAllText("./silent.txt", Options.SilentOutput);
 				File.SetAttributes("./opts.json", FileAttributes.Hidden | FileAttributes.ReadOnly);

@@ -49,10 +49,10 @@ namespace PingLogger
 					.CreateLogger();
 			}
 			//Check to make sure the packet size isn't too large. Don't want to abuse this.
-			if (Host.PacketSize > 20000)
+			if (Host.PacketSize > 65535)
 			{
 				Logger.Error("Packet size too large. Resetting to 20000 bytes");
-				Host.PacketSize = 20000;
+				Host.PacketSize = 65535;
 			}
 			//Make sure that the interval isn't too short. If you set it to be too frequent, it might get flagged as DDoS attack.
 			if (Host.Interval < 500)
@@ -63,15 +63,20 @@ namespace PingLogger
 			//Verify that the IP stored in the settings file matches what it currently resolves to.
 			//Mostly in cases of local network and DHCP
 			Logger.Information("Verifying IP address of hostname is current.");
-			IPAddress[] iPs = Dns.GetHostAddresses(Host.HostName);
-			if (iPs[0].ToString() == Host.IP)
+			foreach(var ip in Dns.GetHostAddresses(Host.HostName))
 			{
-				Logger.Information("IP matches. Continuing");
-			}
-			else
-			{
-				Logger.Warning("IP address does not match last stored. Saving new IP address");
-				Host.IP = iPs[0].ToString();
+				if(ip.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
+				{
+					if(ip.ToString() == Host.IP)
+					{
+						Logger.Information("IP matches. Continuing");
+					} else
+					{
+						Logger.Warning("IP address does not match last stored. Saving new IP address");
+						Host.IP = ip.ToString();
+					}
+					break;
+				}
 			}
 		}
 		/// <summary>
