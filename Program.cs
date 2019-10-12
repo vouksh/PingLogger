@@ -14,10 +14,15 @@ namespace PingLogger
 		private static readonly List<Pinger> Pingers = new List<Pinger>();
 		static void Main()
 		{
+			Version version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
+			DateTime buildDate = new DateTime(2000, 1, 1)
+									.AddDays(version.Build)
+									.AddSeconds(version.Revision * 2);
+			string displayableVersion = $"{version} ({buildDate})";
 			Log.Logger = new LoggerConfiguration()
 				.WriteTo.Console(theme: Serilog.Sinks.SystemConsole.Themes.AnsiConsoleTheme.Literate)
 				.CreateLogger();
-			Log.Information("PingLogger v0.2 by Jack Butler");
+			Log.Information("PingLogger {0} by Jack Butler", displayableVersion);
 			DoStartupTasks();
 		}
 		/// <summary>
