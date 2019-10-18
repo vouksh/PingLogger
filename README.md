@@ -23,4 +23,4 @@ Resulting binary will have no requirements.
 
 Uses Serilog for actual file and console logging. 
 
-Download the binary + source from http://lexdysia.com/PingLogger.zip
+Download the binary from http://lexdysia.com/PingLogger.zip
