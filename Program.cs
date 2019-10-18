@@ -22,7 +22,7 @@ namespace PingLogger
 			Log.Logger = new LoggerConfiguration()
 				.WriteTo.Console(theme: Serilog.Sinks.SystemConsole.Themes.AnsiConsoleTheme.Literate)
 				.CreateLogger();
-			Log.Information("PingLogger {0} by Jack Butler", displayableVersion);
+			Log.Information("PingLogger {0} by Jack B.", displayableVersion);
 			DoStartupTasks();
 		}
 		/// <summary>
@@ -32,7 +32,7 @@ namespace PingLogger
 		public static void DoStartupTasks()
 		{
 			var configured = ReadJsonConfig();
-
+			var madeChanges = false;
 			if (configured)
 			{
 				if (Options.Hosts.Count > 0)
@@ -45,6 +45,7 @@ namespace PingLogger
 						if (resp == "y" || resp == "yes")
 						{
 							UpdateSettings();
+							madeChanges = true;
 						}
 					}
 					catch (TimeoutException)
@@ -65,9 +66,11 @@ namespace PingLogger
 				Log.Information("No hosts configured.");
 				AddNewHosts();
 			}
-
-			UpdatePingers();
-			StartAllPingers();
+			if (!madeChanges)
+			{
+				UpdatePingers();
+				StartAllPingers();
+			}
 			// Override the Ctrl-C input so that we can capture it. 
 			Console.TreatControlCAsInput = true;
 			ConsoleKeyInfo cki;
@@ -133,13 +136,21 @@ namespace PingLogger
 				Console.WriteLine("[5] Refresh silent output message");
 				Console.WriteLine("[6] Change silent output toggle");
 				Console.WriteLine("[7] Change silent output color");
-				if (interrupted)
+				if (Options.LoadOnStartup)
 				{
-					Console.WriteLine("[8] Restart logging");
+					Console.WriteLine("[8] Remove application from system startup");
 				}
 				else
 				{
-					Console.WriteLine("[8] Start Logging");
+					Console.WriteLine("[8] Add application to system startup");
+				}
+				if (interrupted)
+				{
+					Console.WriteLine("[9] Restart logging");
+				}
+				else
+				{
+					Console.WriteLine("[9] Start Logging");
 				}
 				Console.Write("Option: ");
 				var resp = Console.ReadLine().ToLower();
@@ -225,6 +236,28 @@ namespace PingLogger
 						WriteConfig();
 						break;
 					case "8":
+						if(Options.LoadOnStartup)
+						{
+							Console.Write("Are you sure you want to remove this application from the system startup? (y/N) ");
+							var startup = Console.ReadLine().ToLower();
+							if(startup == "y" || startup == "yes")
+							{
+								RemoveStartupShortcut();
+								Options.LoadOnStartup = false;
+							}
+						} else
+						{
+							Console.Write("Are you sure you want to add this application to the system startup? (y/N) ");
+							var startup = Console.ReadLine().ToLower();
+							if (startup == "y" || startup == "yes")
+							{
+								CreateStartupShortcut();
+								Options.LoadOnStartup = true;
+							}
+						}
+						WriteConfig();
+						break;
+					case "9":
 						done = true;
 						UpdatePingers();
 						StartAllPingers();
@@ -339,7 +372,7 @@ namespace PingLogger
 				while (!validHost)
 				{
 					//Get host name from console input
-					Console.Write("New host name (can be IP): ({0})", editHost.HostName);
+					Console.Write("New host name (can be IP): ({0}) ", editHost.HostName);
 					var hostName = Console.ReadLine();
 					if (hostName == string.Empty)
 						break;
@@ -472,7 +505,6 @@ namespace PingLogger
 					var validPacketSize = false;
 					while (!validPacketSize)
 					{
-						//Sets the packet size. Defaults to 64 bytes
 						Console.Write("Packet size in bytes: ({0}) ", editHost.PacketSize);
 						var packetSize = Console.ReadLine();
 						if (packetSize != string.Empty)
@@ -480,8 +512,8 @@ namespace PingLogger
 							try
 							{
 								editHost.PacketSize = Convert.ToInt32(packetSize);
-								// Maximum packet size is 65,535 bytes. Can't go higher than that.
-								if (editHost.PacketSize <= 0 || editHost.PacketSize >= 65535)
+								// Maximum packet size is 65,500 bytes. Can't go higher than that.
+								if (editHost.PacketSize <= 0 || editHost.PacketSize >= 65500)
 								{
 									Console.ForegroundColor = ConsoleColor.Red;
 									Console.WriteLine("Invalid packet size specified.");
@@ -516,7 +548,7 @@ namespace PingLogger
 							try
 							{
 								editHost.Interval = Convert.ToInt32(interval.Replace("ms", ""));
-								if (editHost.Interval <= 500 || editHost.Interval >= int.MaxValue)
+								if (editHost.Interval < 500 || editHost.Interval >= int.MaxValue)
 								{
 									Console.ForegroundColor = ConsoleColor.Red;
 									Console.WriteLine("Invalid interval specified.");
@@ -562,7 +594,6 @@ namespace PingLogger
 				var validHost = false;
 				while (!validHost)
 				{
-					//Get host name from console input
 					Console.Write("New host name (can be IP): ");
 					var hostName = Console.ReadLine();
 					if (CheckIfHostExists(hostName))
@@ -650,7 +681,6 @@ namespace PingLogger
 					var validThreshold = false;
 					while (!validThreshold)
 					{
-						//Sets the warning threshold. Defaults to 500ms;
 						Console.Write("Ping time warning threshold: (500ms) ");
 						var threshold = Console.ReadLine();
 						if (threshold == string.Empty)
@@ -662,7 +692,6 @@ namespace PingLogger
 						{
 							try
 							{
-								//See if we can convert it, but strip the 'ms' off if the user specified it. 
 								newHost.Threshold = Convert.ToInt32(threshold.Replace("ms", ""));
 								if (newHost.Threshold <= 0 || newHost.Threshold >= int.MaxValue)
 								{
@@ -688,7 +717,6 @@ namespace PingLogger
 					var validTimeout = false;
 					while (!validTimeout)
 					{
-						//Sets the ping timeout. Defaults to 1000ms
 						Console.Write("Ping timeout: (1000ms) ");
 						var timeout = Console.ReadLine();
 						if (timeout == string.Empty)
@@ -700,7 +728,6 @@ namespace PingLogger
 						{
 							try
 							{
-								//See if we can convert it, but strip the 'ms' off if the user specified it. 
 								newHost.Timeout = Convert.ToInt32(timeout.Replace("ms", ""));
 								if (newHost.Timeout <= 0 || newHost.Timeout >= int.MaxValue)
 								{
@@ -726,12 +753,11 @@ namespace PingLogger
 					var validPacketSize = false;
 					while (!validPacketSize)
 					{
-						//Sets the packet size. Defaults to 64 bytes
-						Console.Write("Packet size in bytes: (64) ");
+						Console.Write("Packet size in bytes: (32) ");
 						var packetSize = Console.ReadLine();
 						if (packetSize == string.Empty)
 						{
-							newHost.PacketSize = 64;
+							newHost.PacketSize = 32;
 							validPacketSize = true;
 						}
 						else
@@ -740,7 +766,7 @@ namespace PingLogger
 							{
 								newHost.PacketSize = Convert.ToInt32(packetSize);
 								// Maximum packet size is 65,535 bytes. Can't go higher than that.
-								if (newHost.PacketSize <= 0 || newHost.PacketSize >= 65535)
+								if (newHost.PacketSize <= 0 || newHost.PacketSize >= 65500)
 								{
 									Console.ForegroundColor = ConsoleColor.Red;
 									Console.WriteLine("Invalid packet size specified.");
@@ -763,7 +789,6 @@ namespace PingLogger
 					var validInterval = false;
 					while (!validInterval)
 					{
-						//Sets the ping interval. Defaults to 1000ms
 						Console.Write("Ping interval: (1000ms) ");
 						var interval = Console.ReadLine();
 						if (interval == string.Empty)
@@ -775,9 +800,8 @@ namespace PingLogger
 						{
 							try
 							{
-								//See if we can convert it, but strip the 'ms' off if the user specified it. 
 								newHost.Interval = Convert.ToInt32(interval.Replace("ms", ""));
-								if (newHost.Interval <= 500 || newHost.Interval >= int.MaxValue)
+								if (newHost.Interval < 500 || newHost.Interval >= int.MaxValue)
 								{
 									Console.ForegroundColor = ConsoleColor.Red;
 									Console.WriteLine("Invalid interval specified.");
@@ -835,6 +859,39 @@ namespace PingLogger
 				Hosts = new List<Host>()
 			};
 			return false;
+		}
+		public static void CreateStartupShortcut()
+		{
+			try
+			{
+				var batchPath = Environment.GetFolderPath(Environment.SpecialFolder.Startup) + "\\PingLogger.bat";
+				var exePath = Environment.CurrentDirectory + "\\";
+				var exeName = AppDomain.CurrentDomain.FriendlyName + ".exe";
+
+				var batchScript = "@echo off" + Environment.NewLine;
+				batchScript += "CD \"" + exePath + "\"" + Environment.NewLine;
+				batchScript += "START \"\" \".\\" + exeName + "\"";
+
+				Log.Information("Writing startup script to {0}", batchPath);
+				File.WriteAllText(batchPath, batchScript);
+			} catch (Exception e)
+			{
+				Log.Error("Couldn't create startup shortcut.");
+				Log.Error(e.ToString());
+			}
+		}
+		public static void RemoveStartupShortcut()
+		{
+			try
+			{
+				var fileDir = Environment.GetFolderPath(Environment.SpecialFolder.Startup) + "\\PingLogger.bat";
+				Log.Information("Removing startup script {0}", fileDir);
+				File.Delete(fileDir);
+			} catch (Exception e)
+			{
+				Log.Error("Couldn't remove startup script.");
+				Log.Error(e.ToString());
+			}
 		}
 		public static void WriteConfig()
 		{

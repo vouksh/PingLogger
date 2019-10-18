@@ -49,10 +49,10 @@ namespace PingLogger
 					.CreateLogger();
 			}
 			//Check to make sure the packet size isn't too large. Don't want to abuse this.
-			if (Host.PacketSize > 65535)
+			if (Host.PacketSize > 65500)
 			{
 				Logger.Error("Packet size too large. Resetting to 20000 bytes");
-				Host.PacketSize = 65535;
+				Host.PacketSize = 65500;
 			}
 			//Make sure that the interval isn't too short. If you set it to be too frequent, it might get flagged as DDoS attack.
 			if (Host.Interval < 500)
@@ -126,14 +126,14 @@ namespace PingLogger
 			pingSender.PingCompleted += new PingCompletedEventHandler(SendPing);
 			PingOptions options = new PingOptions();
 			AutoResetEvent waiter = new AutoResetEvent(false);
-			options.DontFragment = true;
+			options.DontFragment = false;
 
 			//Generate a string that's as long as the packet size. 
 			//This is outside of the loop, so it's going to be the same while the thread is running.
 			//If it's restarted, we generate a new string. 
 			string data = RandomString(Host.PacketSize);
 			byte[] buffer = Encoding.ASCII.GetBytes(data);
-
+			Log.Information("Data size: " + data.Length);
 			int loops = 0;
 			Running = true;
 			while (Running)
