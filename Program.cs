@@ -128,6 +128,7 @@ namespace PingLogger
 			while (!done)
 			{
 				Console.ForegroundColor = Options.OutputColor;
+				Console.WriteLine();
 				Console.WriteLine("What would you like to do?");
 				Console.WriteLine("[1] Close Application");
 				Console.WriteLine("[2] Add a host");
@@ -294,17 +295,24 @@ namespace PingLogger
 			bool done = false;
 			while (!done)
 			{
+				Console.WriteLine();
 				Console.WriteLine("Which host would you like to remove?");
+				Console.WriteLine("[0] Cancel");
 				for (int i = 0; i < Options.Hosts.Count; i++)
 				{
 					Console.WriteLine($"[{i + 1}] {Options.Hosts[i].HostName} ({ Options.Hosts[i].IP})");
 				}
-				Console.Write("Enter the number you wish to edit: ");
+				Console.Write("Enter the number you wish to remove: ");
 				var selectedHost = Console.ReadLine();
 				int selectedIndex = 0;
 				try
 				{
 					selectedIndex = Convert.ToInt32(selectedHost) - 1;
+					if(selectedIndex == -1)
+					{
+						done = true;
+						continue;
+					}
 				}
 				catch (Exception)
 				{
@@ -342,10 +350,12 @@ namespace PingLogger
 			bool done = false;
 			while (!done)
 			{
+				Console.WriteLine();
 				int selectedIndex;
 				if (Options.Hosts.Count > 1)
 				{
 					Console.WriteLine("Which host would you like to edit?");
+					Console.WriteLine("[0] Cancel");
 					for (int i = 0; i < Options.Hosts.Count; i++)
 					{
 						Console.WriteLine($"[{i + 1}] {Options.Hosts[i].HostName} ({ Options.Hosts[i].IP})");
@@ -355,6 +365,11 @@ namespace PingLogger
 					try
 					{
 						selectedIndex = Convert.ToInt32(selectedHost) - 1;
+						if (selectedIndex == -1)
+						{
+							done = true;
+							continue;
+						}
 					}
 					catch (Exception)
 					{
@@ -590,10 +605,17 @@ namespace PingLogger
 			bool done = false;
 			while (!done)
 			{
+				Console.WriteLine();
 				Host newHost = new Host();
 				var validHost = false;
+				int tries = 0;
 				while (!validHost)
 				{
+					if (tries >= 4)
+					{
+						done = true;
+						break;
+					}
 					Console.Write("New host name (can be IP): ");
 					var hostName = Console.ReadLine();
 					if (CheckIfHostExists(hostName))
@@ -631,6 +653,7 @@ namespace PingLogger
 						{
 							Console.ForegroundColor = ConsoleColor.Red;
 							Console.WriteLine("Invalid host name.");
+							tries++;
 						}
 					}
 					else
@@ -638,7 +661,13 @@ namespace PingLogger
 						Console.ForegroundColor = ConsoleColor.Red;
 						Console.WriteLine("Invalid host name.");
 						Console.ResetColor();
+						tries++;
 					}
+				}
+
+				if (tries >= 4)
+				{
+					break;
 				}
 				var silentDone = false;
 				while (!silentDone)
