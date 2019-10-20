@@ -95,7 +95,7 @@ namespace PingLogger
 						if (Options.AllSilent || AllHostsSilent())
 						{
 							Console.ForegroundColor = Options.OutputColor;
-							Console.Write(Options.SilentOutput);
+							ColoredOutput.WriteMultiLine(Options.SilentOutput);
 							Console.WriteLine();
 							Console.ResetColor();
 						}
@@ -127,33 +127,32 @@ namespace PingLogger
 			var done = false;
 			while (!done)
 			{
-				Console.ForegroundColor = Options.OutputColor;
 				Console.WriteLine();
 				Console.WriteLine("What would you like to do?");
-				Console.WriteLine("[1] Close Application");
-				Console.WriteLine("[2] Add a host");
-				Console.WriteLine("[3] Edit a host");
-				Console.WriteLine("[4] Remove a host");
-				Console.WriteLine("[5] Refresh silent output message");
-				Console.WriteLine("[6] Change silent output toggle");
-				Console.WriteLine("[7] Change silent output color");
+				ColoredOutput.WriteLine("[1] ##red Close Application");
+				ColoredOutput.WriteLine("[2] ##blue Add a host");
+				ColoredOutput.WriteLine("[3] ##yellow Edit a host");
+				ColoredOutput.WriteLine("[4] ##red Remove a host");
+				ColoredOutput.WriteLine("[5] ##cyan Refresh silent output message");
+				ColoredOutput.WriteLine("[6] ##cyan Change silent output toggle");
+				ColoredOutput.WriteLine("[7] Change silent output color");
 				if (Options.LoadOnStartup)
 				{
-					Console.WriteLine("[8] Remove application from system startup");
+					ColoredOutput.WriteLine("[8] ##yellow Remove application from system startup");
 				}
 				else
 				{
-					Console.WriteLine("[8] Add application to system startup");
+					ColoredOutput.WriteLine("[8] ##yellow Add application to system startup");
 				}
 				if (interrupted)
 				{
-					Console.WriteLine("[9] Restart logging");
+					ColoredOutput.WriteLine("[9] ##green Restart logging");
 				}
 				else
 				{
-					Console.WriteLine("[9] Start Logging");
+					ColoredOutput.WriteLine("[9] ##green Start Logging");
 				}
-				Console.Write("Option: ");
+				ColoredOutput.Write("##darkcyan Option:");
 				var resp = Console.ReadLine().ToLower();
 				switch (resp)
 				{
@@ -207,19 +206,12 @@ namespace PingLogger
 						WriteConfig();
 						break;
 					case "7":
-						Console.ForegroundColor = ConsoleColor.White;
-						Console.WriteLine("[1] White");
-						Console.ForegroundColor = ConsoleColor.Red;
-						Console.WriteLine("[2] Red");
-						Console.ForegroundColor = ConsoleColor.Blue;
-						Console.WriteLine("[3] Blue");
-						Console.ForegroundColor = ConsoleColor.Green;
-						Console.WriteLine("[4] Green");
-						Console.ForegroundColor = ConsoleColor.Yellow;
-						Console.WriteLine("[5] Yellow");
-						Console.ForegroundColor = ConsoleColor.Gray;
-						Console.WriteLine("[6] Grey");
-						Console.ForegroundColor = ConsoleColor.White;
+						ColoredOutput.WriteLine("[1] ##white White");
+						ColoredOutput.WriteLine("[2] ##red Red");
+						ColoredOutput.WriteLine("[3] ##blue Blue");
+						ColoredOutput.WriteLine("[4] ##green Green");
+						ColoredOutput.WriteLine("[5] ##yellow Yellow");
+						ColoredOutput.WriteLine("[6] ##gray Grey");
 						Console.Write("Color: ({0}) ", Options.OutputColor);
 						var inputColor = Console.ReadLine();
 						Options.OutputColor = inputColor switch
@@ -232,7 +224,6 @@ namespace PingLogger
 							"6" => ConsoleColor.Gray,
 							_ => ConsoleColor.White,
 						};
-						Console.ForegroundColor = Options.OutputColor;
 						Console.WriteLine("Color set to {0}", Options.OutputColor);
 						WriteConfig();
 						break;
@@ -410,7 +401,11 @@ namespace PingLogger
 				var silentDone = false;
 				while (!silentDone)
 				{
-					Console.Write("Do you want this host to be silent?: (y/N/h) ");
+					Console.ForegroundColor = ConsoleColor.Yellow;
+					Console.WriteLine("Silent mode prevents the output from being printed to this window.");
+					Console.WriteLine("It will still log to a file, this is purely for display purposes");
+					Console.ResetColor();
+					Console.Write("Do you want this host to be silent?: (y/N) ");
 					var silentResp = Console.ReadLine().ToLower();
 					if (silentResp != string.Empty)
 					{
@@ -418,10 +413,6 @@ namespace PingLogger
 						{
 							editHost.Silent = true;
 							silentDone = true;
-						}
-						else if (silentResp == "h" || silentResp == "help")
-						{
-							Console.WriteLine("If this is set to 'yes', then the pings will only be logged to the file, not the console output.");
 						}
 						else if (silentResp == "n" || silentResp == "no" || silentResp == "false")
 						{
@@ -672,7 +663,9 @@ namespace PingLogger
 				var silentDone = false;
 				while (!silentDone)
 				{
-					Console.Write("Do you want this host to be silent?: (y/N/h) ");
+					Console.WriteLine("Silent mode prevents the output from being printed to this window.");
+					Console.WriteLine("It will still log to a file, this is purely for display purposes");
+					Console.Write("Do you want this host to be silent?: (y/N) ");
 					var silentResp = Console.ReadLine().ToLower();
 					if (silentResp != string.Empty)
 					{
@@ -680,10 +673,6 @@ namespace PingLogger
 						{
 							newHost.Silent = true;
 							silentDone = true;
-						}
-						else if (silentResp == "h" || silentResp == "help")
-						{
-							Console.WriteLine("If this is set to 'yes', then the pings will only be logged to the file, not the console output.");
 						}
 						else if (silentResp == "n" || silentResp == "no" || silentResp == "false")
 						{
