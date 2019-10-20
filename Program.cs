@@ -411,7 +411,7 @@ namespace PingLogger
 				while (!silentDone)
 				{
 					Console.Write("Do you want this host to be silent?: (y/N/h) ");
-					var silentResp = Console.ReadLine();
+					var silentResp = Console.ReadLine().ToLower();
 					if (silentResp != string.Empty)
 					{
 						if (silentResp == "y" || silentResp == "yes" || silentResp == "true")
@@ -673,7 +673,7 @@ namespace PingLogger
 				while (!silentDone)
 				{
 					Console.Write("Do you want this host to be silent?: (y/N/h) ");
-					var silentResp = Console.ReadLine();
+					var silentResp = Console.ReadLine().ToLower();
 					if (silentResp != string.Empty)
 					{
 						if (silentResp == "y" || silentResp == "yes" || silentResp == "true")
