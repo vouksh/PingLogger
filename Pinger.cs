@@ -133,7 +133,7 @@ namespace PingLogger
 			//If it's restarted, we generate a new string. 
 			string data = RandomString(Host.PacketSize);
 			byte[] buffer = Encoding.ASCII.GetBytes(data);
-			Log.Information("Data size: " + data.Length);
+
 			int loops = 0;
 			Running = true;
 			while (Running)
