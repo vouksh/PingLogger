@@ -37,7 +37,7 @@ namespace PingLogger
 					Log.Information("Existing hosts detected.");
 					try
 					{
-						Console.Write("Do you want to make changes? (y/N) ");
+						ColoredOutput.Write("Do you want to make changes? ###(##green##y###/##red##N###) ");
 						string resp = WaitForInput.ReadLine(5000).ToLower();
 						if (resp == "y" || resp == "yes")
 						{
@@ -126,30 +126,29 @@ namespace PingLogger
 			{
 				Console.WriteLine();
 				Console.WriteLine("What would you like to do?");
-				ColoredOutput.WriteLine("[1] ##red Close Application");
-				ColoredOutput.WriteLine("[2] ##blue Add a host");
-				ColoredOutput.WriteLine("[3] ##yellow Edit a host");
-				ColoredOutput.WriteLine("[4] ##red Remove a host");
-				ColoredOutput.WriteLine("[5] ##cyan Refresh silent output message");
-				ColoredOutput.WriteLine("[6] ##cyan Change silent output toggle");
-				ColoredOutput.WriteLine("[7] Change silent output color");
+				ColoredOutput.WriteLine("[1] ##darkred##Close Application");
+				ColoredOutput.WriteLine("[2] ##blue##Add a host");
+				ColoredOutput.WriteLine("[3] ##yellow##Edit a host");
+				ColoredOutput.WriteLine("[4] ##red##Remove a host");
+				ColoredOutput.WriteLine("[5] ##cyan##Refresh silent output message");
+				ColoredOutput.WriteLine("[6] ##darkcyan##Change silent output toggle");
 				if (Options.LoadOnStartup)
 				{
-					ColoredOutput.WriteLine("[8] ##yellow Remove application from system startup");
+					ColoredOutput.WriteLine("[7] ##darkyellow##Remove application from system startup");
 				}
 				else
 				{
-					ColoredOutput.WriteLine("[8] ##yellow Add application to system startup");
+					ColoredOutput.WriteLine("[7] ##darkyellow##Add application to system startup");
 				}
 				if (interrupted)
 				{
-					ColoredOutput.WriteLine("[9] ##green Restart logging");
+					ColoredOutput.WriteLine("[8] ##green##Restart logging");
 				}
 				else
 				{
-					ColoredOutput.WriteLine("[9] ##green Start Logging");
+					ColoredOutput.WriteLine("[8] ##green##Start Logging");
 				}
-				ColoredOutput.Write("##darkcyan Option:");
+				ColoredOutput.Write("##white##Option: ");
 				var resp = Console.ReadLine().ToLower();
 				switch (resp)
 				{
@@ -172,7 +171,7 @@ namespace PingLogger
 					case "5":
 						if (!File.Exists("./silent.txt"))
 						{
-							Console.WriteLine("No silent.txt found. Please create one in the same directory as this program and try again.");
+							ColoredOutput.WriteLine("##darkred##No silent.txt found. Please create one in the same directory as this program and try again.");
 						}
 						else
 						{
@@ -182,8 +181,8 @@ namespace PingLogger
 					case "6":
 						if (Options.AllSilent)
 						{
-							Console.WriteLine("Application is currently set to only log to files.");
-							Console.Write("Would you like to change this? (y/N) ");
+							ColoredOutput.WriteLine("Application is currently set to ##cyan##only## log to files.");
+							ColoredOutput.Write("##yellow##Would you like to change this? ###(##green##y###/##red##N###) ");
 							var changeSilent = Console.ReadLine().ToLower();
 							if (changeSilent == "y" || changeSilent == "yes")
 							{
@@ -192,8 +191,8 @@ namespace PingLogger
 						}
 						else
 						{
-							Console.WriteLine("Application is currently set to log to both the console and files");
-							Console.Write("Would you like to change this? (y/N) ");
+							ColoredOutput.WriteLine("Application is currently set to log to ##cyan##both### the console and files");
+							ColoredOutput.Write("##yellow##Would you like to change this? ###(##green##y###/##red##N###) ");
 							var changeSilent = Console.ReadLine().ToLower();
 							if (changeSilent == "y" || changeSilent == "yes")
 							{
@@ -203,31 +202,9 @@ namespace PingLogger
 						WriteConfig();
 						break;
 					case "7":
-						ColoredOutput.WriteLine("[1] ##white White");
-						ColoredOutput.WriteLine("[2] ##red Red");
-						ColoredOutput.WriteLine("[3] ##blue Blue");
-						ColoredOutput.WriteLine("[4] ##green Green");
-						ColoredOutput.WriteLine("[5] ##yellow Yellow");
-						ColoredOutput.WriteLine("[6] ##gray Grey");
-						Console.Write("Color: ({0}) ", Options.OutputColor);
-						var inputColor = Console.ReadLine();
-						Options.OutputColor = inputColor switch
-						{
-							"1" => ConsoleColor.White,
-							"2" => ConsoleColor.Red,
-							"3" => ConsoleColor.Blue,
-							"4" => ConsoleColor.Green,
-							"5" => ConsoleColor.Yellow,
-							"6" => ConsoleColor.Gray,
-							_ => ConsoleColor.White,
-						};
-						Console.WriteLine("Color set to {0}", Options.OutputColor);
-						WriteConfig();
-						break;
-					case "8":
 						if(Options.LoadOnStartup)
 						{
-							Console.Write("Are you sure you want to remove this application from the system startup? (y/N) ");
+							ColoredOutput.Write("Are you sure you want to ##red##remove### this application from the system startup? ###(##green##y###/##red##N) ");
 							var startup = Console.ReadLine().ToLower();
 							if(startup == "y" || startup == "yes")
 							{
@@ -236,7 +213,7 @@ namespace PingLogger
 							}
 						} else
 						{
-							Console.Write("Are you sure you want to add this application to the system startup? (y/N) ");
+							ColoredOutput.Write("Are you sure you want to ##green##add### this application to the system startup? ###(##green##y###/##red##N) ");
 							var startup = Console.ReadLine().ToLower();
 							if (startup == "y" || startup == "yes")
 							{
@@ -246,13 +223,13 @@ namespace PingLogger
 						}
 						WriteConfig();
 						break;
-					case "9":
+					case "8":
 						done = true;
 						UpdatePingers();
 						StartAllPingers();
 						break;
 					default:
-						Console.WriteLine("Invalid selection");
+						ColoredOutput.WriteLine("##red##Invalid selection");
 						break;
 				}
 			}
@@ -284,13 +261,13 @@ namespace PingLogger
 			while (!done)
 			{
 				Console.WriteLine();
-				Console.WriteLine("Which host would you like to remove?");
-				Console.WriteLine("[0] Cancel");
+				ColoredOutput.WriteLine("Which host would you like to ##red##remove###?");
+				ColoredOutput.WriteLine("[0] ##darkyellow##Cancel");
 				for (int i = 0; i < Options.Hosts.Count; i++)
 				{
-					Console.WriteLine($"[{i + 1}] {Options.Hosts[i].HostName} ({ Options.Hosts[i].IP})");
+					ColoredOutput.WriteLine($"[{i + 1}] ##darkcyan##{Options.Hosts[i].HostName} ###(##darkcyan##{ Options.Hosts[i].IP}###)");
 				}
-				Console.Write("Enter the number you wish to remove: ");
+				ColoredOutput.Write("Enter the number you wish to ##red##remove###: ");
 				var selectedHost = Console.ReadLine();
 				int selectedIndex = 0;
 				try

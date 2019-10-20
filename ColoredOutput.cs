@@ -19,45 +19,79 @@ namespace PingLogger
 		}
 		public static void WriteMultiLine(string output)
 		{
-			foreach(var line in output.Split(Environment.NewLine))
+			foreach (var line in output.Split(Environment.NewLine))
 			{
 				ParseText(line);
 				Console.WriteLine();
 			}
 			Console.ResetColor();
 		}
+
 		private static void ParseText(string input)
 		{
-			var splitStr = input.Split(' ', '\n');
-			foreach (var str in splitStr)
+
+			Console.ResetColor();
+			var change = input;
+			foreach (var tag in ColorTags)
 			{
-				if (str.StartsWith("##"))
-				{
-					Console.ForegroundColor = str.Remove(0, 2) switch
-					{
-						"blue" => ConsoleColor.Blue,
-						"green" => ConsoleColor.Green,
-						"red" => ConsoleColor.Red,
-						"yellow" => ConsoleColor.Yellow,
-						"white" => ConsoleColor.White,
-						"darkblue" => ConsoleColor.DarkBlue,
-						"cyan" => ConsoleColor.Cyan,
-						"gray" => ConsoleColor.Gray,
-						"darkcyan" => ConsoleColor.DarkCyan,
-						"magenta" => ConsoleColor.Magenta,
-						"darkmagenta" => ConsoleColor.DarkMagenta,
-						"darkgray" => ConsoleColor.DarkGray,
-						"black" => ConsoleColor.Black,
-						"darkgreen" => ConsoleColor.DarkGreen,
-						"darkred" => ConsoleColor.DarkRed,
-						"darkyellow" => ConsoleColor.DarkYellow,
-						_ => ConsoleColor.Gray
-					};
-				} else
-				{
-					Console.Write(str + " ");
-				}
+				change = change.Replace(tag, "\n" + tag + "\n");
+
 			}
+			var splitStr = change.Split("\n");
+			foreach (var line in splitStr)
+			{
+				var colorLine = false;
+				foreach (var color in ColorTags)
+				{
+					if (line.Contains(color))
+					{
+						Console.ForegroundColor = line.Replace('#', ' ').Trim() switch
+						{
+							"blue" => ConsoleColor.Blue,
+							"green" => ConsoleColor.Green,
+							"red" => ConsoleColor.Red,
+							"yellow" => ConsoleColor.Yellow,
+							"white" => ConsoleColor.White,
+							"darkblue" => ConsoleColor.DarkBlue,
+							"cyan" => ConsoleColor.Cyan,
+							"gray" => ConsoleColor.Gray,
+							"darkcyan" => ConsoleColor.DarkCyan,
+							"magenta" => ConsoleColor.Magenta,
+							"darkmagenta" => ConsoleColor.DarkMagenta,
+							"darkgray" => ConsoleColor.DarkGray,
+							"black" => ConsoleColor.Black,
+							"darkgreen" => ConsoleColor.DarkGreen,
+							"darkred" => ConsoleColor.DarkRed,
+							"darkyellow" => ConsoleColor.DarkYellow,
+							_ => ConsoleColor.Gray
+						};
+						colorLine = true;
+					}
+				}
+				if (!colorLine)
+					Console.Write(line);
+			}
+
 		}
+		private static string[] ColorTags =
+			{
+				"##blue##",
+				"##green##",
+				"##red##",
+				"##yellow##",
+				"##white##",
+				"##darkblue##",
+				"##cyan##",
+				"##gray##",
+				"##darkcyan##",
+				"##magenta##",
+				"##darkmagenta##",
+				"##darkgray##",
+				"##black##",
+				"##darkgreen##",
+				"##darkred##",
+				"##darkyellow##",
+				"###"
+			};
 	}
 }
