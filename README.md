@@ -22,5 +22,3 @@ Requires dotnet core 3.0 or above to compile.
 Resulting binary will have no requirements.
 
 Uses Serilog for actual file and console logging. 
-
-Download the binary from http://lexdysia.com/PingLogger.zip
