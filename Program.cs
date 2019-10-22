@@ -540,7 +540,7 @@ namespace PingLogger
 
 				Log.Information("Edited host {0} with IP address {1}, Threshold {2}ms, Interval {3}ms, Packet Size {4}",
 					editHost.HostName, editHost.IP, editHost.Threshold, editHost.Interval, editHost.PacketSize);
-				ColoredOutput.Write("Do you want to edit another? ###(##red##y###/##green##N) ");
+				ColoredOutput.Write("Do you want to edit another? ###(##red##y###/##green##N###) ");
 				var addMore = Console.ReadLine().ToLower();
 				if (addMore == string.Empty || addMore == "n" || addMore == "no")
 					done = true;
@@ -779,7 +779,7 @@ namespace PingLogger
 				Options.Hosts.Add(newHost);
 				Log.Information("Added a new host {0} with IP address {1}, Threshold {2}ms, Interval {3}ms, Packet Size {4}",
 					newHost.HostName, newHost.IP, newHost.Threshold, newHost.Interval, newHost.PacketSize);
-				ColoredOutput.Write("Do you want to add another? ###(##red##y###/##green##N) ");
+				ColoredOutput.Write("Do you want to add another? ###(##red##y###/##green##N###) ");
 				var addMore = Console.ReadLine().ToLower();
 				if (addMore == string.Empty || addMore == "n" || addMore == "no")
 					done = true;
