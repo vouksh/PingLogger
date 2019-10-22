@@ -23,7 +23,9 @@ namespace PingLogger.Misc
 			};
 			inputThread.Start();
 		}
+
 		private static bool isKey = false;
+
 		private static void Reader()
 		{
 			while (true)
@@ -52,9 +54,6 @@ namespace PingLogger.Misc
 				return input;
 			else
 			{
-				//Ran into a problem where, if the input wasn't received, the console was technically still waiting for an input.
-				//So I found https://stackoverflow.com/a/9634477/1659361
-				//So now when it times out, it sends an enter key to this window.
 				SendKey.DoEnter();
 				throw new TimeoutException("User did not provide input within the timelimit.");
 			}
@@ -76,9 +75,6 @@ namespace PingLogger.Misc
 			}
 			else
 			{
-				//Ran into a problem where, if the input wasn't received, the console was technically still waiting for an input.
-				//So I found https://stackoverflow.com/a/9634477/1659361
-				//So now when it times out, it sends an enter key to this window. 
 				SendKey.DoEnter();
 				throw new TimeoutException("User did not provide input within the timelimit.");
 			}

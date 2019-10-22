@@ -5,6 +5,9 @@ using System.Text;
 
 namespace PingLogger.Misc
 {
+	//Ran into a problem where, if the input wasn't received, the console was technically still waiting for an input.
+	//So I found https://stackoverflow.com/a/9634477/1659361
+	//So now when it times out, it sends an enter key to this window.
 	public static class SendKey
 	{
 		[DllImport("User32.Dll", EntryPoint = "PostMessageA")]
