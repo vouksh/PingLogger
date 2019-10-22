@@ -1,11 +1,11 @@
-﻿using System;
-using System.Net;
-using System.IO;
+﻿using PingLogger.Misc;
 using Serilog;
-using System.Text.Json;
+using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Net;
+using System.Text.Json;
 using System.Threading;
-using PingLogger.Misc;
 
 namespace PingLogger
 {
@@ -125,7 +125,6 @@ namespace PingLogger
 			var done = false;
 			while (!done)
 			{
-				Console.WriteLine();
 				Console.WriteLine("What would you like to do?");
 				ColoredOutput.WriteLine("[1] ##darkred##Close Application");
 				ColoredOutput.WriteLine("[2] ##blue##Add a host");
@@ -182,7 +181,7 @@ namespace PingLogger
 					case "6":
 						if (Options.AllSilent)
 						{
-							ColoredOutput.WriteLine("Application is currently set to ##cyan##only## log to files.");
+							ColoredOutput.WriteLine("Application is currently set to ##cyan##only### log to files.");
 							ColoredOutput.Write("##yellow##Would you like to change this? ###(##green##y###/##red##N###) ");
 							var changeSilent = Console.ReadLine().ToLower();
 							if (changeSilent == "y" || changeSilent == "yes")
@@ -203,16 +202,17 @@ namespace PingLogger
 						WriteConfig();
 						break;
 					case "7":
-						if(Options.LoadOnStartup)
+						if (Options.LoadOnStartup)
 						{
 							ColoredOutput.Write("Are you sure you want to ##red##remove### this application from the system startup? ###(##green##y###/##red##N###) ");
 							var startup = Console.ReadLine().ToLower();
-							if(startup == "y" || startup == "yes")
+							if (startup == "y" || startup == "yes")
 							{
 								RemoveStartupShortcut();
 								Options.LoadOnStartup = false;
 							}
-						} else
+						}
+						else
 						{
 							ColoredOutput.Write("Are you sure you want to ##green##add### this application to the system startup? ###(##green##y###/##red##N###) ");
 							var startup = Console.ReadLine().ToLower();
@@ -274,7 +274,7 @@ namespace PingLogger
 				try
 				{
 					selectedIndex = Convert.ToInt32(selectedHost) - 1;
-					if(selectedIndex == -1)
+					if (selectedIndex == -1)
 					{
 						done = true;
 						continue;
@@ -828,7 +828,8 @@ namespace PingLogger
 
 				Log.Information("Writing startup script to {0}", batchPath);
 				File.WriteAllText(batchPath, batchScript);
-			} catch (Exception e)
+			}
+			catch (Exception e)
 			{
 				Log.Error("Couldn't create startup shortcut.");
 				Log.Error(e.ToString());
@@ -841,7 +842,8 @@ namespace PingLogger
 				var fileDir = Environment.GetFolderPath(Environment.SpecialFolder.Startup) + "\\PingLogger.bat";
 				Log.Information("Removing startup script {0}", fileDir);
 				File.Delete(fileDir);
-			} catch (Exception e)
+			}
+			catch (Exception e)
 			{
 				Log.Error("Couldn't remove startup script.");
 				Log.Error(e.ToString());

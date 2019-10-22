@@ -1,12 +1,12 @@
-﻿using System;
+﻿using PingLogger.Misc;
+using Serilog;
+using System;
+using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.NetworkInformation;
 using System.Text;
-using System.IO;
 using System.Threading;
-using Serilog;
-using System.Linq;
-using PingLogger.Misc;
 
 namespace PingLogger
 {
@@ -35,12 +35,13 @@ namespace PingLogger
 				Logger = new LoggerConfiguration()
 					.WriteTo.Console(theme: Serilog.Sinks.SystemConsole.Themes.AnsiConsoleTheme.Literate)
 					.WriteTo.RollingFile(
-						"./Logs/" + Host.HostName +"-{Date}.log", 
-						shared: true, 
+						"./Logs/" + Host.HostName + "-{Date}.log",
+						shared: true,
 						outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}")
 					.CreateLogger();
-					
-			} else
+
+			}
+			else
 			{
 				Logger = new LoggerConfiguration()
 					.WriteTo.RollingFile(
@@ -64,14 +65,15 @@ namespace PingLogger
 			//Verify that the IP stored in the settings file matches what it currently resolves to.
 			//Mostly in cases of local network and DHCP
 			Logger.Information("Verifying IP address of hostname is current.");
-			foreach(var ip in Dns.GetHostAddresses(Host.HostName))
+			foreach (var ip in Dns.GetHostAddresses(Host.HostName))
 			{
-				if(ip.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
+				if (ip.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
 				{
-					if(ip.ToString() == Host.IP)
+					if (ip.ToString() == Host.IP)
 					{
 						Logger.Information("IP matches. Continuing");
-					} else
+					}
+					else
 					{
 						Logger.Warning("IP address does not match last stored. Saving new IP address");
 						Host.IP = ip.ToString();

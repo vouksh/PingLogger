@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace PingLogger.Misc
 {
@@ -53,7 +51,7 @@ namespace PingLogger.Misc
 			var splitStr = change.Split("\n");
 			foreach (var line in splitStr)
 			{
-				//Intially, we assume the line is not containing a color.
+				//Initially, we assume the line is not containing a color.
 				var colorLine = false;
 				//Parse line through each tag.
 				foreach (var color in ColorTags)
