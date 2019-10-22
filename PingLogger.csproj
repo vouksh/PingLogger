@@ -11,6 +11,10 @@
 	<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
 	<Deterministic>false</Deterministic>
     <ApplicationIcon />
+    <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
+    <Authors>Jack Butler</Authors>
+    <RepositoryUrl>https://github.com/vouksh/PingLogger</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
@@ -29,6 +33,10 @@
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>AssemblyVersion.cs</LastGenOutput>
     </None>
+    <None Include="LICENSE.md">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
   </ItemGroup>
 
   <ItemGroup>
@@ -42,5 +50,9 @@
       <DependentUpon>AssemblyVersion.tt</DependentUpon>
     </Compile>
   </ItemGroup>
+
+  <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
+    <Exec Command="$(ProjectDir)Misc\RunTemplate.bat $(ProjectDir)AssemblyVersion" />
+  </Target>
 
 </Project>

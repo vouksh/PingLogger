@@ -1,4 +1,4 @@
-﻿namespace PingLogger
+﻿namespace PingLogger.Misc
 {
 	public class Host
 	{

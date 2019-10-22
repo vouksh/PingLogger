@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace PingLogger
+namespace PingLogger.Misc
 {
 	public static class ColoredOutput
 	{

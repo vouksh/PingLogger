@@ -5,6 +5,7 @@ using Serilog;
 using System.Text.Json;
 using System.Collections.Generic;
 using System.Threading;
+using PingLogger.Misc;
 
 namespace PingLogger
 {
@@ -76,7 +77,7 @@ namespace PingLogger
 				try
 				{
 					//Use the WaitForInputKey class to have a timeout so that we can keep looping the silent output above. 
-					cki = WaitForInputKey.ReadKey(2000);
+					cki = WaitForInput.ReadKey(2000);
 					if ((cki.Modifiers & ConsoleModifiers.Control) != 0 && cki.Key == ConsoleKey.C)
 					{
 						// Change this back to false so that the user input functions like normal while going through the options.
@@ -118,7 +119,7 @@ namespace PingLogger
 			// This is a bit hacky, but it works.
 			if (interrupted)
 			{
-				WaitForInputKey.DoEnter();
+				SendKey.DoEnter();
 				Thread.Sleep(100);
 			}
 			var done = false;

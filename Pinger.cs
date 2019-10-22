@@ -6,6 +6,7 @@ using System.IO;
 using System.Threading;
 using Serilog;
 using System.Linq;
+using PingLogger.Misc;
 
 namespace PingLogger
 {

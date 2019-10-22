@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace PingLogger
+namespace PingLogger.Misc
 {
 	public class Opts
 	{
