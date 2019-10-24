@@ -57,10 +57,10 @@ namespace PingLogger.Misc
 				foreach (var color in ColorTags)
 				{
 					//Line contains a tag.
-					if (line.Contains(color))
+					if (line.ToLower().Contains(color))
 					{
 						//Use pattern matching to determine which color to set. 
-						Console.ForegroundColor = line.Replace('#', ' ').Trim() switch
+						Console.ForegroundColor = line.Replace('#', ' ').Trim().ToLower() switch
 						{
 							"blue" => ConsoleColor.Blue,
 							"green" => ConsoleColor.Green,

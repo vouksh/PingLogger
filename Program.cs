@@ -92,7 +92,6 @@ namespace PingLogger
 						// If the user wants to have all ping loggers be silent, we'll print out the SilentOutput to the console instead. 
 						if (Options.AllSilent || AllHostsSilent())
 						{
-							Console.ForegroundColor = Options.OutputColor;
 							ColoredOutput.WriteMultiLine(Options.SilentOutput);
 							Console.WriteLine();
 							Console.ResetColor();
