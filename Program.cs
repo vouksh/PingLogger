@@ -13,14 +13,25 @@ namespace PingLogger
 	{
 		private static Opts Options;
 		private static readonly List<Pinger> Pingers = new List<Pinger>();
+		private static Mutex mutex = null;
 		static void Main()
 		{
+			//Only allow one instance of the program to run. 
+			const string AppName = "PingLogger";
+			bool isNewInstance;
+			mutex = new Mutex(true, AppName, out isNewInstance);
+			if(!isNewInstance)
+			{
+				ColoredOutput.WriteLine("##red##Error, program already running.");
+				Thread.Sleep(1000);
+				Environment.Exit(0);
+			}
+
 			Version version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
-			string displayableVersion = $"{version}";
 			Log.Logger = new LoggerConfiguration()
 				.WriteTo.Console(theme: Serilog.Sinks.SystemConsole.Themes.AnsiConsoleTheme.Literate)
 				.CreateLogger();
-			Log.Information("PingLogger {0} by Jack B.", displayableVersion);
+			Log.Information("PingLogger {0} by Jack B.", version);
 			Console.Title = "PingLogger - Testing in progress do not close";
 			DoStartupTasks();
 		}
@@ -59,6 +70,7 @@ namespace PingLogger
 					Log.Information("No hosts configured.");
 					AddNewHosts();
 					UpdateSettings();
+					madeChanges = true;
 				}
 			}
 			else
@@ -66,6 +78,7 @@ namespace PingLogger
 				Log.Information("No hosts configured.");
 				AddNewHosts();
 				UpdateSettings();
+				madeChanges = true;
 			}
 			ColoredOutput.WriteLine("##white##Press ##red##Ctrl-C##white## to access program options.");
 			if (!madeChanges)
@@ -827,7 +840,11 @@ namespace PingLogger
 				var exePath = Environment.CurrentDirectory + "\\";
 				var exeName = AppDomain.CurrentDomain.FriendlyName + ".exe";
 
+				//Find which drive the logger is running off of and change to it in the startup script.
+				var loggerDrive = exePath.Substring(0, 2);
+
 				var batchScript = "@echo off" + Environment.NewLine;
+				batchScript += loggerDrive + Environment.NewLine;
 				batchScript += "CD \"" + exePath + "\"" + Environment.NewLine;
 				batchScript += "START \"\" \".\\" + exeName + "\"";
 
