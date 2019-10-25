@@ -67,6 +67,7 @@ namespace PingLogger
 				AddNewHosts();
 				UpdateSettings();
 			}
+			ColoredOutput.WriteLine("##white##Press ##red##Ctrl-C##white## to access program options.");
 			if (!madeChanges)
 			{
 				UpdatePingers();
