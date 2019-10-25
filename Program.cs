@@ -21,6 +21,7 @@ namespace PingLogger
 				.WriteTo.Console(theme: Serilog.Sinks.SystemConsole.Themes.AnsiConsoleTheme.Literate)
 				.CreateLogger();
 			Log.Information("PingLogger {0} by Jack B.", displayableVersion);
+			Console.Title = "PingLogger - Testing in progress do not close";
 			DoStartupTasks();
 		}
 		/// <summary>
@@ -57,12 +58,14 @@ namespace PingLogger
 				{
 					Log.Information("No hosts configured.");
 					AddNewHosts();
+					UpdateSettings();
 				}
 			}
 			else
 			{
 				Log.Information("No hosts configured.");
 				AddNewHosts();
+				UpdateSettings();
 			}
 			if (!madeChanges)
 			{
@@ -70,6 +73,8 @@ namespace PingLogger
 				StartAllPingers();
 			}
 			// Override the Ctrl-C input so that we can capture it. 
+			var title = Console.Title;
+			Console.Title = title + " - Press Ctrl-C to access options";
 			Console.TreatControlCAsInput = true;
 			ConsoleKeyInfo cki;
 			do
