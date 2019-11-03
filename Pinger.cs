@@ -30,24 +30,26 @@ namespace PingLogger
 			if (!Directory.Exists("./Logs"))
 				Directory.CreateDirectory("./Logs");
 			//Check to see if just this is supposed to be silent, or if it's app-wide setting
-			if (!Host.Silent && !defaultSilent)
+			var outputTemp = "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}";
+			var filePath = "./Logs/" + Host.HostName + "-{Date}.log";
+			//if (!Host.Silent && !defaultSilent)
+			if (!defaultSilent)
 			{
 				Logger = new LoggerConfiguration()
 					.WriteTo.Console(theme: Serilog.Sinks.SystemConsole.Themes.AnsiConsoleTheme.Literate)
 					.WriteTo.RollingFile(
-						"./Logs/" + Host.HostName + "-{Date}.log",
+						filePath,
 						shared: true,
-						outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}")
+						outputTemplate: outputTemp)
 					.CreateLogger();
-
 			}
 			else
 			{
 				Logger = new LoggerConfiguration()
 					.WriteTo.RollingFile(
-						"./Logs/" + Host.HostName + "-{Date}.log",
+						filePath,
 						shared: true,
-						outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}")
+						outputTemplate: outputTemp)
 					.CreateLogger();
 			}
 			//Check to make sure the packet size isn't too large. Don't want to abuse this.
@@ -116,7 +118,7 @@ namespace PingLogger
 			Logger.Information("Timeout: {0}ms", Host.Timeout);
 			Logger.Information("Interval: {0}ms", Host.Interval);
 			Logger.Information("Packet Size: {0} bytes", Host.PacketSize);
-			Logger.Information("Silent Output: {0}", Host.Silent);
+			//Logger.Information("Silent Output: {0}", Host.Silent);
 
 			RunThread.Start();
 		}

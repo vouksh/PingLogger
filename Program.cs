@@ -109,7 +109,8 @@ namespace PingLogger
 					else
 					{
 						// If the user wants to have all ping loggers be silent, we'll print out the SilentOutput to the console instead. 
-						if (Options.AllSilent || AllHostsSilent())
+						//if (Options.AllSilent || AllHostsSilent())
+						if (Options.AllSilent)
 						{
 							ColoredOutput.WriteMultiLine(Options.SilentOutput);
 							Console.WriteLine();
@@ -122,6 +123,8 @@ namespace PingLogger
 				}
 			} while (true);
 		}
+		/*
+		 * No longer relevant. 
 		public static bool AllHostsSilent()
 		{
 			foreach (var host in Options.Hosts)
@@ -131,6 +134,7 @@ namespace PingLogger
 			}
 			return true;
 		}
+		*/
 		public static void UpdateSettings(bool interrupted = false)
 		{
 			// Discovered a bug where, if an additional Enter hasn't been sent, it will want an extra input.
@@ -390,11 +394,13 @@ namespace PingLogger
 						ColoredOutput.WriteLine("##darkred##Invalid host name.");
 					}
 				}
-
+				/* Removed the ability to set individual hosts to be silent. 
+				 * Since this program might be used by less tech-savvy people, it just adds confusion. 
 				var silentDone = false;
 				while (!silentDone)
 				{
-					ColoredOutput.WriteLine("##yellow##Silent mode prevents the output from being printed to ##blue##this ##yellow##window.");
+					ColoredOutput.WriteLine("##yellow##Silent mode prevents the output from being printed to ##white##this ##yellow##window.");
+					ColoredOutput.WriteLine("##yellow##If all hosts are silent, or if the global silent setting is set, the contents of the ##white##silent.txt##yellow##file will be printed instead.");
 					ColoredOutput.WriteLine("##yellow##It ##white##will##yellow## still log to a file, this is purely for display purposes");
 					ColoredOutput.Write("Do you want this host to be silent?: ###(##red##y###/##green##N###) ");
 					var silentResp = Console.ReadLine().ToLower();
@@ -420,7 +426,7 @@ namespace PingLogger
 						silentDone = true;
 					}
 				}
-
+				*/
 				//See if user wants to set up advanced options. Otherwise we use the defaults in the Host class
 				ColoredOutput.Write("Do you want to specify ##red##advanced### options (threshold, timeout, packet size, interval)? ###(##red##y###/##green##N###) ");
 				var advOpts = Console.ReadLine().ToLower();
@@ -502,7 +508,7 @@ namespace PingLogger
 							{
 								editHost.PacketSize = Convert.ToInt32(packetSize);
 								// Maximum packet size is 65,500 bytes. Can't go higher than that.
-								if (editHost.PacketSize <= 0 || editHost.PacketSize >= 65500)
+								if (editHost.PacketSize <= 0 || editHost.PacketSize > 65500)
 								{
 									ColoredOutput.WriteLine("##darkred##Invalid packet size specified.");
 									editHost.PacketSize = 0;
@@ -632,10 +638,13 @@ namespace PingLogger
 				{
 					break;
 				}
+				/* Removed the ability to set individual hosts to be silent. 
+				 * Since this program might be used by less tech-savvy people, it just adds confusion. 
 				var silentDone = false;
 				while (!silentDone)
 				{
-					ColoredOutput.WriteLine("##yellow##Silent mode prevents the output from being printed to ##blue##this ##yellow##window.");
+					ColoredOutput.WriteLine("##yellow##Silent mode prevents the output from being printed to ##white##this ##yellow##window.");
+					ColoredOutput.WriteLine("##yellow##If all hosts are silent then the contents of the ##cyan##silent.txt##yellow## file will be printed instead.");
 					ColoredOutput.WriteLine("##yellow##It ##white##will##yellow## still log to a file, this is purely for display purposes");
 					ColoredOutput.Write("Do you want this host to be silent?: ###(##red##y###/##green##N###) ");
 					var silentResp = Console.ReadLine().ToLower();
@@ -661,6 +670,7 @@ namespace PingLogger
 						silentDone = true;
 					}
 				}
+				*/
 				//See if user wants to set up advanced options. Otherwise we use the defaults in the Host class
 				ColoredOutput.Write("Do you want to specify ##red##advanced### options (threshold, timeout, packet size, interval)? ###(##red##y###/##green##N###) ");
 				var advOpts = Console.ReadLine().ToLower();
@@ -669,7 +679,7 @@ namespace PingLogger
 					var validThreshold = false;
 					while (!validThreshold)
 					{
-						ColoredOutput.Write($"Ping time warning threshold: (##green##500ms###) ");
+						ColoredOutput.Write($"Ping time warning threshold: (##green##{newHost.Threshold}ms###) ");
 						var threshold = Console.ReadLine().ToLower();
 						if (threshold == string.Empty)
 						{
@@ -701,7 +711,7 @@ namespace PingLogger
 					var validTimeout = false;
 					while (!validTimeout)
 					{
-						ColoredOutput.Write($"Ping timeout: (##green##1000ms###) ");
+						ColoredOutput.Write($"Ping timeout: (##green##{newHost.Timeout}ms###) ");
 						var timeout = Console.ReadLine().ToLower();
 						if (timeout == string.Empty)
 						{
@@ -733,7 +743,7 @@ namespace PingLogger
 					var validPacketSize = false;
 					while (!validPacketSize)
 					{
-						ColoredOutput.Write($"Packet size in bytes: (##green##32###) ");
+						ColoredOutput.Write($"Packet size in bytes: (##green##{newHost.PacketSize}###) ");
 						var packetSize = Console.ReadLine();
 						if (packetSize == string.Empty)
 						{
@@ -745,8 +755,8 @@ namespace PingLogger
 							try
 							{
 								newHost.PacketSize = Convert.ToInt32(packetSize);
-								// Maximum packet size is 65,535 bytes. Can't go higher than that.
-								if (newHost.PacketSize <= 0 || newHost.PacketSize >= 65500)
+								// Maximum packet size is 65,500 bytes. Can't go higher than that.
+								if (newHost.PacketSize <= 0 || newHost.PacketSize > 65500)
 								{
 									ColoredOutput.WriteLine("##darkred##Invalid packet size specified.");
 									newHost.PacketSize = 0;
@@ -765,7 +775,7 @@ namespace PingLogger
 					var validInterval = false;
 					while (!validInterval)
 					{
-						ColoredOutput.Write($"Ping interval: (##green##1000ms###) ");
+						ColoredOutput.Write($"Ping interval: (##green##{newHost.Interval}ms###) ");
 						var interval = Console.ReadLine().ToLower();
 						if (interval == string.Empty)
 						{
@@ -819,6 +829,13 @@ namespace PingLogger
 						Log.Information("The file silent.txt was changed since last ran, updating.");
 						Options.SilentOutput = silentFile;
 					}
+					if (Options.LoadOnStartup)
+					{
+						CreateStartupShortcut(true);
+					} else
+					{
+						RemoveStartupShortcut();
+					}
 					return true;
 				}
 				catch (Exception)
@@ -832,24 +849,31 @@ namespace PingLogger
 			};
 			return false;
 		}
-		public static void CreateStartupShortcut()
+		public static void CreateStartupShortcut(bool isStartup = false)
 		{
 			try
 			{
 				var batchPath = Environment.GetFolderPath(Environment.SpecialFolder.Startup) + "\\PingLogger.bat";
-				var exePath = Environment.CurrentDirectory + "\\";
-				var exeName = AppDomain.CurrentDomain.FriendlyName + ".exe";
+				if (!File.Exists(batchPath))
+				{
+					if(isStartup)
+					{
+						Log.Error("Startup script removed since program last started.");
+					}
+					var exePath = Environment.CurrentDirectory + "\\";
+					var exeName = AppDomain.CurrentDomain.FriendlyName + ".exe";
 
-				//Find which drive the logger is running off of and change to it in the startup script.
-				var loggerDrive = exePath.Substring(0, 2);
+					//Find which drive the logger is running off of and change to it in the startup script.
+					var loggerDrive = exePath.Substring(0, 2);
 
-				var batchScript = "@echo off" + Environment.NewLine;
-				batchScript += loggerDrive + Environment.NewLine;
-				batchScript += "CD \"" + exePath + "\"" + Environment.NewLine;
-				batchScript += "START \"\" \".\\" + exeName + "\"";
+					var batchScript = "@echo off" + Environment.NewLine;
+					batchScript += loggerDrive + Environment.NewLine;
+					batchScript += "CD \"" + exePath + "\"" + Environment.NewLine;
+					batchScript += "START \"\" \".\\" + exeName + "\"";
 
-				Log.Information("Writing startup script to {0}", batchPath);
-				File.WriteAllText(batchPath, batchScript);
+					Log.Information("Writing startup script to {0}", batchPath);
+					File.WriteAllText(batchPath, batchScript);
+				}
 			}
 			catch (Exception e)
 			{
