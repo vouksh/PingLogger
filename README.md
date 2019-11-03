@@ -13,8 +13,6 @@ Interval: Specifies the time between each ping.
 
 Packet Size: Specifies the size of the packet to be sent. 
 
-Silent: Only logs the output to a file, not the console.
-
 Also supports silencing all hosts and printing out a message to the console every 2 seconds. 
 To edit the message, create or change the silent.txt file, then trigger a refresh within the application (Ctrl-C, option 5) or close and re-open it.
 
