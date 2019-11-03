@@ -137,9 +137,9 @@ namespace PingLogger
 			//This is outside of the loop, so it's going to be the same while the thread is running.
 			//If it's restarted, we generate a new string. 
 			string data = RandomString(Host.PacketSize);
+			
 			byte[] buffer = Encoding.ASCII.GetBytes(data);
 
-			int loops = 0;
 			Running = true;
 			while (Running)
 			{
@@ -151,7 +151,6 @@ namespace PingLogger
 					Running = false;
 					pingSender.Dispose();
 				}
-				loops++;
 			}
 		}
 		/// <summary>

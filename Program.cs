@@ -31,7 +31,7 @@ namespace PingLogger
 			Log.Logger = new LoggerConfiguration()
 				.WriteTo.Console(theme: Serilog.Sinks.SystemConsole.Themes.AnsiConsoleTheme.Literate)
 				.CreateLogger();
-			Log.Information("PingLogger {0} by Jack B.", version);
+			Log.Information("PingLogger {0} by Jack B.", "v"+version);
 			Console.Title = "PingLogger - Testing in progress do not close";
 			DoStartupTasks();
 		}
