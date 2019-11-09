@@ -30,13 +30,13 @@ namespace PingLogger
 			if (!Directory.Exists("./Logs"))
 				Directory.CreateDirectory("./Logs");
 			//Check to see if just this is supposed to be silent, or if it's app-wide setting
-			var outputTemp = "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}";
+			var outputTemp = "[{Timestamp:HH:mm:ss} {Level:u4}] {Message:lj}{NewLine}{Exception}";
 			var filePath = "./Logs/" + Host.HostName + "-{Date}.log";
 			//if (!Host.Silent && !defaultSilent)
 			if (!defaultSilent)
 			{
 				Logger = new LoggerConfiguration()
-					.WriteTo.Console(theme: Serilog.Sinks.SystemConsole.Themes.AnsiConsoleTheme.Literate)
+					.WriteTo.Console(theme: Serilog.Sinks.SystemConsole.Themes.AnsiConsoleTheme.Literate, outputTemplate: outputTemp)
 					.WriteTo.RollingFile(
 						filePath,
 						shared: true,
@@ -186,7 +186,7 @@ namespace PingLogger
 					//If it is, then we change the output to be a warning, making it easy to track down in the log files.
 					if (reply.RoundtripTime >= Host.Threshold)
 					{
-						Logger.Warning("Pinged {0} ({1}) RoundTrip: {2}ms TTL: {3}", Host.HostName, Host.IP.ToString(), reply.RoundtripTime, reply.Options.Ttl);
+						Logger.Warning("Pinged {0} ({1}) RoundTrip: {2}ms (Over Threshold) TTL: {3}", Host.HostName, Host.IP.ToString(), reply.RoundtripTime, reply.Options.Ttl);
 					}
 					else
 					{
@@ -207,7 +207,7 @@ namespace PingLogger
 					Logger.Error("Ping failed due to hardware.");
 					break;
 				case IPStatus.TimedOut:
-					Logger.Warning("Ping timed out to host {0} ({1}). Timeout is {2}ms", Host.HostName, Host.IP.ToString(), Host.Timeout);
+					Logger.Error("Ping timed out to host {0} ({1}). Timeout is {2}ms", Host.HostName, Host.IP.ToString(), Host.Timeout);
 					break;
 			}
 			((AutoResetEvent)e.UserState).Set();

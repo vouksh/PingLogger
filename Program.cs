@@ -28,10 +28,7 @@ namespace PingLogger
 			}
 
 			Version version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
-			Log.Logger = new LoggerConfiguration()
-				.WriteTo.Console(theme: Serilog.Sinks.SystemConsole.Themes.AnsiConsoleTheme.Literate)
-				.CreateLogger();
-			Log.Information("PingLogger {0} by Jack B.", "v"+version);
+			ColoredOutput.WriteLine($"##cyan##{AppName} ##white##v{version}### by ##cyan##Jack B.", true);
 			Console.Title = "PingLogger - Testing in progress do not close";
 			DoStartupTasks();
 		}
@@ -47,10 +44,10 @@ namespace PingLogger
 			{
 				if (Options.Hosts.Count > 0)
 				{
-					Log.Information("Existing hosts detected.");
+					ColoredOutput.WriteLine("Existing hosts detected.", true);
 					try
 					{
-						ColoredOutput.Write("Do you want to make changes? ###(##green##y###/##red##N###) ");
+						ColoredOutput.Write("Do you want to make changes? ###(##green##y###/##red##N###) ", true);
 						string resp = WaitForInput.ReadLine(5000).ToLower();
 						if (resp == "y" || resp == "yes")
 						{
@@ -61,13 +58,13 @@ namespace PingLogger
 					catch (TimeoutException)
 					{
 						Console.WriteLine();
-						Log.Information("No input detected. Skipping addition of new hosts");
+						ColoredOutput.WriteLine("No input detected. Skipping addition of new hosts", true);
 
 					}
 				}
 				else
 				{
-					Log.Information("No hosts configured.");
+					ColoredOutput.WriteLine("No hosts configured.", true);
 					AddNewHosts();
 					UpdateSettings();
 					madeChanges = true;
@@ -75,12 +72,12 @@ namespace PingLogger
 			}
 			else
 			{
-				Log.Information("No hosts configured.");
+				ColoredOutput.WriteLine("No hosts configured.", true);
 				AddNewHosts();
 				UpdateSettings();
 				madeChanges = true;
 			}
-			ColoredOutput.WriteLine("##white##Press ##red##Ctrl-C##white## to access program options.");
+			ColoredOutput.WriteLine("##white##Press ##red##Ctrl-C##white## to access program options.", true);
 			if (!madeChanges)
 			{
 				UpdatePingers();
@@ -112,8 +109,9 @@ namespace PingLogger
 						//if (Options.AllSilent || AllHostsSilent())
 						if (Options.AllSilent)
 						{
-							ColoredOutput.WriteMultiLine(Options.SilentOutput);
-							Console.WriteLine();
+							ColoredOutput.WriteMultiLine(Options.SilentOutput, true);
+							ColoredOutput.WriteLine("", true);
+							//Console.WriteLine();
 							Console.ResetColor();
 						}
 					}
@@ -123,18 +121,6 @@ namespace PingLogger
 				}
 			} while (true);
 		}
-		/*
-		 * No longer relevant. 
-		public static bool AllHostsSilent()
-		{
-			foreach (var host in Options.Hosts)
-			{
-				if (!host.Silent)
-					return false;
-			}
-			return true;
-		}
-		*/
 		public static void UpdateSettings(bool interrupted = false)
 		{
 			// Discovered a bug where, if an additional Enter hasn't been sent, it will want an extra input.
@@ -147,7 +133,7 @@ namespace PingLogger
 			var done = false;
 			while (!done)
 			{
-				Console.WriteLine("What would you like to do?");
+				ColoredOutput.WriteLine("What would you like to do?", true);
 				ColoredOutput.WriteLine("[1] ##darkred##Close Application");
 				ColoredOutput.WriteLine("[2] ##blue##Add a host");
 				ColoredOutput.WriteLine("[3] ##yellow##Edit a host");
@@ -177,7 +163,7 @@ namespace PingLogger
 					case "1":
 					case "":
 						WriteConfig();
-						Log.Warning("Closing application.");
+						ColoredOutput.WriteLine("##red##Closing application.", true);
 						Thread.Sleep(200);
 						Environment.Exit(0);
 						break;
@@ -310,12 +296,7 @@ namespace PingLogger
 				var resp = Console.ReadLine().ToLower();
 				if (resp != string.Empty || resp == "y" || resp == "yes")
 				{
-					Log.Information("Removed host {0} with IP address {1}, Threshold {2}ms, Interval {3}ms, Packet Size {4}",
-						Options.Hosts[selectedIndex].HostName,
-						Options.Hosts[selectedIndex].IP,
-						Options.Hosts[selectedIndex].Threshold,
-						Options.Hosts[selectedIndex].Interval,
-						Options.Hosts[selectedIndex].PacketSize);
+					ColoredOutput.WriteLine($"Removed host ##cyan##{Options.Hosts[selectedIndex].HostName}### with IP address ##cyan##{Options.Hosts[selectedIndex].IP}###, Threshold ##cyan##{Options.Hosts[selectedIndex].Threshold}ms###, Interval ##cyan##{Options.Hosts[selectedIndex].Interval}ms###, Packet Size ##cyan##{Options.Hosts[selectedIndex].PacketSize}###", true);
 					Options.Hosts.RemoveAt(selectedIndex);
 				}
 				if (Options.Hosts.Count > 0)
@@ -394,39 +375,6 @@ namespace PingLogger
 						ColoredOutput.WriteLine("##darkred##Invalid host name.");
 					}
 				}
-				/* Removed the ability to set individual hosts to be silent. 
-				 * Since this program might be used by less tech-savvy people, it just adds confusion. 
-				var silentDone = false;
-				while (!silentDone)
-				{
-					ColoredOutput.WriteLine("##yellow##Silent mode prevents the output from being printed to ##white##this ##yellow##window.");
-					ColoredOutput.WriteLine("##yellow##If all hosts are silent, or if the global silent setting is set, the contents of the ##white##silent.txt##yellow##file will be printed instead.");
-					ColoredOutput.WriteLine("##yellow##It ##white##will##yellow## still log to a file, this is purely for display purposes");
-					ColoredOutput.Write("Do you want this host to be silent?: ###(##red##y###/##green##N###) ");
-					var silentResp = Console.ReadLine().ToLower();
-					if (silentResp != string.Empty)
-					{
-						if (silentResp == "y" || silentResp == "yes" || silentResp == "true")
-						{
-							editHost.Silent = true;
-							silentDone = true;
-						}
-						else if (silentResp == "n" || silentResp == "no" || silentResp == "false")
-						{
-							editHost.Silent = false;
-							silentDone = true;
-						}
-						else
-						{
-							ColoredOutput.WriteLine("##darkred##Invalid response");
-						}
-					}
-					else
-					{
-						silentDone = true;
-					}
-				}
-				*/
 				//See if user wants to set up advanced options. Otherwise we use the defaults in the Host class
 				ColoredOutput.Write("Do you want to specify ##red##advanced### options (threshold, timeout, packet size, interval)? ###(##red##y###/##green##N###) ");
 				var advOpts = Console.ReadLine().ToLower();
@@ -563,8 +511,7 @@ namespace PingLogger
 				//All done. Add it to the options, then ask if they want to add another. 
 				Options.Hosts[selectedIndex] = editHost;
 
-				Log.Information("Edited host {0} with IP address {1}, Threshold {2}ms, Interval {3}ms, Packet Size {4}",
-					editHost.HostName, editHost.IP, editHost.Threshold, editHost.Interval, editHost.PacketSize);
+				ColoredOutput.WriteLine($"Edited host ##cyan##{editHost.HostName}### with IP address ##cyan##{editHost.IP}###, Threshold ##cyan##{editHost.Threshold}ms###, Interval ##cyan##{editHost.Interval}ms###, Packet Size ##cyan##{editHost.PacketSize}", true);
 				ColoredOutput.Write("Do you want to edit another? ###(##red##y###/##green##N###) ");
 				var addMore = Console.ReadLine().ToLower();
 				if (addMore == string.Empty || addMore == "n" || addMore == "no")
@@ -638,39 +585,7 @@ namespace PingLogger
 				{
 					break;
 				}
-				/* Removed the ability to set individual hosts to be silent. 
-				 * Since this program might be used by less tech-savvy people, it just adds confusion. 
-				var silentDone = false;
-				while (!silentDone)
-				{
-					ColoredOutput.WriteLine("##yellow##Silent mode prevents the output from being printed to ##white##this ##yellow##window.");
-					ColoredOutput.WriteLine("##yellow##If all hosts are silent then the contents of the ##cyan##silent.txt##yellow## file will be printed instead.");
-					ColoredOutput.WriteLine("##yellow##It ##white##will##yellow## still log to a file, this is purely for display purposes");
-					ColoredOutput.Write("Do you want this host to be silent?: ###(##red##y###/##green##N###) ");
-					var silentResp = Console.ReadLine().ToLower();
-					if (silentResp != string.Empty)
-					{
-						if (silentResp == "y" || silentResp == "yes" || silentResp == "true")
-						{
-							newHost.Silent = true;
-							silentDone = true;
-						}
-						else if (silentResp == "n" || silentResp == "no" || silentResp == "false")
-						{
-							newHost.Silent = false;
-							silentDone = true;
-						}
-						else
-						{
-							ColoredOutput.WriteLine("##darkred##Invalid response");
-						}
-					}
-					else
-					{
-						silentDone = true;
-					}
-				}
-				*/
+
 				//See if user wants to set up advanced options. Otherwise we use the defaults in the Host class
 				ColoredOutput.Write("Do you want to specify ##red##advanced### options (threshold, timeout, packet size, interval)? ###(##red##y###/##green##N###) ");
 				var advOpts = Console.ReadLine().ToLower();
@@ -806,9 +721,8 @@ namespace PingLogger
 				}
 				//All done. Add it to the options, then ask if they want to add another. 
 				Options.Hosts.Add(newHost);
-				Log.Information("Added a new host {0} with IP address {1}, Threshold {2}ms, Interval {3}ms, Packet Size {4}",
-					newHost.HostName, newHost.IP, newHost.Threshold, newHost.Interval, newHost.PacketSize);
-				ColoredOutput.Write("Do you want to add another? ###(##red##y###/##green##N###) ");
+				ColoredOutput.WriteLine($"Added a new host ##cyan##{newHost.HostName}### with IP address ##cyan##{newHost.IP}###, Threshold ##cyan##{newHost.Threshold}ms###, Interval ##cyan##{newHost.Interval}ms###, Packet Size ##cyan##{newHost.PacketSize}###", true);
+				ColoredOutput.Write("Do you want to add another? ###(##red##y###/##green##N###) ", true);
 				var addMore = Console.ReadLine().ToLower();
 				if (addMore == string.Empty || addMore == "n" || addMore == "no")
 					done = true;
@@ -826,7 +740,7 @@ namespace PingLogger
 					var silentFile = File.ReadAllText("./silent.txt");
 					if (silentFile != Options.SilentOutput)
 					{
-						Log.Information("The file silent.txt was changed since last ran, updating.");
+						ColoredOutput.WriteLine("The file silent.txt was changed since last ran, updating.", true);
 						Options.SilentOutput = silentFile;
 					}
 					if (Options.LoadOnStartup)
@@ -840,7 +754,7 @@ namespace PingLogger
 				}
 				catch (Exception)
 				{
-					Log.Error("Error loading configuration file");
+					ColoredOutput.WriteLine("##red##Error loading configuration file", true);
 				}
 			}
 			Options = new Opts
@@ -858,7 +772,7 @@ namespace PingLogger
 				{
 					if(isStartup)
 					{
-						Log.Error("Startup script removed since program last started.");
+						ColoredOutput.WriteLine("Startup script removed since program last started.", true);
 					}
 					var exePath = Environment.CurrentDirectory + "\\";
 					var exeName = AppDomain.CurrentDomain.FriendlyName + ".exe";
@@ -871,14 +785,14 @@ namespace PingLogger
 					batchScript += "CD \"" + exePath + "\"" + Environment.NewLine;
 					batchScript += "START \"\" \".\\" + exeName + "\"";
 
-					Log.Information("Writing startup script to {0}", batchPath);
+					ColoredOutput.WriteLine($"Writing startup script to ##darkcyan##{batchPath}", true);
 					File.WriteAllText(batchPath, batchScript);
 				}
 			}
 			catch (Exception e)
 			{
-				Log.Error("Couldn't create startup shortcut.");
-				Log.Error(e.ToString());
+				ColoredOutput.WriteLine("##red##Couldn't create startup shortcut.", true);
+				ColoredOutput.WriteLine(e.ToString(), true);
 			}
 		}
 		public static void RemoveStartupShortcut()
@@ -886,13 +800,16 @@ namespace PingLogger
 			try
 			{
 				var fileDir = Environment.GetFolderPath(Environment.SpecialFolder.Startup) + "\\PingLogger.bat";
-				Log.Information("Removing startup script {0}", fileDir);
-				File.Delete(fileDir);
+				if (File.Exists(fileDir))
+				{
+					ColoredOutput.WriteLine($"Removing startup script ##darkcyan##{fileDir}", true);
+					File.Delete(fileDir);
+				}
 			}
 			catch (Exception e)
 			{
-				Log.Error("Couldn't remove startup script.");
-				Log.Error(e.ToString());
+				ColoredOutput.WriteLine("##red##Couldn't remove startup script.", true);
+				ColoredOutput.WriteLine(e.ToString(), true);
 			}
 		}
 		public static void WriteConfig()
@@ -908,13 +825,13 @@ namespace PingLogger
 			}
 			catch (Exception e)
 			{
-				Log.Error("Error saving configuration file");
-				Log.Error(e.ToString());
+				ColoredOutput.WriteLine("Error saving configuration file", true);
+				ColoredOutput.WriteLine(e.ToString(), true);
 			}
 		}
 		public static void ShutdownAllPingers()
 		{
-			Log.Information("Shutting down all ping loggers.");
+			ColoredOutput.WriteLine("Shutting down all ping loggers.", true);
 			foreach (var pinger in Pingers)
 			{
 				pinger.Stop();
@@ -922,7 +839,7 @@ namespace PingLogger
 		}
 		public static void StartAllPingers()
 		{
-			Log.Information("Starting all ping loggers.");
+			ColoredOutput.WriteLine("Starting all ping loggers.", true);
 			foreach (var pinger in Pingers)
 			{
 				pinger.Start();

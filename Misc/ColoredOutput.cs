@@ -1,15 +1,44 @@
 ﻿using System;
+using System.Text;
+using System.Threading;
 
 namespace PingLogger.Misc
 {
 	public static class ColoredOutput
 	{
 		/// <summary>
+		/// Adds a timestamp to the beginning of the input line.
+		/// Format: [<paramref name="format"/>] <paramref name="input"/>
+		/// </summary>
+		/// <param name="input">String to append timestamp to</param>
+		/// <param name="format">Format of the output, defaults to HH:mm:ss</param>
+		/// <param name="color">Color of the timestamp, defaults to darkgray</param>
+		/// <returns>String with timestamp</returns>
+		private static string AddTimestamp(string input, string format = "HH:mm:ss", string color = "darkgray")
+		{
+			var builder = new StringBuilder();
+			builder.Append("##");
+			builder.Append(color);
+			builder.Append("##[###");
+			builder.Append(DateTime.Now.ToString(format));
+			builder.Append("##");
+			builder.Append(color);
+			builder.Append("##]### ");
+			builder.Append(input);
+
+			return builder.ToString();
+		}
+		/// <summary>
 		/// Use in place of Console.WriteLine(), use tags to color text.
 		/// </summary>
 		/// <param name="output">String with text to output to console, replaces color tags with colors.</param>
-		public static void WriteLine(string output)
+		/// <param name="doTimeStamp">If true, adds timestamp to beginning of line</param>
+		public static void WriteLine(string output, bool doTimeStamp = false)
 		{
+			if(doTimeStamp)
+			{
+				output = AddTimestamp(output);
+			}
 			ParseText(output);
 			Console.ResetColor();
 			Console.WriteLine();
@@ -18,8 +47,13 @@ namespace PingLogger.Misc
 		/// Use in place of Console.Write(), use tags to color text.
 		/// </summary>
 		/// <param name="output">String with text to output to console, replaces color tags with colors.</param>
-		public static void Write(string output)
+		/// <param name="doTimeStamp">If true, adds timestamp to beginning of line</param>
+		public static void Write(string output, bool doTimeStamp = false)
 		{
+			if (doTimeStamp)
+			{
+				output = AddTimestamp(output);
+			}
 			ParseText(output);
 			Console.ResetColor();
 		}
@@ -27,16 +61,27 @@ namespace PingLogger.Misc
 		/// Used if you have a multi-line input, like from a text file, and formats each line individually.
 		/// </summary>
 		/// <param name="output">String with text to output to console, replaces color tags with colors.</param>
-		public static void WriteMultiLine(string output)
+		/// <param name="doTimeStamp">If true, adds timestamp to beginning of each line</param>
+		public static void WriteMultiLine(string output, bool doTimeStamp = false)
 		{
 			foreach (var line in output.Split(Environment.NewLine))
 			{
-				ParseText(line);
+				string lineOut = line;
+				if (doTimeStamp)
+				{
+					lineOut = AddTimestamp(line);
+				}
+				ParseText(lineOut);
 				Console.WriteLine();
 			}
 			Console.ResetColor();
 		}
 
+		/// <summary>
+		/// Parses the input and assigns colors according to the tags in the input
+		/// Outputs directly to console. 
+		/// </summary>
+		/// <param name="input">Text to parse</param>
 		private static void ParseText(string input)
 		{
 			//Reset the color back to default for this input. 
