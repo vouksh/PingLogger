@@ -34,7 +34,7 @@ namespace PingLogger.Misc
 				if (!isKey)
 					input = Console.ReadLine();
 				else
-					keyInput = Console.ReadKey();
+					keyInput = Console.ReadKey(true);
 
 				gotInput.Set();
 			}

@@ -10,7 +10,7 @@ using System.Threading;
 
 namespace PingLogger
 {
-	public class Pinger
+	public class Pinger : IDisposable
 	{
 		private readonly Host Host;
 		public bool Running = false;
@@ -31,12 +31,23 @@ namespace PingLogger
 				Directory.CreateDirectory("./Logs");
 			//Check to see if just this is supposed to be silent, or if it's app-wide setting
 			var outputTemp = "[{Timestamp:HH:mm:ss} {Level:u4}] {Message:lj}{NewLine}{Exception}";
-			var filePath = "./Logs/" + Host.HostName + "-{Date}.log";
-			//if (!Host.Silent && !defaultSilent)
+			var errorOutputTemp = "[{Timestamp:HH:mm:ss} {Level:u5}] {Message:lj}{NewLine}{Exception}";
+			var filePath = "./Logs/" + Host.HostName + "-Verbose-{Date}.log";
+			var errorPathName = "./Logs/" + Host.HostName + "-Errors-{Date}.log";
+			var warnPathName = "./Logs/" + Host.HostName + "-Warnings-{Date}.log";
+
 			if (!defaultSilent)
 			{
 				Logger = new LoggerConfiguration()
 					.WriteTo.Console(theme: Serilog.Sinks.SystemConsole.Themes.AnsiConsoleTheme.Literate, outputTemplate: outputTemp)
+					.WriteTo.Logger(
+						l => l.Filter.ByIncludingOnly(e => e.Level == Serilog.Events.LogEventLevel.Error)
+						.WriteTo.RollingFile(errorPathName, outputTemplate: errorOutputTemp, shared: true)
+						)
+					.WriteTo.Logger(
+						l => l.Filter.ByIncludingOnly(e => e.Level == Serilog.Events.LogEventLevel.Warning)
+						.WriteTo.RollingFile(warnPathName, outputTemplate: outputTemp, shared: true)
+						)
 					.WriteTo.RollingFile(
 						filePath,
 						shared: true,
@@ -46,6 +57,14 @@ namespace PingLogger
 			else
 			{
 				Logger = new LoggerConfiguration()
+					.WriteTo.Logger(
+						l => l.Filter.ByIncludingOnly(e => e.Level == Serilog.Events.LogEventLevel.Error)
+						.WriteTo.RollingFile(errorPathName, outputTemplate: errorOutputTemp, shared: true)
+						)
+					.WriteTo.Logger(
+						l => l.Filter.ByIncludingOnly(e => e.Level == Serilog.Events.LogEventLevel.Warning)
+						.WriteTo.RollingFile(warnPathName, outputTemplate: outputTemp, shared: true)
+						)
 					.WriteTo.RollingFile(
 						filePath,
 						shared: true,
@@ -212,5 +231,30 @@ namespace PingLogger
 			}
 			((AutoResetEvent)e.UserState).Set();
 		}
+
+		#region IDisposable Support
+		private bool disposedValue = false; // To detect redundant calls
+
+		protected virtual void Dispose(bool disposing)
+		{
+			if (!disposedValue)
+			{
+				if (disposing)
+				{
+					Stop();
+					Log.CloseAndFlush();
+					RunThread.Join();
+				}
+				disposedValue = true;
+			}
+		}
+
+		// This code added to correctly implement the disposable pattern.
+		public void Dispose()
+		{
+			// Do not change this code. Put cleanup code in Dispose(bool disposing) above.
+			Dispose(true);
+		}
+		#endregion
 	}
 }

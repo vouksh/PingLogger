@@ -14,13 +14,14 @@ namespace PingLogger
 		private static Opts Options;
 		private static readonly List<Pinger> Pingers = new List<Pinger>();
 		private static Mutex mutex = null;
+		private static bool isClosing = false;
 		static void Main()
 		{
 			//Only allow one instance of the program to run. 
 			const string AppName = "PingLogger";
 			bool isNewInstance;
 			mutex = new Mutex(true, AppName, out isNewInstance);
-			if(!isNewInstance)
+			if (!isNewInstance)
 			{
 				ColoredOutput.WriteLine("##red##Error, program already running.");
 				Thread.Sleep(1000);
@@ -83,6 +84,8 @@ namespace PingLogger
 				UpdatePingers();
 				StartAllPingers();
 			}
+
+			AppDomain.CurrentDomain.ProcessExit += new EventHandler(ProcessExit);
 			// Override the Ctrl-C input so that we can capture it. 
 			var title = Console.Title;
 			Console.Title = title + " - Press Ctrl-C to access options";
@@ -90,12 +93,14 @@ namespace PingLogger
 			ConsoleKeyInfo cki;
 			do
 			{
+				Console.CursorVisible = false;
 				try
 				{
 					//Use the WaitForInputKey class to have a timeout so that we can keep looping the silent output above. 
 					cki = WaitForInput.ReadKey(2000);
 					if ((cki.Modifiers & ConsoleModifiers.Control) != 0 && cki.Key == ConsoleKey.C)
 					{
+						Console.CursorVisible = true;
 						// Change this back to false so that the user input functions like normal while going through the options.
 						Console.TreatControlCAsInput = false;
 						ShutdownAllPingers();
@@ -106,12 +111,10 @@ namespace PingLogger
 					else
 					{
 						// If the user wants to have all ping loggers be silent, we'll print out the SilentOutput to the console instead. 
-						//if (Options.AllSilent || AllHostsSilent())
 						if (Options.AllSilent)
 						{
 							ColoredOutput.WriteMultiLine(Options.SilentOutput, true);
 							ColoredOutput.WriteLine("", true);
-							//Console.WriteLine();
 							Console.ResetColor();
 						}
 					}
@@ -119,7 +122,7 @@ namespace PingLogger
 				catch (TimeoutException)
 				{
 				}
-			} while (true);
+			} while (!isClosing);
 		}
 		public static void UpdateSettings(bool interrupted = false)
 		{
@@ -162,9 +165,6 @@ namespace PingLogger
 				{
 					case "1":
 					case "":
-						WriteConfig();
-						ColoredOutput.WriteLine("##red##Closing application.", true);
-						Thread.Sleep(200);
 						Environment.Exit(0);
 						break;
 					case "2":
@@ -252,14 +252,25 @@ namespace PingLogger
 				Pingers.Add(new Pinger(host, Options.AllSilent));
 			}
 		}
-		public static bool CheckIfHostExists(string hostName)
+		public static bool CheckIfHostExists(string hostName, bool ignoreFirstFind = false)
 		{
+			int occurances = 0;
 			if (Options.Hosts?.Count > 0)
 			{
 				foreach (var host in Options.Hosts)
 				{
 					if (host.HostName == hostName)
+					{
+						occurances++;
+					}
+					if (occurances > 0 & !ignoreFirstFind)
+					{
 						return true;
+					}
+					if( occurances >= 1 & ignoreFirstFind)
+					{
+						return true;
+					}
 				}
 			}
 			return false;
@@ -360,6 +371,12 @@ namespace PingLogger
 					var hostName = Console.ReadLine();
 					if (hostName == string.Empty)
 						break;
+
+					if (CheckIfHostExists(hostName, true))
+					{
+						ColoredOutput.WriteLine("##darkred##Host already exists in configuration.");
+						continue;
+					}
 					try
 					{
 						IPAddress[] iPs = Dns.GetHostAddresses(hostName);
@@ -375,137 +392,132 @@ namespace PingLogger
 						ColoredOutput.WriteLine("##darkred##Invalid host name.");
 					}
 				}
-				//See if user wants to set up advanced options. Otherwise we use the defaults in the Host class
-				ColoredOutput.Write("Do you want to specify ##red##advanced### options (threshold, timeout, packet size, interval)? ###(##red##y###/##green##N###) ");
-				var advOpts = Console.ReadLine().ToLower();
-				if (advOpts == "y" || advOpts == "yes")
+
+				var validThreshold = false;
+				while (!validThreshold)
 				{
-					var validThreshold = false;
-					while (!validThreshold)
+					//Sets the warning threshold. Defaults to 500ms;
+					ColoredOutput.Write($"Ping time warning threshold: (##green##{editHost.Threshold}ms###) ");
+					var threshold = Console.ReadLine().ToLower();
+					if (threshold != string.Empty)
 					{
-						//Sets the warning threshold. Defaults to 500ms;
-						ColoredOutput.Write($"Ping time warning threshold: (##green##{editHost.Threshold}ms###) ");
-						var threshold = Console.ReadLine().ToLower();
-						if (threshold != string.Empty)
+						try
 						{
-							try
+							//See if we can convert it, but strip the 'ms' off if the user specified it. 
+							editHost.Threshold = Convert.ToInt32(threshold.Replace("ms", ""));
+							if (editHost.Threshold <= 0 || editHost.Threshold >= int.MaxValue)
 							{
-								//See if we can convert it, but strip the 'ms' off if the user specified it. 
-								editHost.Threshold = Convert.ToInt32(threshold.Replace("ms", ""));
-								if (editHost.Threshold <= 0 || editHost.Threshold >= int.MaxValue)
-								{
-									ColoredOutput.WriteLine("##red##Invalid threshold specified.");
-									editHost.Threshold = 0;
-								}
-								else
-								{
-									validThreshold = true;
-								}
+								ColoredOutput.WriteLine("##red##Invalid threshold specified.");
+								editHost.Threshold = 0;
 							}
-							catch (Exception)
+							else
 							{
-								ColoredOutput.WriteLine("##darkred##Invalid threshold specified.");
+								validThreshold = true;
 							}
 						}
-						else
+						catch (Exception)
 						{
-							validThreshold = true;
+							ColoredOutput.WriteLine("##darkred##Invalid threshold specified.");
 						}
 					}
-
-					var validTimeout = false;
-					while (!validTimeout)
+					else
 					{
-						ColoredOutput.Write($"Ping timeout: (##green##{editHost.Timeout}ms###) ");
-						var timeout = Console.ReadLine().ToLower();
-						if (timeout != string.Empty)
+						validThreshold = true;
+					}
+				}
+
+				var validTimeout = false;
+				while (!validTimeout)
+				{
+					ColoredOutput.Write($"Ping timeout: (##green##{editHost.Timeout}ms###) ");
+					var timeout = Console.ReadLine().ToLower();
+					if (timeout != string.Empty)
+					{
+						try
 						{
-							try
-							{
-								//See if we can convert it, but strip the 'ms' off if the user specified it. 
-								editHost.Timeout = Convert.ToInt32(timeout.Replace("ms", ""));
-								if (editHost.Timeout <= 0 || editHost.Timeout >= int.MaxValue)
-								{
-									ColoredOutput.WriteLine("##darkred##Invalid timeout specified.");
-									editHost.Timeout = 0;
-								}
-								else
-								{
-									validTimeout = true;
-								}
-							}
-							catch (Exception)
+							//See if we can convert it, but strip the 'ms' off if the user specified it. 
+							editHost.Timeout = Convert.ToInt32(timeout.Replace("ms", ""));
+							if (editHost.Timeout <= 0 || editHost.Timeout >= int.MaxValue)
 							{
 								ColoredOutput.WriteLine("##darkred##Invalid timeout specified.");
+								editHost.Timeout = 0;
+							}
+							else
+							{
+								validTimeout = true;
 							}
 						}
-						else
+						catch (Exception)
 						{
-							validTimeout = true;
+							ColoredOutput.WriteLine("##darkred##Invalid timeout specified.");
 						}
 					}
-
-					var validPacketSize = false;
-					while (!validPacketSize)
+					else
 					{
-						ColoredOutput.Write($"Packet size in bytes: (##green##{editHost.PacketSize}###) ");
-						var packetSize = Console.ReadLine();
-						if (packetSize != string.Empty)
+						validTimeout = true;
+					}
+				}
+
+				var validPacketSize = false;
+				while (!validPacketSize)
+				{
+					ColoredOutput.Write($"Packet size in bytes: (##green##{editHost.PacketSize}###) ");
+					var packetSize = Console.ReadLine();
+					if (packetSize != string.Empty)
+					{
+						try
 						{
-							try
-							{
-								editHost.PacketSize = Convert.ToInt32(packetSize);
-								// Maximum packet size is 65,500 bytes. Can't go higher than that.
-								if (editHost.PacketSize <= 0 || editHost.PacketSize > 65500)
-								{
-									ColoredOutput.WriteLine("##darkred##Invalid packet size specified.");
-									editHost.PacketSize = 0;
-								}
-								else
-								{
-									validPacketSize = true;
-								}
-							}
-							catch (Exception)
+							editHost.PacketSize = Convert.ToInt32(packetSize);
+							// Maximum packet size is 65,500 bytes. Can't go higher than that.
+							if (editHost.PacketSize <= 0 || editHost.PacketSize > 65500)
 							{
 								ColoredOutput.WriteLine("##darkred##Invalid packet size specified.");
+								editHost.PacketSize = 0;
+							}
+							else
+							{
+								validPacketSize = true;
 							}
 						}
-						else
+						catch (Exception)
 						{
-							validPacketSize = true;
+							ColoredOutput.WriteLine("##darkred##Invalid packet size specified.");
 						}
 					}
-
-					var validInterval = false;
-					while (!validInterval)
+					else
 					{
-						ColoredOutput.Write($"Ping interval: (##green##{editHost.Interval}ms###) ");
-						var interval = Console.ReadLine().ToLower();
-						if (interval != string.Empty)
+						validPacketSize = true;
+					}
+				}
+
+				var validInterval = false;
+				while (!validInterval)
+				{
+					ColoredOutput.Write($"Ping interval: (##green##{editHost.Interval}ms###) ");
+					var interval = Console.ReadLine().ToLower();
+					if (interval != string.Empty)
+					{
+						try
 						{
-							try
-							{
-								editHost.Interval = Convert.ToInt32(interval.Replace("ms", ""));
-								if (editHost.Interval < 500 || editHost.Interval >= int.MaxValue)
-								{
-									ColoredOutput.WriteLine("##red##Invalid interval specified.");
-									editHost.Interval = 0;
-								}
-								else
-								{
-									validInterval = true;
-								}
-							}
-							catch (Exception)
+							editHost.Interval = Convert.ToInt32(interval.Replace("ms", ""));
+							if (editHost.Interval < 500 || editHost.Interval >= int.MaxValue)
 							{
 								ColoredOutput.WriteLine("##red##Invalid interval specified.");
+								editHost.Interval = 0;
+							}
+							else
+							{
+								validInterval = true;
 							}
 						}
-						else
+						catch (Exception)
 						{
-							validInterval = true;
+							ColoredOutput.WriteLine("##red##Invalid interval specified.");
 						}
+					}
+					else
+					{
+						validInterval = true;
 					}
 				}
 				//All done. Add it to the options, then ask if they want to add another. 
@@ -746,7 +758,8 @@ namespace PingLogger
 					if (Options.LoadOnStartup)
 					{
 						CreateStartupShortcut(true);
-					} else
+					}
+					else
 					{
 						RemoveStartupShortcut();
 					}
@@ -770,7 +783,7 @@ namespace PingLogger
 				var batchPath = Environment.GetFolderPath(Environment.SpecialFolder.Startup) + "\\PingLogger.bat";
 				if (!File.Exists(batchPath))
 				{
-					if(isStartup)
+					if (isStartup)
 					{
 						ColoredOutput.WriteLine("Startup script removed since program last started.", true);
 					}
@@ -831,11 +844,14 @@ namespace PingLogger
 		}
 		public static void ShutdownAllPingers()
 		{
+			Options.Hosts.Clear();
 			ColoredOutput.WriteLine("Shutting down all ping loggers.", true);
 			foreach (var pinger in Pingers)
 			{
-				pinger.Stop();
+				Options.Hosts.Add(pinger.UpdateHost());
+				pinger.Dispose();
 			}
+			Pingers.Clear();
 		}
 		public static void StartAllPingers()
 		{
@@ -844,6 +860,16 @@ namespace PingLogger
 			{
 				pinger.Start();
 			}
+		}
+		private static void ProcessExit(object sender, EventArgs e)
+		{
+			Console.WriteLine();
+			if (Pingers.Count > 0)
+				ShutdownAllPingers();
+
+			WriteConfig();
+			ColoredOutput.WriteLine("##red##Closing application.", true);
+			Thread.Sleep(200);
 		}
 	}
 }
