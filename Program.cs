@@ -1,5 +1,4 @@
 ﻿using PingLogger.Misc;
-using Serilog;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -138,11 +137,11 @@ namespace PingLogger
 			{
 				ColoredOutput.WriteLine("What would you like to do?", true);
 				ColoredOutput.WriteLine("[1] ##darkred##Close Application");
-				ColoredOutput.WriteLine("[2] ##blue##Add a host");
-				ColoredOutput.WriteLine("[3] ##yellow##Edit a host");
+				ColoredOutput.WriteLine("[2] ##white##Add a host");
+				ColoredOutput.WriteLine("[3] ##white##Edit a host");
 				ColoredOutput.WriteLine("[4] ##red##Remove a host");
-				ColoredOutput.WriteLine("[5] ##cyan##Refresh silent output message");
-				ColoredOutput.WriteLine("[6] ##darkcyan##Change silent output toggle");
+				ColoredOutput.WriteLine("[5] ##cyan##Change silent output toggle");
+				ColoredOutput.WriteLine("[6] ##white##Change how many days to keep logs");
 				if (Options.LoadOnStartup)
 				{
 					ColoredOutput.WriteLine("[7] ##darkyellow##Remove application from system startup");
@@ -177,16 +176,6 @@ namespace PingLogger
 						RemoveHosts();
 						break;
 					case "5":
-						if (!File.Exists("./silent.txt"))
-						{
-							ColoredOutput.WriteLine("##darkred##No silent.txt found. Please create one in the same directory as this program and try again.");
-						}
-						else
-						{
-							Options.SilentOutput = File.ReadAllText("./silent.txt");
-						}
-						break;
-					case "6":
 						if (Options.AllSilent)
 						{
 							ColoredOutput.WriteLine("Application is currently set to ##cyan##only### log to files.");
@@ -208,6 +197,21 @@ namespace PingLogger
 							}
 						}
 						WriteConfig();
+						break;
+					case "6":
+						ColoredOutput.WriteLine($"Currently set to keep up to ##white##{Options.DaysToKeepLogs}### days of log files.");
+						ColoredOutput.Write($"Days to keep (##white##{Options.DaysToKeepLogs}###): ##white##");
+						int days = Options.DaysToKeepLogs;
+						try
+						{
+							days = Convert.ToInt32(Console.ReadLine());
+						}
+						catch (FormatException)
+						{
+							ColoredOutput.WriteLine("##red##Error, response must be in numerical format.");
+							ColoredOutput.WriteLine($"##red##Leaving setting at {Options.DaysToKeepLogs} days");
+						}
+						Options.DaysToKeepLogs = days;
 						break;
 					case "7":
 						if (Options.LoadOnStartup)
@@ -249,7 +253,7 @@ namespace PingLogger
 
 			foreach (var host in Options.Hosts)
 			{
-				Pingers.Add(new Pinger(host, Options.AllSilent));
+				Pingers.Add(new Pinger(host, Options.AllSilent, Options.DaysToKeepLogs));
 			}
 		}
 		public static bool CheckIfHostExists(string hostName, bool ignoreFirstFind = false)
@@ -267,7 +271,7 @@ namespace PingLogger
 					{
 						return true;
 					}
-					if( occurances >= 1 & ignoreFirstFind)
+					if (occurances >= 1 & ignoreFirstFind)
 					{
 						return true;
 					}
@@ -749,7 +753,16 @@ namespace PingLogger
 				{
 					var fileContents = File.ReadAllText("./opts.json");
 					Options = JsonSerializer.Deserialize<Opts>(fileContents);
-					var silentFile = File.ReadAllText("./silent.txt");
+					var silentFile = string.Empty;
+					try
+					{
+						silentFile = File.ReadAllText("./silent.txt");
+					}
+					catch (FileNotFoundException)
+					{
+						ColoredOutput.WriteLine("##red##Error: silent.txt not found, setting back to default.", true);
+						silentFile = "##red##...............................................................................\r\n##red##.....##white##xxxxxxxxxxxxx##red##.....##white##xxxxxxxxxxxxxx##red##.....##white##xxxxxxxxxxxxxx##red##.....##white##xxxxxxxxxxxxx##red##.....\r\n##red##.....##white##xxxxxxxxxxxxx##red##.....##white##xxxxxxxxxxxxxx##red##.....##white##xxxxxxxxxxxxxx##red##.....##white##xxxxxxxxxxxxx##red##.....\r\n##red##.........##white##xxxxx##red##.........##white##xxxxx##red##..............##white##xxxxx##red##..................##white##xxxxx##red##.........\r\n##red##.........##white##xxxxx##red##.........##white##xxxxxxxxxxxxxx##red##.....##white##xxxxxxxxxxxxxx##red##.........##white##xxxxx##red##.........\r\n##red##.........##white##xxxxx##red##.........##white##xxxxx##red##.......................##white##xxxxx##red##.........##white##xxxxx##red##.........\r\n##red##.........##white##xxxxx##red##.........##white##xxxxxxxxxxxxxx##red##.....##white##xxxxxxxxxxxxxx##red##.........##white##xxxxx##red##.........\r\n##red##.........##white##xxxxx##red##.........##white##xxxxxxxxxxxxxx##red##.....##white##xxxxxxxxxxxxxx##red##.........##white##xxxxx##red##.........\r\n##red##...............................................................................";
+					}
 					if (silentFile != Options.SilentOutput)
 					{
 						ColoredOutput.WriteLine("The file silent.txt was changed since last ran, updating.", true);
@@ -765,9 +778,15 @@ namespace PingLogger
 					}
 					return true;
 				}
-				catch (Exception)
+				catch (FileNotFoundException)
 				{
 					ColoredOutput.WriteLine("##red##Error loading configuration file", true);
+					ColoredOutput.WriteLine("##red##File not found.", true);
+				}
+				catch (JsonException)
+				{
+					ColoredOutput.WriteLine("##red##Error loading configuration file", true);
+					ColoredOutput.WriteLine("##red##File is formatted incorrectly.", true);
 				}
 			}
 			Options = new Opts

@@ -7,6 +7,7 @@ using System.Net;
 using System.Net.NetworkInformation;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace PingLogger
 {
@@ -17,6 +18,7 @@ namespace PingLogger
 		private bool stopping = false;
 		private readonly ILogger Logger;
 		private Thread RunThread;
+		private Ping pingSender = new Ping();
 		/// <summary>
 		/// This class is where all of the actual pinging work is done.
 		/// I creates a thread that loops until canceled.
@@ -24,7 +26,7 @@ namespace PingLogger
 		/// </summary>
 		/// <param name="host">The host that will be pinged.</param>
 		/// <param name="defaultSilent">Set this to true to prevent Serilog from printing to the console.</param>
-		public Pinger(Host host, bool defaultSilent = false)
+		public Pinger(Host host, bool defaultSilent = false, int daysToKeep = 7)
 		{
 			Host = host;
 			if (!Directory.Exists("./Logs"))
@@ -32,43 +34,103 @@ namespace PingLogger
 			//Check to see if just this is supposed to be silent, or if it's app-wide setting
 			var outputTemp = "[{Timestamp:HH:mm:ss} {Level:u4}] {Message:lj}{NewLine}{Exception}";
 			var errorOutputTemp = "[{Timestamp:HH:mm:ss} {Level:u5}] {Message:lj}{NewLine}{Exception}";
-			var filePath = "./Logs/" + Host.HostName + "-Verbose-{Date}.log";
+
+			var filePath = "./Logs/" + Host.HostName + "-{Date}.log";
 			var errorPathName = "./Logs/" + Host.HostName + "-Errors-{Date}.log";
 			var warnPathName = "./Logs/" + Host.HostName + "-Warnings-{Date}.log";
+
+#if DEBUG
+			var debugOutputTemp = "[{Timestamp:HH:mm:ss.fff} {Level}] ({ThreadId}) {Message:lj}{NewLine}{Exception}";
+			var debugPathName = "./Logs/" + Host.HostName + "-Debug-{Date}.log";
+#endif
 
 			if (!defaultSilent)
 			{
 				Logger = new LoggerConfiguration()
-					.WriteTo.Console(theme: Serilog.Sinks.SystemConsole.Themes.AnsiConsoleTheme.Literate, outputTemplate: outputTemp)
+#if DEBUG
+					.Enrich.With(new ThreadIdEnricher())
+					.MinimumLevel.Verbose()
+#endif
+					.WriteTo.Console(
+						theme: Serilog.Sinks.SystemConsole.Themes.AnsiConsoleTheme.Literate, 
+						outputTemplate: outputTemp,
+						restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Information
+					)
 					.WriteTo.Logger(
 						l => l.Filter.ByIncludingOnly(e => e.Level == Serilog.Events.LogEventLevel.Error)
-						.WriteTo.RollingFile(errorPathName, outputTemplate: errorOutputTemp, shared: true)
+						.WriteTo.RollingFile(
+							errorPathName,
+							outputTemplate: errorOutputTemp,
+							shared: true,
+							retainedFileCountLimit: daysToKeep)
 						)
 					.WriteTo.Logger(
 						l => l.Filter.ByIncludingOnly(e => e.Level == Serilog.Events.LogEventLevel.Warning)
-						.WriteTo.RollingFile(warnPathName, outputTemplate: outputTemp, shared: true)
+						.WriteTo.RollingFile(
+							warnPathName,
+							outputTemplate: outputTemp, 
+							shared: true,
+							retainedFileCountLimit: daysToKeep)
 						)
+#if DEBUG
+					.WriteTo.Logger(
+						l => l.Filter.ByIncludingOnly(e => e.Level == Serilog.Events.LogEventLevel.Debug)
+						.WriteTo.RollingFile(
+							debugPathName, 
+							outputTemplate: debugOutputTemp, 
+							shared: true,
+							retainedFileCountLimit: daysToKeep,
+							restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Debug)
+						)
+#endif
 					.WriteTo.RollingFile(
 						filePath,
 						shared: true,
-						outputTemplate: outputTemp)
+						outputTemplate: outputTemp,
+						retainedFileCountLimit: daysToKeep,
+						restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Information)
 					.CreateLogger();
 			}
 			else
 			{
 				Logger = new LoggerConfiguration()
+#if DEBUG
+					.Enrich.With(new ThreadIdEnricher())
+					.MinimumLevel.Verbose()
+#endif
 					.WriteTo.Logger(
 						l => l.Filter.ByIncludingOnly(e => e.Level == Serilog.Events.LogEventLevel.Error)
-						.WriteTo.RollingFile(errorPathName, outputTemplate: errorOutputTemp, shared: true)
+						.WriteTo.RollingFile(
+							errorPathName,
+							outputTemplate: errorOutputTemp,
+							shared: true,
+							retainedFileCountLimit: daysToKeep)
 						)
 					.WriteTo.Logger(
 						l => l.Filter.ByIncludingOnly(e => e.Level == Serilog.Events.LogEventLevel.Warning)
-						.WriteTo.RollingFile(warnPathName, outputTemplate: outputTemp, shared: true)
+						.WriteTo.RollingFile(
+							warnPathName,
+							outputTemplate: outputTemp,
+							shared: true,
+							retainedFileCountLimit: daysToKeep)
 						)
+#if DEBUG
+					.WriteTo.Logger(
+						l => l.Filter.ByIncludingOnly(e => e.Level == Serilog.Events.LogEventLevel.Debug)
+						.WriteTo.RollingFile(
+							debugPathName,
+							outputTemplate: debugOutputTemp,
+							shared: true,
+							retainedFileCountLimit: daysToKeep,
+							restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Debug)
+						)
+#endif
 					.WriteTo.RollingFile(
 						filePath,
 						shared: true,
-						outputTemplate: outputTemp)
+						outputTemplate: outputTemp,
+						retainedFileCountLimit: daysToKeep,
+						restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Information)
 					.CreateLogger();
 			}
 			//Check to make sure the packet size isn't too large. Don't want to abuse this.
@@ -88,6 +150,7 @@ namespace PingLogger
 			Logger.Information("Verifying IP address of hostname is current.");
 			foreach (var ip in Dns.GetHostAddresses(Host.HostName))
 			{
+				Logger.Debug($"IP: {ip.ToString()}");
 				if (ip.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
 				{
 					if (ip.ToString() == Host.IP)
@@ -109,6 +172,7 @@ namespace PingLogger
 		/// <returns>Most recent Host class</returns>
 		public Host UpdateHost()
 		{
+			Logger.Debug("UpdateHost() Requested");
 			return Host;
 		}
 
@@ -120,6 +184,7 @@ namespace PingLogger
 		/// <returns>Random string of letters and numbers</returns>
 		private string RandomString(int length)
 		{
+			Logger.Debug($"Random string of {length} characters requested.");
 			const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 			return new string(Enumerable.Repeat(chars, length)
 			  .Select(s => s[random.Next(s.Length)]).ToArray());
@@ -130,6 +195,7 @@ namespace PingLogger
 		/// </summary>
 		public void Start()
 		{
+			Logger.Debug("Start()");
 			RunThread = new Thread(new ThreadStart(StartLogging));
 			Logger.Information("Starting ping logging for host {0} ({1})", Host.HostName, Host.IP);
 			Logger.Information("Using the following options:");
@@ -137,8 +203,8 @@ namespace PingLogger
 			Logger.Information("Timeout: {0}ms", Host.Timeout);
 			Logger.Information("Interval: {0}ms", Host.Interval);
 			Logger.Information("Packet Size: {0} bytes", Host.PacketSize);
-			//Logger.Information("Silent Output: {0}", Host.Silent);
 
+			Logger.Debug("RunThread.Start()");
 			RunThread.Start();
 		}
 		/// <summary>
@@ -146,31 +212,48 @@ namespace PingLogger
 		/// </summary>
 		private void StartLogging()
 		{
-			Ping pingSender = new Ping();
+			Logger.Debug("StartLogging() Called.");
 			pingSender.PingCompleted += new PingCompletedEventHandler(SendPing);
 			PingOptions options = new PingOptions();
 			AutoResetEvent waiter = new AutoResetEvent(false);
-			options.DontFragment = false;
 
 			//Generate a string that's as long as the packet size. 
 			//This is outside of the loop, so it's going to be the same while the thread is running.
 			//If it's restarted, we generate a new string. 
 			string data = RandomString(Host.PacketSize);
-			
+			Logger.Debug($"Data string: {data}");
+
 			byte[] buffer = Encoding.ASCII.GetBytes(data);
 
 			Running = true;
 			while (Running)
 			{
-				pingSender.SendAsync(Host.IP, Host.Timeout, buffer, options, waiter);
-				waiter.WaitOne();
-				Thread.Sleep(Host.Interval);
+				Logger.Debug($"Running: {Running.ToString()}");
+				Logger.Debug($"stopping: {stopping.ToString()}");
+				options.DontFragment = Host.DontFragment;
 				if (stopping)
 				{
 					Running = false;
-					pingSender.Dispose();
+				}
+				else
+				{
+					Logger.Debug("Sending Async Ping");
+					try
+					{
+						pingSender.SendAsync(Host.IP, Host.Timeout, buffer, options, waiter);
+						waiter.WaitOne();
+						Thread.Sleep(Host.Interval);
+						Logger.Debug($"Waited {Host.Interval}ms");
+					}
+					catch
+					{
+						Logger.Debug("Thread Interrupted");
+					}
 				}
 			}
+			Logger.Debug("PingSender.Dispose()");
+			pingSender.Dispose();
+			Logger.Debug("SendPing() Ended");
 		}
 		/// <summary>
 		/// Change the 'stopping' variable to true so that the thread can dispose of the pingSender properly, then allows the thread to exit safely.
@@ -179,6 +262,15 @@ namespace PingLogger
 		{
 			stopping = true;
 			Logger.Information("Stopping ping logger for host {0} ({1})", Host.HostName, Host.IP);
+			Logger.Debug("SendAsyncCancel()");
+			pingSender.SendAsyncCancel();
+			try
+			{
+				RunThread.Interrupt();
+			} catch
+			{
+				Logger.Debug("Thread Interrupted");
+			}
 		}
 		/// <summary>
 		/// The main workhorse of the class. 
@@ -187,20 +279,25 @@ namespace PingLogger
 		/// </summary>
 		private void SendPing(object sender, PingCompletedEventArgs e)
 		{
+			Logger.Debug("SendPing() called");
 			if (e.Cancelled)
 			{
 				Logger.Information("Ping canceled.");
 				((AutoResetEvent)e.UserState).Set();
+				return;
 			}
 			if (e.Error != null)
 			{
-				Logger.Error("Ping failed: {0}", e.Error.ToString());
+				Logger.Information("Ping canceled.");
+				//Logger.Debug(e.Error.ToString());
 				((AutoResetEvent)e.UserState).Set();
+				return;
 			}
 			var reply = e.Reply;
 			switch (reply.Status)
 			{
 				case IPStatus.Success:
+					Logger.Debug("Ping Success");
 					//Ping was successful. Check to see if the round trip time was greater than the threshold.
 					//If it is, then we change the output to be a warning, making it easy to track down in the log files.
 					if (reply.RoundtripTime >= Host.Threshold)
@@ -226,9 +323,15 @@ namespace PingLogger
 					Logger.Error("Ping failed due to hardware.");
 					break;
 				case IPStatus.TimedOut:
+					Logger.Debug("Ping Timed Out");
 					Logger.Error("Ping timed out to host {0} ({1}). Timeout is {2}ms", Host.HostName, Host.IP.ToString(), Host.Timeout);
 					break;
+				case IPStatus.PacketTooBig:
+					Logger.Warning("Specified packet was too big ({0} bytes). Turning on fragmentation.", Host.PacketSize) ;
+					Host.DontFragment = false;
+					break;
 			}
+			Logger.Debug("Ping Ended");
 			((AutoResetEvent)e.UserState).Set();
 		}
 
@@ -237,6 +340,7 @@ namespace PingLogger
 
 		protected virtual void Dispose(bool disposing)
 		{
+			Logger.Debug("Dispose() called");
 			if (!disposedValue)
 			{
 				if (disposing)
