@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading;
 
-namespace PingLogger.Misc
+namespace PingLogger.CLI.Misc
 {
 	//Found this on Stack Overflow. https://stackoverflow.com/a/18342182/1659361
 	//Works well for what I need. 

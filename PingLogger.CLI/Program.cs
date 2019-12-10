@@ -1,4 +1,4 @@
-﻿using PingLogger.Misc;
+﻿using PingLogger.CLI.Misc;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -6,7 +6,7 @@ using System.Net;
 using System.Text.Json;
 using System.Threading;
 
-namespace PingLogger
+namespace PingLogger.CLI
 {
 	class Program
 	{

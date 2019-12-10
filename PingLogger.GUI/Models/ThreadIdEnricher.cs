@@ -2,7 +2,7 @@
 using Serilog.Events;
 using System.Threading;
 
-namespace PingLogger.Misc
+namespace PingLogger.GUI.Models
 {
 	class ThreadIdEnricher : ILogEventEnricher
 	{

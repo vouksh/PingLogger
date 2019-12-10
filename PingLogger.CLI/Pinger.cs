@@ -1,4 +1,4 @@
-﻿using PingLogger.Misc;
+﻿using PingLogger.CLI.Misc;
 using Serilog;
 using System;
 using System.IO;
@@ -9,7 +9,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace PingLogger
+namespace PingLogger.CLI
 {
 	public class Pinger : IDisposable
 	{
