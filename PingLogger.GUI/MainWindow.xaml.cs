@@ -22,7 +22,7 @@ namespace PingLogger.GUI
 		private bool Initializing = false;
 		public MainWindow()
 		{
-			Logger.Log.Debug("MainWindow()");
+			Version version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
 			Initializing = true;
 			InitializeComponent();
 			_tabItems = new List<TabItem>();
@@ -55,6 +55,7 @@ namespace PingLogger.GUI
 			tabControl.DataContext = _tabItems;
 			tabControl.SelectedIndex = 0;
 			Initializing = false;
+			this.Title = $"PingLogger v{version}";
 		}
 		private void tabAddBtn_Click(object sender, RoutedEventArgs e)
 		{

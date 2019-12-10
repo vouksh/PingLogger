@@ -12,6 +12,7 @@
 	<AssemblyName>PingLogger</AssemblyName>
 	<PublishReadyToRunShowWarnings>true</PublishReadyToRunShowWarnings>
 	<ApplicationIcon>AppIcon.ico</ApplicationIcon>
+	<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -20,6 +21,7 @@
 
   <ItemGroup>
     <None Remove="add.png" />
+    <None Remove="AppIcon.ico" />
     <None Remove="delete.png" />
   </ItemGroup>
 
@@ -31,6 +33,7 @@
 
   <ItemGroup>
     <Resource Include="add.png" />
+    <Resource Include="AppIcon.ico" />
     <Resource Include="delete.png" />
   </ItemGroup>
 
@@ -43,6 +46,14 @@
 
   <ItemGroup>
     <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="AssemblyVersion.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>AssemblyVersion.tt</DependentUpon>
+    </Compile>
   </ItemGroup>
   
 </Project>
