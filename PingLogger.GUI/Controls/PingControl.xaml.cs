@@ -79,6 +79,18 @@ namespace PingLogger.GUI.Controls
 				Pinger.Start();
 			}
 		}
+		public void DoStart()
+		{
+			StopBtn.IsEnabled = true;
+			StartBtn.IsEnabled = false;
+			HostNameBox.IsEnabled = false;
+			IntervalBox.IsEnabled = false;
+			WarningBox.IsEnabled = false;
+			TimeoutBox.IsEnabled = false;
+			PacketSizeBox.IsEnabled = false;
+			Pinger = new Pinger(PingHost);
+			Pinger.Start();
+		}
 		void Timer_Tick(object sender, EventArgs e)
 		{
 			if (Pinger != null && Pinger.Running)
@@ -151,7 +163,7 @@ namespace PingLogger.GUI.Controls
 			Pinger.Start();
 		}
 
-		public void Stop()
+		public void DoStop()
 		{
 			StopBtn.IsEnabled = false;
 			StartBtn.IsEnabled = true;

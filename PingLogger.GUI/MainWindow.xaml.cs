@@ -104,7 +104,7 @@ namespace PingLogger.GUI
 					MessageBoxImage.Question);
 				if (question == MessageBoxResult.Yes)
 				{
-					(tab.Content as PingControl).Stop();
+					(tab.Content as PingControl).DoStop();
 					tabControl.DataContext = null;
 					_tabItems.Remove(tab);
 					Config.Hosts.Remove(selectedHost);
@@ -193,6 +193,51 @@ namespace PingLogger.GUI
 				_tabItems.Remove(tab);
 				tab.Header = $"Host: {hostName}";
 				_tabItems.Insert(curIndex, tab);
+			}
+		}
+
+		public void StopAllLoggers()
+		{
+			var question = MessageBox.Show("Are you sure you want to stop all ping loggers?", "Alert", MessageBoxButton.YesNo, MessageBoxImage.Question);
+			if (question == MessageBoxResult.Yes)
+			{
+				foreach (var item in _tabItems)
+				{
+					try
+					{
+						if (item != null && (item.Header as string).Contains("Host:"))
+						{
+							var pingCtrl = item.Content as PingControl;
+							pingCtrl.DoStop();
+						}
+					}
+					catch (Exception e)
+					{
+						Logger.Log.Debug(e.ToString());
+					}
+				}
+			}
+		}
+
+		public void StartAllLoggers()
+		{
+			var question = MessageBox.Show("Are you sure you want to start all ping loggers?", "Alert", MessageBoxButton.YesNo, MessageBoxImage.Question);
+			if (question == MessageBoxResult.Yes)
+			{
+				foreach (var item in _tabItems)
+				{
+					try
+					{
+						if (item != null && (item.Header as string).Contains("Host:"))
+						{
+							var pingCtrl = item.Content as PingControl;
+							pingCtrl.DoStart();
+						}
+					} catch (Exception e)
+					{
+						Logger.Log.Debug(e.ToString());
+					}
+				}
 			}
 		}
 	}

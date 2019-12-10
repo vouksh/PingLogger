@@ -81,12 +81,15 @@ namespace PingLogger.GUI.Controls
 
 		private void StartAllLoggersBtn_Click(object sender, RoutedEventArgs e)
 		{
-			MessageBox.Show("Not yet implemented.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+			var parentWindow = Window.GetWindow(this) as MainWindow;
+			parentWindow.StartAllLoggers();
+			//MessageBox.Show("Not yet implemented.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
 		}
 
 		private void StopAllLoggersBtn_Click(object sender, RoutedEventArgs e)
 		{
-			MessageBox.Show("Not yet implemented.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+			var parentWindow = Window.GetWindow(this) as MainWindow;
+			parentWindow.StopAllLoggers();
 		}
 	}
 }
