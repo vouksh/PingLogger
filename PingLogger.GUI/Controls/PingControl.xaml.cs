@@ -93,22 +93,31 @@ namespace PingLogger.GUI.Controls
 		}
 		void Timer_Tick(object sender, EventArgs e)
 		{
+			//Logger.Debug("Timer_Tick()");
 			if (Pinger != null && Pinger.Running)
 			{
+				Logger.Debug("Pinger not null & Pinger Running");
 				StringBuilder sb = new StringBuilder();
+				Logger.Debug($"Replies to parse: {Pinger.Replies.Count}");
 				for (int i = 0; i < Pinger.Replies.Count - 1; i++)
 				{
+					Logger.Debug($"Reply #{i}");
 					Reply reply;
 					var success = Pinger.Replies.TryTake(out reply);
 					if (success)
 					{
+						Logger.Debug("Ping Success");
 						var line = $"[{ reply.DateTime.ToLongTimeString()}] ";
 						if (reply.RoundTrip > 0)
+						{
 							PingTimes.Add(reply.RoundTrip);
+							Logger.Debug($"RoundTrip Time > 0: {reply.RoundTrip}");
+						}
 
 						if (reply.TimedOut)
 						{
 							Timeouts++;
+							Logger.Debug($"Reply timed out. Number of Timeouts: {Timeouts}");
 							line += $"Timed out to host {reply.Host.HostName}";
 						}
 						else
@@ -117,12 +126,15 @@ namespace PingLogger.GUI.Controls
 						}
 						sb.Append(line);
 						sb.Append(Environment.NewLine);
+
 					}
 				}
+				Logger.Debug($"Adding line to text box: {sb.ToString()}");
 				PingStatusBox.Text += sb.ToString();
 				var lines = PingStatusBox.Text.Split(Environment.NewLine).ToList();
 				if (lines.Count() > 26)
 				{
+					Logger.Debug($"Lines in text box greater than 26, removing a line.");
 					lines.RemoveAt(0);
 					PingStatusBox.Text = string.Join(Environment.NewLine, lines);
 				}
@@ -152,15 +164,24 @@ namespace PingLogger.GUI.Controls
 
 		private void StartBtn_Click(object sender, RoutedEventArgs e)
 		{
-			StopBtn.IsEnabled = true;
-			StartBtn.IsEnabled = false;
-			HostNameBox.IsEnabled = false;
-			IntervalBox.IsEnabled = false;
-			WarningBox.IsEnabled = false;
-			TimeoutBox.IsEnabled = false;
-			PacketSizeBox.IsEnabled = false;
-			Pinger = new Pinger(PingHost);
-			Pinger.Start();
+			try
+			{
+				Logger.Debug($"StartBtn_Click");
+				StopBtn.IsEnabled = true;
+				StartBtn.IsEnabled = false;
+				HostNameBox.IsEnabled = false;
+				IntervalBox.IsEnabled = false;
+				WarningBox.IsEnabled = false;
+				TimeoutBox.IsEnabled = false;
+				PacketSizeBox.IsEnabled = false;
+				Pinger = new Pinger(PingHost);
+				Logger.Debug($"Pinger instance created.");
+				Pinger.Start();
+				Logger.Debug($"Pinger started.");
+			} catch (Exception ex)
+			{
+				Logger.Debug(ex.ToString());
+			}
 		}
 
 		public void DoStop()

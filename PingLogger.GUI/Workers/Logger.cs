@@ -12,8 +12,13 @@ namespace PingLogger.GUI.Workers
 		{
 			Log = new LoggerConfiguration()
 				.MinimumLevel.Verbose()
-				.WriteTo.File("PingLogger.GUI.log", restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Verbose, shared: true)
+				.WriteTo.File("PingLogger.log", restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Verbose, shared: true)
 				.CreateLogger();
+		}
+
+		public static void Debug(string text)
+		{
+			Log.Debug(text);
 		}
 	}
 }

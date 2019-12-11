@@ -4,15 +4,14 @@
     <OutputType>WinExe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <UseWPF>true</UseWPF>
-	<PublishTrimmed>true</PublishTrimmed>
-	<PublishReadyToRun>true</PublishReadyToRun>
-	<PublishSingleFile>true</PublishSingleFile>
 	<RuntimeIdentifier>win-x64</RuntimeIdentifier>
-	<Deterministic>true</Deterministic>
+	<Deterministic>false</Deterministic>
 	<AssemblyName>PingLogger</AssemblyName>
 	<PublishReadyToRunShowWarnings>true</PublishReadyToRunShowWarnings>
 	<ApplicationIcon>AppIcon.ico</ApplicationIcon>
 	<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+	<PublishTrimmed>true</PublishTrimmed>
+	<PublishReadyToRun>true</PublishReadyToRun>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -29,6 +28,8 @@
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
     <PackageReference Include="Serilog" Version="2.9.1-dev-01154" />
     <PackageReference Include="Serilog.Sinks.File" Version="4.1.0" />
+    <PackageReference Include="System.Net.NetworkInformation" Version="4.3.0" />
+    <PackageReference Include="System.Net.Ping" Version="4.3.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -54,6 +55,11 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>AssemblyVersion.tt</DependentUpon>
     </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+	<TrimmerRootAssembly  Include="System.Net.Ping" />
+	<TrimmerRootAssembly  Include="System.Net.NetworkInformation" />
   </ItemGroup>
   
 </Project>
