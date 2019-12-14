@@ -4,6 +4,7 @@ using PingLogger.GUI.Workers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -23,6 +24,7 @@ namespace PingLogger.GUI
 		public MainWindow()
 		{
 			Version version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
+			Thread.CurrentThread.Name = "MainWindowThread";
 			Initializing = true;
 			InitializeComponent();
 			_tabItems = new List<TabItem>();
@@ -235,8 +237,28 @@ namespace PingLogger.GUI
 						}
 					} catch (Exception e)
 					{
-						Logger.Log.Debug(e.ToString());
+						Logger.Debug(e.ToString());
 					}
+				}
+			}
+		}
+
+		private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+		{
+			Logger.Debug("Application closing");
+			foreach (var item in _tabItems)
+			{
+				try
+				{
+					if (item != null && (item.Header as string).Contains("Host:"))
+					{
+						var pingCtrl = item.Content as PingControl;
+						pingCtrl.DoStop();
+					}
+				}
+				catch (Exception ex)
+				{
+					Logger.Debug(ex.ToString());
 				}
 			}
 		}

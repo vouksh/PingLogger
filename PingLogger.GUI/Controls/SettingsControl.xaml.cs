@@ -25,11 +25,14 @@ namespace PingLogger.GUI.Controls
 		{
 			InitializeComponent();
 		}
+
 		private static readonly Regex regex = new Regex("[^0-9.-]+");
+
 		private static bool IsNumericInput(string text)
 		{
 			return !regex.IsMatch(text);
 		}
+
 		private void LoadOnBoot_Unchecked(object sender, RoutedEventArgs e)
 		{
 			Config.LoadWithWindows = false;
@@ -62,6 +65,7 @@ namespace PingLogger.GUI.Controls
 				CreateStartupShortcut();
 			}
 		}
+
 		private void CreateStartupShortcut()
 		{
 			var batchPath = Environment.GetFolderPath(Environment.SpecialFolder.Startup) + "\\PingLogger.bat";
@@ -79,6 +83,7 @@ namespace PingLogger.GUI.Controls
 				File.WriteAllText(batchPath, batchScript);
 			}
 		}
+
 		private void DeleteStartupShortcut()
 		{
 			var batchPath = Environment.GetFolderPath(Environment.SpecialFolder.Startup) + "\\PingLogger.bat";
@@ -106,7 +111,16 @@ namespace PingLogger.GUI.Controls
 		{
 			try
 			{
-				Config.DaysToKeepLogs = Convert.ToInt32(daysToKeep.Text);
+				var input = Convert.ToInt32(daysToKeep.Text);
+				if(input > 0)
+				{
+					Config.DaysToKeepLogs = input;
+				} else
+				{
+					MessageBox.Show("Input can not be less than 1", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+					daysToKeep.Text = "1";
+					Config.DaysToKeepLogs = 1;
+				}
 			}
 			catch (FormatException)
 			{

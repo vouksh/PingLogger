@@ -8,6 +8,7 @@ using System.Net.NetworkInformation;
 using System.Threading;
 using PingLogger.GUI.Models;
 using System.Collections.Concurrent;
+using System.Diagnostics;
 
 namespace PingLogger.GUI.Workers
 {
@@ -27,7 +28,7 @@ namespace PingLogger.GUI.Workers
 		/// </summary>
 		/// <param name="host">The host that will be pinged.</param>
 		/// <param name="defaultSilent">Set this to true to prevent Serilog from printing to the console.</param>
-		public Pinger(Host host, int daysToKeep = 7)
+		public Pinger(Host host)
 		{
 			Host = host;
 			if (!Directory.Exists("./Logs"))
@@ -36,13 +37,13 @@ namespace PingLogger.GUI.Workers
 			var outputTemp = "[{Timestamp:HH:mm:ss} {Level:u4}] {Message:lj}{NewLine}{Exception}";
 			var errorOutputTemp = "[{Timestamp:HH:mm:ss} {Level:u5}] {Message:lj}{NewLine}{Exception}";
 
-			var filePath = "./Logs/" + Host.HostName + ".log";
-			var errorPathName = "./Logs/" + Host.HostName + "-Errors.log";
-			var warnPathName = "./Logs/" + Host.HostName + "-Warnings.log";
+			var filePath = "./Logs/" + Host.HostName + "-{Date}.log";
+			var errorPathName = "./Logs/" + Host.HostName + "-Errors-{Date}.log";
+			var warnPathName = "./Logs/" + Host.HostName + "-Warnings-{Date}.log";
 
 #if DEBUG
 			var debugOutputTemp = "[{Timestamp:HH:mm:ss.fff} {Level}] ({ThreadId}) {Message:lj}{NewLine}{Exception}";
-			var debugPathName = "./Logs/" + Host.HostName + "-Debug.log";
+			var debugPathName = "./Logs/" + Host.HostName + "-Debug-{Date}.log";
 #endif
 			Logger = new LoggerConfiguration()
 #if DEBUG
@@ -51,40 +52,40 @@ namespace PingLogger.GUI.Workers
 #endif
 				.WriteTo.Logger(
 					l => l.Filter.ByIncludingOnly(e => e.Level == Serilog.Events.LogEventLevel.Error)
-					.WriteTo.File(
+					.WriteTo.RollingFile(
 						errorPathName,
 						restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Error,
-						retainedFileCountLimit: daysToKeep,
+						retainedFileCountLimit: Config.DaysToKeepLogs,
 						shared: true,
 						outputTemplate: errorOutputTemp
 						)
 					)
 				.WriteTo.Logger(
 					l => l.Filter.ByIncludingOnly(e => e.Level == Serilog.Events.LogEventLevel.Warning)
-					.WriteTo.File(
+					.WriteTo.RollingFile(
 						warnPathName,
 						shared: true,
-						retainedFileCountLimit: daysToKeep,
+						retainedFileCountLimit: Config.DaysToKeepLogs,
 						outputTemplate: outputTemp
 						)
 					)
 #if DEBUG
 					.WriteTo.Logger(
 					l => l.Filter.ByIncludingOnly(e => e.Level == Serilog.Events.LogEventLevel.Debug)
-					.WriteTo.File(
+					.WriteTo.RollingFile(
 						debugPathName,
 						shared: true,
-						retainedFileCountLimit: daysToKeep,
+						retainedFileCountLimit: Config.DaysToKeepLogs,
 						restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Debug,
 						outputTemplate: debugOutputTemp
 						)
 					)
 #endif
-				.WriteTo.File(
+				.WriteTo.RollingFile(
 						filePath,
 						shared: true,
 						outputTemplate: outputTemp,
-						retainedFileCountLimit: daysToKeep,
+						retainedFileCountLimit: Config.DaysToKeepLogs,
 						restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Information
 					)
 				.CreateLogger();
@@ -153,6 +154,7 @@ namespace PingLogger.GUI.Workers
 		{
 			Logger.Debug("Start()");
 			RunThread = new Thread(new ThreadStart(StartLogging));
+			RunThread.Name = $"{Host.HostName}-MainThread";
 			Logger.Information("Starting ping logging for host {0} ({1})", Host.HostName, Host.IP);
 			Logger.Information("Using the following options:");
 			Logger.Information("Threshold: {0}ms", Host.Threshold);
@@ -170,7 +172,11 @@ namespace PingLogger.GUI.Workers
 		{
 			Logger.Debug("StartLogging() Called.");
 			pingSender.PingCompleted += new PingCompletedEventHandler(SendPing);
-			PingOptions options = new PingOptions();
+			PingOptions options = new PingOptions
+			{
+				DontFragment = Host.PacketSize <= 32,
+				Ttl = 64
+			};
 			AutoResetEvent waiter = new AutoResetEvent(false);
 
 			//Generate a string that's as long as the packet size. 
@@ -186,7 +192,6 @@ namespace PingLogger.GUI.Workers
 			{
 				Logger.Debug($"Running: {Running.ToString()}");
 				Logger.Debug($"stopping: {stopping.ToString()}");
-				options.DontFragment = false;
 				if (stopping)
 				{
 					Running = false;
@@ -196,8 +201,13 @@ namespace PingLogger.GUI.Workers
 					Logger.Debug("Sending Async Ping");
 					try
 					{
+						var sw = new Stopwatch();
+						sw.Start();
+						Logger.Debug("Stopwatch Started");
 						pingSender.SendAsync(Host.IP, Host.Timeout, buffer, options, waiter);
 						waiter.WaitOne();
+						sw.Stop();
+						Logger.Debug($"Stopwatch.ElapsesedMilliseconds: {sw.ElapsedMilliseconds}ms");
 						Thread.Sleep(Host.Interval);
 						Logger.Debug($"Waited {Host.Interval}ms");
 					}
@@ -236,6 +246,7 @@ namespace PingLogger.GUI.Workers
 		/// </summary>
 		private void SendPing(object sender, PingCompletedEventArgs e)
 		{
+			Thread.CurrentThread.Name = $"{Host.HostName}-PingThread-{Thread.CurrentThread.ManagedThreadId}";
 			Logger.Debug("SendPing() called");
 			if (e.Cancelled)
 			{
@@ -257,17 +268,27 @@ namespace PingLogger.GUI.Workers
 			{
 				case IPStatus.Success:
 					Logger.Debug("Ping Success");
-					//Ping was successful. Check to see if the round trip time was greater than the threshold.
-					//If it is, then we change the output to be a warning, making it easy to track down in the log files.
-					if (reply.RoundtripTime >= Host.Threshold)
+					//This check is because of a bug/problem with Ping where, if using a small timeout threshold, the ping reply can still be received.
+					//See https://docs.microsoft.com/en-us/dotnet/api/system.net.networkinformation.ping.send?redirectedfrom=MSDN&view=netcore-3.1#System_Net_NetworkInformation_Ping_Send_System_String_System_Int32_System_Byte___
+					if (reply.RoundtripTime < Host.Timeout)
 					{
-						Logger.Warning("Pinged {0} ({1}) RoundTrip: {2}ms (Over Threshold) TTL: {3}", Host.HostName, Host.IP.ToString(), reply.RoundtripTime, reply.Options.Ttl);
-						success = true;
-					}
-					else
+						//Ping was successful. Check to see if the round trip time was greater than the threshold.
+						//If it is, then we change the output to be a warning, making it easy to track down in the log files.
+						if (reply.RoundtripTime >= Host.Threshold)
+						{
+							Logger.Warning("Pinged {0} ({1}) RoundTrip: {2}ms (Over Threshold) TTL: {3}", Host.HostName, Host.IP.ToString(), reply.RoundtripTime, reply.Options.Ttl);
+							success = true;
+						}
+						else
+						{
+							Logger.Information("Pinged {0} ({1}) RoundTrip: {2}ms TTL: {3}", Host.HostName, Host.IP.ToString(), reply.RoundtripTime, reply.Options.Ttl);
+							success = true;
+						}
+					} else
 					{
-						Logger.Information("Pinged {0} ({1}) RoundTrip: {2}ms TTL: {3}", Host.HostName, Host.IP.ToString(), reply.RoundtripTime, reply.Options.Ttl);
-						success = true;
+						Logger.Debug("Ping Reply Success, but roundtrip time exceeds timeout. Marking it as a timeout.");
+						Logger.Error("Ping timed out to host {0} ({1}). Timeout is {2}ms", Host.HostName, Host.IP.ToString(), Host.Timeout);
+						timedOut = true;
 					}
 					break;
 				//These indicate that there was a problem somewhere along the way. 

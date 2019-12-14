@@ -8,8 +8,9 @@ namespace PingLogger.CLI.Misc
 	{
 		public void Enrich(LogEvent logEvent, ILogEventPropertyFactory propertyFactory)
 		{
+			string id = Thread.CurrentThread.Name != null ? Thread.CurrentThread.Name : Thread.CurrentThread.ManagedThreadId.ToString();
 			logEvent.AddPropertyIfAbsent(propertyFactory.CreateProperty(
-					"ThreadId", Thread.CurrentThread.ManagedThreadId));
+					"ThreadId", id));
 		}
 	}
 }

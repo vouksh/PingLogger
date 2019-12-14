@@ -32,6 +32,7 @@ namespace PingLogger.GUI.Controls
 		private Pinger Pinger;
 		private List<long> PingTimes = new List<long>();
 		private int Timeouts = 0;
+		private int Warnings = 0;
 		private readonly SynchronizationContext syncCtx;
 		private bool LoadFromVar = false;
 		private bool IsLookingUp = false;
@@ -123,6 +124,10 @@ namespace PingLogger.GUI.Controls
 						else
 						{
 							line += $"Pinged {reply.Host.HostName} - Round Trip: {reply.RoundTrip}ms";
+							if(reply.RoundTrip >= PingHost.Threshold)
+							{
+								Warnings++;
+							}
 						}
 						sb.Append(line);
 						sb.Append(Environment.NewLine);
@@ -146,6 +151,8 @@ namespace PingLogger.GUI.Controls
 
 					avgPingLbl.Content = Math.Ceiling(PingTimes.Average()).ToString() + "ms";
 				}
+				timeoutLbl.Content = Timeouts.ToString();
+				warningLbl.Content = Warnings.ToString();
 			} else
 			{
 				if (!IsLookingUp)
@@ -363,22 +370,6 @@ namespace PingLogger.GUI.Controls
 		private void TimeoutBox_LostFocus(object sender, RoutedEventArgs e)
 		{
 			UpdateHost();
-		}
-
-		private void expandBtn_Click(object sender, RoutedEventArgs e)
-		{
-			collapseBtn.Visibility = Visibility.Visible;
-			expandBtn.Visibility = Visibility.Hidden;
-			var parentWindow = Window.GetWindow(this) as MainWindow;
-			parentWindow.Width += 375;
-		}
-
-		private void collapseBtn_Click(object sender, RoutedEventArgs e)
-		{
-			collapseBtn.Visibility = Visibility.Hidden;
-			expandBtn.Visibility = Visibility.Visible;
-			var parentWindow = Window.GetWindow(this) as MainWindow;
-			parentWindow.Width -= 375;
 		}
 	}
 }
