@@ -8,5 +8,6 @@ namespace PingLogger.GUI.Models
 	{
 		public bool LoadOnSystemBoot { get; set; } = false;
 		public bool StartLoggersAutomatically { get; set; } = false;
+		public int DaysToKeepLogs { get; set; } = 7;
 	}
 }

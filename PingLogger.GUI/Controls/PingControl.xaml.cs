@@ -193,7 +193,10 @@ namespace PingLogger.GUI.Controls
 			WarningBox.IsEnabled = true;
 			TimeoutBox.IsEnabled = true;
 			PacketSizeBox.IsEnabled = true;
-			Pinger.Stop();
+			if (Pinger != null)
+			{
+				Pinger.Stop();
+			}
 		}
 
 		private void StopBtn_Click(object sender, RoutedEventArgs e)
@@ -360,6 +363,22 @@ namespace PingLogger.GUI.Controls
 		private void TimeoutBox_LostFocus(object sender, RoutedEventArgs e)
 		{
 			UpdateHost();
+		}
+
+		private void expandBtn_Click(object sender, RoutedEventArgs e)
+		{
+			collapseBtn.Visibility = Visibility.Visible;
+			expandBtn.Visibility = Visibility.Hidden;
+			var parentWindow = Window.GetWindow(this) as MainWindow;
+			parentWindow.Width += 375;
+		}
+
+		private void collapseBtn_Click(object sender, RoutedEventArgs e)
+		{
+			collapseBtn.Visibility = Visibility.Hidden;
+			expandBtn.Visibility = Visibility.Visible;
+			var parentWindow = Window.GetWindow(this) as MainWindow;
+			parentWindow.Width -= 375;
 		}
 	}
 }

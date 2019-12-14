@@ -5,9 +5,9 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:PingLogger.GUI.Controls"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
+             d:DesignHeight="435" d:DesignWidth="785">
 	<Grid x:Name="MainControl" Loaded="MainControl_Loaded">
-		<TextBlock x:Name="PingStatusBox" HorizontalAlignment="Left" Margin="482,0,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="430" Width="308" Background="White" IsEnabled="False" ScrollViewer.CanContentScroll="True"/>
+		<TextBlock x:Name="PingStatusBox" HorizontalAlignment="Left" Margin="480,5,0,0" TextWrapping="NoWrap" VerticalAlignment="Top" Height="425" Width="300" Background="White" IsEnabled="False" ScrollViewer.CanContentScroll="True"/>
 		<Label x:Name="label" Content="Host Name:" HorizontalAlignment="Left" Margin="10,39,0,0" VerticalAlignment="Top" Width="116" HorizontalContentAlignment="Right"/>
 		<Label x:Name="label_Copy" Content="IP Address:" HorizontalAlignment="Left" Margin="10,70,0,0" VerticalAlignment="Top" Width="116" HorizontalContentAlignment="Right"/>
 		<Label x:Name="label_Copy1" Content="Interval:" HorizontalAlignment="Left" Margin="10,101,0,0" VerticalAlignment="Top" Width="116" HorizontalContentAlignment="Right"/>
@@ -22,8 +22,10 @@
 		<TextBox x:Name="PacketSizeBox" HorizontalAlignment="Left" Margin="131,196,0,0" Text="32" TextWrapping="Wrap" VerticalAlignment="Top" Width="175" Height="26" FontSize="14" TabIndex="5" PreviewTextInput="PacketSizeBox_PreviewTextInput" LostFocus="PacketSizeBox_LostFocus" GotFocus="PacketSizeBox_GotFocus"/>
 		<Label x:Name="label1" Content="Average Ping:" HorizontalAlignment="Left" Margin="10,243,0,0" VerticalAlignment="Top"/>
 		<Label x:Name="avgPingLbl" Content="0ms" HorizontalAlignment="Left" Margin="93,243,0,0" VerticalAlignment="Top"/>
-		<Button x:Name="StartBtn" Content="Start Pinging" HorizontalAlignment="Left" Margin="51,316,0,0" VerticalAlignment="Top" Width="75" Height="35" Click="StartBtn_Click"/>
-		<Button x:Name="StopBtn" Content="Stop Pinging" HorizontalAlignment="Left" Margin="144,316,0,0" VerticalAlignment="Top" Width="74" Height="35" Click="StopBtn_Click" IsEnabled="False"/>
+		<Button x:Name="StartBtn" Content="Start Pinging" HorizontalAlignment="Left" Margin="133,316,0,0" VerticalAlignment="Top" Width="75" Height="35" Click="StartBtn_Click"/>
+		<Button x:Name="StopBtn" Content="Stop Pinging" HorizontalAlignment="Left" Margin="226,316,0,0" VerticalAlignment="Top" Width="74" Height="35" Click="StopBtn_Click" IsEnabled="False"/>
+		<Button x:Name="collapseBtn" Content="&lt;&lt;" HorizontalAlignment="Left" Margin="443,197,0,0" VerticalAlignment="Top" Click="collapseBtn_Click" Visibility="Hidden"/>
+		<Button x:Name="expandBtn" Content="&gt;&gt;" HorizontalAlignment="Left" Margin="443,197,0,0" VerticalAlignment="Top" Click="expandBtn_Click"/>
 
 	</Grid>
 </UserControl>

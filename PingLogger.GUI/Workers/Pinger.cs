@@ -7,6 +7,7 @@ using System.Net;
 using System.Net.NetworkInformation;
 using System.Threading;
 using PingLogger.GUI.Models;
+using System.Collections.Concurrent;
 
 namespace PingLogger.GUI.Workers
 {
@@ -18,7 +19,7 @@ namespace PingLogger.GUI.Workers
 		private readonly ILogger Logger;
 		private Thread RunThread;
 		private Ping pingSender = new Ping();
-		public System.Collections.Concurrent.BlockingCollection<Reply> Replies = new System.Collections.Concurrent.BlockingCollection<Reply>();
+		public BlockingCollection<Reply> Replies = new BlockingCollection<Reply>();
 		/// <summary>
 		/// This class is where all of the actual pinging work is done.
 		/// I creates a thread that loops until canceled.
@@ -26,7 +27,7 @@ namespace PingLogger.GUI.Workers
 		/// </summary>
 		/// <param name="host">The host that will be pinged.</param>
 		/// <param name="defaultSilent">Set this to true to prevent Serilog from printing to the console.</param>
-		public Pinger(Host host, bool defaultSilent = false, int daysToKeep = 7)
+		public Pinger(Host host, int daysToKeep = 7)
 		{
 			Host = host;
 			if (!Directory.Exists("./Logs"))

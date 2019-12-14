@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.IO;
+﻿using Newtonsoft.Json;
 using PingLogger.GUI.Models;
-using System.ComponentModel;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
-using Newtonsoft.Json;
+using System.IO;
 
 namespace PingLogger.GUI.Workers
 {
@@ -17,6 +13,18 @@ namespace PingLogger.GUI.Workers
 		public static ObservableCollection<Host> Hosts { get; set; } = new ObservableCollection<Host>();
 		private static bool InitialLoad = false;
 		private static AppOptions Options { get; set; }
+		public static int DaysToKeepLogs
+		{
+			get
+			{
+				return Options.DaysToKeepLogs;
+			}
+			set
+			{
+				Options.DaysToKeepLogs = value;
+				SaveConfig();
+			}
+		}
 		public static bool LoadWithWindows
 		{
 			get
@@ -48,12 +56,12 @@ namespace PingLogger.GUI.Workers
 		}
 		private static void optionsChanged(object sender, NotifyCollectionChangedEventArgs e)
 		{
-			if(!InitialLoad)
+			if (!InitialLoad)
 				SaveConfig();
 		}
 		private static void ReadConfig()
 		{
-			if(File.Exists(hostsPath))
+			if (File.Exists(hostsPath))
 			{
 				InitialLoad = true;
 				try
@@ -61,15 +69,17 @@ namespace PingLogger.GUI.Workers
 					var fileContents = File.ReadAllText(hostsPath);
 					Hosts = JsonConvert.DeserializeObject<ObservableCollection<Host>>(fileContents);
 					InitialLoad = false;
-				} catch
+				}
+				catch
 				{
 
 				}
-			} else
+			}
+			else
 			{
 				Hosts = new ObservableCollection<Host>();
 			}
-			if(File.Exists(configPath))
+			if (File.Exists(configPath))
 			{
 				InitialLoad = true;
 				try
@@ -77,11 +87,13 @@ namespace PingLogger.GUI.Workers
 					var fileContents = File.ReadAllText(configPath);
 					Options = JsonConvert.DeserializeObject<AppOptions>(fileContents);
 				}
-				catch {
+				catch
+				{
 					Options = new AppOptions();
 				}
 				InitialLoad = false;
-			} else
+			}
+			else
 			{
 				Options = new AppOptions();
 			}

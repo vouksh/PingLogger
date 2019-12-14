@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -24,7 +25,11 @@ namespace PingLogger.GUI.Controls
 		{
 			InitializeComponent();
 		}
-
+		private static readonly Regex regex = new Regex("[^0-9.-]+");
+		private static bool IsNumericInput(string text)
+		{
+			return !regex.IsMatch(text);
+		}
 		private void LoadOnBoot_Unchecked(object sender, RoutedEventArgs e)
 		{
 			Config.LoadWithWindows = false;
@@ -51,6 +56,7 @@ namespace PingLogger.GUI.Controls
 		{
 			LoadOnBoot.IsChecked = Config.LoadWithWindows;
 			StartAllLoggers.IsChecked = Config.StartLoggersAutomatically;
+			daysToKeep.Text = Config.DaysToKeepLogs.ToString();
 			if(Config.LoadWithWindows)
 			{
 				CreateStartupShortcut();
@@ -89,6 +95,23 @@ namespace PingLogger.GUI.Controls
 		{
 			var parentWindow = Window.GetWindow(this) as MainWindow;
 			parentWindow.StopAllLoggers();
+		}
+
+		private void daysToKeep_PreviewTextInput(object sender, TextCompositionEventArgs e)
+		{
+			e.Handled = !IsNumericInput(e.Text);
+		}
+
+		private void daysToKeep_TextChanged(object sender, TextChangedEventArgs e)
+		{
+			try
+			{
+				Config.DaysToKeepLogs = Convert.ToInt32(daysToKeep.Text);
+			}
+			catch (FormatException)
+			{
+				MessageBox.Show("Input must be a number.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+			}
 		}
 	}
 }
