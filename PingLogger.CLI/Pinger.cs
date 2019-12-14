@@ -1,4 +1,4 @@
-﻿using PingLogger.Misc;
+﻿using PingLogger.CLI.Misc;
 using Serilog;
 using System;
 using System.IO;
@@ -9,7 +9,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace PingLogger
+namespace PingLogger.CLI
 {
 	public class Pinger : IDisposable
 	{
@@ -196,7 +196,10 @@ namespace PingLogger
 		public void Start()
 		{
 			Logger.Debug("Start()");
-			RunThread = new Thread(new ThreadStart(StartLogging));
+			RunThread = new Thread(new ThreadStart(StartLogging))
+			{
+				Name = $"{Host.HostName}-MainThread"
+			};
 			Logger.Information("Starting ping logging for host {0} ({1})", Host.HostName, Host.IP);
 			Logger.Information("Using the following options:");
 			Logger.Information("Threshold: {0}ms", Host.Threshold);
@@ -279,6 +282,7 @@ namespace PingLogger
 		/// </summary>
 		private void SendPing(object sender, PingCompletedEventArgs e)
 		{
+			Thread.CurrentThread.Name = $"{Host.HostName}-PingThread-{Thread.CurrentThread.ManagedThreadId}";
 			Logger.Debug("SendPing() called");
 			if (e.Cancelled)
 			{
@@ -298,15 +302,24 @@ namespace PingLogger
 			{
 				case IPStatus.Success:
 					Logger.Debug("Ping Success");
-					//Ping was successful. Check to see if the round trip time was greater than the threshold.
-					//If it is, then we change the output to be a warning, making it easy to track down in the log files.
-					if (reply.RoundtripTime >= Host.Threshold)
+					//This check is because of a bug/problem with Ping where, if using a small timeout threshold, the ping reply can still be received.
+					//See https://docs.microsoft.com/en-us/dotnet/api/system.net.networkinformation.ping.send?redirectedfrom=MSDN&view=netcore-3.1#System_Net_NetworkInformation_Ping_Send_System_String_System_Int32_System_Byte___
+					if (reply.RoundtripTime < Host.Timeout)
 					{
-						Logger.Warning("Pinged {0} ({1}) RoundTrip: {2}ms (Over Threshold) TTL: {3}", Host.HostName, Host.IP.ToString(), reply.RoundtripTime, reply.Options.Ttl);
-					}
-					else
+						//Ping was successful. Check to see if the round trip time was greater than the threshold.
+						//If it is, then we change the output to be a warning, making it easy to track down in the log files.
+						if (reply.RoundtripTime >= Host.Threshold)
+						{
+							Logger.Warning("Pinged {0} ({1}) RoundTrip: {2}ms (Over Threshold) TTL: {3}", Host.HostName, Host.IP.ToString(), reply.RoundtripTime, reply.Options.Ttl);
+						}
+						else
+						{
+							Logger.Information("Pinged {0} ({1}) RoundTrip: {2}ms TTL: {3}", Host.HostName, Host.IP.ToString(), reply.RoundtripTime, reply.Options.Ttl);
+						}
+					} else
 					{
-						Logger.Information("Pinged {0} ({1}) RoundTrip: {2}ms TTL: {3}", Host.HostName, Host.IP.ToString(), reply.RoundtripTime, reply.Options.Ttl);
+						Logger.Debug("Ping Reply Success, but roundtrip time exceeds timeout. Marking it as a timeout.");
+						Logger.Error("Ping timed out to host {0} ({1}). Timeout is {2}ms", Host.HostName, Host.IP.ToString(), Host.Timeout);
 					}
 					break;
 				//These indicate that there was a problem somewhere along the way. 

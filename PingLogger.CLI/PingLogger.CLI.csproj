@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
     <PublishTrimmed>true</PublishTrimmed>
     <PublishReadyToRun>true</PublishReadyToRun>
     <PublishSingleFile>true</PublishSingleFile>
@@ -10,11 +10,13 @@
     <StartupObject></StartupObject>
 	<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
 	<Deterministic>false</Deterministic>
-    <ApplicationIcon />
+    <ApplicationIcon>AppIcon.ico</ApplicationIcon>
     <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
     <Authors>Jack Butler</Authors>
     <RepositoryUrl>https://github.com/vouksh/PingLogger</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
+    <AssemblyName>PingLogger</AssemblyName>
+    <SignAssembly>false</SignAssembly>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">

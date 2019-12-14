@@ -1,0 +1,18 @@
+﻿<UserControl x:Class="PingLogger.GUI.Controls.SettingsControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:PingLogger.GUI.Controls"
+             mc:Ignorable="d" 
+             d:DesignHeight="435" d:DesignWidth="785" Loaded="UserControl_Loaded">
+	<Grid>
+		<CheckBox x:Name="LoadOnBoot" Content="Load Application On Windows Startup?" HorizontalAlignment="Center" Margin="0,106,0,0" VerticalAlignment="Top" Unchecked="LoadOnBoot_Unchecked" Checked="LoadOnBoot_Checked"/>
+		<CheckBox x:Name="StartAllLoggers" Content="Start All Ping Loggers On Application Startup?" HorizontalAlignment="Center" Margin="0,146,0,0" VerticalAlignment="Top" Checked="StartAllLoggers_Checked" Unchecked="StartAllLoggers_Unchecked"/>
+		<Button x:Name="StartAllLoggersBtn" Content="Start All Loggers" HorizontalAlignment="Left" Margin="150,272,0,0" VerticalAlignment="Top" Height="65" Width="100" Click="StartAllLoggersBtn_Click"/>
+		<Button x:Name="StopAllLoggersBtn" Content="Stop All Loggers" HorizontalAlignment="Left" Margin="545,272,0,0" VerticalAlignment="Top"  Height="65" Width="100" Click="StopAllLoggersBtn_Click"/>
+		<Label x:Name="label" Content="Number of days to keep log files:" HorizontalAlignment="Left" Margin="286,180,0,0" VerticalAlignment="Top"/>
+		<TextBox x:Name="daysToKeep" HorizontalAlignment="Left" Margin="476,184,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="29" HorizontalContentAlignment="Center" PreviewTextInput="daysToKeep_PreviewTextInput" TextChanged="daysToKeep_TextChanged"/>
+
+	</Grid>
+</UserControl>

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
-namespace PingLogger.Misc
+namespace PingLogger.CLI.Misc
 {
 	//Ran into a problem where, if the input wasn't received, the console was technically still waiting for an input.
 	//So I found https://stackoverflow.com/a/9634477/1659361
