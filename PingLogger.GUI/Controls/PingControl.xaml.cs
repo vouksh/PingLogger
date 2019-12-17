@@ -1,24 +1,17 @@
-﻿using System;
+﻿using PingLogger.GUI.Models;
+using PingLogger.GUI.Workers;
+using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Net;
 using System.Text;
+using System.Text.RegularExpressions;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using System.Windows.Threading;
-using PingLogger.GUI.Workers;
-using PingLogger.GUI.Models;
-using System.Net;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Threading;
-using Serilog;
-using System.Text.RegularExpressions;
 
 namespace PingLogger.GUI.Controls
 {
@@ -35,7 +28,6 @@ namespace PingLogger.GUI.Controls
 		private int Warnings = 0;
 		private readonly SynchronizationContext syncCtx;
 		private bool LoadFromVar = false;
-		private bool IsLookingUp = false;
 		public PingControl()
 		{
 			InitializeComponent();
@@ -47,7 +39,6 @@ namespace PingLogger.GUI.Controls
 			PingHost = new Host();
 			syncCtx = SynchronizationContext.Current;
 			Timer.Start();
-			AutoStart();
 		}
 
 		public PingControl(Host _host, bool RunTimeAdded = false)
@@ -62,12 +53,12 @@ namespace PingLogger.GUI.Controls
 			LoadFromVar = true;
 			syncCtx = SynchronizationContext.Current;
 			Timer.Start();
-			if(!RunTimeAdded)
+			if (!RunTimeAdded)
 				AutoStart();
 		}
 		void AutoStart()
 		{
-			if(Config.StartLoggersAutomatically)
+			if (Config.StartLoggersAutomatically)
 			{
 				StopBtn.IsEnabled = true;
 				StartBtn.IsEnabled = false;
@@ -94,7 +85,6 @@ namespace PingLogger.GUI.Controls
 		}
 		void Timer_Tick(object sender, EventArgs e)
 		{
-			//Logger.Debug("Timer_Tick()");
 			if (Pinger != null && Pinger.Running)
 			{
 				Logger.Debug("Pinger not null & Pinger Running");
@@ -124,7 +114,7 @@ namespace PingLogger.GUI.Controls
 						else
 						{
 							line += $"Pinged {reply.Host.HostName} - Round Trip: {reply.RoundTrip}ms";
-							if(reply.RoundTrip >= PingHost.Threshold)
+							if (reply.RoundTrip >= PingHost.Threshold)
 							{
 								Warnings++;
 							}
@@ -134,7 +124,6 @@ namespace PingLogger.GUI.Controls
 
 					}
 				}
-				Logger.Debug($"Adding line to text box: {sb.ToString()}");
 				PingStatusBox.Text += sb.ToString();
 				var lines = PingStatusBox.Text.Split(Environment.NewLine).ToList();
 				if (lines.Count() > 26)
@@ -153,18 +142,16 @@ namespace PingLogger.GUI.Controls
 				}
 				timeoutLbl.Content = Timeouts.ToString();
 				warningLbl.Content = Warnings.ToString();
-			} else
+			}
+			else
 			{
-				if (!IsLookingUp)
+				if (IPAddressBox.Text == "Invalid Host Name")
 				{
-					if (IPAddressBox.Text == "Invalid Host Name")
-					{
-						StartBtn.IsEnabled = false;
-					}
-					else
-					{
-						StartBtn.IsEnabled = true;
-					}
+					StartBtn.IsEnabled = false;
+				}
+				else
+				{
+					StartBtn.IsEnabled = true;
 				}
 			}
 		}
@@ -185,7 +172,8 @@ namespace PingLogger.GUI.Controls
 				Logger.Debug($"Pinger instance created.");
 				Pinger.Start();
 				Logger.Debug($"Pinger started.");
-			} catch (Exception ex)
+			}
+			catch (Exception ex)
 			{
 				Logger.Debug(ex.ToString());
 			}
@@ -230,10 +218,14 @@ namespace PingLogger.GUI.Controls
 		}
 		private async void HostNameBox_LostFocus(object sender, RoutedEventArgs e)
 		{
-			StartBtn.IsEnabled = false;
-			await UpdateIPBox();
-			(this.Parent as TabItem).Header = $"Host: {HostNameBox.Text}";
-			UpdateHost();
+			if (PingHost.HostName != HostNameBox.Text)
+			{
+				StartBtn.IsEnabled = false;
+
+				await UpdateIPBox();
+				(this.Parent as TabItem).Header = $"Host: {HostNameBox.Text}";
+				UpdateHost();
+			}
 		}
 
 		private async void MainControl_Loaded(object sender, RoutedEventArgs e)
@@ -252,7 +244,6 @@ namespace PingLogger.GUI.Controls
 
 		private async Task UpdateIPBox()
 		{
-			IsLookingUp = true;
 			try
 			{
 				foreach (var ip in await Dns.GetHostAddressesAsync(HostNameBox.Text))
@@ -275,7 +266,6 @@ namespace PingLogger.GUI.Controls
 			{
 				IPAddressBox.Text = "Invalid Host Name";
 			}
-			IsLookingUp = false;
 			return;
 		}
 
@@ -308,7 +298,7 @@ namespace PingLogger.GUI.Controls
 		private void IntervalBox_LostFocus(object sender, RoutedEventArgs e)
 		{
 			var interval = Convert.ToInt32(IntervalBox.Text);
-			if(interval < 250)
+			if (interval < 250)
 			{
 				IntervalBox.Text = "250";
 				MessageBox.Show("Interval can not be less than 250ms!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
@@ -319,12 +309,12 @@ namespace PingLogger.GUI.Controls
 		private void PacketSizeBox_LostFocus(object sender, RoutedEventArgs e)
 		{
 			var packetSize = Convert.ToInt32(PacketSizeBox.Text);
-			if(packetSize > 65500)
+			if (packetSize > 65500)
 			{
 				PacketSizeBox.Text = "65500";
 				MessageBox.Show("Packet size can not be larger than 65,500 bytes!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
 			}
-			if(packetSize == 0)
+			if (packetSize == 0)
 			{
 				PacketSizeBox.Text = "1";
 				MessageBox.Show("Packet size can not be smaller than 1 byte!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);

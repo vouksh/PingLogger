@@ -19,8 +19,8 @@ namespace PingLogger.GUI
 	{
 		private List<TabItem> _tabItems;
 		private TabItem tabAdd;
-		private Button tabAddBtn;
 		private bool Initializing = false;
+
 		public MainWindow()
 		{
 			Version version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
@@ -28,27 +28,27 @@ namespace PingLogger.GUI
 			Initializing = true;
 			InitializeComponent();
 			_tabItems = new List<TabItem>();
-			tabAdd = new TabItem();
 			TabItem optsTab = new TabItem
 			{
 				Header = "Options",
 				Name = "tabOpts",
 				Content = new SettingsControl()
 			};
-			var addImg = new Image();
-			addImg.Source = new BitmapImage(new Uri("/add.png", UriKind.Relative));
 
-			tabAddBtn = new Button()
+			var addImg = new Image
 			{
-				Content = addImg,
-				Background = Brushes.Transparent,
-				BorderBrush = Brushes.Transparent,
+				Source = new BitmapImage(new Uri("/add.png", UriKind.Relative)),
+				Width = 16,
+				Height = 16
+			};
+
+			tabAdd = new TabItem
+			{
+				Header = addImg,
+				Margin = new Thickness(0),
+				Padding = new Thickness(0),
 				Width = 19
 			};
-			tabAdd.Header = tabAddBtn;
-			tabAdd.Margin = new Thickness(0);
-			tabAdd.Padding = new Thickness(0);
-			tabAddBtn.Click += tabAddBtn_Click;
 
 			_tabItems.Add(tabAdd);
 
@@ -56,16 +56,10 @@ namespace PingLogger.GUI
 
 			tabControl.DataContext = _tabItems;
 			tabControl.SelectedIndex = 0;
-			Initializing = false;
+			//Initializing = false;
 			this.Title = $"PingLogger v{version}";
 		}
-		private void tabAddBtn_Click(object sender, RoutedEventArgs e)
-		{
-			tabControl.DataContext = null;
-			var newTab = AddTabItem(true);
-			tabControl.DataContext = _tabItems;
-			tabControl.SelectedItem = newTab;
-		}
+
 		private void tabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
 			if (!Initializing)
@@ -75,16 +69,10 @@ namespace PingLogger.GUI
 					var tabAddIndex = tabControl.Items.IndexOf(tabAdd);
 					if (tabControl.SelectedIndex == tabAddIndex)
 					{
-						if (tabControl.Items.Count < 2)
-						{
-							AddTabItem(true);
-						}
-						else
-						{
-							Initializing = true;
-							tabControl.SelectedIndex = tabAddIndex - 1;
-							Initializing = false;
-						}
+						tabControl.DataContext = null;
+						var newTab = AddTabItem(true);
+						tabControl.DataContext = _tabItems;
+						tabControl.SelectedItem = newTab;
 					}
 				}
 			}
@@ -116,10 +104,6 @@ namespace PingLogger.GUI
 						selectedTab = _tabItems[0];
 					}
 
-					if (_tabItems.Count < 3)
-					{
-						AddTabItem(true);
-					}
 					tabControl.SelectedItem = selectedTab;
 				}
 			}
@@ -127,6 +111,7 @@ namespace PingLogger.GUI
 
 		private void Window_Loaded(object sender, RoutedEventArgs e)
 		{
+			Initializing = true;
 			if (Config.Hosts.Count > 0)
 			{
 				foreach (var host in Config.Hosts)
@@ -139,6 +124,7 @@ namespace PingLogger.GUI
 				AddTabItem();
 			}
 			tabControl.SelectedIndex = 0;
+			Initializing = false;
 		}
 
 		private TabItem AddTabItem(bool AddOnRuntime = false)

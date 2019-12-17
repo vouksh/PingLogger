@@ -7,5 +7,5 @@ using System.Reflection;
 
 [assembly: AssemblyTitle("PingLogger")]
 [assembly: AssemblyDescription("Advanced multi-threaded ping logging application")]
-[assembly: AssemblyVersion("2.0.0.215")]
-[assembly: AssemblyFileVersion("2.0.0.215")]
+[assembly: AssemblyVersion("2.0.0.273")]
+[assembly: AssemblyFileVersion("2.0.0.273")]
