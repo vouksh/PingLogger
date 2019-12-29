@@ -20,14 +20,14 @@ namespace PingLogger.GUI.Controls
 	/// </summary>
 	public partial class PingControl : UserControl
 	{
-		DispatcherTimer Timer;
+		readonly DispatcherTimer Timer;
 		public Host PingHost;
 		private Pinger Pinger;
-		private List<long> PingTimes = new List<long>();
+		private readonly List<long> PingTimes = new List<long>();
 		private int Timeouts = 0;
 		private int Warnings = 0;
 		private readonly SynchronizationContext syncCtx;
-		private bool LoadFromVar = false;
+		private readonly bool LoadFromVar = false;
 		public PingControl()
 		{
 			InitializeComponent();
@@ -93,8 +93,7 @@ namespace PingLogger.GUI.Controls
 				for (int i = 0; i < Pinger.Replies.Count - 1; i++)
 				{
 					Logger.Debug($"Reply #{i}");
-					Reply reply;
-					var success = Pinger.Replies.TryTake(out reply);
+					var success = Pinger.Replies.TryTake(out Reply reply);
 					if (success)
 					{
 						Logger.Debug("Ping Success");
@@ -109,19 +108,19 @@ namespace PingLogger.GUI.Controls
 						{
 							Timeouts++;
 							Logger.Debug($"Reply timed out. Number of Timeouts: {Timeouts}");
-							line += $"Timed out to host {reply.Host.HostName}";
+							line += $"Timed out to host";
 						}
 						else
 						{
-							line += $"Pinged {reply.Host.HostName} - Round Trip: {reply.RoundTrip}ms";
+							line += $"Ping round trip: {reply.RoundTrip}ms";
 							if (reply.RoundTrip >= PingHost.Threshold)
 							{
 								Warnings++;
+								line += " [Warning]";
 							}
 						}
 						sb.Append(line);
 						sb.Append(Environment.NewLine);
-
 					}
 				}
 				PingStatusBox.Text += sb.ToString();
@@ -262,7 +261,7 @@ namespace PingLogger.GUI.Controls
 					}
 				}
 			}
-			catch (Exception e)
+			catch (Exception)
 			{
 				IPAddressBox.Text = "Invalid Host Name";
 			}
@@ -360,6 +359,12 @@ namespace PingLogger.GUI.Controls
 		private void TimeoutBox_LostFocus(object sender, RoutedEventArgs e)
 		{
 			UpdateHost();
+		}
+
+		private void HelpBtn_Click(object sender, RoutedEventArgs e)
+		{
+			var helpDlg = new HelpDialog();
+			helpDlg.ShowDialog();
 		}
 	}
 }

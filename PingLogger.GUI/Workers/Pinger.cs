@@ -19,8 +19,9 @@ namespace PingLogger.GUI.Workers
 		private bool stopping = false;
 		private readonly ILogger Logger;
 		private Thread RunThread;
-		private Ping pingSender = new Ping();
+		private readonly Ping pingSender = new Ping();
 		public BlockingCollection<Reply> Replies = new BlockingCollection<Reply>();
+		private bool DontFragment = true;
 		/// <summary>
 		/// This class is where all of the actual pinging work is done.
 		/// I creates a thread that loops until canceled.
@@ -153,8 +154,10 @@ namespace PingLogger.GUI.Workers
 		public void Start()
 		{
 			Logger.Debug("Start()");
-			RunThread = new Thread(new ThreadStart(StartLogging));
-			RunThread.Name = $"{Host.HostName}-MainThread";
+			RunThread = new Thread(new ThreadStart(StartLogging))
+			{
+				Name = $"{Host.HostName}-MainThread"
+			};
 			Logger.Information("Starting ping logging for host {0} ({1})", Host.HostName, Host.IP);
 			Logger.Information("Using the following options:");
 			Logger.Information("Threshold: {0}ms", Host.Threshold);
@@ -172,11 +175,6 @@ namespace PingLogger.GUI.Workers
 		{
 			Logger.Debug("StartLogging() Called.");
 			pingSender.PingCompleted += new PingCompletedEventHandler(SendPing);
-			PingOptions options = new PingOptions
-			{
-				DontFragment = Host.PacketSize <= 32,
-				Ttl = 64
-			};
 			AutoResetEvent waiter = new AutoResetEvent(false);
 
 			//Generate a string that's as long as the packet size. 
@@ -190,6 +188,11 @@ namespace PingLogger.GUI.Workers
 			Running = true;
 			while (Running)
 			{
+				PingOptions options = new PingOptions
+				{
+					DontFragment = DontFragment,
+					Ttl = 64
+				};
 				Logger.Debug($"Running: {Running.ToString()}");
 				Logger.Debug($"stopping: {stopping.ToString()}");
 				if (stopping)
@@ -308,6 +311,12 @@ namespace PingLogger.GUI.Workers
 					Logger.Debug("Ping Timed Out");
 					Logger.Error("Ping timed out to host {0} ({1}). Timeout is {2}ms", Host.HostName, Host.IP.ToString(), Host.Timeout);
 					timedOut = true;
+					break;
+				case IPStatus.PacketTooBig:
+					Logger.Debug("Packet too large. Turning on fragmentation");
+					Logger.Error("Packet size too large, turning on fragmentation.");
+					timedOut = true;
+					DontFragment = false;
 					break;
 			}
 			var LogReply = new Reply

@@ -22,6 +22,11 @@
     <None Remove="add.png" />
     <None Remove="AppIcon.ico" />
     <None Remove="delete.png" />
+    <None Remove="README.md" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="README.md" />
   </ItemGroup>
 
   <ItemGroup>

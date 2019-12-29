@@ -28,5 +28,6 @@
 		<Label x:Name="timeoutLbl" Content="0" HorizontalAlignment="Left" Margin="236,241,0,0" VerticalAlignment="Top"/>
 		<Label x:Name="label2_Copy" Content="Warnings:" HorizontalAlignment="Left" Margin="315,239,0,0" VerticalAlignment="Top"/>
 		<Label x:Name="warningLbl" Content="0" HorizontalAlignment="Left" Margin="371,240,0,0" VerticalAlignment="Top"/>
+		<Button x:Name="HelpBtn" Content="Help" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Click="HelpBtn_Click"/>
 	</Grid>
 </UserControl>

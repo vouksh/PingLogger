@@ -17,8 +17,8 @@ namespace PingLogger.GUI
 	/// </summary>
 	public partial class MainWindow : Window
 	{
-		private List<TabItem> _tabItems;
-		private TabItem tabAdd;
+		private readonly List<TabItem> _tabItems;
+		private readonly TabItem tabAdd;
 		private bool Initializing = false;
 
 		public MainWindow()
@@ -246,6 +246,15 @@ namespace PingLogger.GUI
 				{
 					Logger.Debug(ex.ToString());
 				}
+			}
+		}
+
+		private void Window_KeyUp(object sender, System.Windows.Input.KeyEventArgs e)
+		{
+			if(e.Key == System.Windows.Input.Key.F1)
+			{
+				HelpDialog helpDialog = new HelpDialog();
+				helpDialog.ShowDialog();
 			}
 		}
 	}

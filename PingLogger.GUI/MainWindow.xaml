@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:PingLogger.GUI"
         xmlns:Controls="clr-namespace:PingLogger.GUI.Controls" x:Class="PingLogger.GUI.MainWindow"
         mc:Ignorable="d"
-        Title="PingLogger" Height="480" Width="805" Loaded="Window_Loaded" Icon="/AppIcon.ico" ResizeMode="NoResize" Padding="0" Closing="Window_Closing">
+        Title="PingLogger" Height="480" Width="805" Loaded="Window_Loaded" Icon="/AppIcon.ico" ResizeMode="CanMinimize" Padding="0" Closing="Window_Closing" KeyUp="Window_KeyUp">
 	<Grid>
 		<TabControl x:Name="tabControl" ItemsSource="{Binding}" SelectionChanged="tabControl_SelectionChanged" Grid.ColumnSpan="3" Padding="0">
 			<TabControl.Resources>
