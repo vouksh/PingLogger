@@ -13,6 +13,5 @@ namespace PingLogger.GUI.Models
 		public int Interval { get; set; } = 1000;
 		public int Timeout { get; set; } = 2000;
 		public bool DontFragment { get; set; } = true;
-
 	}
 }

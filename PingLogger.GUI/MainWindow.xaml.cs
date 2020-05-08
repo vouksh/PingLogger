@@ -236,7 +236,7 @@ namespace PingLogger.GUI
 			{
 				try
 				{
-					if (item != null && (item.Header as string).Contains("Host:"))
+					if (item != null && item.Content != null && item.Header != null && (item.Header as string).Contains("Host:"))
 					{
 						var pingCtrl = item.Content as PingControl;
 						pingCtrl.DoStop();

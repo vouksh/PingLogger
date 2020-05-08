@@ -28,6 +28,8 @@ namespace PingLogger.GUI.Controls
 		private int Warnings = 0;
 		private readonly SynchronizationContext syncCtx;
 		private readonly bool LoadFromVar = false;
+		private double PacketLoss = 0.0;
+		private long TotalPings = 0;
 		public PingControl()
 		{
 			InitializeComponent();
@@ -93,6 +95,7 @@ namespace PingLogger.GUI.Controls
 				for (int i = 0; i < Pinger.Replies.Count - 1; i++)
 				{
 					Logger.Debug($"Reply #{i}");
+					TotalPings++;
 					var success = Pinger.Replies.TryTake(out Reply reply);
 					if (success)
 					{
@@ -109,6 +112,7 @@ namespace PingLogger.GUI.Controls
 							Timeouts++;
 							Logger.Debug($"Reply timed out. Number of Timeouts: {Timeouts}");
 							line += $"Timed out to host";
+							PacketLoss = ((double)Timeouts / (double)TotalPings) * 100;
 						}
 						else
 						{
@@ -141,6 +145,7 @@ namespace PingLogger.GUI.Controls
 				}
 				timeoutLbl.Content = Timeouts.ToString();
 				warningLbl.Content = Warnings.ToString();
+				packetLossLabel.Content = $"{Math.Round(PacketLoss, 2)}%";
 			}
 			else
 			{
