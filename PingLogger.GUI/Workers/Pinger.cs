@@ -58,7 +58,8 @@ namespace PingLogger.GUI.Workers
 						restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Error,
 						retainedFileCountLimit: Config.DaysToKeepLogs,
 						shared: true,
-						outputTemplate: errorOutputTemp
+						outputTemplate: errorOutputTemp,
+						flushToDiskInterval: TimeSpan.FromSeconds(2) //Added this because I noticed that it wasn't consistently flushing to disk at a good interval.
 						)
 					)
 				.WriteTo.Logger(
@@ -67,7 +68,8 @@ namespace PingLogger.GUI.Workers
 						warnPathName,
 						shared: true,
 						retainedFileCountLimit: Config.DaysToKeepLogs,
-						outputTemplate: outputTemp
+						outputTemplate: outputTemp,
+						flushToDiskInterval: TimeSpan.FromSeconds(2) 
 						)
 					)
 #if DEBUG
@@ -78,7 +80,8 @@ namespace PingLogger.GUI.Workers
 						shared: true,
 						retainedFileCountLimit: Config.DaysToKeepLogs,
 						restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Debug,
-						outputTemplate: debugOutputTemp
+						outputTemplate: debugOutputTemp,
+						flushToDiskInterval: TimeSpan.FromSeconds(2)
 						)
 					)
 #endif
@@ -87,7 +90,8 @@ namespace PingLogger.GUI.Workers
 						shared: true,
 						outputTemplate: outputTemp,
 						retainedFileCountLimit: Config.DaysToKeepLogs,
-						restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Information
+						restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Information,
+						flushToDiskInterval: TimeSpan.FromSeconds(2)
 					)
 				.CreateLogger();
 
