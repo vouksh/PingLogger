@@ -2,6 +2,8 @@
 using PingLogger.GUI.Workers;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
@@ -112,7 +114,6 @@ namespace PingLogger.GUI.Controls
 							Timeouts++;
 							Logger.Debug($"Reply timed out. Number of Timeouts: {Timeouts}");
 							line += $"Timed out to host";
-							PacketLoss = ((double)Timeouts / (double)TotalPings) * 100;
 						}
 						else
 						{
@@ -145,6 +146,7 @@ namespace PingLogger.GUI.Controls
 				}
 				timeoutLbl.Content = Timeouts.ToString();
 				warningLbl.Content = Warnings.ToString();
+				PacketLoss = ((double)Timeouts / (double)TotalPings) * 100;
 				packetLossLabel.Content = $"{Math.Round(PacketLoss, 2)}%";
 			}
 			else
@@ -370,6 +372,18 @@ namespace PingLogger.GUI.Controls
 		{
 			var helpDlg = new HelpDialog();
 			helpDlg.ShowDialog();
+		}
+
+		private void openLogFolderBtn_Click(object sender, RoutedEventArgs e)
+		{
+			_ = new Process
+			{
+				StartInfo = new ProcessStartInfo
+				{
+					FileName = "explorer.exe",
+					Arguments = Environment.CurrentDirectory + Path.DirectorySeparatorChar + "Logs"
+				}
+			}.Start();
 		}
 	}
 }

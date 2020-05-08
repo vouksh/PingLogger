@@ -7,7 +7,7 @@
              mc:Ignorable="d" 
              d:DesignHeight="415" d:DesignWidth="785">
 	<Grid x:Name="MainControl" Loaded="MainControl_Loaded">
-		<TextBlock x:Name="PingStatusBox" HorizontalAlignment="Left" Margin="409,7,0,0" TextWrapping="NoWrap" VerticalAlignment="Top" Height="400" Width="370" Background="#FF171717" IsEnabled="False" ScrollViewer.CanContentScroll="True" Foreground="White"/>
+		<TextBlock x:Name="PingStatusBox" HorizontalAlignment="Left" Margin="409,7,0,0" TextWrapping="NoWrap" VerticalAlignment="Top" Height="400" Width="370" IsEnabled="False" ScrollViewer.CanContentScroll="True"/>
 		<Label x:Name="label" Content="Host Name:" HorizontalAlignment="Left" Margin="10,39,0,0" VerticalAlignment="Top" Width="116" HorizontalContentAlignment="Right"/>
 		<Label x:Name="label_Copy" Content="IP Address:" HorizontalAlignment="Left" Margin="10,70,0,0" VerticalAlignment="Top" Width="116" HorizontalContentAlignment="Right"/>
 		<Label x:Name="label_Copy1" Content="Interval:" HorizontalAlignment="Left" Margin="10,101,0,0" VerticalAlignment="Top" Width="116" HorizontalContentAlignment="Right"/>
@@ -31,5 +31,6 @@
 		<Button x:Name="HelpBtn" Content="Help" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Click="HelpBtn_Click"/>
 		<Label x:Name="label3" Content="Packet Loss:" HorizontalAlignment="Left" Margin="168,267,0,0" VerticalAlignment="Top"/>
 		<Label x:Name="packetLossLabel" Content="0%" HorizontalAlignment="Left" Margin="236,267,0,0" VerticalAlignment="Top"/>
+		<Button x:Name="openLogFolderBtn" Content="Logs" HorizontalAlignment="Left" Margin="44,10,0,0" VerticalAlignment="Top" Click="openLogFolderBtn_Click"/>
 	</Grid>
 </UserControl>
