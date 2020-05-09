@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PingLogger.GUI.Controls"
         mc:Ignorable="d"
-        Title="Help" Height="615" Width="400" Loaded="Window_Loaded" ResizeMode="NoResize" SizeToContent="WidthAndHeight" WindowStartupLocation="CenterScreen">
+        Title="Help" Height="615" Width="400" Loaded="Window_Loaded" ResizeMode="NoResize" SizeToContent="WidthAndHeight" WindowStartupLocation="CenterScreen" Style="{DynamicResource CustomWindowStyle}">
 	<Grid>
 		<TextBlock x:Name="helpText" HorizontalAlignment="Left" Margin="5,5,0,0" Text="TextBlock" TextWrapping="Wrap" VerticalAlignment="Top" Width="390" Height="587"/>
 

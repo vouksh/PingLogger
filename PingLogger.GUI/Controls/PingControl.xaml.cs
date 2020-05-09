@@ -32,6 +32,7 @@ namespace PingLogger.GUI.Controls
 		private readonly bool LoadFromVar = false;
 		private double PacketLoss = 0.0;
 		private long TotalPings = 0;
+		public ICommand CloseTabCommand { get; set; }
 		public PingControl()
 		{
 			InitializeComponent();

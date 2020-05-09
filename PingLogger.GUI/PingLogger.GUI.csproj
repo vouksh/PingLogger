@@ -12,6 +12,8 @@
 	<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
 	<PublishTrimmed>true</PublishTrimmed>
 	<PublishReadyToRun>true</PublishReadyToRun>
+	<StartupObject>PingLogger.GUI.App</StartupObject>
+	<PackageLicenseFile>LICENSE.md</PackageLicenseFile>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -19,10 +21,14 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="add.png" />
     <None Remove="AppIcon.ico" />
-    <None Remove="delete.png" />
     <None Remove="README.md" />
+    <None Remove="Resources\closeWindow.png" />
+    <None Remove="Resources\minimizeWindow.png" />
+    <None Include="LICENSE.md">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
   </ItemGroup>
 
   <ItemGroup>
@@ -39,28 +45,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="add.png" />
     <Resource Include="AppIcon.ico" />
-    <Resource Include="delete.png" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Update="AssemblyVersion.tt">
-      <LastGenOutput>AssemblyVersion.cs</LastGenOutput>
-      <Generator>TextTemplatingFileGenerator</Generator>
-    </None>
+    <Resource Include="Resources\closeWindow.png" />
+    <Resource Include="Resources\minimizeWindow.png" />
   </ItemGroup>
 
   <ItemGroup>
     <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Update="AssemblyVersion.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>AssemblyVersion.tt</DependentUpon>
-    </Compile>
   </ItemGroup>
 
   <ItemGroup>

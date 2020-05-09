@@ -104,4 +104,9 @@ namespace PingLogger.GUI.Workers
 			File.WriteAllText(configPath, JsonConvert.SerializeObject(Options, Formatting.Indented));
 		}
 	}
+
+	public enum Theme
+	{
+		Dark, Light
+	}
 }

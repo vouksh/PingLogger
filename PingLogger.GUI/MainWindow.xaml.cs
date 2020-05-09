@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
@@ -21,8 +22,20 @@ namespace PingLogger.GUI
 		private readonly TabItem tabAdd;
 		private bool Initializing = false;
 
+		public ICommand CloseWindowCommand { get; set; }
+		public ICommand MinimizeWindowCommand { get; set; }
+
+		public ICommand NewTabCommand { get; set; }
+		public ICommand CloseTabCommand { get; set; }
+
 		public MainWindow()
 		{
+			CloseWindowCommand = new Command(CloseWindow);
+			MinimizeWindowCommand = new Command(Minimize);
+
+			CloseTabCommand = new CommandParam(tabDelBtn_Click);
+			NewTabCommand = new Command(AddTabItem);
+
 			Version version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
 			Thread.CurrentThread.Name = "MainWindowThread";
 			Initializing = true;
@@ -35,52 +48,16 @@ namespace PingLogger.GUI
 				Content = new SettingsControl()
 			};
 
-			var addImg = new Image
-			{
-				Source = new BitmapImage(new Uri("/add.png", UriKind.Relative)),
-				Width = 16,
-				Height = 16
-			};
-
-			tabAdd = new TabItem
-			{
-				Header = addImg,
-				Margin = new Thickness(0),
-				Padding = new Thickness(0),
-				Width = 19
-			};
-
-			_tabItems.Add(tabAdd);
-
 			_tabItems.Add(optsTab);
 
 			tabControl.DataContext = _tabItems;
 			tabControl.SelectedIndex = 0;
-			//Initializing = false;
 			this.Title = $"PingLogger v{version}";
 		}
 
-		private void tabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		private void tabDelBtn_Click(object sender)
 		{
-			if (!Initializing)
-			{
-				if (tabControl.SelectedItem is TabItem tab && tab.Header != null)
-				{
-					var tabAddIndex = tabControl.Items.IndexOf(tabAdd);
-					if (tabControl.SelectedIndex == tabAddIndex)
-					{
-						tabControl.DataContext = null;
-						var newTab = AddTabItem(true);
-						tabControl.DataContext = _tabItems;
-						tabControl.SelectedItem = newTab;
-					}
-				}
-			}
-		}
-
-		private void tabDelBtn_Click(object sender, RoutedEventArgs e)
-		{
-			string hostId = (sender as Button).CommandParameter.ToString();
+			string hostId = (sender as string);
 
 			var item = tabControl.Items.Cast<TabItem>().First(i => i.Uid.Equals(hostId));
 
@@ -121,13 +98,18 @@ namespace PingLogger.GUI
 			}
 			else
 			{
-				AddTabItem();
+				var newHost = new Host
+				{
+					Id = Guid.NewGuid(),
+					HostName = "google.com"
+				};
+				AddTabItem(newHost);
 			}
 			tabControl.SelectedIndex = 0;
 			Initializing = false;
 		}
 
-		private TabItem AddTabItem(bool AddOnRuntime = false)
+		private void AddTabItem()
 		{
 
 			tabControl.DataContext = null;
@@ -142,14 +124,15 @@ namespace PingLogger.GUI
 				Header = string.Format("Host: {0}", newHost.HostName),
 				Name = string.Format("tab{0}", count),
 				HeaderTemplate = tabControl.FindResource("TabHeader") as DataTemplate,
-				Uid = newHost.Id.ToString()
+				Uid = newHost.Id.ToString(),
 			};
+			tab.SetResourceReference(Control.TemplateProperty, "CloseButton");
 			Config.Hosts.Add(newHost);
-			PingControl pingControl = new PingControl(newHost, AddOnRuntime);
+			PingControl pingControl = new PingControl(newHost, true);
 			tab.Content = pingControl;
-			_tabItems.Insert(count - 2, tab);
+			_tabItems.Insert(count - 1, tab);
 			tabControl.DataContext = _tabItems;
-			return tab;
+			//return tab;
 		}
 		private TabItem AddTabItem(Host host, bool AddOnRuntime = false)
 		{
@@ -163,9 +146,10 @@ namespace PingLogger.GUI
 				Uid = host.Id.ToString()
 			};
 
+			tab.SetResourceReference(Control.TemplateProperty, "CloseButton");
 			PingControl pingControl = new PingControl(host, AddOnRuntime);
 			tab.Content = pingControl;
-			_tabItems.Insert(count - 2, tab);
+			_tabItems.Insert(count - 1, tab);
 			tabControl.DataContext = _tabItems;
 			return tab;
 		}
@@ -256,6 +240,21 @@ namespace PingLogger.GUI
 				HelpDialog helpDialog = new HelpDialog();
 				helpDialog.ShowDialog();
 			}
+		}
+
+		private void CloseWindow()
+		{
+			Close();
+		}
+
+		private void Minimize()
+		{
+			WindowState = WindowState.Minimized;
+		}
+
+		private void CloseTabClick()
+		{
+
 		}
 	}
 }
