@@ -32,5 +32,6 @@
 		<Label x:Name="label3" Content="Packet Loss:" HorizontalAlignment="Left" Margin="168,267,0,0" VerticalAlignment="Top"/>
 		<Label x:Name="packetLossLabel" Content="0%" HorizontalAlignment="Left" Margin="236,267,0,0" VerticalAlignment="Top"/>
 		<Button x:Name="openLogFolderBtn" Content="Logs" HorizontalAlignment="Left" Margin="58,10,0,0" Padding="4" VerticalAlignment="Top" Click="openLogFolderBtn_Click"/>
+		<Button x:Name="viewLogBtn" Content="Watch Log" HorizontalAlignment="Left" Margin="108,10,0,0" Padding="4" VerticalAlignment="Top" Click="viewLogBtn_Click" />
 	</Grid>
 </UserControl>

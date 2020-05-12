@@ -17,8 +17,24 @@ namespace PingLogger.GUI
 	{
 		private void Application_Startup(object sender, StartupEventArgs e)
 		{
-			MainWindow window = new MainWindow();
+            SetTheme(Config.Theme);
+			MainWindow window = new MainWindow(this);
 			window.Show();
-		}
-	}
+        }
+
+        public void SetTheme(Theme theme)
+        {
+            string themeName = null;
+            switch (theme)
+            {
+                case Theme.Dark: themeName = "DarkTheme"; break;
+                case Theme.Light: themeName = "LightTheme"; break;
+            }
+
+            if (!string.IsNullOrEmpty(themeName))
+            {
+                this.Resources.MergedDictionaries[0].Source = new Uri($"/Themes/{themeName}.xaml", UriKind.Relative);
+            }
+        }
+    }
 }

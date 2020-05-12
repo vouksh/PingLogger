@@ -64,6 +64,13 @@ namespace PingLogger.GUI.Controls
 			{
 				CreateStartupShortcut();
 			}
+			if(Config.Theme == Theme.Dark)
+			{
+				darkThemeBtn.IsChecked = true;
+			} else
+			{
+				lightThemeBtn.IsChecked = true;
+			}
 		}
 
 		private void CreateStartupShortcut()
@@ -126,6 +133,16 @@ namespace PingLogger.GUI.Controls
 			{
 				MessageBox.Show("Input must be a number.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
 			}
+		}
+
+		private void lightThemeBtn_Checked(object sender, RoutedEventArgs e)
+		{
+			Config.Theme = Theme.Light;
+		}
+
+		private void darkThemeBtn_Checked(object sender, RoutedEventArgs e)
+		{
+			Config.Theme = Theme.Dark;
 		}
 	}
 }

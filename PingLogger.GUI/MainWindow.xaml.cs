@@ -18,6 +18,7 @@ namespace PingLogger.GUI
 	/// </summary>
 	public partial class MainWindow : Window
 	{
+		public static App CurrentApp;
 		private readonly List<TabItem> _tabItems;
 		private readonly TabItem tabAdd;
 		private bool Initializing = false;
@@ -28,8 +29,9 @@ namespace PingLogger.GUI
 		public ICommand NewTabCommand { get; set; }
 		public ICommand CloseTabCommand { get; set; }
 
-		public MainWindow()
+		public MainWindow(App curApp)
 		{
+			CurrentApp = curApp;
 			CloseWindowCommand = new Command(CloseWindow);
 			MinimizeWindowCommand = new Command(Minimize);
 
@@ -132,6 +134,7 @@ namespace PingLogger.GUI
 			tab.Content = pingControl;
 			_tabItems.Insert(count - 1, tab);
 			tabControl.DataContext = _tabItems;
+			tabControl.SelectedIndex = tabControl.Items.Count - 2;
 			//return tab;
 		}
 		private TabItem AddTabItem(Host host, bool AddOnRuntime = false)

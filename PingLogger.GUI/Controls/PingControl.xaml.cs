@@ -386,5 +386,11 @@ namespace PingLogger.GUI.Controls
 				}
 			}.Start();
 		}
+
+		private void viewLogBtn_Click(object sender, RoutedEventArgs e)
+		{
+			LogViewerDialog lvn = new LogViewerDialog(this.PingHost);
+			lvn.Show();
+		}
 	}
 }

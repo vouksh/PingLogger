@@ -13,5 +13,8 @@
 		<Button x:Name="StopAllLoggersBtn" Content="Stop All Loggers" HorizontalAlignment="Left" Margin="545,272,0,0" VerticalAlignment="Top"  Height="65" Width="100" Click="StopAllLoggersBtn_Click"/>
 		<Label x:Name="label" Content="Number of days to keep log files:" HorizontalAlignment="Left" Margin="286,180,0,0" VerticalAlignment="Top"/>
 		<TextBox x:Name="daysToKeep" HorizontalAlignment="Left" Margin="476,184,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="29" HorizontalContentAlignment="Center" PreviewTextInput="daysToKeep_PreviewTextInput" TextChanged="daysToKeep_TextChanged"/>
+		<RadioButton x:Name="lightThemeBtn" GroupName="themeGrp" Content="Light" HorizontalAlignment="Left" Margin="406,228,0,0" VerticalAlignment="Top" VerticalContentAlignment="Center" Checked="lightThemeBtn_Checked" />
+		<RadioButton x:Name="darkThemeBtn" GroupName="themeGrp" Content="Dark" HorizontalAlignment="Left" Margin="406,256,0,0" VerticalAlignment="Top" VerticalContentAlignment="Center" Checked="darkThemeBtn_Checked" />
+		<Label x:Name="label1" Content="Theme:" HorizontalAlignment="Left" Margin="344,238,0,0" VerticalAlignment="Top"/>
 	</Grid>
 </UserControl>

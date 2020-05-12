@@ -1,17 +1,17 @@
-﻿<Window x:Class="PingLogger.GUI.Controls.HelpDialog"
+﻿<Window x:Class="PingLogger.GUI.Controls.LogViewerDialog"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PingLogger.GUI.Controls"
         mc:Ignorable="d"
-        Title="Help" Height="587" Width="390" Loaded="Window_Loaded" 
-		ResizeMode="NoResize"
+        Title="Log Viewer" Height="600" Width="800"
 		WindowStartupLocation="CenterScreen" Style="{DynamicResource CustomDialogStyle}"
 		DataContext="{Binding RelativeSource={RelativeSource Self}}"
-		WindowStyle="SingleBorderWindow">
+		WindowStyle="SingleBorderWindow" Closing="Window_Closing" Loaded="Window_Loaded">
 	<Grid>
-		<TextBlock x:Name="helpText" HorizontalAlignment="Left" Margin="5,5,0,0" Text="TextBlock" TextWrapping="Wrap" VerticalAlignment="Top" Width="390" Height="587"/>
-
+		<ScrollViewer x:Name="scrollViewer">
+			<TextBlock x:Name="textBlock" Text="" Width="Auto" Height="Auto" TextWrapping="Wrap"/>
+		</ScrollViewer>
 	</Grid>
 </Window>

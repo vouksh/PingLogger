@@ -12,6 +12,9 @@
     <Compile Update="Controls\HelpDialog.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="Controls\LogViewerDialog.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="Controls\PingControl.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -23,6 +26,9 @@
     <Page Update="Controls\HelpDialog.xaml">
       <SubType>Designer</SubType>
     </Page>
+    <Page Update="Controls\LogViewerDialog.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Update="Controls\PingControl.xaml">
       <SubType>Designer</SubType>
     </Page>
@@ -30,6 +36,9 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Update="MainWindow.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Themes\LightTheme.xaml">
       <SubType>Designer</SubType>
     </Page>
   </ItemGroup>

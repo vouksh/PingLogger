@@ -13,6 +13,19 @@ namespace PingLogger.GUI.Workers
 		public static ObservableCollection<Host> Hosts { get; set; } = new ObservableCollection<Host>();
 		private static bool InitialLoad = false;
 		private static AppOptions Options { get; set; }
+		public static Theme Theme
+		{
+			get
+			{
+				return Options.Theme;
+			}
+			set
+			{
+				Options.Theme = value;
+				MainWindow.CurrentApp.SetTheme(value);
+				SaveConfig();
+			}
+		}
 		public static int DaysToKeepLogs
 		{
 			get

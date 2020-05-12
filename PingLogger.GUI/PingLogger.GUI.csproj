@@ -24,7 +24,10 @@
     <None Remove="AppIcon.ico" />
     <None Remove="README.md" />
     <None Remove="Resources\closeWindow.png" />
+    <None Remove="Resources\closeWindowLight .png" />
+    <None Remove="Resources\closeWindowLight.png" />
     <None Remove="Resources\minimizeWindow.png" />
+    <None Remove="Resources\minimizeWindowLight.png" />
     <None Include="LICENSE.md">
       <Pack>True</Pack>
       <PackagePath></PackagePath>
@@ -47,7 +50,9 @@
   <ItemGroup>
     <Resource Include="AppIcon.ico" />
     <Resource Include="Resources\closeWindow.png" />
+    <Resource Include="Resources\closeWindowLight.png" />
     <Resource Include="Resources\minimizeWindow.png" />
+    <Resource Include="Resources\minimizeWindowLight.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -57,6 +62,12 @@
   <ItemGroup>
 	<TrimmerRootAssembly Include="System.Net.Ping" />
 	<TrimmerRootAssembly Include="System.Net.NetworkInformation" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Page Update="Themes\DarkTheme.xaml">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Page>
   </ItemGroup>
   
 </Project>

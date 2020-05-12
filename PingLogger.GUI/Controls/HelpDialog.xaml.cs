@@ -12,6 +12,7 @@ using System.Windows.Shapes;
 using System.IO;
 using System.Reflection;
 using System.Linq;
+using PingLogger.GUI.Workers;
 
 namespace PingLogger.GUI.Controls
 {
@@ -20,11 +21,16 @@ namespace PingLogger.GUI.Controls
 	/// </summary>
 	public partial class HelpDialog : Window
 	{
+		public ICommand CloseWindowCommand { get; set; }
 		public HelpDialog()
 		{
 			InitializeComponent();
+			CloseWindowCommand = new Command(CloseWindow);
 		}
-
+		private void CloseWindow()
+		{
+			this.Close();
+		}
 		private void Window_Loaded(object sender, RoutedEventArgs e)
 		{
 			var assembly = Assembly.GetExecutingAssembly();
