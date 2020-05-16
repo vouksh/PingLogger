@@ -25,12 +25,9 @@ namespace PingLogger.GUI.Controls
 		public HelpDialog()
 		{
 			InitializeComponent();
-			CloseWindowCommand = new Command(CloseWindow);
+			CloseWindowCommand = new Command(Close);
 		}
-		private void CloseWindow()
-		{
-			this.Close();
-		}
+
 		private void Window_Loaded(object sender, RoutedEventArgs e)
 		{
 			var assembly = Assembly.GetExecutingAssembly();

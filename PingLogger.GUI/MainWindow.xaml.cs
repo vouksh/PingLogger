@@ -8,8 +8,6 @@ using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
 
 namespace PingLogger.GUI
 {
@@ -20,8 +18,6 @@ namespace PingLogger.GUI
 	{
 		public static App CurrentApp;
 		private readonly List<TabItem> _tabItems;
-		private readonly TabItem tabAdd;
-		private bool Initializing = false;
 
 		public ICommand CloseWindowCommand { get; set; }
 		public ICommand MinimizeWindowCommand { get; set; }
@@ -32,7 +28,7 @@ namespace PingLogger.GUI
 		public MainWindow(App curApp)
 		{
 			CurrentApp = curApp;
-			CloseWindowCommand = new Command(CloseWindow);
+			CloseWindowCommand = new Command(Close);
 			MinimizeWindowCommand = new Command(Minimize);
 
 			CloseTabCommand = new CommandParam(tabDelBtn_Click);
@@ -40,7 +36,6 @@ namespace PingLogger.GUI
 
 			Version version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
 			Thread.CurrentThread.Name = "MainWindowThread";
-			Initializing = true;
 			InitializeComponent();
 			_tabItems = new List<TabItem>();
 			TabItem optsTab = new TabItem
@@ -90,7 +85,6 @@ namespace PingLogger.GUI
 
 		private void Window_Loaded(object sender, RoutedEventArgs e)
 		{
-			Initializing = true;
 			if (Config.Hosts.Count > 0)
 			{
 				foreach (var host in Config.Hosts)
@@ -108,7 +102,6 @@ namespace PingLogger.GUI
 				AddTabItem(newHost);
 			}
 			tabControl.SelectedIndex = 0;
-			Initializing = false;
 		}
 
 		private void AddTabItem()
@@ -208,7 +201,8 @@ namespace PingLogger.GUI
 							var pingCtrl = item.Content as PingControl;
 							pingCtrl.DoStart();
 						}
-					} catch (Exception e)
+					}
+					catch (Exception e)
 					{
 						Logger.Debug(e.ToString());
 					}
@@ -236,28 +230,18 @@ namespace PingLogger.GUI
 			}
 		}
 
-		private void Window_KeyUp(object sender, System.Windows.Input.KeyEventArgs e)
+		private void Window_KeyUp(object sender, KeyEventArgs e)
 		{
-			if(e.Key == System.Windows.Input.Key.F1)
+			if (e.Key == Key.F1)
 			{
 				HelpDialog helpDialog = new HelpDialog();
 				helpDialog.ShowDialog();
 			}
 		}
 
-		private void CloseWindow()
-		{
-			Close();
-		}
-
 		private void Minimize()
 		{
 			WindowState = WindowState.Minimized;
-		}
-
-		private void CloseTabClick()
-		{
-
 		}
 	}
 }

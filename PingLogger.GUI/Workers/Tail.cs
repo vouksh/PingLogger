@@ -14,7 +14,7 @@ namespace PingLogger.GUI.Workers
 {
     class Tail
     {
-        ManualResetEvent me;
+        readonly ManualResetEvent me;
 
         const string defaultLevel = "INFO";
 
@@ -28,8 +28,8 @@ namespace PingLogger.GUI.Workers
 
         long prevLen = -1;
 
-        string path;
-        int nLines;
+        readonly string path;
+        readonly int nLines;
         public string LineFilter { get; set; }
 
         public string LevelRegex { get; set; }
@@ -91,67 +91,60 @@ namespace PingLogger.GUI.Workers
                         //assume truncated!
                         prevLen = 0;
                     }
-                    using (var stream = new FileStream(fi.FullName, FileMode.Open, FileAccess.Read, FileShare.Delete | FileShare.ReadWrite))
+                    using var stream = new FileStream(fi.FullName, FileMode.Open, FileAccess.Read, FileShare.Delete | FileShare.ReadWrite);
+                    stream.Seek(prevLen, SeekOrigin.Begin);
+                    if (string.IsNullOrEmpty(LineFilter))
                     {
-                        stream.Seek(prevLen, SeekOrigin.Begin);
-                        if (string.IsNullOrEmpty(LineFilter))
+                        using StreamReader sr = new StreamReader(stream);
+                        var all = sr.ReadToEnd();
+                        var lines = all.Split('\n');
+
+                        var lastIndex = lines.Length - 1;
+
+                        for (var i = 0; i < lines.Length; i++)
                         {
-                            using (StreamReader sr = new StreamReader(stream))
-                            {
-                                var all = sr.ReadToEnd();
-                                var lines = all.Split('\n');
+                            var line = lines[i].TrimEnd('\r');
 
-                                var lastIndex = lines.Length - 1;
-
-                                for (var i = 0; i < lines.Length; i++)
-                                {
-                                    var line = lines[i].TrimEnd('\r');
-
-                                    if (i != lastIndex)
-                                        OnChanged(line + Environment.NewLine);
-                                    else
-                                        OnChanged(line);
-                                }
-                            }
+                            if (i != lastIndex)
+                                OnChanged(line + Environment.NewLine);
+                            else
+                                OnChanged(line);
                         }
-                        else
+                    }
+                    else
+                    {
+                        char[] buffer = new char[bufSize];
+                        StringBuilder current = new StringBuilder();
+                        using StreamReader sr = new StreamReader(stream);
+                        int nRead;
+                        do
                         {
-                            char[] buffer = new char[bufSize];
-                            StringBuilder current = new StringBuilder();
-                            using (StreamReader sr = new StreamReader(stream))
+                            nRead = sr.ReadBlock(buffer, 0, bufSize);
+                            for (int i = 0; i < nRead; ++i)
                             {
-                                int nRead;
-                                do
+                                if (buffer[i] == '\n' || buffer[i] == '\r')
                                 {
-                                    nRead = sr.ReadBlock(buffer, 0, bufSize);
-                                    for (int i = 0; i < nRead; ++i)
+                                    if (current.Length > 0)
                                     {
-                                        if (buffer[i] == '\n' || buffer[i] == '\r')
-                                        {
-                                            if (current.Length > 0)
-                                            {
-                                                string line = string.Concat(previous, current);
+                                        string line = string.Concat(previous, current);
 
-                                                if (lineFilterRegex.IsMatch(line))
-                                                {
-                                                    OnChanged(string.Concat(line, Environment.NewLine));
-                                                }
-                                            }
-                                            current = new StringBuilder();
-                                        }
-                                        else
+                                        if (lineFilterRegex.IsMatch(line))
                                         {
-                                            current.Append(buffer[i]);
+                                            OnChanged(string.Concat(line, Environment.NewLine));
                                         }
                                     }
-                                } while (nRead > 0);
-                                if (current.Length > 0)
+                                    current = new StringBuilder();
+                                }
+                                else
                                 {
-                                    previous = current.ToString();
+                                    current.Append(buffer[i]);
                                 }
                             }
+                        } while (nRead > 0);
+                        if (current.Length > 0)
+                        {
+                            previous = current.ToString();
                         }
-
                     }
                 }
                 prevLen = fi.Length;

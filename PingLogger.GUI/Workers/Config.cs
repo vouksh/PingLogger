@@ -8,8 +8,8 @@ namespace PingLogger.GUI.Workers
 {
 	public static class Config
 	{
-		private static string hostsPath = "./hosts.json";
-		private static string configPath = "./config.json";
+		private static readonly string hostsPath = "./hosts.json";
+		private static readonly string configPath = "./config.json";
 		public static ObservableCollection<Host> Hosts { get; set; } = new ObservableCollection<Host>();
 		private static bool InitialLoad = false;
 		private static AppOptions Options { get; set; }

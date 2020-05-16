@@ -1,18 +1,10 @@
 ﻿using PingLogger.GUI.Models;
 using PingLogger.GUI.Workers;
 using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Text;
+using System.IO;
 using System.Threading;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace PingLogger.GUI.Controls
 {
@@ -22,18 +14,18 @@ namespace PingLogger.GUI.Controls
 	public partial class LogViewerDialog : Window
 	{
 		public ICommand CloseWindowCommand { get; set; }
-		private Tail Tail;
+		private readonly Tail Tail;
 		private readonly SynchronizationContext syncCtx;
+		private bool isRunning = false;
 		public LogViewerDialog(Host host)
 		{
 			InitializeComponent();
-			CloseWindowCommand = new Command(CloseWindow);
+			CloseWindowCommand = new Command(Close);
+
 			Tail = new Tail($"./Logs/{host.HostName}-{DateTime.Now:yyyyMMdd}.log", 20);
 			Tail.Changed += Tail_Changed;
 			syncCtx = SynchronizationContext.Current;
 		}
-
-		private void CloseWindow() => this.Close();
 
 		private void Tail_Changed(object sender, Tail.TailEventArgs e)
 		{
@@ -46,7 +38,7 @@ namespace PingLogger.GUI.Controls
 			{
 				textBlock.Text += (string)o;
 
-				if(scrollToBottom)
+				if (scrollToBottom)
 					scrollViewer.ScrollToBottom();
 			}),
 			e.Line);
@@ -54,12 +46,22 @@ namespace PingLogger.GUI.Controls
 
 		private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
 		{
-			Tail.Stop();
+			if(isRunning)
+				Tail.Stop();
 		}
 
 		private void Window_Loaded(object sender, RoutedEventArgs e)
 		{
-			Tail.Run();
+			try
+			{
+				Tail.Run();
+				isRunning = true;
+			}
+			catch (FileNotFoundException)
+			{
+				MessageBox.Show("Please start the ping logger at least once before attempting to watch it", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+				Close();
+			}
 		}
 	}
 }

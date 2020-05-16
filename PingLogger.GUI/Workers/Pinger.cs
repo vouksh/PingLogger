@@ -98,7 +98,7 @@ namespace PingLogger.GUI.Workers
 			//Check to make sure the packet size isn't too large. Don't want to abuse this.
 			if (Host.PacketSize > 65500)
 			{
-				Logger.Error("Packet size too large. Resetting to 20000 bytes");
+				Logger.Error("Packet size too large. Resetting to 65500 bytes");
 				Host.PacketSize = 65500;
 			}
 			//Make sure that the interval isn't too short. If you set it to be too frequent, it might get flagged as DDoS attack.
@@ -112,7 +112,7 @@ namespace PingLogger.GUI.Workers
 			Logger.Information("Verifying IP address of hostname is current.");
 			foreach (var ip in Dns.GetHostAddresses(Host.HostName))
 			{
-				Logger.Debug($"IP: {ip.ToString()}");
+				Logger.Debug($"IP: {ip}");
 				if (ip.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
 				{
 					if (ip.ToString() == Host.IP)
@@ -197,8 +197,8 @@ namespace PingLogger.GUI.Workers
 					DontFragment = DontFragment,
 					Ttl = 64
 				};
-				Logger.Debug($"Running: {Running.ToString()}");
-				Logger.Debug($"stopping: {stopping.ToString()}");
+				Logger.Debug($"Running: {Running}");
+				Logger.Debug($"stopping: {stopping}");
 				if (stopping)
 				{
 					Running = false;

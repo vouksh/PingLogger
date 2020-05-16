@@ -30,28 +30,33 @@ namespace PingLogger.GUI.Controls
 
 		private static bool IsNumericInput(string text)
 		{
+			Logger.Info($"Checking if {text} is numerical");
 			return !regex.IsMatch(text);
 		}
 
 		private void LoadOnBoot_Unchecked(object sender, RoutedEventArgs e)
 		{
+			Logger.Info("LoadOnBoot unchecked");
 			Config.LoadWithWindows = false;
 			DeleteStartupShortcut();
 		}
 
 		private void LoadOnBoot_Checked(object sender, RoutedEventArgs e)
 		{
+			Logger.Info("LoadOnBoot checked");
 			Config.LoadWithWindows = true;
 			CreateStartupShortcut();
 		}
 
 		private void StartAllLoggers_Checked(object sender, RoutedEventArgs e)
 		{
+			Logger.Info("StartAllLoggers checked");
 			Config.StartLoggersAutomatically = true;
 		}
 
 		private void StartAllLoggers_Unchecked(object sender, RoutedEventArgs e)
 		{
+			Logger.Info("StartAllLoggers unchecked");
 			Config.StartLoggersAutomatically = false;
 		}
 
@@ -71,11 +76,14 @@ namespace PingLogger.GUI.Controls
 			{
 				lightThemeBtn.IsChecked = true;
 			}
+			Logger.Info("SettingsControl loaded");
 		}
 
 		private void CreateStartupShortcut()
 		{
+			Logger.Info("CreateStartupShortcut called");
 			var batchPath = Environment.GetFolderPath(Environment.SpecialFolder.Startup) + "\\PingLogger.bat";
+			Logger.Info($"Saving batch file to {batchPath}");
 			if(!File.Exists(batchPath))
 			{
 				var exePath = Environment.CurrentDirectory + "\\";
@@ -87,13 +95,16 @@ namespace PingLogger.GUI.Controls
 				batchScript += loggerDrive + Environment.NewLine;
 				batchScript += $"CD \"{exePath}\"" + Environment.NewLine;
 				batchScript += $"START \"\" \".\\{exeName}\"";
+				Logger.Info($"Writing script: {batchScript}");
 				File.WriteAllText(batchPath, batchScript);
 			}
 		}
 
 		private void DeleteStartupShortcut()
 		{
+			Logger.Info("DeleteStartupShortcut called");
 			var batchPath = Environment.GetFolderPath(Environment.SpecialFolder.Startup) + "\\PingLogger.bat";
+			Logger.Info($"Deleting batch file {batchPath}");
 			File.Delete(batchPath);
 		}
 
@@ -137,11 +148,13 @@ namespace PingLogger.GUI.Controls
 
 		private void lightThemeBtn_Checked(object sender, RoutedEventArgs e)
 		{
+			Logger.Info("lightThemeBtn Checked");
 			Config.Theme = Theme.Light;
 		}
 
 		private void darkThemeBtn_Checked(object sender, RoutedEventArgs e)
 		{
+			Logger.Info("darkThemeBtn Checked");
 			Config.Theme = Theme.Dark;
 		}
 	}

@@ -1,5 +1,6 @@
 ﻿using PingLogger.GUI.Models;
 using Serilog;
+using System;
 
 namespace PingLogger.GUI.Workers
 {
@@ -8,17 +9,19 @@ namespace PingLogger.GUI.Workers
 		public static readonly ILogger Log;
 		static Logger()
 		{
-#if DEBUG
 			Log = new LoggerConfiguration()
+#if DEBUG
 				.MinimumLevel.Verbose()
+#endif
 				.Enrich.With(new ThreadIdEnricher())
-				.WriteTo.File(
-				"PingLogger.log", 
+				.WriteTo.RollingFile(
+				"PingLogger-{Date}.log", 
 				restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Verbose, 
 				shared: true,
-				outputTemplate: "[{Timestamp:HH:mm:ss.fff} {Level}] ({ThreadId}) {Message:lj}{NewLine}{Exception}")
+				outputTemplate: "[{Timestamp:HH:mm:ss.fff} {Level}] ({ThreadId}) {Message:lj}{NewLine}{Exception}",
+				flushToDiskInterval: TimeSpan.FromSeconds(1)
+				)
 				.CreateLogger();
-#endif
 		}
 
 		public static void Debug(string text)
@@ -27,5 +30,9 @@ namespace PingLogger.GUI.Workers
 			Log.Debug(text);
 #endif
 		}
+
+		public static void Info(string text) => Log.Information(text);
+		public static void Error(string text) => Log.Error(text);
+		public static void Fatal(string text) => Log.Fatal(text);
 	}
 }
