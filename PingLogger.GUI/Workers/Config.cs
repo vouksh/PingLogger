@@ -1,8 +1,8 @@
-﻿using Newtonsoft.Json;
-using PingLogger.GUI.Models;
+﻿using PingLogger.GUI.Models;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.IO;
+using System.Text.Json;
 
 namespace PingLogger.GUI.Workers
 {
@@ -77,16 +77,9 @@ namespace PingLogger.GUI.Workers
 			if (File.Exists(hostsPath))
 			{
 				InitialLoad = true;
-				try
-				{
-					var fileContents = File.ReadAllText(hostsPath);
-					Hosts = JsonConvert.DeserializeObject<ObservableCollection<Host>>(fileContents);
-					InitialLoad = false;
-				}
-				catch
-				{
-
-				}
+				var fileContents = File.ReadAllText(hostsPath);
+				Hosts = JsonSerializer.Deserialize<ObservableCollection<Host>>(fileContents);
+				InitialLoad = false;
 			}
 			else
 			{
@@ -98,7 +91,7 @@ namespace PingLogger.GUI.Workers
 				try
 				{
 					var fileContents = File.ReadAllText(configPath);
-					Options = JsonConvert.DeserializeObject<AppOptions>(fileContents);
+					Options = JsonSerializer.Deserialize<AppOptions>(fileContents);
 				}
 				catch
 				{
@@ -113,8 +106,8 @@ namespace PingLogger.GUI.Workers
 		}
 		private static void SaveConfig()
 		{
-			File.WriteAllText(hostsPath, JsonConvert.SerializeObject(Hosts, Formatting.Indented));
-			File.WriteAllText(configPath, JsonConvert.SerializeObject(Options, Formatting.Indented));
+			File.WriteAllText(hostsPath, JsonSerializer.Serialize(Hosts, new JsonSerializerOptions { WriteIndented = true }));
+			File.WriteAllText(configPath, JsonSerializer.Serialize(Options, new JsonSerializerOptions { WriteIndented = true }));
 		}
 	}
 
