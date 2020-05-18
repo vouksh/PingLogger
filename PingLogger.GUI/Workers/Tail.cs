@@ -174,7 +174,7 @@ namespace PingLogger.GUI.Workers
                     }
                 }
             }
-
+            lines.Add(Environment.NewLine);
             foreach (var l in lines)
             {
                 OnChanged(l);
@@ -184,7 +184,7 @@ namespace PingLogger.GUI.Workers
 
         private static void EnqueueLine(int nLines, List<string> lines, string line)
         {
-            if (lines.Count >= nLines)
+            if (nLines > 0 && lines.Count >= nLines)
             {
                 lines.RemoveAt(0);
             }
