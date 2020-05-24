@@ -2,6 +2,7 @@
 <Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <_LastSelectedProfileId>C:\Users\vouks\Source\Repos\vouksh\PingLogger\PingLogger.GUI\Properties\PublishProfiles\64-Bit.pubxml</_LastSelectedProfileId>
+    <RunAnalyzersDuringLiveAnalysis>false</RunAnalyzersDuringLiveAnalysis>
   </PropertyGroup>
   <ItemGroup>
     <ApplicationDefinition Update="App.xaml">

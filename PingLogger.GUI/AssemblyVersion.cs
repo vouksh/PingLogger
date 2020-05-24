@@ -4,7 +4,9 @@
 // 
 
 using System.Reflection;
+using System.Resources;
 
 [assembly: AssemblyTitle("PingLogger")]
 [assembly: AssemblyDescription("Advanced multi-threaded ping logging application")]
 [assembly: AssemblyVersion("2.0.*")]
+[assembly: NeutralResourcesLanguage("en-US")]

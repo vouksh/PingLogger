@@ -34,17 +34,19 @@ namespace PingLogger.GUI.Workers
 			Host = host;
 			if (!Directory.Exists("./Logs"))
 				Directory.CreateDirectory("./Logs");
+			if (!Directory.Exists($"./Logs/{Host.HostName}/"))
+				Directory.CreateDirectory($"./Logs/{Host.HostName}/");
 			//Check to see if just this is supposed to be silent, or if it's app-wide setting
 			var outputTemp = "[{Timestamp:HH:mm:ss} {Level:u4}] {Message:lj}{NewLine}{Exception}";
 			var errorOutputTemp = "[{Timestamp:HH:mm:ss} {Level:u5}] {Message:lj}{NewLine}{Exception}";
 
-			var filePath = "./Logs/" + Host.HostName + "-{Date}.log";
-			var errorPathName = "./Logs/" + Host.HostName + "-Errors-{Date}.log";
-			var warnPathName = "./Logs/" + Host.HostName + "-Warnings-{Date}.log";
+			var filePath = "./Logs/" + Host.HostName + "/" + Host.HostName + "-{Date}.log";
+			var errorPathName = "./Logs/" + Host.HostName + "/" + Host.HostName + "-Errors-{Date}.log";
+			var warnPathName = "./Logs/" + Host.HostName + "/" + Host.HostName + "-Warnings-{Date}.log";
 
 #if DEBUG
 			var debugOutputTemp = "[{Timestamp:HH:mm:ss.fff} {Level}] ({ThreadId}) {Message:lj}{NewLine}{Exception}";
-			var debugPathName = "./Logs/" + Host.HostName + "-Debug-{Date}.log";
+			var debugPathName = "./Logs/" + Host.HostName + "/" + Host.HostName + "-Debug-{Date}.log";
 #endif
 			Logger = new LoggerConfiguration()
 #if DEBUG

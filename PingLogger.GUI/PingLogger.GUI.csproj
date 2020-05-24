@@ -14,12 +14,19 @@
 	<PublishReadyToRun>true</PublishReadyToRun>
 	<StartupObject>PingLogger.GUI.App</StartupObject>
 	<PackageLicenseFile>LICENSE.md</PackageLicenseFile>
-	<SatelliteResourceLanguages>en-US</SatelliteResourceLanguages>
 	<PreserveCompilationContext>false</PreserveCompilationContext>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <GenerateSerializationAssemblies>Auto</GenerateSerializationAssemblies>
+  </PropertyGroup>
+
+  <PropertyGroup>
+	<SatelliteResourceLanguages>en-US</SatelliteResourceLanguages>
+	<SignAssembly>true</SignAssembly>
+	<RunAnalyzersDuringBuild>false</RunAnalyzersDuringBuild>
+	<NoWin32Manifest>true</NoWin32Manifest>
+	<PackageIcon>AppIcon.ico</PackageIcon>
   </PropertyGroup>
 
   <ItemGroup>
@@ -30,6 +37,10 @@
     <None Remove="Resources\closeWindowLight.png" />
     <None Remove="Resources\minimizeWindow.png" />
     <None Remove="Resources\minimizeWindowLight.png" />
+    <None Include="AppIcon.ico">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
     <None Include="LICENSE.md">
       <Pack>True</Pack>
       <PackagePath></PackagePath>

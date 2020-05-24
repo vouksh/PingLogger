@@ -91,10 +91,10 @@ namespace PingLogger.GUI.Controls
 		}
 		void Timer_Tick(object sender, EventArgs e)
 		{
-			if (Directory.Exists("./Logs"))
+			if (Directory.Exists($"./Logs/{HostNameBox.Text}"))
 			{
 				openLogFolderBtn.Visibility = Visibility.Visible;
-				if (File.Exists($"./Logs/{HostNameBox.Text}-{DateTime.Now:yyyyMMdd}.log"))
+				if (File.Exists($"./Logs/{HostNameBox.Text}/{HostNameBox.Text}-{DateTime.Now:yyyyMMdd}.log"))
 				{
 					viewLogBtn.Visibility = Visibility.Visible;
 				}
@@ -391,7 +391,7 @@ namespace PingLogger.GUI.Controls
 				StartInfo = new ProcessStartInfo
 				{
 					FileName = "explorer.exe",
-					Arguments = Environment.CurrentDirectory + Path.DirectorySeparatorChar + "Logs"
+					Arguments = $"{Environment.CurrentDirectory}{Path.DirectorySeparatorChar}Logs{Path.DirectorySeparatorChar}{HostNameBox.Text}"
 				}
 			}.Start();
 		}

@@ -1,6 +1,7 @@
 ﻿using PingLogger.GUI.Models;
 using Serilog;
 using System;
+using System.IO;
 
 namespace PingLogger.GUI.Workers
 {
@@ -9,13 +10,16 @@ namespace PingLogger.GUI.Workers
 		public static readonly ILogger Log;
 		static Logger()
 		{
+			if (!Directory.Exists("./Logs"))
+				Directory.CreateDirectory("./Logs");
+
 			Log = new LoggerConfiguration()
 #if DEBUG
 				.MinimumLevel.Verbose()
 #endif
 				.Enrich.With(new ThreadIdEnricher())
 				.WriteTo.RollingFile(
-				"PingLogger-{Date}.log", 
+				"./Logs/PingLogger-{Date}.log", 
 				restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Verbose, 
 				shared: true,
 				outputTemplate: "[{Timestamp:HH:mm:ss.fff} {Level}] ({ThreadId}) {Message:lj}{NewLine}{Exception}",
