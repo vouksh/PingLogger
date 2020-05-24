@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.NetworkInformation;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -90,6 +91,14 @@ namespace PingLogger.GUI.Controls
 		}
 		void Timer_Tick(object sender, EventArgs e)
 		{
+			if (Directory.Exists("./Logs"))
+			{
+				openLogFolderBtn.Visibility = Visibility.Visible;
+				if (File.Exists($"./Logs/{HostNameBox.Text}-{DateTime.Now:yyyyMMdd}.log"))
+				{
+					viewLogBtn.Visibility = Visibility.Visible;
+				}
+			}
 			if (Pinger != null && Pinger.Running)
 			{
 				Logger.Debug("Pinger not null & Pinger Running");
@@ -391,6 +400,14 @@ namespace PingLogger.GUI.Controls
 		{
 			LogViewerDialog lvn = new LogViewerDialog(this.PingHost);
 			lvn.Show();
+		}
+
+		private void HostNameBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
+		{
+			if(e.Text != PingHost.HostName)
+			{
+				viewLogBtn.Visibility = Visibility.Hidden;
+			}
 		}
 	}
 }
