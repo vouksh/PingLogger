@@ -20,7 +20,7 @@ namespace PingLogger.GUI
 		{
 			Logger.Debug("Application start");
 			AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
-			SetTheme(Config.Theme);
+			//SetTheme(Config.Theme);
 			MainWindow window = new MainWindow(this);
 			window.Show();
 		}
@@ -30,7 +30,7 @@ namespace PingLogger.GUI
 			MessageBox.Show((e.ExceptionObject as Exception).Message, "An error has occurred", MessageBoxButton.OK, MessageBoxImage.Error);
 			Logger.Error((e.ExceptionObject as Exception).Message);
 		}
-
+		/*
 		public void SetTheme(Theme theme)
 		{
 			string themeName = null;
@@ -44,6 +44,6 @@ namespace PingLogger.GUI
 			{
 				Resources.MergedDictionaries[0].Source = new Uri($"/Themes/{themeName}.xaml", UriKind.Relative);
 			}
-		}
+		}*/
 	}
 }

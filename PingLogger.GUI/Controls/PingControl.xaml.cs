@@ -91,16 +91,22 @@ namespace PingLogger.GUI.Controls
 		}
 		void Timer_Tick(object sender, EventArgs e)
 		{
-			if (Directory.Exists($"./Logs/{HostNameBox.Text}"))
+			if (Directory.Exists($"{Environment.CurrentDirectory}{Path.DirectorySeparatorChar}Logs{Path.DirectorySeparatorChar}{HostNameBox.Text}"))
 			{
 				openLogFolderBtn.Visibility = Visibility.Visible;
-				if (File.Exists($"./Logs/{HostNameBox.Text}/{HostNameBox.Text}-{DateTime.Now:yyyyMMdd}.log"))
+				if (File.Exists($"{Environment.CurrentDirectory}{Path.DirectorySeparatorChar}Logs{Path.DirectorySeparatorChar}{HostNameBox.Text}/{HostNameBox.Text}-{DateTime.Now:yyyyMMdd}.log"))
 				{
 					viewLogBtn.Visibility = Visibility.Visible;
 				}
+			} else
+			{
+				openLogFolderBtn.Visibility = Visibility.Hidden;
+				viewLogBtn.Visibility = Visibility.Hidden;
 			}
 			if (Pinger != null && Pinger.Running)
 			{
+				StartBtn.Visibility = Visibility.Hidden;
+				StopBtn.Visibility = Visibility.Visible;
 				Logger.Debug("Pinger not null & Pinger Running");
 				StringBuilder sb = new StringBuilder();
 				Logger.Debug($"Replies to parse: {Pinger.Replies.Count}");
@@ -161,6 +167,8 @@ namespace PingLogger.GUI.Controls
 			}
 			else
 			{
+				StartBtn.Visibility = Visibility.Visible;
+				StopBtn.Visibility = Visibility.Hidden;
 				if (IPAddressBox.Text == "Invalid Host Name")
 				{
 					StartBtn.IsEnabled = false;
@@ -241,6 +249,14 @@ namespace PingLogger.GUI.Controls
 				await UpdateIPBox();
 				(this.Parent as TabItem).Header = $"Host: {HostNameBox.Text}";
 				UpdateHost();
+			}
+			if (!Directory.Exists($"{Environment.CurrentDirectory}{Path.DirectorySeparatorChar}Logs{Path.DirectorySeparatorChar}{HostNameBox.Text}"))
+			{
+				viewLogBtn.Visibility = Visibility.Hidden;
+			}
+			else
+			{
+				viewLogBtn.Visibility = Visibility.Visible;
 			}
 		}
 

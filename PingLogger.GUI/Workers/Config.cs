@@ -3,29 +3,17 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.IO;
 using System.Text.Json;
+using System.IO.Compression;
+using System;
 
 namespace PingLogger.GUI.Workers
 {
 	public static class Config
 	{
-		private static readonly string hostsPath = "./hosts.json";
-		private static readonly string configPath = "./config.json";
 		public static ObservableCollection<Host> Hosts { get; set; } = new ObservableCollection<Host>();
 		private static bool InitialLoad = false;
 		private static AppOptions Options { get; set; }
-		public static Theme Theme
-		{
-			get
-			{
-				return Options.Theme;
-			}
-			set
-			{
-				Options.Theme = value;
-				MainWindow.CurrentApp.SetTheme(value);
-				SaveConfig();
-			}
-		}
+
 		public static int DaysToKeepLogs
 		{
 			get
@@ -72,42 +60,106 @@ namespace PingLogger.GUI.Workers
 			if (!InitialLoad)
 				SaveConfig();
 		}
+
+		// Put this in for backward compatibility.
+		private static bool CheckForOldConfig()
+		{
+			bool oldConfigExists = false;
+			if(File.Exists("./config.json"))
+			{
+				oldConfigExists = true;
+				var fileContents = File.ReadAllText("./config.json");
+				Options = JsonSerializer.Deserialize<AppOptions>(fileContents);
+				File.Delete("./config.json");
+			}
+			if(File.Exists("./hosts.json"))
+			{
+				oldConfigExists = true;
+				var fileContents = File.ReadAllText("./hosts.json");
+				Hosts = JsonSerializer.Deserialize<ObservableCollection<Host>>(fileContents);
+				File.Delete("./hosts.json");
+			}
+			return oldConfigExists;
+		}
+
 		private static void ReadConfig()
 		{
-			if (File.Exists(hostsPath))
+			string dataPath = "./config.dat";
+			if (File.Exists("./config.dat"))
 			{
 				InitialLoad = true;
-				var fileContents = File.ReadAllText(hostsPath);
-				Hosts = JsonSerializer.Deserialize<ObservableCollection<Host>>(fileContents);
+				using var archive = ZipFile.OpenRead(dataPath);
+				foreach (var entry in archive.Entries)
+				{
+					using StreamReader streamReader = new StreamReader(entry.Open());
+					var fileContents = streamReader.ReadToEnd();
+					switch(entry.FullName)
+					{
+						case "hosts.json":
+							Hosts = JsonSerializer.Deserialize<ObservableCollection<Host>>(fileContents);
+							break;
+						case "config.json":
+							Options = JsonSerializer.Deserialize<AppOptions>(fileContents);
+							break;
+					}
+				}
 				InitialLoad = false;
 			}
 			else
 			{
-				Hosts = new ObservableCollection<Host>();
-			}
-			if (File.Exists(configPath))
-			{
-				InitialLoad = true;
-				try
+				if (!CheckForOldConfig())
 				{
-					var fileContents = File.ReadAllText(configPath);
-					Options = JsonSerializer.Deserialize<AppOptions>(fileContents);
-				}
-				catch
-				{
+					Hosts = new ObservableCollection<Host>();
 					Options = new AppOptions();
 				}
-				InitialLoad = false;
-			}
-			else
-			{
-				Options = new AppOptions();
+				SaveConfig();
 			}
 		}
 		private static void SaveConfig()
 		{
-			File.WriteAllText(hostsPath, JsonSerializer.Serialize(Hosts, new JsonSerializerOptions { WriteIndented = true }));
-			File.WriteAllText(configPath, JsonSerializer.Serialize(Options, new JsonSerializerOptions { WriteIndented = true }));
+			var hostData = JsonSerializer.Serialize(Hosts, new JsonSerializerOptions { WriteIndented = true });
+			var configData = JsonSerializer.Serialize(Options, new JsonSerializerOptions { WriteIndented = true });
+			var fileStream = File.Open("./config.dat", FileMode.OpenOrCreate);
+			using var archive = new ZipArchive(fileStream, ZipArchiveMode.Update);
+			if (archive.Entries.Count > 0)
+			{
+				foreach(var entry in archive.Entries)
+				{
+					using StreamWriter entryWriter = new StreamWriter(entry.Open());
+					switch (entry.FullName)
+					{
+						case "hosts.json":
+							foreach (var line in hostData.Split(Environment.NewLine))
+							{
+								entryWriter.WriteLine(line);
+							}
+							break;
+
+						case "config.json":
+							foreach (var line in configData.Split(Environment.NewLine))
+							{
+								entryWriter.WriteLine(line);
+							}
+							break;
+					}
+				}
+			}
+			else
+			{
+				var hostEntry = archive.CreateEntry("hosts.json");
+				using StreamWriter hostWriter = new StreamWriter(hostEntry.Open());
+				foreach (var line in hostData.Split(Environment.NewLine))
+				{
+					hostWriter.WriteLine(line);
+				}
+
+				var configEntry = archive.CreateEntry("config.json");
+				using StreamWriter configWriter = new StreamWriter(configEntry.Open());
+				foreach (var line in configData.Split(Environment.NewLine))
+				{
+					configWriter.WriteLine(line);
+				}
+			}
 		}
 	}
 

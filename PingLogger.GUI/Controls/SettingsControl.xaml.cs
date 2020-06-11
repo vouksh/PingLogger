@@ -69,13 +69,14 @@ namespace PingLogger.GUI.Controls
 			{
 				CreateStartupShortcut();
 			}
+			/*
 			if(Config.Theme == Theme.Dark)
 			{
 				darkThemeBtn.IsChecked = true;
 			} else
 			{
 				lightThemeBtn.IsChecked = true;
-			}
+			}*/
 			Logger.Info("SettingsControl loaded");
 		}
 
@@ -149,13 +150,13 @@ namespace PingLogger.GUI.Controls
 		private void lightThemeBtn_Checked(object sender, RoutedEventArgs e)
 		{
 			Logger.Info("lightThemeBtn Checked");
-			Config.Theme = Theme.Light;
+			//Config.Theme = Theme.Light;
 		}
 
 		private void darkThemeBtn_Checked(object sender, RoutedEventArgs e)
 		{
 			Logger.Info("darkThemeBtn Checked");
-			Config.Theme = Theme.Dark;
+			//Config.Theme = Theme.Dark;
 		}
 	}
 }

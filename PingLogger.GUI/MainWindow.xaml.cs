@@ -99,6 +99,7 @@ namespace PingLogger.GUI
 					Id = Guid.NewGuid(),
 					HostName = "google.com"
 				};
+				Config.Hosts.Add(newHost);
 				AddTabItem(newHost);
 			}
 			tabControl.SelectedIndex = 0;
