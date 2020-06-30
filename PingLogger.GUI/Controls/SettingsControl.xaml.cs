@@ -21,6 +21,7 @@ namespace PingLogger.GUI.Controls
 	/// </summary>
 	public partial class SettingsControl : UserControl
 	{
+		public static bool FirstLoadComplete = false;
 		public SettingsControl()
 		{
 			InitializeComponent();
@@ -62,22 +63,26 @@ namespace PingLogger.GUI.Controls
 
 		private void UserControl_Loaded(object sender, RoutedEventArgs e)
 		{
-			LoadOnBoot.IsChecked = Config.LoadWithWindows;
-			StartAllLoggers.IsChecked = Config.StartLoggersAutomatically;
-			daysToKeep.Text = Config.DaysToKeepLogs.ToString();
-			if(Config.LoadWithWindows)
+			if (!FirstLoadComplete)
 			{
-				CreateStartupShortcut();
+				LoadOnBoot.IsChecked = Config.LoadWithWindows;
+				StartAllLoggers.IsChecked = Config.StartLoggersAutomatically;
+				daysToKeep.Text = Config.DaysToKeepLogs.ToString();
+				if (Config.LoadWithWindows)
+				{
+					CreateStartupShortcut();
+				}
+				/*
+				if(Config.Theme == Theme.Dark)
+				{
+					darkThemeBtn.IsChecked = true;
+				} else
+				{
+					lightThemeBtn.IsChecked = true;
+				}*/
+				FirstLoadComplete = true;
+				Logger.Info("SettingsControl loaded");
 			}
-			/*
-			if(Config.Theme == Theme.Dark)
-			{
-				darkThemeBtn.IsChecked = true;
-			} else
-			{
-				lightThemeBtn.IsChecked = true;
-			}*/
-			Logger.Info("SettingsControl loaded");
 		}
 
 		private void CreateStartupShortcut()

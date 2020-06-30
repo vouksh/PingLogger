@@ -13,7 +13,7 @@
 		DataContext="{Binding RelativeSource={RelativeSource Self}}"
 		WindowStyle="SingleBorderWindow">
 	<Grid>
-		<TabControl x:Name="tabControl" ItemsSource="{Binding}" DataContext="{Binding RelativeSource={RelativeSource AncestorType=local:MainWindow}, Path=DataContext}" Grid.ColumnSpan="3" Padding="0" Template="{DynamicResource AddButtons}">
+		<TabControl x:Name="tabControl" ItemsSource="{Binding}" DataContext="{Binding RelativeSource={RelativeSource AncestorType=local:MainWindow}, Path=DataContext}" Grid.ColumnSpan="3" Padding="0" Template="{DynamicResource AddButtons}" SelectionChanged="tabControl_SelectionChanged">
 			<TabControl.Resources>
 				<DataTemplate x:Key="TabHeader" DataType="TabItem">
 					<TextBlock Text="{Binding RelativeSource={RelativeSource AncestorType={x:Type TabItem}}, Path=Header}" />

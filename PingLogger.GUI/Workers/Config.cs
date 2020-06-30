@@ -123,25 +123,22 @@ namespace PingLogger.GUI.Workers
 			using var archive = new ZipArchive(fileStream, ZipArchiveMode.Update);
 			if (archive.Entries.Count > 0)
 			{
-				foreach(var entry in archive.Entries)
+				var hostEntry = archive.GetEntry("hosts.json");
+				hostEntry.Delete();
+				hostEntry = archive.CreateEntry("hosts.json");
+				using StreamWriter hostWriter = new StreamWriter(hostEntry.Open());
+				foreach (var line in hostData.Split(Environment.NewLine))
 				{
-					using StreamWriter entryWriter = new StreamWriter(entry.Open());
-					switch (entry.FullName)
-					{
-						case "hosts.json":
-							foreach (var line in hostData.Split(Environment.NewLine))
-							{
-								entryWriter.WriteLine(line);
-							}
-							break;
+					hostWriter.WriteLine(line);
+				}
 
-						case "config.json":
-							foreach (var line in configData.Split(Environment.NewLine))
-							{
-								entryWriter.WriteLine(line);
-							}
-							break;
-					}
+				var configEntry = archive.GetEntry("config.json");
+				configEntry.Delete(); 
+				configEntry = archive.CreateEntry("config.json");
+				using StreamWriter configWriter = new StreamWriter(configEntry.Open());
+				foreach (var line in configData.Split(Environment.NewLine))
+				{
+					configWriter.WriteLine(line);
 				}
 			}
 			else

@@ -18,9 +18,9 @@ namespace PingLogger.GUI
 
 		private void Application_Startup(object sender, StartupEventArgs e)
 		{
-			Logger.Debug("Application start");
+			Logger.Info("Application start");
+			Logger.Info($"Application is running from directory {AppContext.BaseDirectory}");
 			AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
-			//SetTheme(Config.Theme);
 			MainWindow window = new MainWindow(this);
 			window.Show();
 		}
@@ -28,22 +28,7 @@ namespace PingLogger.GUI
 		private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
 		{
 			MessageBox.Show((e.ExceptionObject as Exception).Message, "An error has occurred", MessageBoxButton.OK, MessageBoxImage.Error);
-			Logger.Error((e.ExceptionObject as Exception).Message);
+			Logger.Log.Fatal((e.ExceptionObject as Exception), "A fatal unhandled exception occurred");
 		}
-		/*
-		public void SetTheme(Theme theme)
-		{
-			string themeName = null;
-			switch (theme)
-			{
-				case Theme.Dark: themeName = "DarkTheme"; break;
-				case Theme.Light: themeName = "LightTheme"; break;
-			}
-			Logger.Info($"Setting theme to {themeName}");
-			if (!string.IsNullOrEmpty(themeName))
-			{
-				Resources.MergedDictionaries[0].Source = new Uri($"/Themes/{themeName}.xaml", UriKind.Relative);
-			}
-		}*/
 	}
 }

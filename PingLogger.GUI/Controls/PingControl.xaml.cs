@@ -107,13 +107,11 @@ namespace PingLogger.GUI.Controls
 			{
 				StartBtn.Visibility = Visibility.Hidden;
 				StopBtn.Visibility = Visibility.Visible;
-				Logger.Debug("Pinger not null & Pinger Running");
 				StringBuilder sb = new StringBuilder();
-				Logger.Debug($"Replies to parse: {Pinger.Replies.Count}");
 				for (int i = 0; i < Pinger.Replies.Count - 1; i++)
 				{
-					Logger.Debug($"Reply #{i}");
 					TotalPings++;
+					Logger.Info($"{PingHost.HostName} TotalPings: {TotalPings}");
 					var success = Pinger.Replies.TryTake(out Reply reply);
 					if (success)
 					{
@@ -122,13 +120,13 @@ namespace PingLogger.GUI.Controls
 						if (reply.RoundTrip > 0)
 						{
 							PingTimes.Add(reply.RoundTrip);
-							Logger.Debug($"RoundTrip Time > 0: {reply.RoundTrip}");
+							Logger.Debug($"{PingHost.HostName} RoundTrip Time > 0: {reply.RoundTrip}");
 						}
 
 						if (reply.TimedOut)
 						{
 							Timeouts++;
-							Logger.Debug($"Reply timed out. Number of Timeouts: {Timeouts}");
+							Logger.Debug($"{PingHost.HostName} Reply timed out. Number of Timeouts: {Timeouts}");
 							line += $"Timed out to host";
 						}
 						else
@@ -148,7 +146,7 @@ namespace PingLogger.GUI.Controls
 				var lines = PingStatusBox.Text.Split(Environment.NewLine).ToList();
 				if (lines.Count() > 26)
 				{
-					Logger.Debug($"Lines in text box greater than 26, removing a line.");
+					Logger.Debug($"{PingHost.HostName} Lines in text box greater than 26, removing a line.");
 					lines.RemoveAt(0);
 					PingStatusBox.Text = string.Join(Environment.NewLine, lines);
 				}

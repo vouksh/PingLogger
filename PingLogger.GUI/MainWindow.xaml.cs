@@ -244,5 +244,17 @@ namespace PingLogger.GUI
 		{
 			WindowState = WindowState.Minimized;
 		}
+
+		private void tabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		{
+			TabControl tabControl = (TabControl)sender;
+			ScrollViewer scroller = (ScrollViewer)tabControl.Template.FindName("TabControlScroller", tabControl);
+			if (scroller != null && tabControl.SelectedIndex > 0)
+			{
+				double index = (double)(tabControl.SelectedIndex);
+				double offset = index * (scroller.ScrollableWidth / (double)(tabControl.Items.Count));
+				scroller.ScrollToHorizontalOffset(offset);
+			}
+		}
 	}
 }
