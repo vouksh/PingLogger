@@ -72,14 +72,6 @@ namespace PingLogger.GUI.Controls
 				{
 					CreateStartupShortcut();
 				}
-				/*
-				if(Config.Theme == Theme.Dark)
-				{
-					darkThemeBtn.IsChecked = true;
-				} else
-				{
-					lightThemeBtn.IsChecked = true;
-				}*/
 				FirstLoadComplete = true;
 				Logger.Info("SettingsControl loaded");
 			}
@@ -87,11 +79,11 @@ namespace PingLogger.GUI.Controls
 
 		private void CreateStartupShortcut()
 		{
-			Logger.Info("CreateStartupShortcut called");
 			var batchPath = Environment.GetFolderPath(Environment.SpecialFolder.Startup) + "\\PingLogger.bat";
-			Logger.Info($"Saving batch file to {batchPath}");
 			if(!File.Exists(batchPath))
 			{
+				Logger.Info("CreateStartupShortcut called");
+				Logger.Info($"Saving batch file to {batchPath}");
 				var exePath = Environment.CurrentDirectory + "\\";
 				var exeName = AppDomain.CurrentDomain.FriendlyName + ".exe";
 
@@ -101,7 +93,7 @@ namespace PingLogger.GUI.Controls
 				batchScript += loggerDrive + Environment.NewLine;
 				batchScript += $"CD \"{exePath}\"" + Environment.NewLine;
 				batchScript += $"START \"\" \".\\{exeName}\"";
-				Logger.Info($"Writing script: {batchScript}");
+				Logger.Info($"Writing script: \n{batchScript}");
 				File.WriteAllText(batchPath, batchScript);
 			}
 		}
@@ -110,8 +102,11 @@ namespace PingLogger.GUI.Controls
 		{
 			Logger.Info("DeleteStartupShortcut called");
 			var batchPath = Environment.GetFolderPath(Environment.SpecialFolder.Startup) + "\\PingLogger.bat";
-			Logger.Info($"Deleting batch file {batchPath}");
-			File.Delete(batchPath);
+			if (File.Exists(batchPath))
+			{
+				Logger.Info($"Deleting batch file {batchPath}");
+				File.Delete(batchPath);
+			}
 		}
 
 		private void StartAllLoggersBtn_Click(object sender, RoutedEventArgs e)

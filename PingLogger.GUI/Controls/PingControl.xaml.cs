@@ -111,7 +111,7 @@ namespace PingLogger.GUI.Controls
 				for (int i = 0; i < Pinger.Replies.Count - 1; i++)
 				{
 					TotalPings++;
-					Logger.Info($"{PingHost.HostName} TotalPings: {TotalPings}");
+					// Logger.Info($"{PingHost.HostName} TotalPings: {TotalPings}");
 					var success = Pinger.Replies.TryTake(out Reply reply);
 					if (success)
 					{
@@ -412,8 +412,15 @@ namespace PingLogger.GUI.Controls
 
 		private void viewLogBtn_Click(object sender, RoutedEventArgs e)
 		{
-			LogViewerDialog lvn = new LogViewerDialog(this.PingHost);
-			lvn.Show();
+			Thread viewLogThread = new Thread(new ThreadStart(() =>
+			{
+				Application.Current.Dispatcher.Invoke((Action)delegate
+				{
+					new LogViewerDialog(this.PingHost).Show();
+				});
+			}));
+			viewLogThread.SetApartmentState(ApartmentState.STA);
+			viewLogThread.Start();
 		}
 
 		private void HostNameBox_PreviewTextInput(object sender, TextCompositionEventArgs e)

@@ -9,6 +9,7 @@ using System.Text;
 using System.IO;
 using System.Threading;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
 namespace PingLogger.GUI.Workers
 {
@@ -67,19 +68,19 @@ namespace PingLogger.GUI.Workers
             ThreadPool.QueueUserWorkItem(new WaitCallback(q => ChangeLoop()));
         }
 
-        private void ChangeLoop()
+        private async void ChangeLoop()
         {
             while (!requestForExit)
             {
-                fw_Changed();
-                Thread.Sleep(pollInterval);
+                await fw_Changed();
+                await Task.Delay(pollInterval);
             }
             me.Set();
         }
         static readonly int pollInterval = 100;
         static readonly int bufSize = 4096;
         string previous = string.Empty;
-        void fw_Changed()
+        async Task fw_Changed()
         {
             FileInfo fi = new FileInfo(path);
             if (fi.Exists)
@@ -96,7 +97,7 @@ namespace PingLogger.GUI.Workers
                     if (string.IsNullOrEmpty(LineFilter))
                     {
                         using StreamReader sr = new StreamReader(stream);
-                        var all = sr.ReadToEnd();
+                        var all = await sr.ReadToEndAsync();
                         var lines = all.Split('\n');
 
                         var lastIndex = lines.Length - 1;
@@ -152,14 +153,14 @@ namespace PingLogger.GUI.Workers
 
         }
         public event EventHandler<TailEventArgs> Changed;
-        private void MakeTail(int nLines, string path)
+        private async void MakeTail(int nLines, string path)
         {
             List<string> lines = new List<string>();
             using (var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Delete | FileShare.ReadWrite))
             using (StreamReader sr = new StreamReader(stream))
             {
                 string line;
-                while (null != (line = sr.ReadLine()))
+                while (null != (line = await sr.ReadLineAsync()))
                 {
                     if (!string.IsNullOrEmpty(LineFilter))
                     {

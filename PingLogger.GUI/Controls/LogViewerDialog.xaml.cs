@@ -3,6 +3,7 @@ using PingLogger.GUI.Workers;
 using System;
 using System.IO;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 
@@ -22,39 +23,41 @@ namespace PingLogger.GUI.Controls
 			InitializeComponent();
 			CloseWindowCommand = new Command(Close);
 
-			Tail = new Tail($"./Logs/{host.HostName}/{host.HostName}-{DateTime.Now:yyyyMMdd}.log", -1);
+			Tail = new Tail($"./Logs/{host.HostName}/{host.HostName}-{DateTime.Now:yyyyMMdd}.log", 1024);
 			Tail.Changed += Tail_Changed;
 			syncCtx = SynchronizationContext.Current;
 		}
 
-		private void Tail_Changed(object sender, Tail.TailEventArgs e)
+		private async void Tail_Changed(object sender, Tail.TailEventArgs e)
 		{
-			bool scrollToBottom = false;
-			if (scrollViewer.VerticalOffset == scrollViewer.ScrollableHeight)
+			await Task.Run(() =>
 			{
-				scrollToBottom = true;
-			}
-			syncCtx.Post(new SendOrPostCallback(o =>
-			{
-				textBlock.Text += (string)o;
-
-				if (scrollToBottom)
-					scrollViewer.ScrollToBottom();
-			}),
-			e.Line);
+				bool scrollToBottom = false;
+				if (scrollViewer.VerticalOffset == scrollViewer.ScrollableHeight)
+				{
+					scrollToBottom = true;
+				}
+				syncCtx.Post(new SendOrPostCallback(o =>
+				{
+					textBlock.Text += (string)o;
+					if (scrollToBottom)
+						scrollViewer.ScrollToBottom();
+				}),
+				e.Line);
+			});
 		}
 
 		private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
 		{
-			if(isRunning)
+			if (isRunning)
 				Tail.Stop();
 		}
 
-		private void Window_Loaded(object sender, RoutedEventArgs e)
+		private async void Window_Loaded(object sender, RoutedEventArgs e)
 		{
 			try
 			{
-				Tail.Run();
+				await Task.Run(() => { Tail.Run(); });
 				isRunning = true;
 			}
 			catch (FileNotFoundException)

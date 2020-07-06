@@ -11,7 +11,7 @@
 		WindowStyle="SingleBorderWindow" Closing="Window_Closing" Loaded="Window_Loaded">
 	<Grid>
 		<ScrollViewer x:Name="scrollViewer">
-			<TextBlock x:Name="textBlock" Text="" Width="Auto" Height="Auto" TextWrapping="Wrap"/>
+			<TextBlock x:Name="textBlock" Text="" Width="Auto" Height="Auto" TextWrapping="Wrap" />
 		</ScrollViewer>
 	</Grid>
 </Window>
