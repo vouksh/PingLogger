@@ -9,6 +9,9 @@ using System.Threading;
 using PingLogger.GUI.Models;
 using System.Collections.Concurrent;
 using System.Diagnostics;
+using System.Windows.Documents;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace PingLogger.GUI.Workers
 {
@@ -197,7 +200,7 @@ namespace PingLogger.GUI.Workers
 				PingOptions options = new PingOptions
 				{
 					DontFragment = DontFragment,
-					Ttl = 64
+					Ttl = 128
 				};
 				Logger.Debug($"Running: {Running}");
 				Logger.Debug($"stopping: {stopping}");
@@ -235,17 +238,20 @@ namespace PingLogger.GUI.Workers
 		/// </summary>
 		public void Stop()
 		{
-			stopping = true;
-			Logger.Information("Stopping ping logger for host {0} ({1})", Host.HostName, Host.IP);
-			Logger.Debug("SendAsyncCancel()");
-			pingSender.SendAsyncCancel();
-			try
+			if (Running)
 			{
-				RunThread.Interrupt();
-			}
-			catch
-			{
-				Logger.Debug("Thread Interrupted");
+				stopping = true;
+				Logger.Information("Stopping ping logger for host {0} ({1})", Host.HostName, Host.IP);
+				Logger.Debug("SendAsyncCancel()");
+				pingSender.SendAsyncCancel();
+				try
+				{
+					RunThread.Interrupt();
+				}
+				catch
+				{
+					Logger.Debug("Thread Interrupted");
+				}
 			}
 		}
 		/// <summary>
@@ -273,6 +279,7 @@ namespace PingLogger.GUI.Workers
 			var reply = e.Reply;
 			bool timedOut = false;
 			bool success = false;
+			List<IPAddress> traceIPs = new List<IPAddress>();
 			switch (reply.Status)
 			{
 				case IPStatus.Success:
@@ -337,6 +344,72 @@ namespace PingLogger.GUI.Workers
 			Replies.Add(LogReply);
 			Logger.Debug("Ping Ended");
 			((AutoResetEvent)e.UserState).Set();
+		}
+
+		/// <summary>
+		/// Performs a route trace on the host. Cannot be run if the ping logging thread is running.
+		/// </summary>
+		/// <param name="maxTTL">Max number of jumps</param>
+		/// <returns></returns>
+		public async IAsyncEnumerable<TraceReply> GetTraceRoute(int maxTTL = 30)
+		{
+			if(Running)
+				throw new Exception("Ping logger cannot be running while performing a route trace!");
+
+			var result = new List<TraceReply>();
+			string data = RandomString(Host.PacketSize);
+			Logger.Debug($"Data string: {data}");
+
+			byte[] buffer = Encoding.ASCII.GetBytes(data);
+			using var pinger = new Ping();
+			for(int ttl = 1; ttl <= maxTTL; ttl++)
+			{
+				var pingOpts = new PingOptions(ttl, true);
+				var reply = await pinger.SendPingAsync(Host.HostName, Host.Timeout, buffer, pingOpts);
+				if(reply.Status == IPStatus.Success || reply.Status == IPStatus.TtlExpired)
+				{
+					yield return new TraceReply { IPAddress = reply.Address.ToString(), RoundTrip = await GetSingleRoundTrip(reply.Address, ttl), Ttl = ttl };
+				}
+				if(reply.Status != IPStatus.TtlExpired && reply.Status != IPStatus.TimedOut)
+				{
+					break;
+				}
+			}
+			//return result;
+		}
+
+		private async Task<long> GetSingleRoundTrip(IPAddress address, int ttl)
+		{
+			string data = RandomString(Host.PacketSize);
+			byte[] buffer = Encoding.ASCII.GetBytes(data);
+			using var pinger = new Ping();
+			var pingOpts = new PingOptions(ttl, true);
+			var reply = await pinger.SendPingAsync(address, Host.Timeout, buffer, pingOpts);
+			return reply.RoundtripTime;
+		}
+
+		public static IEnumerable<IPAddress> GetTraceRoute(string hostName, int timeout = 1000, int maxTTL = 30)
+		{
+			var result = new List<IPAddress>();
+			const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+			string data = new string(Enumerable.Repeat(chars, 32)
+			  .Select(s => s[new Random().Next(s.Length)]).ToArray());
+
+			byte[] buffer = Encoding.ASCII.GetBytes(data);
+			using var pinger = new Ping();
+			for (int ttl = 1; ttl <= maxTTL; ttl++)
+			{
+				var pingOpts = new PingOptions(ttl, true);
+				var reply = pinger.Send(hostName, timeout, buffer, pingOpts);
+				if (reply.Status == IPStatus.Success || reply.Status == IPStatus.TtlExpired)
+				{
+					yield return reply.Address;
+				}
+				if (reply.Status != IPStatus.TtlExpired && reply.Status != IPStatus.TimedOut)
+				{
+					break;
+				}
+			}
 		}
 
 		#region IDisposable Support

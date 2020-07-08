@@ -22,6 +22,9 @@
     <Compile Update="Controls\SettingsControl.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="Controls\TraceRouteControl.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Page Update="Controls\HelpDialog.xaml">
@@ -34,6 +37,9 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Controls\SettingsControl.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Controls\TraceRouteControl.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="MainWindow.xaml">

@@ -11,6 +11,6 @@ namespace PingLogger.GUI.Models
 		public long RoundTrip { get; set; } = 0;
 		public DateTime DateTime { get; set; }
 		public bool TimedOut { get; set; } = false;
-		public bool Succeeded { get; set; }
+		public bool? Succeeded { get; set; }
 	}
 }

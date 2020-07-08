@@ -107,6 +107,7 @@ namespace PingLogger.GUI.Controls
 			{
 				StartBtn.Visibility = Visibility.Hidden;
 				StopBtn.Visibility = Visibility.Visible;
+				doTraceRteBtn.Visibility = Visibility.Hidden;
 				StringBuilder sb = new StringBuilder();
 				for (int i = 0; i < Pinger.Replies.Count - 1; i++)
 				{
@@ -167,6 +168,7 @@ namespace PingLogger.GUI.Controls
 			{
 				StartBtn.Visibility = Visibility.Visible;
 				StopBtn.Visibility = Visibility.Hidden;
+				doTraceRteBtn.Visibility = Visibility.Visible;
 				if (IPAddressBox.Text == "Invalid Host Name")
 				{
 					StartBtn.IsEnabled = false;
@@ -429,6 +431,16 @@ namespace PingLogger.GUI.Controls
 			{
 				viewLogBtn.Visibility = Visibility.Hidden;
 			}
+		}
+
+		private void doTraceRteBtn_Click(object sender, RoutedEventArgs e)
+		{
+			if(null == Pinger)
+			{
+				Pinger = new Pinger(PingHost);
+			}
+			var showTraceRteWindow = new TraceRouteControl(ref Pinger);
+			showTraceRteWindow.ShowDialog();
 		}
 	}
 }

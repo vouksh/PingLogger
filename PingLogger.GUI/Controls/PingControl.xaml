@@ -33,5 +33,6 @@
 		<Label x:Name="packetLossLabel" Content="0%" HorizontalAlignment="Left" Margin="236,267,0,0" VerticalAlignment="Top"/>
 		<Button x:Name="openLogFolderBtn" Content="Logs" Visibility="Hidden" HorizontalAlignment="Left" Margin="58,10,0,0" Padding="4" VerticalAlignment="Top" Click="openLogFolderBtn_Click"/>
 		<Button x:Name="viewLogBtn" Content="Watch Log" Visibility="Hidden" HorizontalAlignment="Left" Margin="108,10,0,0" Padding="4" VerticalAlignment="Top" Click="viewLogBtn_Click" />
+		<Button x:Name="doTraceRteBtn" Content="Run Trace Route" HorizontalAlignment="Left" Margin="22,316,0,0" VerticalAlignment="Top" Width="95" Height="35" Click="doTraceRteBtn_Click" />
 	</Grid>
 </UserControl>

@@ -1,0 +1,54 @@
+﻿<Window x:Class="PingLogger.GUI.Controls.TraceRouteControl"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:PingLogger.GUI.Controls"
+        mc:Ignorable="d"
+        Title="Route Trace Utility" Height="450" Width="600"
+		ResizeMode="CanResizeWithGrip"
+		WindowStartupLocation="CenterScreen" Style="{DynamicResource CustomDialogStyle}"
+		DataContext="{Binding RelativeSource={RelativeSource Self}}"
+		WindowStyle="SingleBorderWindow">
+    <Grid>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="195" />
+			<ColumnDefinition Width="195" />
+			<ColumnDefinition Width="195" />
+		</Grid.ColumnDefinitions>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="50" />
+			<RowDefinition Height="*" />
+		</Grid.RowDefinitions>
+		<Button x:Name="startTraceRteBtn" Grid.Column="0" Grid.Row="0" Content="Run Trace" Click="startTraceRteBtn_Click" Margin="5" />
+		<Label Grid.Row="0" Grid.Column="1" Content="HostName" HorizontalAlignment="Center" VerticalAlignment="Center" x:Name="hostNameLabel" />
+		<ProgressBar Grid.Row="0" Grid.Column="2" Value="0" IsIndeterminate="True" Height="24" Visibility="Hidden" x:Name="fakeProgressBar" Padding="5" />
+		<DataGrid VerticalScrollBarVisibility="Auto" Grid.Row="1" Grid.ColumnSpan="3" Grid.Column="0" x:Name="traceView" VerticalGridLinesBrush="Transparent" CanUserResizeColumns="False" AutoGenerateColumns="False" RowBackground="{DynamicResource ControlDarkerBackground}" AlternatingRowBackground="{DynamicResource ControlDisabledBackground}" SelectionMode="Single" CanUserAddRows="False" CanUserDeleteRows="False" CanUserResizeRows="False">
+			<DataGrid.RowHeaderStyle>
+				<Style TargetType="DataGridRowHeader">
+					<Setter Property="Background" Value="{DynamicResource ControlBrightDefaultBackground}" />
+				</Style>
+			</DataGrid.RowHeaderStyle>
+			<DataGrid.CellStyle>
+				<Style TargetType="DataGridCell">
+					<Setter Property="HorizontalAlignment" Value="Center" />
+					<Setter Property="HorizontalContentAlignment" Value="Stretch" />
+				</Style>
+			</DataGrid.CellStyle>
+			<DataGrid.ColumnHeaderStyle>
+				<Style TargetType="DataGridColumnHeader">
+					<Setter Property="Background" Value="{DynamicResource ControlSelectedBackground}" />
+					<Setter Property="HorizontalAlignment" Value="Stretch" />
+					<Setter Property="HorizontalContentAlignment" Value="Center" />
+					<Setter Property="Height" Value="26" />
+					<Setter Property="FontSize" Value="18" />
+				</Style>
+			</DataGrid.ColumnHeaderStyle>
+			<DataGrid.Columns>
+				<DataGridTextColumn Header="Ttl" Binding="{Binding Path=Ttl}" Width="40" />
+				<DataGridTextColumn Header="IP Address" Binding="{Binding Path=IPAddress}" Width="*" />
+				<DataGridTextColumn Header="Round Trip" Binding="{Binding Path=RoundTrip}" Width="150" />
+			</DataGrid.Columns>
+		</DataGrid>
+	</Grid>
+</Window>
