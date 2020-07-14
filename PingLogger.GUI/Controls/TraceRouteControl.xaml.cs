@@ -45,6 +45,7 @@ namespace PingLogger.GUI.Controls
 			traceView.ItemsSource = null;
 			fakeProgressBar.Visibility = Visibility.Visible;
 			startTraceRteBtn.Visibility = Visibility.Hidden;
+			pingTimeLabel.Content = "Current Ping: " + await Pinger.GetSingleRoundTrip(pinger.UpdateHost().IP, 64, pinger.UpdateHost().Timeout) + "ms";
 			//traceView.Items.Clear();
 			traceView.ItemsSource = await pinger.GetTraceRoute().ToListAsync();
 			startTraceRteBtn.Visibility = Visibility.Visible;
