@@ -6,7 +6,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Net.NetworkInformation;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -98,7 +97,8 @@ namespace PingLogger.GUI.Controls
 				{
 					viewLogBtn.Visibility = Visibility.Visible;
 				}
-			} else
+			}
+			else
 			{
 				openLogFolderBtn.Visibility = Visibility.Hidden;
 				viewLogBtn.Visibility = Visibility.Hidden;
@@ -427,7 +427,7 @@ namespace PingLogger.GUI.Controls
 
 		private void HostNameBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
 		{
-			if(e.Text != PingHost.HostName)
+			if (e.Text != PingHost.HostName)
 			{
 				viewLogBtn.Visibility = Visibility.Hidden;
 			}
@@ -435,7 +435,7 @@ namespace PingLogger.GUI.Controls
 
 		private void doTraceRteBtn_Click(object sender, RoutedEventArgs e)
 		{
-			if(null == Pinger)
+			if (null == Pinger)
 			{
 				Pinger = new Pinger(PingHost);
 			}

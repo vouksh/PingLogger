@@ -1,9 +1,4 @@
-﻿using PingLogger.GUI.Workers;
-using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace PingLogger.GUI.Models
+﻿namespace PingLogger.GUI.Models
 {
 	public class AppOptions
 	{

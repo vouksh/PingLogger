@@ -48,5 +48,8 @@
     <Page Update="Themes\LightTheme.xaml">
       <SubType>Designer</SubType>
     </Page>
+    <None Update="Themes\LightTheme.xaml.old">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
 </Project>

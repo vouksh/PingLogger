@@ -1,10 +1,10 @@
 ﻿using PingLogger.GUI.Models;
+using System;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.IO;
-using System.Text.Json;
 using System.IO.Compression;
-using System;
+using System.Text.Json;
 
 namespace PingLogger.GUI.Workers
 {
@@ -65,14 +65,14 @@ namespace PingLogger.GUI.Workers
 		private static bool CheckForOldConfig()
 		{
 			bool oldConfigExists = false;
-			if(File.Exists("./config.json"))
+			if (File.Exists("./config.json"))
 			{
 				oldConfigExists = true;
 				var fileContents = File.ReadAllText("./config.json");
 				Options = JsonSerializer.Deserialize<AppOptions>(fileContents);
 				File.Delete("./config.json");
 			}
-			if(File.Exists("./hosts.json"))
+			if (File.Exists("./hosts.json"))
 			{
 				oldConfigExists = true;
 				var fileContents = File.ReadAllText("./hosts.json");
@@ -93,7 +93,7 @@ namespace PingLogger.GUI.Workers
 				{
 					using StreamReader streamReader = new StreamReader(entry.Open());
 					var fileContents = streamReader.ReadToEnd();
-					switch(entry.FullName)
+					switch (entry.FullName)
 					{
 						case "hosts.json":
 							Hosts = JsonSerializer.Deserialize<ObservableCollection<Host>>(fileContents);
@@ -133,7 +133,7 @@ namespace PingLogger.GUI.Workers
 				}
 
 				var configEntry = archive.GetEntry("config.json");
-				configEntry.Delete(); 
+				configEntry.Delete();
 				configEntry = archive.CreateEntry("config.json");
 				using StreamWriter configWriter = new StreamWriter(configEntry.Open());
 				foreach (var line in configData.Split(Environment.NewLine))

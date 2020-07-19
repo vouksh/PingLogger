@@ -1,18 +1,10 @@
 ﻿using PingLogger.GUI.Workers;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace PingLogger.GUI.Controls
 {
@@ -80,7 +72,7 @@ namespace PingLogger.GUI.Controls
 		private void CreateStartupShortcut()
 		{
 			var batchPath = Environment.GetFolderPath(Environment.SpecialFolder.Startup) + "\\PingLogger.bat";
-			if(!File.Exists(batchPath))
+			if (!File.Exists(batchPath))
 			{
 				Logger.Info("CreateStartupShortcut called");
 				Logger.Info($"Saving batch file to {batchPath}");
@@ -131,10 +123,11 @@ namespace PingLogger.GUI.Controls
 			try
 			{
 				var input = Convert.ToInt32(daysToKeep.Text);
-				if(input > 0)
+				if (input > 0)
 				{
 					Config.DaysToKeepLogs = input;
-				} else
+				}
+				else
 				{
 					MessageBox.Show("Input can not be less than 1", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
 					daysToKeep.Text = "1";

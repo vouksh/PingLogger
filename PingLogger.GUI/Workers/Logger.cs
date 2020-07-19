@@ -19,8 +19,8 @@ namespace PingLogger.GUI.Workers
 #endif
 				.Enrich.With(new ThreadIdEnricher())
 				.WriteTo.RollingFile(
-				"./Logs/PingLogger-{Date}.log", 
-				restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Verbose, 
+				"./Logs/PingLogger-{Date}.log",
+				restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Verbose,
 				shared: true,
 				outputTemplate: "[{Timestamp:HH:mm:ss.fff} {Level}] ({ThreadId}) {Message:lj}{NewLine}{Exception}",
 				flushToDiskInterval: TimeSpan.FromSeconds(1)

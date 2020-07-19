@@ -1,17 +1,16 @@
-﻿using System;
-using System.Text;
+﻿using PingLogger.GUI.Models;
 using Serilog;
+using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.NetworkInformation;
+using System.Text;
 using System.Threading;
-using PingLogger.GUI.Models;
-using System.Collections.Concurrent;
-using System.Diagnostics;
-using System.Collections.Generic;
 using System.Threading.Tasks;
-using System.Net.Sockets;
 
 namespace PingLogger.GUI.Workers
 {
@@ -74,7 +73,7 @@ namespace PingLogger.GUI.Workers
 						shared: true,
 						retainedFileCountLimit: Config.DaysToKeepLogs,
 						outputTemplate: outputTemp,
-						flushToDiskInterval: TimeSpan.FromSeconds(2) 
+						flushToDiskInterval: TimeSpan.FromSeconds(2)
 						)
 					)
 #if DEBUG
@@ -149,7 +148,7 @@ namespace PingLogger.GUI.Workers
 		/// </summary>
 		/// <param name="length">Number of characters in the string</param>
 		/// <returns>Random string of letters and numbers</returns>
-		private static string RandomString(int length)
+		public static string RandomString(int length)
 		{
 			Random random = new Random();
 			const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
@@ -300,7 +299,8 @@ namespace PingLogger.GUI.Workers
 							Logger.Information("Pinged {0} ({1}) RoundTrip: {2}ms TTL: {3}", Host.HostName, Host.IP.ToString(), reply.RoundtripTime, reply.Options.Ttl);
 							success = true;
 						}
-					} else
+					}
+					else
 					{
 						Logger.Debug("Ping Reply Success, but roundtrip time exceeds timeout. Marking it as a timeout.");
 						Logger.Error("Ping timed out to host {0} ({1}). Timeout is {2}ms", Host.HostName, Host.IP.ToString(), Host.Timeout);
@@ -351,9 +351,9 @@ namespace PingLogger.GUI.Workers
 		/// </summary>
 		/// <param name="maxTTL">Max number of jumps</param>
 		/// <returns></returns>
-		public async IAsyncEnumerable<TraceReply> GetTraceRoute(int maxTTL = 30, int pingAttempts = 3)
+		public async IAsyncEnumerable<TraceReply> GetTraceRouteAsync(int maxTTL = 30, int pingAttempts = 3)
 		{
-			if(Running)
+			if (Running)
 				throw new Exception("Ping logger cannot be running while performing a route trace!");
 
 			var result = new List<TraceReply>();
@@ -362,19 +362,20 @@ namespace PingLogger.GUI.Workers
 
 			byte[] buffer = Encoding.ASCII.GetBytes(data);
 			using var pinger = new Ping();
-			for(int ttl = 1; ttl <= maxTTL; ttl++)
+			for (int ttl = 1; ttl <= maxTTL; ttl++)
 			{
 				var pingOpts = new PingOptions(ttl, true);
 				var reply = await pinger.SendPingAsync(Host.HostName, Host.Timeout, buffer, pingOpts);
-				if(reply.Status == IPStatus.Success || reply.Status == IPStatus.TtlExpired)
+				if (reply.Status == IPStatus.Success || reply.Status == IPStatus.TtlExpired)
 				{
-					yield return new TraceReply { 
-						IPAddress = reply.Address.ToString(), 
-						PingTimes = await GetMultipleRoundTrips(reply.Address, ttl, pingAttempts), 
-						Ttl = ttl 
+					yield return new TraceReply
+					{
+						IPAddress = reply.Address.ToString(),
+						//PingTimes = await GetMultipleRoundTrips(reply.Address, ttl, pingAttempts), 
+						Ttl = ttl
 					};
 				}
-				if(reply.Status != IPStatus.TtlExpired && reply.Status != IPStatus.TimedOut)
+				if (reply.Status != IPStatus.TtlExpired && reply.Status != IPStatus.TimedOut)
 				{
 					break;
 				}
@@ -382,27 +383,17 @@ namespace PingLogger.GUI.Workers
 			//return result;
 		}
 
-		private async Task<long[]> GetMultipleRoundTrips(IPAddress address, int ttl, int count = 3)
+		public async Task<long[]> GetMultipleRoundTrips(IPAddress address, int ttl, int count = 3)
 		{
 			long[] ret = new long[count];
-			for(int i = 0; i < count; i++)
+			for (int i = 0; i < count; i++)
 			{
 				ret[i] = await GetSingleRoundTrip(address, ttl);
 			}
 			return ret;
 		}
 
-		public static async Task<long[]> GetMultipleRoundTrips(string address, int ttl, int timeout, int count = 3)
-		{
-			long[] ret = new long[count];
-			for (int i = 0; i < count; i++)
-			{
-				ret[i] = await GetSingleRoundTrip(address, ttl, timeout);
-			}
-			return ret;
-		}
-
-		private async Task<long> GetSingleRoundTrip(IPAddress address, int ttl)
+		public async Task<long> GetSingleRoundTrip(IPAddress address, int ttl)
 		{
 			string data = RandomString(Host.PacketSize);
 			byte[] buffer = Encoding.ASCII.GetBytes(data);
@@ -410,40 +401,6 @@ namespace PingLogger.GUI.Workers
 			var pingOpts = new PingOptions(ttl, true);
 			var reply = await pinger.SendPingAsync(address, Host.Timeout, buffer, pingOpts);
 			return reply.RoundtripTime;
-		}
-
-		public static async Task<long> GetSingleRoundTrip(string address, int ttl, int timeout)
-		{
-			string data = RandomString(32);
-			byte[] buffer = Encoding.ASCII.GetBytes(data);
-			using var pinger = new Ping();
-			var pingOpts = new PingOptions(ttl, true);
-			var reply = await pinger.SendPingAsync(address, timeout, buffer, pingOpts);
-			return reply.RoundtripTime;
-		}
-
-		public static IEnumerable<IPAddress> GetTraceRoute(string hostName, int timeout = 1000, int maxTTL = 30)
-		{
-			var result = new List<IPAddress>();
-			const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-			string data = new string(Enumerable.Repeat(chars, 32)
-			  .Select(s => s[new Random().Next(s.Length)]).ToArray());
-
-			byte[] buffer = Encoding.ASCII.GetBytes(data);
-			using var pinger = new Ping();
-			for (int ttl = 1; ttl <= maxTTL; ttl++)
-			{
-				var pingOpts = new PingOptions(ttl, true);
-				var reply = pinger.Send(hostName, timeout, buffer, pingOpts);
-				if (reply.Status == IPStatus.Success || reply.Status == IPStatus.TtlExpired)
-				{
-					yield return reply.Address;
-				}
-				if (reply.Status != IPStatus.TtlExpired && reply.Status != IPStatus.TimedOut)
-				{
-					break;
-				}
-			}
 		}
 
 		#region IDisposable Support

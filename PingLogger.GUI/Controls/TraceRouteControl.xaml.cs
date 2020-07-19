@@ -1,18 +1,14 @@
 ﻿using PingLogger.GUI.Models;
 using PingLogger.GUI.Workers;
-using System;
 using System.Collections.Generic;
-using System.Diagnostics;
+using System.Collections.ObjectModel;
 using System.Linq;
+using System.Net;
+using System.Net.NetworkInformation;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace PingLogger.GUI.Controls
 {
@@ -22,8 +18,9 @@ namespace PingLogger.GUI.Controls
 	public partial class TraceRouteControl : Window
 	{
 		private Pinger pinger;
+		private Host host;
 		public ICommand CloseWindowCommand { get; set; }
-		public List<TraceReply> TraceReplies = new List<TraceReply>();
+		public ObservableCollection<TraceReply> TraceReplies = new ObservableCollection<TraceReply>();
 
 		public TraceRouteControl()
 		{
@@ -36,7 +33,8 @@ namespace PingLogger.GUI.Controls
 			InitializeComponent();
 			CloseWindowCommand = new Command(Close);
 			pinger = _pinger;
-			hostNameLabel.Content = pinger.UpdateHost().HostName;
+			host = _pinger.UpdateHost();
+			hostNameLabel.Content = host.HostName;
 			//traceView.ItemsSource = TraceReplies;
 		}
 
@@ -45,11 +43,54 @@ namespace PingLogger.GUI.Controls
 			traceView.ItemsSource = null;
 			fakeProgressBar.Visibility = Visibility.Visible;
 			startTraceRteBtn.Visibility = Visibility.Hidden;
-			pingTimeLabel.Content = "Current Ping: " + await Pinger.GetSingleRoundTrip(pinger.UpdateHost().IP, 64, pinger.UpdateHost().Timeout) + "ms";
+			pingTimeLabel.Content = "Current Ping: " + await pinger.GetSingleRoundTrip(IPAddress.Parse(host.IP), 64) + "ms";
 			//traceView.Items.Clear();
-			traceView.ItemsSource = await pinger.GetTraceRoute().ToListAsync();
+			traceView.ItemsSource = TraceReplies;
+			await RunTraceRoute();
 			startTraceRteBtn.Visibility = Visibility.Visible;
 			fakeProgressBar.Visibility = Visibility.Hidden;
+		}
+
+		private async Task RunTraceRoute()
+		{
+			var result = new List<TraceReply>();
+			string data = Pinger.RandomString(host.PacketSize);
+			Logger.Debug($"Data string: {data}");
+
+			byte[] buffer = Encoding.ASCII.GetBytes(data);
+			using var ping = new Ping();
+			for (int ttl = 1; ttl <= 128; ttl++)
+			{
+				var pingOpts = new PingOptions(ttl, true);
+				var reply = await ping.SendPingAsync(host.HostName, host.Timeout, buffer, pingOpts);
+				if (reply.Status == IPStatus.Success || reply.Status == IPStatus.TtlExpired)
+				{
+					TraceReplies.Add(new TraceReply
+					{
+						IPAddress = reply.Address.ToString(),
+						PingTimes = new string[3],
+						Ttl = ttl
+					});
+					traceView.ScrollIntoView(TraceReplies.Last());
+					var firstTry = await pinger.GetSingleRoundTrip(reply.Address, ttl);
+					TraceReplies.First(t => t.Ttl == ttl).PingTimes[0] = firstTry == 0 ? "Timeout" : firstTry.ToString();
+					traceView.Items.Refresh();
+					await Task.Delay(250);
+
+					var secondTry = await pinger.GetSingleRoundTrip(reply.Address, ttl);
+					TraceReplies.First(t => t.Ttl == ttl).PingTimes[1] = secondTry == 0 ? "Timeout" : secondTry.ToString();
+					traceView.Items.Refresh();
+					await Task.Delay(250);
+
+					var thirdTry = await pinger.GetSingleRoundTrip(reply.Address, ttl);
+					TraceReplies.First(t => t.Ttl == ttl).PingTimes[2] = thirdTry == 0 ? "Timeout" : thirdTry.ToString();
+					traceView.Items.Refresh();
+				}
+				if (reply.Status != IPStatus.TtlExpired && reply.Status != IPStatus.TimedOut)
+				{
+					break;
+				}
+			}
 		}
 	}
 }

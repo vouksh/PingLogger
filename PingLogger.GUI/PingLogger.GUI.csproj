@@ -78,6 +78,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Page Update="Themes\LightTheme.xaml">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Page>
     <Page Update="Themes\DarkTheme.xaml">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Page>
