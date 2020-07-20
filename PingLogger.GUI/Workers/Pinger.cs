@@ -399,7 +399,10 @@ namespace PingLogger.GUI.Workers
 			byte[] buffer = Encoding.ASCII.GetBytes(data);
 			using var pinger = new Ping();
 			var pingOpts = new PingOptions(ttl, true);
+			Logger.Information("Single Ping sent to " + address.ToString());
 			var reply = await pinger.SendPingAsync(address, Host.Timeout, buffer, pingOpts);
+			Logger.Information("Single Ping Reply Status " + reply.Status);
+			Logger.Information("Single Ping Reply RoundTrip " + reply.RoundtripTime);
 			return reply.RoundtripTime;
 		}
 

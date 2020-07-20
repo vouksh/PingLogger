@@ -35,7 +35,7 @@ namespace PingLogger.GUI.Controls
 			pinger = _pinger;
 			host = _pinger.UpdateHost();
 			hostNameLabel.Content = host.HostName;
-			//traceView.ItemsSource = TraceReplies;
+			traceView.ItemsSource = TraceReplies;
 		}
 
 		private async void startTraceRteBtn_Click(object sender, RoutedEventArgs e)
@@ -44,7 +44,7 @@ namespace PingLogger.GUI.Controls
 			fakeProgressBar.Visibility = Visibility.Visible;
 			startTraceRteBtn.Visibility = Visibility.Hidden;
 			pingTimeLabel.Content = "Current Ping: " + await pinger.GetSingleRoundTrip(IPAddress.Parse(host.IP), 64) + "ms";
-			//traceView.Items.Clear();
+			TraceReplies.Clear();
 			traceView.ItemsSource = TraceReplies;
 			await RunTraceRoute();
 			startTraceRteBtn.Visibility = Visibility.Visible;
