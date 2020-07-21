@@ -43,7 +43,9 @@ namespace PingLogger.GUI.Controls
 			traceView.ItemsSource = null;
 			fakeProgressBar.Visibility = Visibility.Visible;
 			startTraceRteBtn.Visibility = Visibility.Hidden;
-			pingTimeLabel.Content = "Current Ping: " + await pinger.GetSingleRoundTrip(IPAddress.Parse(host.IP), 64) + "ms";
+			var currentPing = $"Current Ping: {(await pinger.GetSingleRoundTrip(IPAddress.Parse(host.IP), 64)).Item1}ms";
+			Logger.Info(currentPing);
+			pingTimeLabel.Content = currentPing;
 			TraceReplies.Clear();
 			traceView.ItemsSource = TraceReplies;
 			await RunTraceRoute();
@@ -73,18 +75,19 @@ namespace PingLogger.GUI.Controls
 					});
 					traceView.ScrollIntoView(TraceReplies.Last());
 					var firstTry = await pinger.GetSingleRoundTrip(reply.Address, ttl);
-					TraceReplies.First(t => t.Ttl == ttl).PingTimes[0] = firstTry == 0 ? "Timeout" : firstTry.ToString();
+					TraceReplies.First(t => t.Ttl == ttl).PingTimes[0] = firstTry.Item2 != IPStatus.Success ? firstTry.Item2.ToString() : firstTry.Item1.ToString();
 					traceView.Items.Refresh();
 					await Task.Delay(250);
 
 					var secondTry = await pinger.GetSingleRoundTrip(reply.Address, ttl);
-					TraceReplies.First(t => t.Ttl == ttl).PingTimes[1] = secondTry == 0 ? "Timeout" : secondTry.ToString();
+					TraceReplies.First(t => t.Ttl == ttl).PingTimes[1] = secondTry.Item2 != IPStatus.Success ? secondTry.Item2.ToString() : secondTry.Item1.ToString();
 					traceView.Items.Refresh();
 					await Task.Delay(250);
 
 					var thirdTry = await pinger.GetSingleRoundTrip(reply.Address, ttl);
-					TraceReplies.First(t => t.Ttl == ttl).PingTimes[2] = thirdTry == 0 ? "Timeout" : thirdTry.ToString();
+					TraceReplies.First(t => t.Ttl == ttl).PingTimes[2] = thirdTry.Item2 != IPStatus.Success ? secondTry.Item2.ToString() : thirdTry.Item1.ToString();
 					traceView.Items.Refresh();
+					await Task.Delay(250);
 				}
 				if (reply.Status != IPStatus.TtlExpired && reply.Status != IPStatus.TimedOut)
 				{

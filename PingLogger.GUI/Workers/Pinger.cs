@@ -346,64 +346,17 @@ namespace PingLogger.GUI.Workers
 			((AutoResetEvent)e.UserState).Set();
 		}
 
-		/// <summary>
-		/// Performs a route trace on the host. Cannot be run if the ping logging thread is running.
-		/// </summary>
-		/// <param name="maxTTL">Max number of jumps</param>
-		/// <returns></returns>
-		public async IAsyncEnumerable<TraceReply> GetTraceRouteAsync(int maxTTL = 30, int pingAttempts = 3)
-		{
-			if (Running)
-				throw new Exception("Ping logger cannot be running while performing a route trace!");
-
-			var result = new List<TraceReply>();
-			string data = RandomString(Host.PacketSize);
-			Logger.Debug($"Data string: {data}");
-
-			byte[] buffer = Encoding.ASCII.GetBytes(data);
-			using var pinger = new Ping();
-			for (int ttl = 1; ttl <= maxTTL; ttl++)
-			{
-				var pingOpts = new PingOptions(ttl, true);
-				var reply = await pinger.SendPingAsync(Host.HostName, Host.Timeout, buffer, pingOpts);
-				if (reply.Status == IPStatus.Success || reply.Status == IPStatus.TtlExpired)
-				{
-					yield return new TraceReply
-					{
-						IPAddress = reply.Address.ToString(),
-						//PingTimes = await GetMultipleRoundTrips(reply.Address, ttl, pingAttempts), 
-						Ttl = ttl
-					};
-				}
-				if (reply.Status != IPStatus.TtlExpired && reply.Status != IPStatus.TimedOut)
-				{
-					break;
-				}
-			}
-			//return result;
-		}
-
-		public async Task<long[]> GetMultipleRoundTrips(IPAddress address, int ttl, int count = 3)
-		{
-			long[] ret = new long[count];
-			for (int i = 0; i < count; i++)
-			{
-				ret[i] = await GetSingleRoundTrip(address, ttl);
-			}
-			return ret;
-		}
-
-		public async Task<long> GetSingleRoundTrip(IPAddress address, int ttl)
+		public async Task<Tuple<long, IPStatus>> GetSingleRoundTrip(IPAddress address, int ttl)
 		{
 			string data = RandomString(Host.PacketSize);
 			byte[] buffer = Encoding.ASCII.GetBytes(data);
 			using var pinger = new Ping();
 			var pingOpts = new PingOptions(ttl, true);
-			Logger.Information("Single Ping sent to " + address.ToString());
+			Logger.Information($"Single Ping sent to {address}");
 			var reply = await pinger.SendPingAsync(address, Host.Timeout, buffer, pingOpts);
-			Logger.Information("Single Ping Reply Status " + reply.Status);
-			Logger.Information("Single Ping Reply RoundTrip " + reply.RoundtripTime);
-			return reply.RoundtripTime;
+			Logger.Information($"Single Ping Reply Status: {reply.Status}");
+			Logger.Information($"Single Ping Reply RoundTrip: {reply.RoundtripTime}ms");
+			return new Tuple<long, IPStatus>(reply.RoundtripTime, reply.Status);
 		}
 
 		#region IDisposable Support

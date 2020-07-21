@@ -1,4 +1,5 @@
 ﻿using Microsoft.Win32;
+using PingLogger.GUI.Models;
 using PingLogger.GUI.Workers;
 using System;
 using System.Windows;
@@ -23,8 +24,24 @@ namespace PingLogger.GUI
 
 		public void SetTheme()
 		{
-			int lightTheme = Convert.ToInt32(Registry.GetValue("HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize", "AppsUseLightTheme", 1));
-			if (lightTheme == 1)
+			bool useLightTheme = false;
+			switch (Config.Theme)
+			{
+				case Theme.Auto:
+					int lightTheme = Convert.ToInt32(Registry.GetValue("HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize", "AppsUseLightTheme", 1));
+					if (lightTheme == 1)
+						useLightTheme = true;
+					else
+						useLightTheme = false;
+					break;
+				case Theme.Light:
+					useLightTheme = true;
+					break;
+				case Theme.Dark:
+					useLightTheme = false;
+					break;
+			}
+			if (useLightTheme)
 			{
 				this.Resources.MergedDictionaries[0].Source = new Uri("/Themes/LightTheme.xaml", UriKind.Relative);
 			}

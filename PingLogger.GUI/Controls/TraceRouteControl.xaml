@@ -6,15 +6,15 @@
         xmlns:local="clr-namespace:PingLogger.GUI.Controls"
         mc:Ignorable="d"
         Title="Route Trace Utility" Height="450" Width="600"
-		ResizeMode="CanResizeWithGrip"
+		ResizeMode="NoResize"
 		WindowStartupLocation="CenterScreen" Style="{DynamicResource CustomDialogStyle}"
 		DataContext="{Binding RelativeSource={RelativeSource Self}}"
 		WindowStyle="SingleBorderWindow">
     <Grid>
 		<Grid.ColumnDefinitions>
-			<ColumnDefinition Width="195" />
-			<ColumnDefinition Width="195" />
-			<ColumnDefinition Width="195" />
+			<ColumnDefinition Width="197" />
+			<ColumnDefinition Width="197" />
+			<ColumnDefinition Width="197" />
 		</Grid.ColumnDefinitions>
 		<Grid.RowDefinitions>
 			<RowDefinition Height="60" />
@@ -33,7 +33,7 @@
 		<DataGrid VerticalScrollBarVisibility="Auto" Grid.Row="1" Grid.ColumnSpan="3" Grid.Column="0" x:Name="traceView" VerticalGridLinesBrush="Transparent" CanUserResizeColumns="False" AutoGenerateColumns="False" RowBackground="{DynamicResource ControlDarkerBackground}" AlternatingRowBackground="{DynamicResource ControlDisabledBackground}" SelectionMode="Single" CanUserAddRows="False" CanUserDeleteRows="False" CanUserResizeRows="False">
 			<DataGrid.RowHeaderStyle>
 				<Style TargetType="DataGridRowHeader">
-					<Setter Property="Background" Value="{DynamicResource ControlBrightDefaultBackground}" />
+					<Setter Property="Background" Value="{DynamicResource ControlDarkerBackground}" />
 				</Style>
 			</DataGrid.RowHeaderStyle>
 			<DataGrid.CellStyle>
@@ -44,15 +44,17 @@
 			</DataGrid.CellStyle>
 			<DataGrid.ColumnHeaderStyle>
 				<Style TargetType="DataGridColumnHeader">
-					<Setter Property="Background" Value="{DynamicResource ControlSelectedBackground}" />
+					<Setter Property="Background" Value="{DynamicResource ControlSecondarySpecialColour}" />
+					<Setter Property="BorderBrush" Value="{DynamicResource ContainerBorder}" />
+					<Setter Property="BorderThickness" Value="1" />
 					<Setter Property="HorizontalAlignment" Value="Stretch" />
 					<Setter Property="HorizontalContentAlignment" Value="Center" />
-					<Setter Property="Height" Value="26" />
-					<Setter Property="FontSize" Value="18" />
+					<Setter Property="Height" Value="24" />
+					<Setter Property="FontSize" Value="14" />
 				</Style>
 			</DataGrid.ColumnHeaderStyle>
 			<DataGrid.Columns>
-				<DataGridTextColumn Header="Ttl" Binding="{Binding Path=Ttl}" Width="20" />
+				<DataGridTextColumn Header="Ttl" Binding="{Binding Path=Ttl}" Width="30" />
 				<DataGridTextColumn Header="IP Address" Binding="{Binding Path=IPAddress}" Width="*" />
 				<DataGridTextColumn Header="Round Trip 1" Binding="{Binding Path=PingTimes[0]}" Width="110" />
 				<DataGridTextColumn Header="Round Trip 2" Binding="{Binding Path=PingTimes[1]}" Width="110" />

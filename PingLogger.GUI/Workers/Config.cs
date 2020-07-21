@@ -14,6 +14,19 @@ namespace PingLogger.GUI.Workers
 		private static bool InitialLoad = false;
 		private static AppOptions Options { get; set; }
 
+		public static Theme Theme
+		{
+			get
+			{
+				return Options.Theme;
+			}
+			set
+			{
+				Options.Theme = value;
+				SaveConfig();
+			}
+		}
+
 		public static int DaysToKeepLogs
 		{
 			get
@@ -158,10 +171,5 @@ namespace PingLogger.GUI.Workers
 				}
 			}
 		}
-	}
-
-	public enum Theme
-	{
-		Dark, Light
 	}
 }

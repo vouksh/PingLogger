@@ -1927,8 +1927,8 @@
 		<Setter Property="WindowChrome.WindowChrome">
 			<Setter.Value>
 				<WindowChrome CornerRadius="2" 
-                              CaptionHeight="39"
-                              GlassFrameThickness="2"/>
+                              CaptionHeight="37"
+                              GlassFrameThickness="1"/>
 			</Setter.Value>
 		</Setter>
 
@@ -1938,15 +1938,15 @@
 					<Grid>
 						<Border Background="{TemplateBinding Background}"
                                 BorderBrush="{TemplateBinding BorderBrush}"
-                                BorderThickness="7,39,7,7">
+                                BorderThickness="4,35,4,4">
 							<AdornerDecorator>
 								<ContentPresenter />
 							</AdornerDecorator>
 						</Border>
 
-						<Grid Height="32"
+						<Grid Height="28"
                               Background="{StaticResource WindowTitleColour}"
-                            VerticalAlignment="Top" Margin="7,7,7,0">
+                            VerticalAlignment="Top" Margin="4,4,4,0">
 
 							<Grid.ColumnDefinitions>
 								<ColumnDefinition Width="32"/>
@@ -1954,11 +1954,11 @@
 								<ColumnDefinition Width="Auto"/>
 							</Grid.ColumnDefinitions>
 
-							<Image HorizontalAlignment="Left" VerticalAlignment="Stretch" Width="20" Margin="6" Source="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Icon}"  />
+							<Image HorizontalAlignment="Left" VerticalAlignment="Stretch" Width="18" Margin="6" Source="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Icon}"  />
 							<TextBlock Margin="5,0,0,0"
                                        VerticalAlignment="Center"
                                        HorizontalAlignment="Left"
-                                       FontSize="16"
+                                       FontSize="14"
                                        Foreground="{DynamicResource ControlDefaultForeground}"
                                        Text="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Title}"   
                                        Grid.Column="1"/>
@@ -2001,8 +2001,8 @@
 		<Setter Property="WindowChrome.WindowChrome">
 			<Setter.Value>
 				<WindowChrome CornerRadius="2" 
-                              CaptionHeight="39"
-                              GlassFrameThickness="2"/>
+                              CaptionHeight="37"
+                              GlassFrameThickness="1"/>
 			</Setter.Value>
 		</Setter>
 
@@ -2012,34 +2012,32 @@
 					<Grid>
 						<Border Background="{TemplateBinding Background}"
                                 BorderBrush="{TemplateBinding BorderBrush}"
-                                BorderThickness="7,39,7,7">
+                                BorderThickness="4,35,4,4">
 							<AdornerDecorator>
 								<ContentPresenter />
 							</AdornerDecorator>
 						</Border>
 
-						<Grid Height="32"
+						<Grid Height="28"
                               Background="{StaticResource WindowTitleColour}"
-                            VerticalAlignment="Top" Margin="7,7,7,0">
+                            VerticalAlignment="Top" Margin="4,4,4,0">
 
 							<Grid.ColumnDefinitions>
-								<ColumnDefinition Width="32"/>
 								<ColumnDefinition Width="*"/>
 								<ColumnDefinition Width="Auto"/>
 							</Grid.ColumnDefinitions>
-
-							<Image HorizontalAlignment="Left" VerticalAlignment="Stretch" Width="20" Margin="6" Source="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Icon}"  />
+							
 							<TextBlock Margin="5,0,0,0"
                                        VerticalAlignment="Center"
                                        HorizontalAlignment="Left"
-                                       FontSize="16"
+                                       FontSize="14"
                                        Foreground="{DynamicResource ControlDefaultForeground}"
                                        Text="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Title}"   
-                                       Grid.Column="1"/>
+                                       Grid.Column="0"/>
 
 
 							<StackPanel Orientation="Horizontal"
-                                        Grid.Column="2">
+                                        Grid.Column="1">
 								<Button x:Name="btnClose"
                                         Background="Transparent"
                                         BorderBrush="Transparent"

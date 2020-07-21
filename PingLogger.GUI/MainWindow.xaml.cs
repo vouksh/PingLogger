@@ -52,6 +52,11 @@ namespace PingLogger.GUI
 			this.Title = $"PingLogger v{version}";
 		}
 
+		public static void SetTheme()
+		{
+			CurrentApp.SetTheme();
+		}
+
 		private void tabDelBtn_Click(object sender)
 		{
 			string hostId = (sender as string);
