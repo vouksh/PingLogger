@@ -3,9 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29001.49
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PingLogger.CLI", "PingLogger.CLI\PingLogger.CLI.csproj", "{930C95EB-6C5E-4310-B984-05EF6EF321AE}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PingLogger.GUI", "PingLogger.GUI\PingLogger.GUI.csproj", "{34590190-EC23-4876-96CB-66234BC18ADE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PingLogger", "PingLogger.csproj", "{34590190-EC23-4876-96CB-66234BC18ADE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,14 +13,6 @@ Global
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{930C95EB-6C5E-4310-B984-05EF6EF321AE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{930C95EB-6C5E-4310-B984-05EF6EF321AE}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{930C95EB-6C5E-4310-B984-05EF6EF321AE}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{930C95EB-6C5E-4310-B984-05EF6EF321AE}.Debug|x86.Build.0 = Debug|Any CPU
-		{930C95EB-6C5E-4310-B984-05EF6EF321AE}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{930C95EB-6C5E-4310-B984-05EF6EF321AE}.Release|Any CPU.Build.0 = Release|Any CPU
-		{930C95EB-6C5E-4310-B984-05EF6EF321AE}.Release|x86.ActiveCfg = Release|Any CPU
-		{930C95EB-6C5E-4310-B984-05EF6EF321AE}.Release|x86.Build.0 = Release|Any CPU
 		{34590190-EC23-4876-96CB-66234BC18ADE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{34590190-EC23-4876-96CB-66234BC18ADE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{34590190-EC23-4876-96CB-66234BC18ADE}.Debug|x86.ActiveCfg = Debug|Any CPU
