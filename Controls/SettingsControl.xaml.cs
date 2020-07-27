@@ -83,33 +83,29 @@ namespace PingLogger.GUI.Controls
 
 		private void CreateStartupShortcut()
 		{
-			var batchPath = Environment.GetFolderPath(Environment.SpecialFolder.Startup) + "\\PingLogger.bat";
-			if (!File.Exists(batchPath))
+			string shortcutPath = Environment.GetFolderPath(Environment.SpecialFolder.Startup) + "\\PingLogger.lnk";
+			if (!File.Exists(shortcutPath))
 			{
 				Logger.Info("CreateStartupShortcut called");
-				Logger.Info($"Saving batch file to {batchPath}");
-				var exePath = Environment.CurrentDirectory + "\\";
-				var exeName = AppDomain.CurrentDomain.FriendlyName + ".exe";
+				Logger.Info($"Saving shortcut to {shortcutPath}");
 
-				var loggerDrive = exePath.Substring(0, 2);
-
-				var batchScript = "@echo off" + Environment.NewLine;
-				batchScript += loggerDrive + Environment.NewLine;
-				batchScript += $"CD \"{exePath}\"" + Environment.NewLine;
-				batchScript += $"START \"\" \".\\{exeName}\"";
-				Logger.Info($"Writing script: \n{batchScript}");
-				File.WriteAllText(batchPath, batchScript);
+				IWshRuntimeLibrary.WshShell shell = new IWshRuntimeLibrary.WshShell();
+				IWshRuntimeLibrary.IWshShortcut shortcut = (IWshRuntimeLibrary.IWshShortcut)shell.CreateShortcut(shortcutPath);
+				shortcut.Description = "Startup shortcut for PingLogger";
+				shortcut.TargetPath = Environment.CurrentDirectory + "\\" + AppDomain.CurrentDomain.FriendlyName + ".exe";
+				shortcut.WorkingDirectory = Environment.CurrentDirectory;
+				shortcut.Save();
 			}
 		}
 
 		private void DeleteStartupShortcut()
 		{
 			Logger.Info("DeleteStartupShortcut called");
-			var batchPath = Environment.GetFolderPath(Environment.SpecialFolder.Startup) + "\\PingLogger.bat";
-			if (File.Exists(batchPath))
+			string shortcutPath = Environment.GetFolderPath(Environment.SpecialFolder.Startup) + "\\PingLogger.lnk";
+			if (File.Exists(shortcutPath))
 			{
-				Logger.Info($"Deleting batch file {batchPath}");
-				File.Delete(batchPath);
+				Logger.Info($"Deleting batch file {shortcutPath}");
+				File.Delete(shortcutPath);
 			}
 		}
 
