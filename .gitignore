@@ -5,7 +5,4 @@
 /bin
 /.vs
 /obj
-/PingLogger.GUI/.vs/PingWPF
-/PingLogger.GUI/bin
-/PingLogger.GUI/obj
-/PingLogger.GUI/Properties/PublishProfiles
+/Properties/PublishProfiles
