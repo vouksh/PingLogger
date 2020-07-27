@@ -49,6 +49,7 @@ namespace PingLogger.GUI.Controls
 
 		private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
 		{
+			textBlock.Text = "";
 			if (isRunning)
 				Tail.Stop();
 		}

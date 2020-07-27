@@ -5,16 +5,16 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PingLogger.GUI.Controls"
         mc:Ignorable="d"
-        Title="Route Trace Utility" Height="450" Width="600"
+        Title="Route Trace Utility" Height="450" Width="650"
 		ResizeMode="NoResize"
 		WindowStartupLocation="CenterScreen" Style="{DynamicResource CustomDialogStyle}"
 		DataContext="{Binding RelativeSource={RelativeSource Self}}"
-		WindowStyle="SingleBorderWindow">
+		WindowStyle="SingleBorderWindow" Closing="Window_Closing">
     <Grid>
 		<Grid.ColumnDefinitions>
-			<ColumnDefinition Width="197" />
-			<ColumnDefinition Width="197" />
-			<ColumnDefinition Width="197" />
+			<ColumnDefinition Width="*" />
+			<ColumnDefinition Width="*" />
+			<ColumnDefinition Width="*" />
 		</Grid.ColumnDefinitions>
 		<Grid.RowDefinitions>
 			<RowDefinition Height="60" />
@@ -30,7 +30,7 @@
 			<Label Grid.Row="1" FontSize="11" Content="Click &quot;Run Trace&quot; To Begin" HorizontalAlignment="Center" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" VerticalAlignment="Center" x:Name="pingTimeLabel" />
 		</Grid>
 		<ProgressBar Grid.Row="0" Grid.Column="2" Value="0" IsIndeterminate="True" Height="24" Visibility="Hidden" x:Name="fakeProgressBar" Padding="5" />
-		<DataGrid VerticalScrollBarVisibility="Auto" Grid.Row="1" Grid.ColumnSpan="3" Grid.Column="0" x:Name="traceView" VerticalGridLinesBrush="Transparent" CanUserResizeColumns="False" AutoGenerateColumns="False" RowBackground="{DynamicResource ControlDarkerBackground}" AlternatingRowBackground="{DynamicResource ControlDisabledBackground}" SelectionMode="Single" CanUserAddRows="False" CanUserDeleteRows="False" CanUserResizeRows="False">
+		<DataGrid SelectionUnit="Cell" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Auto" CanUserSortColumns="False" Grid.Row="1" Grid.ColumnSpan="3" Grid.Column="0" x:Name="traceView" VerticalGridLinesBrush="Transparent" CanUserResizeColumns="False" AutoGenerateColumns="False" RowBackground="{DynamicResource ControlDarkerBackground}" AlternatingRowBackground="{DynamicResource ControlDisabledBackground}" SelectionMode="Extended" CanUserAddRows="False" CanUserDeleteRows="False" CanUserResizeRows="False">
 			<DataGrid.RowHeaderStyle>
 				<Style TargetType="DataGridRowHeader">
 					<Setter Property="Background" Value="{DynamicResource ControlDarkerBackground}" />
@@ -54,11 +54,22 @@
 				</Style>
 			</DataGrid.ColumnHeaderStyle>
 			<DataGrid.Columns>
-				<DataGridTextColumn Header="Ttl" Binding="{Binding Path=Ttl}" Width="30" />
-				<DataGridTextColumn Header="IP Address" Binding="{Binding Path=IPAddress}" Width="*" />
-				<DataGridTextColumn Header="Round Trip 1" Binding="{Binding Path=PingTimes[0]}" Width="110" />
-				<DataGridTextColumn Header="Round Trip 2" Binding="{Binding Path=PingTimes[1]}" Width="110" />
-				<DataGridTextColumn Header="Round Trip 3" Binding="{Binding Path=PingTimes[2]}" Width="110" />
+				<DataGridTextColumn Header="Ttl" Binding="{Binding Path=Ttl}" Width="30" IsReadOnly="True" />
+				<DataGridTextColumn Header="IP Address" Binding="{Binding Path=IPAddress}" Width="120" />
+				<DataGridTextColumn Header="Host Name" Binding="{Binding Path=HostName}" Width="*" />
+				<DataGridTemplateColumn>
+					<DataGridTemplateColumn.CellTemplate>
+						<DataTemplate>
+							<Grid>
+								<Button Click="CreateHostFromTrace" FontWeight="Bold" Visibility="{Binding Path=HostAddButtonVisible}" Uid="{Binding Path=HostName}" HorizontalAlignment="Center" HorizontalContentAlignment="Center" VerticalAlignment="Center" VerticalContentAlignment="Center" Padding="1,-7,1,0" ToolTip="Add this as a new host" Height="14" FontSize="16">+</Button>
+								<Button Click="CreateHostFromTrace" FontWeight="Bold" Visibility="{Binding Path=IPAddButtonVisible}" Uid="{Binding Path=IPAddress}" HorizontalAlignment="Center" HorizontalContentAlignment="Center" VerticalAlignment="Center" VerticalContentAlignment="Center" Padding="1,-7,1,0" ToolTip="Add this as a new host" Height="14" FontSize="16">+</Button>
+							</Grid>
+						</DataTemplate>
+					</DataGridTemplateColumn.CellTemplate>
+				</DataGridTemplateColumn>
+				<DataGridTextColumn Header="Ping 1" Binding="{Binding Path=PingTimes[0]}" Width="65" IsReadOnly="True" />
+				<DataGridTextColumn Header="Ping 2" Binding="{Binding Path=PingTimes[1]}" Width="65" IsReadOnly="True" />
+				<DataGridTextColumn Header="Ping 3" Binding="{Binding Path=PingTimes[2]}" Width="65" IsReadOnly="True" />
 			</DataGrid.Columns>
 		</DataGrid>
 	</Grid>

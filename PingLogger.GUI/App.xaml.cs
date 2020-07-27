@@ -14,10 +14,11 @@ namespace PingLogger.GUI
 
 		private void Application_Startup(object sender, StartupEventArgs e)
 		{
-			Logger.Info("Application start");
+			AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+			Version version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
+			Logger.Info($"Application start, version {version}");
 			Logger.Info($"Application is running from directory {AppContext.BaseDirectory}");
 			SetTheme();
-			AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
 			MainWindow window = new MainWindow(this);
 			window.Show();
 		}

@@ -90,19 +90,7 @@ namespace PingLogger.GUI.Controls
 		}
 		void Timer_Tick(object sender, EventArgs e)
 		{
-			if (Directory.Exists($"{Environment.CurrentDirectory}{Path.DirectorySeparatorChar}Logs{Path.DirectorySeparatorChar}{HostNameBox.Text}"))
-			{
-				openLogFolderBtn.Visibility = Visibility.Visible;
-				if (File.Exists($"{Environment.CurrentDirectory}{Path.DirectorySeparatorChar}Logs{Path.DirectorySeparatorChar}{HostNameBox.Text}/{HostNameBox.Text}-{DateTime.Now:yyyyMMdd}.log"))
-				{
-					viewLogBtn.Visibility = Visibility.Visible;
-				}
-			}
-			else
-			{
-				openLogFolderBtn.Visibility = Visibility.Hidden;
-				viewLogBtn.Visibility = Visibility.Hidden;
-			}
+
 			if (Pinger != null && Pinger.Running)
 			{
 				StartBtn.Visibility = Visibility.Hidden;
@@ -166,16 +154,31 @@ namespace PingLogger.GUI.Controls
 			}
 			else
 			{
+				if (Directory.Exists($"{Environment.CurrentDirectory}{Path.DirectorySeparatorChar}Logs{Path.DirectorySeparatorChar}{HostNameBox.Text}"))
+				{
+					openLogFolderBtn.Visibility = Visibility.Visible;
+					if (File.Exists($"{Environment.CurrentDirectory}{Path.DirectorySeparatorChar}Logs{Path.DirectorySeparatorChar}{HostNameBox.Text}/{HostNameBox.Text}-{DateTime.Now:yyyyMMdd}.log"))
+					{
+						viewLogBtn.Visibility = Visibility.Visible;
+					}
+				}
+				else
+				{
+					openLogFolderBtn.Visibility = Visibility.Hidden;
+					viewLogBtn.Visibility = Visibility.Hidden;
+				}
 				StartBtn.Visibility = Visibility.Visible;
 				StopBtn.Visibility = Visibility.Hidden;
 				doTraceRteBtn.Visibility = Visibility.Visible;
 				if (IPAddressBox.Text == "Invalid Host Name")
 				{
 					StartBtn.IsEnabled = false;
+					doTraceRteBtn.IsEnabled = false;
 				}
 				else
 				{
 					StartBtn.IsEnabled = true;
+					doTraceRteBtn.IsEnabled = true;
 				}
 			}
 		}
@@ -297,6 +300,7 @@ namespace PingLogger.GUI.Controls
 			catch (Exception)
 			{
 				IPAddressBox.Text = "Invalid Host Name";
+				doTraceRteBtn.IsEnabled = false;
 			}
 			return;
 		}
@@ -412,18 +416,7 @@ namespace PingLogger.GUI.Controls
 			}.Start();
 		}
 
-		private void viewLogBtn_Click(object sender, RoutedEventArgs e)
-		{
-			Thread viewLogThread = new Thread(new ThreadStart(() =>
-			{
-				Application.Current.Dispatcher.Invoke((Action)delegate
-				{
-					new LogViewerDialog(this.PingHost).Show();
-				});
-			}));
-			viewLogThread.SetApartmentState(ApartmentState.STA);
-			viewLogThread.Start();
-		}
+		private void viewLogBtn_Click(object sender, RoutedEventArgs e) => new LogViewerDialog(this.PingHost).Show();
 
 		private void HostNameBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
 		{
@@ -435,12 +428,21 @@ namespace PingLogger.GUI.Controls
 
 		private void doTraceRteBtn_Click(object sender, RoutedEventArgs e)
 		{
-			if (null == Pinger)
+			try
 			{
-				Pinger = new Pinger(PingHost);
+				if (null == Pinger)
+				{
+					Pinger = new Pinger(PingHost);
+
+				}
+				var showTraceRteWindow = new TraceRouteControl(ref Pinger);
+				showTraceRteWindow.Owner = Window.GetWindow(this);
+				showTraceRteWindow.ShowDialog();
 			}
-			var showTraceRteWindow = new TraceRouteControl(ref Pinger);
-			showTraceRteWindow.ShowDialog();
+			catch (System.Net.Sockets.SocketException)
+			{
+				MessageBox.Show("Invalid host.");
+			}
 		}
 	}
 }

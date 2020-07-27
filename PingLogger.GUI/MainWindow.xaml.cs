@@ -136,6 +136,13 @@ namespace PingLogger.GUI
 			tabControl.SelectedIndex = tabControl.Items.Count - 2;
 			//return tab;
 		}
+		public void AddTab(string hostName)
+		{
+			var newHost = new Host { HostName = hostName, Id = Guid.NewGuid() };
+			Config.Hosts.Add(newHost);
+			AddTabItem(newHost, true);
+			tabControl.SelectedIndex = tabControl.Items.Count - 2;
+		}
 		private TabItem AddTabItem(Host host, bool AddOnRuntime = false)
 		{
 			tabControl.DataContext = null;
