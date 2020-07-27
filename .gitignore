@@ -6,3 +6,4 @@
 /.vs
 /obj
 /Properties/PublishProfiles
+/PingLogger.csproj.user
