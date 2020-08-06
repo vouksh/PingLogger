@@ -90,7 +90,6 @@ namespace PingLogger.GUI.Controls
 		}
 		void Timer_Tick(object sender, EventArgs e)
 		{
-
 			if (Pinger != null && Pinger.Running)
 			{
 				StartBtn.Visibility = Visibility.Hidden;
@@ -154,19 +153,6 @@ namespace PingLogger.GUI.Controls
 			}
 			else
 			{
-				if (Directory.Exists($"{Environment.CurrentDirectory}{Path.DirectorySeparatorChar}Logs{Path.DirectorySeparatorChar}{HostNameBox.Text}"))
-				{
-					openLogFolderBtn.Visibility = Visibility.Visible;
-					if (File.Exists($"{Environment.CurrentDirectory}{Path.DirectorySeparatorChar}Logs{Path.DirectorySeparatorChar}{HostNameBox.Text}/{HostNameBox.Text}-{DateTime.Now:yyyyMMdd}.log"))
-					{
-						viewLogBtn.Visibility = Visibility.Visible;
-					}
-				}
-				else
-				{
-					openLogFolderBtn.Visibility = Visibility.Hidden;
-					viewLogBtn.Visibility = Visibility.Hidden;
-				}
 				StartBtn.Visibility = Visibility.Visible;
 				StopBtn.Visibility = Visibility.Hidden;
 				doTraceRteBtn.Visibility = Visibility.Visible;
@@ -179,6 +165,37 @@ namespace PingLogger.GUI.Controls
 				{
 					StartBtn.IsEnabled = true;
 					doTraceRteBtn.IsEnabled = true;
+				}
+			}
+			CheckForFolder();
+		}
+
+		private bool DirExists = false;
+		private bool LogExists = false;
+
+		private void CheckForFolder()
+		{
+			if (!DirExists)
+			{
+				if (Directory.Exists($"{Environment.CurrentDirectory}{Path.DirectorySeparatorChar}Logs{Path.DirectorySeparatorChar}{HostNameBox.Text}"))
+				{
+					DirExists = true;
+					openLogFolderBtn.Visibility = Visibility.Visible;
+				}
+				else
+				{
+					openLogFolderBtn.Visibility = Visibility.Hidden;
+				}
+			}
+			if(!LogExists)
+			{
+				if (File.Exists($"{Environment.CurrentDirectory}{Path.DirectorySeparatorChar}Logs{Path.DirectorySeparatorChar}{HostNameBox.Text}/{HostNameBox.Text}-{DateTime.Now:yyyyMMdd}.log"))
+				{
+					LogExists = true;
+					viewLogBtn.Visibility = Visibility.Visible;
+				} else
+				{
+					viewLogBtn.Visibility = Visibility.Hidden;
 				}
 			}
 		}
