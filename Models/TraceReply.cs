@@ -1,9 +1,11 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
 
 namespace PingLogger.GUI.Models
 {
 	public class TraceReply
 	{
+		public Guid ID { get; set; }
 		public string IPAddress { get; set; }
 		public int Ttl { get; set; }
 		public long RoundTrip { get; set; }

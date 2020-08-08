@@ -359,6 +359,19 @@ namespace PingLogger.GUI.Workers
 			return new Tuple<long, IPStatus>(reply.RoundtripTime, reply.Status);
 		}
 
+		public async Task<Tuple<long, IPStatus>> GetSingleRoundTrip(string address, int ttl)
+		{
+			string data = RandomString(Host.PacketSize);
+			byte[] buffer = Encoding.ASCII.GetBytes(data);
+			using var pinger = new Ping();
+			var pingOpts = new PingOptions(ttl, true);
+			Logger.Information($"Single Ping sent to {address}");
+			var reply = await pinger.SendPingAsync(address, Host.Timeout, buffer, pingOpts);
+			Logger.Information($"Single Ping Reply Status: {reply.Status}");
+			Logger.Information($"Single Ping Reply RoundTrip: {reply.RoundtripTime}ms");
+			return new Tuple<long, IPStatus>(reply.RoundtripTime, reply.Status);
+		}
+
 		#region IDisposable Support
 		private bool disposedValue = false; // To detect redundant calls
 
