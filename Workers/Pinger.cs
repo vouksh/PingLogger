@@ -30,7 +30,6 @@ namespace PingLogger.GUI.Workers
 		/// The thread fires an event to do the actual pinging. 
 		/// </summary>
 		/// <param name="host">The host that will be pinged.</param>
-		/// <param name="defaultSilent">Set this to true to prevent Serilog from printing to the console.</param>
 		public Pinger(Host host)
 		{
 			Host = host;
@@ -38,7 +37,6 @@ namespace PingLogger.GUI.Workers
 				Directory.CreateDirectory("./Logs");
 			if (!Directory.Exists($"./Logs/{Host.HostName}/"))
 				Directory.CreateDirectory($"./Logs/{Host.HostName}/");
-			//Check to see if just this is supposed to be silent, or if it's app-wide setting
 			var outputTemp = "[{Timestamp:HH:mm:ss} {Level:u4}] {Message:lj}{NewLine}{Exception}";
 			var errorOutputTemp = "[{Timestamp:HH:mm:ss} {Level:u5}] {Message:lj}{NewLine}{Exception}";
 
@@ -142,7 +140,6 @@ namespace PingLogger.GUI.Workers
 			return Host;
 		}
 
-		private readonly Random random = new Random();
 		/// <summary>
 		/// Generates a random string with the specified length.
 		/// </summary>
@@ -346,7 +343,7 @@ namespace PingLogger.GUI.Workers
 			((AutoResetEvent)e.UserState).Set();
 		}
 
-		public async Task<Tuple<long, IPStatus>> GetSingleRoundTrip(IPAddress address, int ttl)
+		public async Task<(long RoundTrip, IPStatus Status)> GetSingleRoundTrip(IPAddress address, int ttl)
 		{
 			string data = RandomString(Host.PacketSize);
 			byte[] buffer = Encoding.ASCII.GetBytes(data);
@@ -356,10 +353,10 @@ namespace PingLogger.GUI.Workers
 			var reply = await pinger.SendPingAsync(address, Host.Timeout, buffer, pingOpts);
 			Logger.Information($"Single Ping Reply Status: {reply.Status}");
 			Logger.Information($"Single Ping Reply RoundTrip: {reply.RoundtripTime}ms");
-			return new Tuple<long, IPStatus>(reply.RoundtripTime, reply.Status);
+			return (reply.RoundtripTime, reply.Status);
 		}
 
-		public async Task<Tuple<long, IPStatus>> GetSingleRoundTrip(string address, int ttl)
+		public async Task<(long RoundTrip, IPStatus Status)> GetSingleRoundTrip(string address, int ttl)
 		{
 			string data = RandomString(Host.PacketSize);
 			byte[] buffer = Encoding.ASCII.GetBytes(data);
@@ -369,7 +366,7 @@ namespace PingLogger.GUI.Workers
 			var reply = await pinger.SendPingAsync(address, Host.Timeout, buffer, pingOpts);
 			Logger.Information($"Single Ping Reply Status: {reply.Status}");
 			Logger.Information($"Single Ping Reply RoundTrip: {reply.RoundtripTime}ms");
-			return new Tuple<long, IPStatus>(reply.RoundtripTime, reply.Status);
+			return (reply.RoundtripTime, reply.Status);
 		}
 
 		#region IDisposable Support

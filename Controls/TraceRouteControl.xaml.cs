@@ -153,20 +153,20 @@ namespace PingLogger.GUI.Controls
 
 
 					var firstTry = await pinger.GetSingleRoundTrip(reply.Address, ttl + 1);
-					TraceReplies.First(t => t.ID == newID).PingTimes[0] = firstTry.Item2 != IPStatus.Success ? firstTry.Item2.ToString() : firstTry.Item1.ToString() + "ms";
+					TraceReplies.First(t => t.ID == newID).PingTimes[0] = firstTry.Status != IPStatus.Success ? firstTry.Status.ToString() : firstTry.RoundTrip.ToString() + "ms";
 					traceView.Items.Refresh();
 
 					if (firstTry.Item2 == IPStatus.Success)
 						await Task.Delay(250);
 
 					var secondTry = await pinger.GetSingleRoundTrip(reply.Address, ttl + 1);
-					TraceReplies.First(t => t.ID == newID).PingTimes[1] = secondTry.Item2 != IPStatus.Success ? secondTry.Item2.ToString() : secondTry.Item1.ToString() + "ms";
+					TraceReplies.First(t => t.ID == newID).PingTimes[1] = secondTry.Status != IPStatus.Success ? secondTry.Status.ToString() : secondTry.RoundTrip.ToString() + "ms";
 					traceView.Items.Refresh();
 					if (secondTry.Item2 == IPStatus.Success)
 						await Task.Delay(250);
 
 					var thirdTry = await pinger.GetSingleRoundTrip(reply.Address, ttl + 1);
-					TraceReplies.First(t => t.ID == newID).PingTimes[2] = thirdTry.Item2 != IPStatus.Success ? secondTry.Item2.ToString() : thirdTry.Item1.ToString() + "ms";
+					TraceReplies.First(t => t.ID == newID).PingTimes[2] = thirdTry.Status != IPStatus.Success ? thirdTry.Status.ToString() : thirdTry.RoundTrip.ToString() + "ms";
 					traceView.Items.Refresh();
 
 					if (thirdTry.Item2 == IPStatus.Success)
