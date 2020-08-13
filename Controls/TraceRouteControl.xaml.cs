@@ -57,6 +57,8 @@ namespace PingLogger.GUI.Controls
 
 		private async void startTraceRteBtn_Click(object sender, RoutedEventArgs e)
 		{
+			var stopWatch = new System.Diagnostics.Stopwatch();
+			stopWatch.Start();
 			hostsLookedUp = 0;
 			traceView.ItemsSource = null;
 			traceView.IsReadOnly = true;
@@ -80,8 +82,11 @@ namespace PingLogger.GUI.Controls
 				await Task.Delay(50);
 			}
 			fakeProgressBar.Visibility = Visibility.Hidden;
+			CheckButtons();
 			startTraceRteBtn.Visibility = Visibility.Visible;
 			traceView.IsReadOnly = false;
+			stopWatch.Stop();
+			Logger.Info($"Total trace route time {stopWatch.ElapsedMilliseconds}ms");
 		}
 
 		private void CreateHostFromTrace(object sender, RoutedEventArgs e)
@@ -131,11 +136,11 @@ namespace PingLogger.GUI.Controls
 							{
 								TraceReplies.First(t => t.ID == newID).HostName = hostEntryTask.Result.HostName;
 							}
-							catch(Exception ex)
+							catch (Exception ex)
 							{
 								Logger.Debug($"Unable to find host entry for IP {reply.Address}");
 								Logger.Log.Debug(ex, $"Exception data for {reply.Address} with Ttl {ttl} and ID of {newID}");
-								TraceReplies.First(t => t.ID == newID).HostName = "N/A"; 
+								TraceReplies.First(t => t.ID == newID).HostName = "N/A";
 							}
 							Interlocked.Increment(ref hostsLookedUp);
 							Logger.Debug($"hostsLookedUp: {hostsLookedUp}");
@@ -147,39 +152,23 @@ namespace PingLogger.GUI.Controls
 					}));
 
 
-					var firstTry = await pinger.GetSingleRoundTrip(reply.Address, ttl);
+					var firstTry = await pinger.GetSingleRoundTrip(reply.Address, ttl + 1);
 					TraceReplies.First(t => t.ID == newID).PingTimes[0] = firstTry.Item2 != IPStatus.Success ? firstTry.Item2.ToString() : firstTry.Item1.ToString() + "ms";
 					traceView.Items.Refresh();
 
 					if (firstTry.Item2 == IPStatus.Success)
 						await Task.Delay(250);
 
-					var secondTry = await pinger.GetSingleRoundTrip(reply.Address, ttl);
+					var secondTry = await pinger.GetSingleRoundTrip(reply.Address, ttl + 1);
 					TraceReplies.First(t => t.ID == newID).PingTimes[1] = secondTry.Item2 != IPStatus.Success ? secondTry.Item2.ToString() : secondTry.Item1.ToString() + "ms";
 					traceView.Items.Refresh();
 					if (secondTry.Item2 == IPStatus.Success)
 						await Task.Delay(250);
 
-					var thirdTry = await pinger.GetSingleRoundTrip(reply.Address, ttl);
+					var thirdTry = await pinger.GetSingleRoundTrip(reply.Address, ttl + 1);
 					TraceReplies.First(t => t.ID == newID).PingTimes[2] = thirdTry.Item2 != IPStatus.Success ? secondTry.Item2.ToString() : thirdTry.Item1.ToString() + "ms";
 					traceView.Items.Refresh();
 
-					if ((firstTry.Item2 == IPStatus.TimedOut || firstTry.Item2 == IPStatus.TtlExpired) && (secondTry.Item2 == IPStatus.TimedOut || secondTry.Item2 == IPStatus.TtlExpired) && (thirdTry.Item2 == IPStatus.TimedOut || thirdTry.Item2 == IPStatus.TtlExpired))
-					{
-						TraceReplies.First(t => t.ID == newID).HostAddButtonVisible = Visibility.Hidden;
-						TraceReplies.First(t => t.ID == newID).IPAddButtonVisible = Visibility.Hidden;
-					}
-					else
-					{
-						if (TraceReplies.First(t => t.ID == newID).HostName == "N/A")
-						{
-							TraceReplies.First(t => t.ID == newID).IPAddButtonVisible = Visibility.Visible;
-						}
-						else
-						{
-							TraceReplies.First(t => t.ID == newID).HostAddButtonVisible = Visibility.Visible;
-						}
-					}
 					if (thirdTry.Item2 == IPStatus.Success)
 						await Task.Delay(250);
 				}
@@ -187,6 +176,41 @@ namespace PingLogger.GUI.Controls
 				{
 					break;
 				}
+			}
+		}
+
+		private void CheckButtons()
+		{
+			foreach(var reply in TraceReplies)
+			{
+				// Check all 3 ping times to see if they were valid or not. We can just discard the result, we don't care what it is.
+				// Future TODO? Make it an array, then parse it. If all are false, then we can just set the buttons to hidden and be done. 
+				bool firstReply = int.TryParse(reply.PingTimes[0].Replace("ms", ""), out _);
+				bool secondReply = int.TryParse(reply.PingTimes[1].Replace("ms", ""), out _);
+				bool thirdReply = int.TryParse(reply.PingTimes[2].Replace("ms", ""), out _);
+
+				// if the host name is N/A, then it's not a valid host.
+				bool isValidHost = reply.HostName == "N/A" ? false : true;
+
+				if(firstReply || secondReply || thirdReply)
+				{
+					// At least one of the replies was good. So we can make one of the buttons visible.
+					if(isValidHost)
+					{
+						reply.HostAddButtonVisible = Visibility.Visible;
+						reply.IPAddButtonVisible = Visibility.Hidden;
+					} else
+					{
+						reply.HostAddButtonVisible = Visibility.Hidden;
+						reply.IPAddButtonVisible = Visibility.Visible;
+					}
+				} else
+				{
+					// None of the replies were good. Lets hide both buttons.
+					reply.HostAddButtonVisible = Visibility.Hidden;
+					reply.IPAddButtonVisible = Visibility.Hidden;
+				}
+				traceView.Items.Refresh();
 			}
 		}
 
