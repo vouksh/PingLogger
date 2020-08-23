@@ -1,24 +1,33 @@
-﻿using PingLogger.GUI.Workers;
+﻿using PingLogger.GUI;
+using PingLogger.GUI.Workers;
+using PingLogger;
 using System;
+using System.Collections.Generic;
 using System.IO;
-using System.Text.RegularExpressions;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
 using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Shapes;
+using System.Text.RegularExpressions;
 
 namespace PingLogger.GUI.Controls
 {
 	/// <summary>
-	/// Interaction logic for SettingsControl.xaml
+	/// Interaction logic for SettingsDialog.xaml
 	/// </summary>
-	public partial class SettingsControl : UserControl
+	public partial class SettingsDialog : Window
 	{
-		public static bool FirstLoadComplete = false;
-		public SettingsControl()
+		public ICommand CloseWindowCommand { get; set; }
+		public SettingsDialog()
 		{
 			InitializeComponent();
+			CloseWindowCommand = new Command(Close);
 		}
-
 		private static readonly Regex regex = new Regex("[^0-9.-]+");
 
 		private static bool IsNumericInput(string text)
@@ -51,34 +60,6 @@ namespace PingLogger.GUI.Controls
 		{
 			Logger.Info("StartAllLoggers unchecked");
 			Config.StartLoggersAutomatically = false;
-		}
-
-		private void UserControl_Loaded(object sender, RoutedEventArgs e)
-		{
-			if (!FirstLoadComplete)
-			{
-				LoadOnBoot.IsChecked = Config.LoadWithWindows;
-				StartAllLoggers.IsChecked = Config.StartLoggersAutomatically;
-				daysToKeep.Text = Config.DaysToKeepLogs.ToString();
-				if (Config.LoadWithWindows)
-				{
-					CreateStartupShortcut();
-				}
-				switch (Config.Theme)
-				{
-					case Models.Theme.Auto:
-						ThemeBox.SelectedIndex = 0;
-						break;
-					case Models.Theme.Light:
-						ThemeBox.SelectedIndex = 1;
-						break;
-					case Models.Theme.Dark:
-						ThemeBox.SelectedIndex = 2;
-						break;
-				}
-				FirstLoadComplete = true;
-				Logger.Info("SettingsControl loaded");
-			}
 		}
 
 		private void CreateStartupShortcut()
@@ -156,23 +137,52 @@ namespace PingLogger.GUI.Controls
 
 		private void ThemeBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
-			switch(ThemeBox.SelectedIndex)
+			if (!doingInitialLoad)
 			{
-				case 0:
-					Config.Theme = Models.Theme.Auto;
+				switch (ThemeBox.SelectedIndex)
+				{
+					case 0:
+						Config.Theme = Models.Theme.Auto;
+						break;
+					case 1:
+						Config.Theme = Models.Theme.Light;
+						break;
+					case 2:
+						Config.Theme = Models.Theme.Dark;
+						break;
+					default:
+						Config.Theme = Models.Theme.Auto;
+						break;
+				}
+				Logger.Info($"Theme changed to {Config.Theme}.");
+				MainWindow.SetTheme();
+			}
+		}
+		bool doingInitialLoad = false;
+		private void Window_Loaded(object sender, RoutedEventArgs e)
+		{
+			doingInitialLoad = true;
+			LoadOnBoot.IsChecked = Config.LoadWithWindows;
+			StartAllLoggers.IsChecked = Config.StartLoggersAutomatically;
+			daysToKeep.Text = Config.DaysToKeepLogs.ToString();
+			if (Config.LoadWithWindows)
+			{
+				CreateStartupShortcut();
+			}
+			switch (Config.Theme)
+			{
+				case Models.Theme.Auto:
+					ThemeBox.SelectedIndex = 0;
 					break;
-				case 1:
-					Config.Theme = Models.Theme.Light;
+				case Models.Theme.Light:
+					ThemeBox.SelectedIndex = 1;
 					break;
-				case 2:
-					Config.Theme = Models.Theme.Dark;
-					break;
-				default:
-					Config.Theme = Models.Theme.Auto;
+				case Models.Theme.Dark:
+					ThemeBox.SelectedIndex = 2;
 					break;
 			}
-			Logger.Info($"Theme changed to {Config.Theme}.");
-			MainWindow.SetTheme();
+			doingInitialLoad = false;
+			Logger.Info("SettingsControl loaded");
 		}
 	}
 }

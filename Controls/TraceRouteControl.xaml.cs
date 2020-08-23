@@ -45,16 +45,6 @@ namespace PingLogger.GUI.Controls
 			syncCtx = SynchronizationContext.Current;
 		}
 
-		private void TraceReplies_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
-		{
-			traceView.Items.Refresh();
-		}
-
-		private void RefreshTimer_Tick(object sender, EventArgs e)
-		{
-			traceView.Items.Refresh();
-		}
-
 		private async void startTraceRteBtn_Click(object sender, RoutedEventArgs e)
 		{
 			var stopWatch = new System.Diagnostics.Stopwatch();
@@ -64,7 +54,7 @@ namespace PingLogger.GUI.Controls
 			traceView.IsReadOnly = true;
 			fakeProgressBar.Visibility = Visibility.Visible;
 			startTraceRteBtn.Visibility = Visibility.Hidden;
-			var currentPing = $"Current Ping: {(await pinger.GetSingleRoundTrip(IPAddress.Parse(host.IP), 64)).Item1}ms";
+			var currentPing = $"Current Ping: {(await pinger.GetSingleRoundTrip(IPAddress.Parse(host.IP), 64)).RoundTrip}ms";
 			Logger.Info(currentPing);
 			pingTimeLabel.Content = currentPing;
 			TraceReplies.Clear();
@@ -79,7 +69,7 @@ namespace PingLogger.GUI.Controls
 			catch { }
 			while (TraceReplies.Count != hostsLookedUp)
 			{
-				await Task.Delay(50);
+				await Task.Delay(50); // Keep waiting for the all of the hosts to get looked up. Use Task.Delay to prevent UI lockups. 
 			}
 			fakeProgressBar.Visibility = Visibility.Hidden;
 			CheckButtons();

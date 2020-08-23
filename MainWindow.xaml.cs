@@ -21,6 +21,7 @@ namespace PingLogger.GUI
 
 		public ICommand CloseWindowCommand { get; set; }
 		public ICommand MinimizeWindowCommand { get; set; }
+		public ICommand OptionsWindowCommand { get; set; }
 
 		public ICommand NewTabCommand { get; set; }
 		public ICommand CloseTabCommand { get; set; }
@@ -30,26 +31,24 @@ namespace PingLogger.GUI
 			CurrentApp = curApp;
 			CloseWindowCommand = new Command(Close);
 			MinimizeWindowCommand = new Command(Minimize);
+			OptionsWindowCommand = new Command(OpenOptionsDialog);
 
 			CloseTabCommand = new CommandParam(tabDelBtn_Click);
 			NewTabCommand = new Command(AddTabItem);
-
+			
 			Version version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
 			Thread.CurrentThread.Name = "MainWindowThread";
 			InitializeComponent();
 			_tabItems = new List<TabItem>();
-			TabItem optsTab = new TabItem
-			{
-				Header = "Options",
-				Name = "tabOpts",
-				Content = new SettingsControl()
-			};
-
-			_tabItems.Add(optsTab);
 
 			tabControl.DataContext = _tabItems;
 			tabControl.SelectedIndex = 0;
 			this.Title = $"PingLogger v{version}";
+		}
+
+		private void OpenOptionsDialog()
+		{
+			new Controls.SettingsDialog().ShowDialog();
 		}
 
 		public static void SetTheme()
@@ -133,7 +132,7 @@ namespace PingLogger.GUI
 			tab.Content = pingControl;
 			_tabItems.Insert(count - 1, tab);
 			tabControl.DataContext = _tabItems;
-			tabControl.SelectedIndex = tabControl.Items.Count - 2;
+			tabControl.SelectedIndex = tabControl.Items.Count - 1;
 			//return tab;
 		}
 		public void AddTab(string hostName)
@@ -141,7 +140,7 @@ namespace PingLogger.GUI
 			var newHost = new Host { HostName = hostName, Id = Guid.NewGuid() };
 			Config.Hosts.Add(newHost);
 			AddTabItem(newHost, true);
-			tabControl.SelectedIndex = tabControl.Items.Count - 2;
+			tabControl.SelectedIndex = tabControl.Items.Count - 1;
 		}
 		private TabItem AddTabItem(Host host, bool AddOnRuntime = false)
 		{
@@ -158,7 +157,7 @@ namespace PingLogger.GUI
 			tab.SetResourceReference(Control.TemplateProperty, "CloseButton");
 			PingControl pingControl = new PingControl(host, AddOnRuntime);
 			tab.Content = pingControl;
-			_tabItems.Insert(count - 1, tab);
+			_tabItems.Insert(count, tab);
 			tabControl.DataContext = _tabItems;
 			return tab;
 		}

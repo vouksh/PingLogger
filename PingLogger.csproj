@@ -23,20 +23,12 @@
 
   <PropertyGroup>
 	<SatelliteResourceLanguages>en-US</SatelliteResourceLanguages>
-	<SignAssembly>true</SignAssembly>
 	<RunAnalyzersDuringBuild>false</RunAnalyzersDuringBuild>
 	<NoWin32Manifest>true</NoWin32Manifest>
 	<PackageIcon>AppIcon.ico</PackageIcon>
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="AppIcon.ico" />
-    <None Remove="README.md" />
-    <None Remove="Resources\closeWindow.png" />
-    <None Remove="Resources\closeWindowLight .png" />
-    <None Remove="Resources\closeWindowLight.png" />
-    <None Remove="Resources\minimizeWindow.png" />
-    <None Remove="Resources\minimizeWindowLight.png" />
     <COMReference Include="IWshRuntimeLibrary.dll">
       <Guid>f935dc20-1cf0-11d0-adb9-00c04fd58a0b</Guid>
       <VersionMajor>1</VersionMajor>
@@ -74,6 +66,8 @@
     <Resource Include="Resources\closeWindowLight.png" />
     <Resource Include="Resources\minimizeWindow.png" />
     <Resource Include="Resources\minimizeWindowLight.png" />
+    <Resource Include="Resources\optionsGear.png" />
+    <Resource Include="Resources\optionsGearLight.png" />
   </ItemGroup>
 
   <ItemGroup>

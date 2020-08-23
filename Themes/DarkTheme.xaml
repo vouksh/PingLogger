@@ -665,6 +665,45 @@
 		</ControlTemplate.Triggers>
 	</ControlTemplate>
 
+	<ControlTemplate x:Key="OptionsWindowButton" TargetType="{x:Type Button}">
+		<Border x:Name="border" 
+                                    BorderBrush="{TemplateBinding BorderBrush}" 
+                                    BorderThickness="{TemplateBinding BorderThickness}" 
+                                    Background="{TemplateBinding Background}" 
+                                    SnapsToDevicePixels="true"
+                                    HorizontalAlignment="Stretch" 
+                                    VerticalAlignment="Stretch">
+			<!-- <Border.BitmapEffect>
+                            <DropShadowBitmapEffect Color="Black" Direction="320" Softness="0.7" ShadowDepth="4" Opacity="0.5" />
+                        </Border.BitmapEffect>-->
+			<ContentPresenter x:Name="contentPresenter" 
+                                                  Focusable="False" 
+                                                  Margin="{TemplateBinding Padding}" 
+                                                  RecognizesAccessKey="True" 
+                                                  SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" 
+                                                  VerticalAlignment="Center"
+                                                  HorizontalAlignment="Center"/>
+		</Border>
+		<ControlTemplate.Triggers>
+			<Trigger Property="IsDefaulted" Value="true">
+				<Setter Property="BorderBrush" TargetName="border" Value="{StaticResource ControlMouseOverBorderBrush}"/>
+			</Trigger>
+			<Trigger Property="IsMouseOver" Value="true">
+				<Setter Property="Background" TargetName="border" Value="#279c00"/>
+				<Setter Property="BorderBrush" TargetName="border" Value="#279c00"/>
+			</Trigger>
+			<Trigger Property="IsPressed" Value="true">
+				<Setter Property="Background" TargetName="border" Value="DarkGreen"/>
+				<Setter Property="BorderBrush" TargetName="border" Value="DarkGreen"/>
+			</Trigger>
+			<Trigger Property="IsEnabled" Value="false">
+				<Setter Property="Background" TargetName="border" Value="{StaticResource ControlBrightDefaultBackground}"/>
+				<Setter Property="BorderBrush" TargetName="border" Value="{StaticResource ControlBrightDefaultBorderBrush}"/>
+				<Setter Property="TextElement.Foreground" TargetName="contentPresenter" Value="{StaticResource ControlDisabledGlythColour}"/>
+			</Trigger>
+		</ControlTemplate.Triggers>
+	</ControlTemplate>
+
 	<!-- Tooltip -->
 
 	<Style TargetType="{x:Type ToolTip}">
@@ -1966,13 +2005,22 @@
 
 							<StackPanel Orientation="Horizontal"
                                         Grid.Column="2">
+								<Button x:Name="btnOptions"
+                                        Background="Transparent"
+                                        BorderBrush="Transparent"
+										Template="{DynamicResource OptionsWindowButton}"
+                                        Width="50"
+                                        VerticalContentAlignment="Bottom"
+                                        WindowChrome.IsHitTestVisibleInChrome="True" Command="{Binding OptionsWindowCommand}">
+									<Image Source="/Resources/optionsGear.png" Margin="2"/>
+								</Button>
 								<Button x:Name="btnMinimize"
                                         Background="Transparent"
                                         BorderBrush="Transparent"
                                         Width="50"
                                         VerticalContentAlignment="Bottom"
                                         WindowChrome.IsHitTestVisibleInChrome="True" Command="{Binding MinimizeWindowCommand}">
-									<Image Source="/Resources/minimizeWindow.png" Margin="7"/>
+									<Image Source="/Resources/minimizeWindow.png" Margin="4"/>
 								</Button>
 
 								<Button x:Name="btnClose"
@@ -1982,7 +2030,7 @@
                                         Width="50"
                                         WindowChrome.IsHitTestVisibleInChrome="True" 
                                         Command="{Binding CloseWindowCommand}">
-									<Image Source="/Resources/closeWindow.png" Margin="7"/>
+									<Image Source="/Resources/closeWindow.png" Margin="4"/>
 								</Button>
 
 							</StackPanel>
@@ -2045,7 +2093,7 @@
                                         Width="50"
                                         WindowChrome.IsHitTestVisibleInChrome="True" 
                                         Command="{Binding CloseWindowCommand}">
-									<Image Source="/Resources/closeWindow.png" Margin="7"/>
+									<Image Source="/Resources/closeWindow.png" Margin="4"/>
 								</Button>
 
 							</StackPanel>
