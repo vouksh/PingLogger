@@ -30,9 +30,9 @@
 	<SolidColorBrush x:Key="ControlSelectedMouseOverBackground" Color="#FFBEE6FD"/>
 	<SolidColorBrush x:Key="ControlSelectedMouseOverBorderBrush" Color="#FF3C7FB1"/>
 
-	<SolidColorBrush x:Key="ControlGlythColour"  Color="#FAFAFA" />
-	<SolidColorBrush x:Key="ControlMouseOverGlythColour"  Color="#c9c9c9" />
-	<SolidColorBrush x:Key="ControlSelectedGlythColour"  Color="#bfbfbf" />
+	<SolidColorBrush x:Key="ControlGlythColour"  Color="#1A1A1A" />
+	<SolidColorBrush x:Key="ControlMouseOverGlythColour"  Color="#292929" />
+	<SolidColorBrush x:Key="ControlSelectedGlythColour"  Color="#3f3f3f" />
 	<SolidColorBrush x:Key="ControlDisabledGlythColour"  Color="#FF838383" />
 
 	<SolidColorBrush x:Key="ControlPrimarySpecialColour"  Color="#FF0B63CD" />
@@ -876,7 +876,7 @@
 		<Setter Property="Foreground" Value="White"/>
 		<Setter Property="Background" Value="{StaticResource ContainerBackground}"/>
 		<Setter Property="BorderBrush" Value="{StaticResource ContainerBorder}"/>
-		<Setter Property="Margin" Value="0"/>
+		<Setter Property="Margin" Value="1,0,2,0"/>
 		<Setter Property="Padding" Value="20, 9, 20, 9"/>
 		<Setter Property="HorizontalContentAlignment" Value="Stretch"/>
 		<Setter Property="VerticalContentAlignment" Value="Stretch"/>
@@ -2078,7 +2078,7 @@
 
 							<TextBlock Margin="5,0,0,0"
                                        VerticalAlignment="Center"
-                                       HorizontalAlignment="Center"
+                                       HorizontalAlignment="Left"
                                        FontSize="14"
                                        Foreground="{DynamicResource ControlDefaultForeground}"
                                        Text="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Title}"   

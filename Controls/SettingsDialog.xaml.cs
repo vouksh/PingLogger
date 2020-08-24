@@ -41,6 +41,7 @@ namespace PingLogger.GUI.Controls
 			Logger.Info("LoadOnBoot unchecked");
 			Config.LoadWithWindows = false;
 			DeleteStartupShortcut();
+			StartMinimized.Visibility = Visibility.Hidden;
 		}
 
 		private void LoadOnBoot_Checked(object sender, RoutedEventArgs e)
@@ -48,6 +49,7 @@ namespace PingLogger.GUI.Controls
 			Logger.Info("LoadOnBoot checked");
 			Config.LoadWithWindows = true;
 			CreateStartupShortcut();
+			StartMinimized.Visibility = Visibility.Visible;
 		}
 
 		private void StartAllLoggers_Checked(object sender, RoutedEventArgs e)
@@ -165,6 +167,14 @@ namespace PingLogger.GUI.Controls
 			LoadOnBoot.IsChecked = Config.LoadWithWindows;
 			StartAllLoggers.IsChecked = Config.StartLoggersAutomatically;
 			daysToKeep.Text = Config.DaysToKeepLogs.ToString();
+			StartMinimized.IsChecked = Config.StartApplicationMinimized;
+			if(Config.LoadWithWindows)
+			{
+				StartMinimized.Visibility = Visibility.Visible;
+			} else
+			{
+				StartMinimized.Visibility = Visibility.Hidden;
+			}
 			if (Config.LoadWithWindows)
 			{
 				CreateStartupShortcut();
@@ -183,6 +193,18 @@ namespace PingLogger.GUI.Controls
 			}
 			doingInitialLoad = false;
 			Logger.Info("SettingsControl loaded");
+		}
+
+		private void StartMinimized_Checked(object sender, RoutedEventArgs e)
+		{
+			Logger.Info("StartMinimized Checked");
+			Config.StartApplicationMinimized = true;
+		}
+
+		private void StartMinimized_Unchecked(object sender, RoutedEventArgs e)
+		{
+			Logger.Info("StartMinimized Unchecked");
+			Config.StartApplicationMinimized = false;
 		}
 	}
 }

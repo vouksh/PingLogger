@@ -107,6 +107,10 @@ namespace PingLogger.GUI
 				AddTabItem(newHost);
 			}
 			tabControl.SelectedIndex = 0;
+			if(Config.LoadWithWindows && Config.StartApplicationMinimized)
+			{
+				this.Minimize();
+			}
 		}
 
 		private void AddTabItem()
