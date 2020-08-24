@@ -38,30 +38,42 @@ namespace PingLogger.GUI.Controls
 
 		private void LoadOnBoot_Unchecked(object sender, RoutedEventArgs e)
 		{
-			Logger.Info("LoadOnBoot unchecked");
-			Config.LoadWithWindows = false;
-			DeleteStartupShortcut();
-			StartMinimized.Visibility = Visibility.Hidden;
+			if (!doingInitialLoad)
+			{
+				Logger.Info("LoadOnBoot unchecked");
+				Config.LoadWithWindows = false;
+				DeleteStartupShortcut();
+				StartMinimized.Visibility = Visibility.Hidden;
+			}
 		}
 
 		private void LoadOnBoot_Checked(object sender, RoutedEventArgs e)
 		{
-			Logger.Info("LoadOnBoot checked");
-			Config.LoadWithWindows = true;
-			CreateStartupShortcut();
-			StartMinimized.Visibility = Visibility.Visible;
+			if (!doingInitialLoad)
+			{
+				Logger.Info("LoadOnBoot checked");
+				Config.LoadWithWindows = true;
+				CreateStartupShortcut();
+				StartMinimized.Visibility = Visibility.Visible;
+			}
 		}
 
 		private void StartAllLoggers_Checked(object sender, RoutedEventArgs e)
 		{
-			Logger.Info("StartAllLoggers checked");
-			Config.StartLoggersAutomatically = true;
+			if (!doingInitialLoad)
+			{
+				Logger.Info("StartAllLoggers checked");
+				Config.StartLoggersAutomatically = true;
+			}
 		}
 
 		private void StartAllLoggers_Unchecked(object sender, RoutedEventArgs e)
 		{
-			Logger.Info("StartAllLoggers unchecked");
-			Config.StartLoggersAutomatically = false;
+			if (!doingInitialLoad)
+			{
+				Logger.Info("StartAllLoggers unchecked");
+				Config.StartLoggersAutomatically = false;
+			}
 		}
 
 		private void CreateStartupShortcut()
@@ -93,7 +105,7 @@ namespace PingLogger.GUI.Controls
 			string shortcutPath = Environment.GetFolderPath(Environment.SpecialFolder.Startup) + "\\PingLogger.lnk";
 			if (File.Exists(shortcutPath))
 			{
-				Logger.Info($"Deleting batch file {shortcutPath}");
+				Logger.Info($"Deleting shortcut file {shortcutPath}");
 				File.Delete(shortcutPath);
 			}
 		}
@@ -117,23 +129,26 @@ namespace PingLogger.GUI.Controls
 
 		private void daysToKeep_TextChanged(object sender, TextChangedEventArgs e)
 		{
-			try
+			if (!doingInitialLoad)
 			{
-				var input = Convert.ToInt32(daysToKeep.Text);
-				if (input > 0)
+				try
 				{
-					Config.DaysToKeepLogs = input;
+					var input = Convert.ToInt32(daysToKeep.Text);
+					if (input > 0)
+					{
+						Config.DaysToKeepLogs = input;
+					}
+					else
+					{
+						MessageBox.Show("Input can not be less than 1", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+						daysToKeep.Text = "1";
+						Config.DaysToKeepLogs = 1;
+					}
 				}
-				else
+				catch (FormatException)
 				{
-					MessageBox.Show("Input can not be less than 1", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-					daysToKeep.Text = "1";
-					Config.DaysToKeepLogs = 1;
+					MessageBox.Show("Input must be a number.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
 				}
-			}
-			catch (FormatException)
-			{
-				MessageBox.Show("Input must be a number.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
 			}
 		}
 
@@ -168,10 +183,11 @@ namespace PingLogger.GUI.Controls
 			StartAllLoggers.IsChecked = Config.StartLoggersAutomatically;
 			daysToKeep.Text = Config.DaysToKeepLogs.ToString();
 			StartMinimized.IsChecked = Config.StartApplicationMinimized;
-			if(Config.LoadWithWindows)
+			if (Config.LoadWithWindows)
 			{
 				StartMinimized.Visibility = Visibility.Visible;
-			} else
+			}
+			else
 			{
 				StartMinimized.Visibility = Visibility.Hidden;
 			}
@@ -197,14 +213,20 @@ namespace PingLogger.GUI.Controls
 
 		private void StartMinimized_Checked(object sender, RoutedEventArgs e)
 		{
-			Logger.Info("StartMinimized Checked");
-			Config.StartApplicationMinimized = true;
+			if (!doingInitialLoad)
+			{
+				Logger.Info("StartMinimized Checked");
+				Config.StartApplicationMinimized = true;
+			}
 		}
 
 		private void StartMinimized_Unchecked(object sender, RoutedEventArgs e)
 		{
-			Logger.Info("StartMinimized Unchecked");
-			Config.StartApplicationMinimized = false;
+			if (!doingInitialLoad)
+			{
+				Logger.Info("StartMinimized Unchecked");
+				Config.StartApplicationMinimized = false;
+			}
 		}
 	}
 }

@@ -26,6 +26,7 @@ namespace PingLogger.GUI.Controls
 		public ICommand CloseWindowCommand { get; set; }
 		public ObservableCollection<TraceReply> TraceReplies = new ObservableCollection<TraceReply>();
 		private readonly SynchronizationContext syncCtx;
+		private CancellationTokenSource cancelToken = new CancellationTokenSource();
 
 		public TraceRouteControl()
 		{
@@ -59,8 +60,14 @@ namespace PingLogger.GUI.Controls
 			pingTimeLabel.Content = currentPing;
 			TraceReplies.Clear();
 			traceView.ItemsSource = TraceReplies;
-			await RunTraceRoute();
-
+			try
+			{
+				await RunTraceRoute();
+			} catch (Exception)
+			{
+				Logger.Error("RunTraceRoute Cancelled");
+				return;
+			}
 			Task allLookedUp = Task.WhenAll(HostNameLookupTasks);
 			try
 			{
@@ -69,7 +76,7 @@ namespace PingLogger.GUI.Controls
 			catch { }
 			while (TraceReplies.Count != hostsLookedUp)
 			{
-				await Task.Delay(50); // Keep waiting for the all of the hosts to get looked up. Use Task.Delay to prevent UI lockups. 
+				await Task.Delay(50, cancelToken.Token); // Keep waiting for the all of the hosts to get looked up. Use Task.Delay to prevent UI lockups. 
 			}
 			fakeProgressBar.Visibility = Visibility.Hidden;
 			CheckButtons();
@@ -138,8 +145,8 @@ namespace PingLogger.GUI.Controls
 							{
 								traceView.Items.Refresh();
 							}), null);
-						});
-					}));
+						}, cancelToken.Token);
+					}, cancelToken.Token));
 
 
 					var firstTry = await pinger.GetSingleRoundTrip(reply.Address, ttl + 1);
@@ -147,20 +154,20 @@ namespace PingLogger.GUI.Controls
 					traceView.Items.Refresh();
 
 					if (firstTry.Item2 == IPStatus.Success)
-						await Task.Delay(250);
+						await Task.Delay(250, cancelToken.Token);
 
 					var secondTry = await pinger.GetSingleRoundTrip(reply.Address, ttl + 1);
 					TraceReplies.First(t => t.ID == newID).PingTimes[1] = secondTry.Status != IPStatus.Success ? secondTry.Status.ToString() : secondTry.RoundTrip.ToString() + "ms";
 					traceView.Items.Refresh();
 					if (secondTry.Item2 == IPStatus.Success)
-						await Task.Delay(250);
+						await Task.Delay(250, cancelToken.Token);
 
 					var thirdTry = await pinger.GetSingleRoundTrip(reply.Address, ttl + 1);
 					TraceReplies.First(t => t.ID == newID).PingTimes[2] = thirdTry.Status != IPStatus.Success ? thirdTry.Status.ToString() : thirdTry.RoundTrip.ToString() + "ms";
 					traceView.Items.Refresh();
 
 					if (thirdTry.Item2 == IPStatus.Success)
-						await Task.Delay(250);
+						await Task.Delay(250, cancelToken.Token);
 				}
 				if (reply.Status != IPStatus.TtlExpired && reply.Status != IPStatus.TimedOut)
 				{
@@ -206,6 +213,7 @@ namespace PingLogger.GUI.Controls
 
 		private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
 		{
+			cancelToken.Cancel();
 			traceView.ItemsSource = null;
 			TraceReplies.Clear();
 		}
