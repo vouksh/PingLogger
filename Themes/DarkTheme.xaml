@@ -677,6 +677,7 @@
                             <DropShadowBitmapEffect Color="Black" Direction="320" Softness="0.7" ShadowDepth="4" Opacity="0.5" />
                         </Border.BitmapEffect>-->
 			<ContentPresenter x:Name="contentPresenter" 
+												  ToolTip="Click to open options dialog"
                                                   Focusable="False" 
                                                   Margin="{TemplateBinding Padding}" 
                                                   RecognizesAccessKey="True" 

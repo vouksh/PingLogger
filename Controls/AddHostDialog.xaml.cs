@@ -33,26 +33,29 @@ namespace PingLogger.GUI.Controls
 
 		private async void Timer_Tick(object sender, EventArgs e)
 		{
-			try
+			if (!IsValidHost)
 			{
-				foreach (var ip in await Dns.GetHostAddressesAsync(hostNameBox.Text))
+				try
 				{
-					if (ip.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
+					foreach (var ip in await Dns.GetHostAddressesAsync(hostNameBox.Text))
 					{
-						IsValidHost = true;
+						if (ip.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
+						{
+							IsValidHost = true;
 
-						break;
+							break;
+						}
 					}
 				}
+				catch (Exception)
+				{
+					IsValidHost = false;
+				}
+				syncCtx.Post(new SendOrPostCallback(o =>
+				{
+					AddBtn.IsEnabled = (bool)o;
+				}), IsValidHost);
 			}
-			catch (Exception)
-			{
-				IsValidHost = false;
-			}
-			syncCtx.Post(new SendOrPostCallback(o =>
-			{
-				AddBtn.IsEnabled = (bool)o;
-			}), IsValidHost);
 		}
 
 		public bool IsValidHost { get; set; } = false;
@@ -91,6 +94,7 @@ namespace PingLogger.GUI.Controls
 
 		private void hostNameBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
 		{
+			IsValidHost = false;
 			e.Handled = false;
 			AddBtn.IsEnabled = false;
 		}
