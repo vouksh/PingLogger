@@ -115,7 +115,11 @@ namespace PingLogger.GUI
 
 		private void AddTabItem()
 		{
+			var addDialog = new AddHostDialog();
+			addDialog.Owner = Window.GetWindow(this);
+			addDialog.ShowDialog();
 
+			/*
 			tabControl.DataContext = null;
 			var newHost = new Host
 			{
@@ -138,6 +142,7 @@ namespace PingLogger.GUI
 			tabControl.DataContext = _tabItems;
 			tabControl.SelectedIndex = tabControl.Items.Count - 1;
 			//return tab;
+			*/
 		}
 		public void AddTab(string hostName)
 		{

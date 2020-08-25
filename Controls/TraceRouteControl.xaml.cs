@@ -12,7 +12,6 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using System.Windows.Threading;
 
 namespace PingLogger.GUI.Controls
 {
@@ -63,7 +62,8 @@ namespace PingLogger.GUI.Controls
 			try
 			{
 				await RunTraceRoute();
-			} catch (Exception)
+			}
+			catch (Exception)
 			{
 				Logger.Error("RunTraceRoute Cancelled");
 				return;
@@ -178,7 +178,7 @@ namespace PingLogger.GUI.Controls
 
 		private void CheckButtons()
 		{
-			foreach(var reply in TraceReplies)
+			foreach (var reply in TraceReplies)
 			{
 				// Check all 3 ping times to see if they were valid or not. We can just discard the result, we don't care what it is.
 				// Future TODO? Make it an array, then parse it. If all are false, then we can just set the buttons to hidden and be done. 
@@ -189,19 +189,21 @@ namespace PingLogger.GUI.Controls
 				// if the host name is N/A, then it's not a valid host.
 				bool isValidHost = reply.HostName == "N/A" ? false : true;
 
-				if(firstReply || secondReply || thirdReply)
+				if (firstReply || secondReply || thirdReply)
 				{
 					// At least one of the replies was good. So we can make one of the buttons visible.
-					if(isValidHost)
+					if (isValidHost)
 					{
 						reply.HostAddButtonVisible = Visibility.Visible;
 						reply.IPAddButtonVisible = Visibility.Hidden;
-					} else
+					}
+					else
 					{
 						reply.HostAddButtonVisible = Visibility.Hidden;
 						reply.IPAddButtonVisible = Visibility.Visible;
 					}
-				} else
+				}
+				else
 				{
 					// None of the replies were good. Lets hide both buttons.
 					reply.HostAddButtonVisible = Visibility.Hidden;
