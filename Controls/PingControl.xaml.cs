@@ -132,16 +132,16 @@ namespace PingLogger.GUI.Controls
 				}
 				PingStatusBox.Text += sb.ToString();
 				var lines = PingStatusBox.Text.Split(Environment.NewLine).ToList();
-				if (lines.Count() > 26)
+				if (lines.Count() > 22)
 				{
-					Logger.Debug($"{PingHost.HostName} Lines in text box greater than 26, removing a line.");
+					Logger.Debug($"{PingHost.HostName} Lines in text box greater than 22, removing a line.");
 					lines.RemoveAt(0);
 					PingStatusBox.Text = string.Join(Environment.NewLine, lines);
 				}
 
 				if (PingTimes.Count > 0)
 				{
-					if (PingTimes.Count > 26)
+					if (PingTimes.Count > 22)
 						PingTimes.RemoveAt(0);
 
 					avgPingLbl.Content = Math.Ceiling(PingTimes.Average()).ToString() + "ms";
@@ -290,7 +290,7 @@ namespace PingLogger.GUI.Controls
 				TimeoutBox.Text = PingHost.Timeout.ToString();
 				PacketSizeBox.Text = PingHost.PacketSize.ToString();
 			}
-
+			ToggleSideVisibility();
 			await UpdateIPBox();
 		}
 
@@ -441,6 +441,7 @@ namespace PingLogger.GUI.Controls
 			{
 				viewLogBtn.Visibility = Visibility.Hidden;
 			}
+			StartBtn.IsEnabled = false;
 		}
 
 		private void doTraceRteBtn_Click(object sender, RoutedEventArgs e)
@@ -459,6 +460,42 @@ namespace PingLogger.GUI.Controls
 			catch (System.Net.Sockets.SocketException)
 			{
 				MessageBox.Show("Invalid host.");
+			}
+		}
+
+		private void resetCountersBtn_Click(object sender, RoutedEventArgs e)
+		{
+			Timeouts = 0;
+			PacketLoss = 0.0;
+			TotalPings = 0;
+			Warnings = 0;
+			PingTimes.Clear();
+		}
+
+		private void pingWindowToggle_Click(object sender, RoutedEventArgs e)
+		{
+			if(Config.WindowExpanded)
+			{
+				Config.WindowExpanded = false;
+			} else
+			{
+				Config.WindowExpanded = true;
+			}
+			 (Window.GetWindow(this) as MainWindow).ToggleWindowSize();
+		}
+
+		public void ToggleSideVisibility()
+		{
+			// Funny enough, this is never called directly in this class.
+			// It just gets hit from the MainWindow calling it.
+			if(Config.WindowExpanded)
+			{
+				PingStatusBox.Visibility = Visibility.Visible;
+				pingWindowToggle.Content = "<<";
+			} else
+			{
+				PingStatusBox.Visibility = Visibility.Collapsed;
+				pingWindowToggle.Content = ">>";
 			}
 		}
 	}

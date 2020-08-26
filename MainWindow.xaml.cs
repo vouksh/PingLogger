@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -46,6 +47,31 @@ namespace PingLogger.GUI
 			this.Title = $"PingLogger v{version}";
 		}
 
+		public async void ToggleWindowSize()
+		{
+			ScrollViewer scroller = (ScrollViewer)tabControl.Template.FindName("TabControlScroller", tabControl);
+			if (Config.WindowExpanded)
+			{
+				this.Width = 805;
+				this.Height = 480;
+			} else
+			{
+				this.Width = 420;
+				await Task.Delay(50); // This is really dumb, but we gotta wait for the UI thread to update before adjusting the height.
+				if (scroller.ComputedHorizontalScrollBarVisibility == Visibility.Visible)
+				{
+					this.Height = 495;
+				} else
+				{
+					this.Height = 480;
+				}
+			}
+			foreach(var item in tabControl.Items.Cast<TabItem>())
+			{
+				(item.Content as PingControl).ToggleSideVisibility();
+			}
+		}
+
 		private void OpenOptionsDialog()
 		{
 			new Controls.SettingsDialog().ShowDialog();
@@ -85,6 +111,7 @@ namespace PingLogger.GUI
 					tabControl.SelectedItem = selectedTab;
 				}
 			}
+			ToggleWindowSize();
 		}
 
 		private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -111,6 +138,7 @@ namespace PingLogger.GUI
 			{
 				this.Minimize();
 			}
+			ToggleWindowSize();
 		}
 
 		private void AddTabItem()
@@ -118,31 +146,6 @@ namespace PingLogger.GUI
 			var addDialog = new AddHostDialog();
 			addDialog.Owner = Window.GetWindow(this);
 			addDialog.ShowDialog();
-
-			/*
-			tabControl.DataContext = null;
-			var newHost = new Host
-			{
-				Id = Guid.NewGuid(),
-				HostName = "google.com"
-			};
-			int count = _tabItems.Count;
-			TabItem tab = new TabItem
-			{
-				Header = string.Format("Host: {0}", newHost.HostName),
-				Name = string.Format("tab{0}", count),
-				HeaderTemplate = tabControl.FindResource("TabHeader") as DataTemplate,
-				Uid = newHost.Id.ToString(),
-			};
-			tab.SetResourceReference(Control.TemplateProperty, "CloseButton");
-			Config.Hosts.Add(newHost);
-			PingControl pingControl = new PingControl(newHost, true);
-			tab.Content = pingControl;
-			_tabItems.Insert(count - 1, tab);
-			tabControl.DataContext = _tabItems;
-			tabControl.SelectedIndex = tabControl.Items.Count - 1;
-			//return tab;
-			*/
 		}
 		public void AddTab(string hostName)
 		{
@@ -150,6 +153,7 @@ namespace PingLogger.GUI
 			Config.Hosts.Add(newHost);
 			AddTabItem(newHost, true);
 			tabControl.SelectedIndex = tabControl.Items.Count - 1;
+			ToggleWindowSize();
 		}
 		private TabItem AddTabItem(Host host, bool AddOnRuntime = false)
 		{
@@ -168,6 +172,7 @@ namespace PingLogger.GUI
 			tab.Content = pingControl;
 			_tabItems.Insert(count, tab);
 			tabControl.DataContext = _tabItems;
+			ToggleWindowSize();
 			return tab;
 		}
 
@@ -183,6 +188,7 @@ namespace PingLogger.GUI
 				tab.Header = $"Host: {hostName}";
 				_tabItems.Insert(curIndex, tab);
 			}
+			ToggleWindowSize();
 		}
 
 		public void StopAllLoggers()

@@ -7,6 +7,7 @@
 		public int DaysToKeepLogs { get; set; } = 7;
 		public Theme Theme { get; set; } = Theme.Auto;
 		public bool StartProgramMinimized { get; set; } = false;
+		public bool WindowExpanded { get; set; } = false;
 	}
 	public enum Theme
 	{

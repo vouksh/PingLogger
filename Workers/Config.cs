@@ -80,6 +80,20 @@ namespace PingLogger.GUI.Workers
 				SaveConfig();
 			}
 		}
+
+		public static bool WindowExpanded
+		{
+			get
+			{
+				return Options.WindowExpanded;
+			}
+			set
+			{
+				Options.WindowExpanded = value;
+				SaveConfig();
+			}
+		}
+
 		static Config()
 		{
 			ReadConfig();
