@@ -86,6 +86,6 @@
 		</Grid>
 		<Button Grid.Row="0" Grid.Column="1" x:Name="viewLogBtn" Content="Watch Log" Visibility="Visible" HorizontalAlignment="Stretch" Margin="20,6,20,6" Padding="4" VerticalAlignment="Stretch" Click="viewLogBtn_Click" />
 		<Button Grid.Column="2" Grid.Row="0" x:Name="doTraceRteBtn" Content="Run Trace Route" HorizontalAlignment="Stretch" Margin="6" VerticalAlignment="Stretch" Click="doTraceRteBtn_Click" />
-		<Button Grid.Column="1" Grid.Row="9" x:Name="resetCountersBtn" Content="Reset Counters" HorizontalAlignment="Stretch" Margin="6" VerticalAlignment="Stretch" />
+		<Button Grid.Column="1" Grid.Row="9" x:Name="resetCountersBtn" Content="Reset Counters" HorizontalAlignment="Stretch" Margin="6" VerticalAlignment="Stretch" Click="resetCountersBtn_Click" />
 	</Grid>
 </UserControl>
