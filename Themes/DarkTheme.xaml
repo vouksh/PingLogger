@@ -665,6 +665,46 @@
 		</ControlTemplate.Triggers>
 	</ControlTemplate>
 
+	<ControlTemplate x:Key="MinimizeWindowButton" TargetType="{x:Type Button}">
+		<Border x:Name="border" 
+                                    BorderBrush="{TemplateBinding BorderBrush}" 
+                                    BorderThickness="{TemplateBinding BorderThickness}" 
+                                    Background="{TemplateBinding Background}" 
+                                    SnapsToDevicePixels="true"
+                                    HorizontalAlignment="Stretch" 
+                                    VerticalAlignment="Stretch">
+			<!-- <Border.BitmapEffect>
+                            <DropShadowBitmapEffect Color="Black" Direction="320" Softness="0.7" ShadowDepth="4" Opacity="0.5" />
+                        </Border.BitmapEffect>-->
+			<ContentPresenter x:Name="contentPresenter" 
+												  ToolTip="Click to minimize application to task bar"
+                                                  Focusable="False" 
+                                                  Margin="{TemplateBinding Padding}" 
+                                                  RecognizesAccessKey="True" 
+                                                  SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" 
+                                                  VerticalAlignment="Center"
+                                                  HorizontalAlignment="Center"/>
+		</Border>
+		<ControlTemplate.Triggers>
+			<Trigger Property="IsDefaulted" Value="true">
+				<Setter Property="BorderBrush" TargetName="border" Value="{StaticResource ControlMouseOverBorderBrush}"/>
+			</Trigger>
+			<Trigger Property="IsMouseOver" Value="true">
+				<Setter Property="Background" TargetName="border" Value="#0264ed"/>
+				<Setter Property="BorderBrush" TargetName="border" Value="#0264ed"/>
+			</Trigger>
+			<Trigger Property="IsPressed" Value="true">
+				<Setter Property="Background" TargetName="border" Value="DarkBlue"/>
+				<Setter Property="BorderBrush" TargetName="border" Value="DarkBlue"/>
+			</Trigger>
+			<Trigger Property="IsEnabled" Value="false">
+				<Setter Property="Background" TargetName="border" Value="{StaticResource ControlBrightDefaultBackground}"/>
+				<Setter Property="BorderBrush" TargetName="border" Value="{StaticResource ControlBrightDefaultBorderBrush}"/>
+				<Setter Property="TextElement.Foreground" TargetName="contentPresenter" Value="{StaticResource ControlDisabledGlythColour}"/>
+			</Trigger>
+		</ControlTemplate.Triggers>
+	</ControlTemplate>
+
 	<ControlTemplate x:Key="OptionsWindowButton" TargetType="{x:Type Button}">
 		<Border x:Name="border" 
                                     BorderBrush="{TemplateBinding BorderBrush}" 
@@ -1076,9 +1116,9 @@
                                               HorizontalAlignment="{Binding HorizontalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}" 
                                               Margin="10,9,36,9" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" 
                                               VerticalAlignment="{Binding VerticalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"/>
-			<Border CornerRadius="3" Height="20" VerticalAlignment="Center" HorizontalAlignment="Right" Width="19" Margin="0,8,8,7">
-				<Button Background="Transparent" Foreground="DarkRed" Command="{Binding Path=CloseTabCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType={x:Type TabItem}}, Path=Uid}" BorderBrush="{x:Null}" 
-                                        VerticalAlignment="Stretch" HorizontalAlignment="Stretch" FontFamily="Consolas" Content="x"/>
+			<Border CornerRadius="3" Height="20" VerticalAlignment="Center" HorizontalAlignment="Right" Width="19" Margin="0,8,8,8">
+				<Button Background="Transparent" Foreground="DarkRed" Template="{DynamicResource CloseWindowButton}" Command="{Binding Path=CloseTabCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType={x:Type TabItem}}, Path=Uid}" BorderBrush="{x:Null}" 
+                                        VerticalAlignment="Stretch" HorizontalAlignment="Stretch" FontFamily="Consolas" FontWeight="Heavy" FontSize="14" Content="X"/>
 			</Border>
 		</Grid>
 		<ControlTemplate.Triggers>
@@ -2018,6 +2058,7 @@
 								<Button x:Name="btnMinimize"
                                         Background="Transparent"
                                         BorderBrush="Transparent"
+										Template="{DynamicResource MinimizeWindowButton}"
                                         Width="50"
                                         VerticalContentAlignment="Bottom"
                                         WindowChrome.IsHitTestVisibleInChrome="True" Command="{Binding MinimizeWindowCommand}">

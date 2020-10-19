@@ -76,7 +76,18 @@ namespace PingLogger.GUI.Controls
 			catch { }
 			while (TraceReplies.Count != hostsLookedUp)
 			{
-				await Task.Delay(50, cancelToken.Token); // Keep waiting for the all of the hosts to get looked up. Use Task.Delay to prevent UI lockups. 
+				if(stopWatch.Elapsed == TimeSpan.FromMinutes(5))
+				{
+					break;
+				}
+				try
+				{
+					await Task.Delay(50, cancelToken.Token); // Keep waiting for the all of the hosts to get looked up. Use Task.Delay to prevent UI lockups. 
+				}
+				catch
+				{
+					break;
+				}
 			}
 			fakeProgressBar.Visibility = Visibility.Hidden;
 			CheckButtons();
@@ -95,7 +106,7 @@ namespace PingLogger.GUI.Controls
 			}
 		}
 
-		List<Task> HostNameLookupTasks = new List<Task>();
+		readonly List<Task> HostNameLookupTasks = new List<Task>();
 		int hostsLookedUp = 0;
 
 		private async Task RunTraceRoute()
@@ -153,20 +164,20 @@ namespace PingLogger.GUI.Controls
 					TraceReplies.First(t => t.ID == newID).PingTimes[0] = firstTry.Status != IPStatus.Success ? firstTry.Status.ToString() : firstTry.RoundTrip.ToString() + "ms";
 					traceView.Items.Refresh();
 
-					if (firstTry.Item2 == IPStatus.Success)
+					if (firstTry.Status == IPStatus.Success)
 						await Task.Delay(250, cancelToken.Token);
 
 					var secondTry = await pinger.GetSingleRoundTrip(reply.Address, ttl + 1);
 					TraceReplies.First(t => t.ID == newID).PingTimes[1] = secondTry.Status != IPStatus.Success ? secondTry.Status.ToString() : secondTry.RoundTrip.ToString() + "ms";
 					traceView.Items.Refresh();
-					if (secondTry.Item2 == IPStatus.Success)
+					if (secondTry.Status == IPStatus.Success)
 						await Task.Delay(250, cancelToken.Token);
 
 					var thirdTry = await pinger.GetSingleRoundTrip(reply.Address, ttl + 1);
 					TraceReplies.First(t => t.ID == newID).PingTimes[2] = thirdTry.Status != IPStatus.Success ? thirdTry.Status.ToString() : thirdTry.RoundTrip.ToString() + "ms";
 					traceView.Items.Refresh();
 
-					if (thirdTry.Item2 == IPStatus.Success)
+					if (thirdTry.Status == IPStatus.Success)
 						await Task.Delay(250, cancelToken.Token);
 				}
 				if (reply.Status != IPStatus.TtlExpired && reply.Status != IPStatus.TimedOut)
@@ -187,7 +198,7 @@ namespace PingLogger.GUI.Controls
 				bool thirdReply = int.TryParse(reply.PingTimes[2].Replace("ms", ""), out _);
 
 				// if the host name is N/A, then it's not a valid host.
-				bool isValidHost = reply.HostName == "N/A" ? false : true;
+				bool isValidHost = reply.HostName != "N/A";
 
 				if (firstReply || secondReply || thirdReply)
 				{

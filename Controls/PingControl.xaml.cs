@@ -481,7 +481,7 @@ namespace PingLogger.GUI.Controls
 			{
 				Config.WindowExpanded = true;
 			}
-			 (Window.GetWindow(this) as MainWindow).ToggleWindowSize();
+			(Window.GetWindow(this) as MainWindow).ToggleWindowSize();
 		}
 
 		public void ToggleSideVisibility()
