@@ -5,6 +5,7 @@ using System.Collections.Specialized;
 using System.IO;
 using System.IO.Compression;
 using System.Text.Json;
+using System.Threading.Tasks;
 
 namespace PingLogger.GUI.Workers
 {
@@ -167,56 +168,59 @@ namespace PingLogger.GUI.Workers
 				SaveConfig();
 			}
 		}
-		private static void SaveConfig()
+		private static async void SaveConfig()
 		{
-			Logger.Info("SaveConfig() Called");
-			var hostData = JsonSerializer.Serialize(Hosts, new JsonSerializerOptions { WriteIndented = true });
-			var configData = JsonSerializer.Serialize(Options, new JsonSerializerOptions { WriteIndented = true });
-			var fileStream = File.Open("./config.dat", FileMode.OpenOrCreate);
-			Logger.Info("config.dat opened");
-			using var archive = new ZipArchive(fileStream, ZipArchiveMode.Update);
-			if (archive.Entries.Count > 0)
-			{
-				Logger.Info("Existing configuration found, overwriting");
-				Logger.Info("Saving host configuration");
-				var hostEntry = archive.GetEntry("hosts.json");
-				hostEntry.Delete();
-				hostEntry = archive.CreateEntry("hosts.json");
-				using StreamWriter hostWriter = new StreamWriter(hostEntry.Open());
-				foreach (var line in hostData.Split(Environment.NewLine))
+			await Task.Run(() => {
+				Logger.Info("SaveConfig() Called");
+				var hostData = JsonSerializer.Serialize(Hosts, new JsonSerializerOptions { WriteIndented = true });
+				var configData = JsonSerializer.Serialize(Options, new JsonSerializerOptions { WriteIndented = true });
+				var fileStream = File.Open("./config.dat", FileMode.OpenOrCreate);
+				Logger.Info("config.dat opened");
+				using var archive = new ZipArchive(fileStream, ZipArchiveMode.Update);
+				if (archive.Entries.Count > 0)
 				{
-					hostWriter.WriteLine(line);
-				}
+					Logger.Info("Existing configuration found, overwriting");
+					Logger.Info("Saving host configuration");
+					var hostEntry = archive.GetEntry("hosts.json");
+					hostEntry.Delete();
+					hostEntry = archive.CreateEntry("hosts.json");
+					using StreamWriter hostWriter = new StreamWriter(hostEntry.Open());
+					foreach (var line in hostData.Split(Environment.NewLine))
+					{
+						hostWriter.WriteLine(line);
+					}
 
-				Logger.Info("Saving application configuration");
-				var configEntry = archive.GetEntry("config.json");
-				configEntry.Delete();
-				configEntry = archive.CreateEntry("config.json");
-				using StreamWriter configWriter = new StreamWriter(configEntry.Open());
-				foreach (var line in configData.Split(Environment.NewLine))
-				{
-					configWriter.WriteLine(line);
+					Logger.Info("Saving application configuration");
+					var configEntry = archive.GetEntry("config.json");
+					configEntry.Delete();
+					configEntry = archive.CreateEntry("config.json");
+					using StreamWriter configWriter = new StreamWriter(configEntry.Open());
+					foreach (var line in configData.Split(Environment.NewLine))
+					{
+						configWriter.WriteLine(line);
+					}
 				}
-			}
-			else
-			{
-				Logger.Info("Saving host configuration");
-				var hostEntry = archive.CreateEntry("hosts.json");
-				using StreamWriter hostWriter = new StreamWriter(hostEntry.Open());
-				foreach (var line in hostData.Split(Environment.NewLine))
+				else
 				{
-					hostWriter.WriteLine(line);
-				}
+					Logger.Info("Saving host configuration");
+					var hostEntry = archive.CreateEntry("hosts.json");
+					using StreamWriter hostWriter = new StreamWriter(hostEntry.Open());
+					foreach (var line in hostData.Split(Environment.NewLine))
+					{
+						hostWriter.WriteLine(line);
+					}
 
-				Logger.Info("Saving application configuration");
-				var configEntry = archive.CreateEntry("config.json");
-				using StreamWriter configWriter = new StreamWriter(configEntry.Open());
-				foreach (var line in configData.Split(Environment.NewLine))
-				{
-					configWriter.WriteLine(line);
+					Logger.Info("Saving application configuration");
+					var configEntry = archive.CreateEntry("config.json");
+					using StreamWriter configWriter = new StreamWriter(configEntry.Open());
+					foreach (var line in configData.Split(Environment.NewLine))
+					{
+						configWriter.WriteLine(line);
+					}
 				}
-			}
-			Logger.Info("Done saving config.dat");
+				Logger.Info("Done saving config.dat");
+			});
+
 		}
 	}
 }
