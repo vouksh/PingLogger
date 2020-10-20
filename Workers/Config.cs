@@ -95,6 +95,32 @@ namespace PingLogger.GUI.Workers
 			}
 		}
 
+		public static bool AppWasUpdated
+		{
+			get
+			{
+				return Options.AppWasUpdated;
+			}
+			set
+			{
+				Options.AppWasUpdated = value;
+				SaveConfig();
+			}
+		}
+
+		public static DateTime LastUpdated
+		{
+			get
+			{
+				return Options.LastUpdated;
+			}
+			set
+			{
+				Options.LastUpdated = value;
+				SaveConfig();
+			}
+		}
+
 		static Config()
 		{
 			ReadConfig();
