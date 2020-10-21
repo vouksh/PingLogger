@@ -17,8 +17,8 @@ namespace PingLogger
 		static Controls.SplashScreen splashScreen;
 		public static async Task CheckForUpdates()
 		{
-			splashScreen.Show();
 			splashScreen = new Controls.SplashScreen();
+			splashScreen.Show();
 			splashScreen.dlProgress.IsIndeterminate = true;
 			splashScreen.dlProgress.Value = 1;
 			if (Config.AppWasUpdated)
