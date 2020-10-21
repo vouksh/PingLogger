@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace PingLogger.GUI.Models
+namespace PingLogger.Models
 {
 	public class Host
 	{

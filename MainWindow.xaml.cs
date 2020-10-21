@@ -1,6 +1,6 @@
-﻿using PingLogger.GUI.Controls;
-using PingLogger.GUI.Models;
-using PingLogger.GUI.Workers;
+﻿using PingLogger.Controls;
+using PingLogger.Models;
+using PingLogger.Workers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,7 +10,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 
-namespace PingLogger.GUI
+namespace PingLogger
 {
 	/// <summary>
 	/// Interaction logic for MainWindow.xaml

@@ -1,11 +1,11 @@
-﻿using PingLogger.GUI.Workers;
+﻿using PingLogger.Workers;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Input;
 
-namespace PingLogger.GUI.Controls
+namespace PingLogger.Controls
 {
 	/// <summary>
 	/// Interaction logic for HelpDialog.xaml

@@ -1,9 +1,9 @@
-﻿using PingLogger.GUI.Models;
+﻿using PingLogger.Models;
 using Serilog;
 using System;
 using System.IO;
 
-namespace PingLogger.GUI.Workers
+namespace PingLogger.Workers
 {
 	public static class Logger
 	{

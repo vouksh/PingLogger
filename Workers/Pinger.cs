@@ -1,4 +1,4 @@
-﻿using PingLogger.GUI.Models;
+﻿using PingLogger.Models;
 using Serilog;
 using System;
 using System.Collections.Concurrent;
@@ -12,7 +12,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace PingLogger.GUI.Workers
+namespace PingLogger.Workers
 {
 	public class Pinger : IDisposable
 	{
@@ -139,19 +139,6 @@ namespace PingLogger.GUI.Workers
 			Logger.Debug("UpdateHost() Requested");
 			return Host;
 		}
-
-		/// <summary>
-		/// Generates a random string with the specified length.
-		/// </summary>
-		/// <param name="length">Number of characters in the string</param>
-		/// <returns>Random string of letters and numbers</returns>
-		public static string RandomString(int length)
-		{
-			Random random = new Random();
-			const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-			return new string(Enumerable.Repeat(chars, length)
-			  .Select(s => s[random.Next(s.Length)]).ToArray());
-		}
 		/// <summary>
 		/// Starts the primary thread where all the work is done. 
 		/// Outputs all of the hosts info so that if we're starting it up, the user can see if anything is wrong, allowing them time to make changes.
@@ -185,7 +172,7 @@ namespace PingLogger.GUI.Workers
 			//Generate a string that's as long as the packet size. 
 			//This is outside of the loop, so it's going to be the same while the thread is running.
 			//If it's restarted, we generate a new string. 
-			string data = RandomString(Host.PacketSize);
+			string data = Util.RandomString(Host.PacketSize);
 			Logger.Debug($"Data string: {data}");
 
 			byte[] buffer = Encoding.ASCII.GetBytes(data);
@@ -345,7 +332,7 @@ namespace PingLogger.GUI.Workers
 
 		public async Task<(long RoundTrip, IPStatus Status)> GetSingleRoundTrip(IPAddress address, int ttl)
 		{
-			string data = RandomString(Host.PacketSize);
+			string data = Util.RandomString(Host.PacketSize);
 			byte[] buffer = Encoding.ASCII.GetBytes(data);
 			using var pinger = new Ping();
 			var pingOpts = new PingOptions(ttl, true);
@@ -358,7 +345,7 @@ namespace PingLogger.GUI.Workers
 
 		public async Task<(long RoundTrip, IPStatus Status)> GetSingleRoundTrip(string address, int ttl)
 		{
-			string data = RandomString(Host.PacketSize);
+			string data = Util.RandomString(Host.PacketSize);
 			byte[] buffer = Encoding.ASCII.GetBytes(data);
 			using var pinger = new Ping();
 			var pingOpts = new PingOptions(ttl, true);

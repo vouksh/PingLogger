@@ -1,4 +1,4 @@
-﻿using PingLogger.GUI.Models;
+﻿using PingLogger.Models;
 using System;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
@@ -7,7 +7,7 @@ using System.IO.Compression;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-namespace PingLogger.GUI.Workers
+namespace PingLogger.Workers
 {
 	public static class Config
 	{

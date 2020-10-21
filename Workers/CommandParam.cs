@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Input;
 
-namespace PingLogger.GUI.Workers
+namespace PingLogger.Workers
 {
 	public class CommandParam : ICommand
 	{

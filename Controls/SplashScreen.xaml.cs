@@ -10,7 +10,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
-namespace PingLogger.GUI.Controls
+namespace PingLogger.Controls
 {
 	/// <summary>
 	/// Interaction logic for SplashScreen.xaml

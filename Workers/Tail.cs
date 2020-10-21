@@ -10,7 +10,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace PingLogger.GUI.Workers
+namespace PingLogger.Workers
 {
 	class Tail
 	{

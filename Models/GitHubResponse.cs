@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace PingLogger.GUI.Models
+namespace PingLogger.Models
 {
 	public class GitHubResponse
 	{
@@ -11,6 +11,7 @@ namespace PingLogger.GUI.Models
 		public string tag_name { get; set; }
 		public DateTime published_at { get; set; }
 		public List<Asset> assets { get; set; }
+		public string body { get; set; }
 	}
 	public class Asset
 	{

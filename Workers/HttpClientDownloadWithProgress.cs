@@ -5,7 +5,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PingLogger.GUI.Workers
+namespace PingLogger.Workers
 {
     /// <summary>
     /// Credit to René Sackers for this class

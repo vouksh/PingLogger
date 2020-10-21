@@ -12,7 +12,7 @@
 	<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
 	<PublishTrimmed>true</PublishTrimmed>
 	<PublishReadyToRun>true</PublishReadyToRun>
-	<StartupObject>PingLogger.GUI.App</StartupObject>
+	<StartupObject>PingLogger.App</StartupObject>
 	<PackageLicenseFile>LICENSE.md</PackageLicenseFile>
 	<PreserveCompilationContext>false</PreserveCompilationContext>
   </PropertyGroup>

@@ -1,5 +1,5 @@
-﻿using PingLogger.GUI.Models;
-using PingLogger.GUI.Workers;
+﻿using PingLogger.Models;
+using PingLogger.Workers;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -13,7 +13,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 
-namespace PingLogger.GUI.Controls
+namespace PingLogger.Controls
 {
 	/// <summary>
 	/// Interaction logic for TraceRouteControl.xaml
@@ -112,7 +112,7 @@ namespace PingLogger.GUI.Controls
 		private async Task RunTraceRoute()
 		{
 			var result = new List<TraceReply>();
-			string data = Pinger.RandomString(host.PacketSize);
+			string data = Util.RandomString(host.PacketSize);
 			Logger.Debug($"Data string: {data}");
 
 			byte[] buffer = Encoding.ASCII.GetBytes(data);

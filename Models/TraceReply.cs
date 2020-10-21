@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows;
 
-namespace PingLogger.GUI.Models
+namespace PingLogger.Models
 {
 	public class TraceReply
 	{

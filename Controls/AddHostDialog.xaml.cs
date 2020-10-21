@@ -1,4 +1,4 @@
-﻿using PingLogger.GUI.Workers;
+﻿using PingLogger.Workers;
 using System;
 using System.Net;
 using System.Threading;
@@ -7,7 +7,7 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
 
-namespace PingLogger.GUI.Controls
+namespace PingLogger.Controls
 {
 	/// <summary>
 	/// Interaction logic for AddHostDialog.xaml

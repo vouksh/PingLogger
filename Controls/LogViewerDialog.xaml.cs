@@ -1,5 +1,5 @@
-﻿using PingLogger.GUI.Models;
-using PingLogger.GUI.Workers;
+﻿using PingLogger.Models;
+using PingLogger.Workers;
 using System;
 using System.IO;
 using System.Threading;
@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 
-namespace PingLogger.GUI.Controls
+namespace PingLogger.Controls
 {
 	/// <summary>
 	/// Interaction logic for LogViewerDialog.xaml

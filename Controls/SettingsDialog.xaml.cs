@@ -1,4 +1,4 @@
-﻿using PingLogger.GUI.Workers;
+﻿using PingLogger.Workers;
 using System;
 using System.IO;
 using System.Text.RegularExpressions;
@@ -6,7 +6,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 
-namespace PingLogger.GUI.Controls
+namespace PingLogger.Controls
 {
 	/// <summary>
 	/// Interaction logic for SettingsDialog.xaml
