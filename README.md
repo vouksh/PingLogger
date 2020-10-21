@@ -78,6 +78,7 @@ It's similar to the TRACERT command in Windows [Click here to find out more info
 * In the new window, click Run Trace to see the hops that are being taken to reach the destination.
   * ![TraceRouteControl](Resources/Help/TraceRouteControl.jpg)
 * It will do a quick normal ping, then start tracing through the hops. 
+* Clicking the small plus sign ![PlusSign](Resources/Help/TracePlus.jpg) will add that host/IP to the main window so that you can start logging pings against that as well. 
 
 ## Running Requirements ##
 Only requires a 64-bit Windows 7 or 10 Operating System.
