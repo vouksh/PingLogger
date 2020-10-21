@@ -121,6 +121,20 @@ namespace PingLogger.GUI.Workers
 			}
 		}
 
+		public static bool EnableAutoUpdate
+		{
+			get
+			{
+				return Options.EnableAutoUpdate;
+			}
+			set
+			{
+				Logger.Info("Options.EnableAutoUpdate was changed");
+				Options.EnableAutoUpdate = value;
+				SaveConfig();
+			}
+		}
+
 		static Config()
 		{
 			ReadConfig();

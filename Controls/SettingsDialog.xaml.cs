@@ -174,6 +174,7 @@ namespace PingLogger.GUI.Controls
 			StartAllLoggers.IsChecked = Config.StartLoggersAutomatically;
 			daysToKeep.Text = Config.DaysToKeepLogs.ToString();
 			StartMinimized.IsChecked = Config.StartApplicationMinimized;
+			AutoUpdateToggle.IsChecked = Config.EnableAutoUpdate;
 			if (Config.LoadWithWindows)
 			{
 				StartMinimized.Visibility = Visibility.Visible;
@@ -217,6 +218,24 @@ namespace PingLogger.GUI.Controls
 			{
 				Logger.Info("StartMinimized Unchecked");
 				Config.StartApplicationMinimized = false;
+			}
+		}
+
+		private void AutoUpdateToggle_Checked(object sender, RoutedEventArgs e)
+		{
+			if(!doingInitialLoad)
+			{
+				Logger.Info("AutoUpdateToggle checked");
+				Config.EnableAutoUpdate = true;
+			}
+		}
+
+		private void AutoUpdateToggle_Unchecked(object sender, RoutedEventArgs e)
+		{
+			if (!doingInitialLoad)
+			{
+				Logger.Info("AutoUpdateToggle unchecked");
+				Config.EnableAutoUpdate = false;
 			}
 		}
 	}

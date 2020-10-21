@@ -12,6 +12,7 @@ namespace PingLogger.GUI.Models
 		public bool WindowExpanded { get; set; } = false;
 		public bool AppWasUpdated { get; set; } = false;
 		public DateTime LastUpdated { get; set; } = DateTime.Now;
+		public bool EnableAutoUpdate { get; set; } = true;
 	}
 	public enum Theme
 	{

@@ -13,7 +13,7 @@
 			<RowDefinition Height="400" />
 			<RowDefinition Height="*" />
 		</Grid.RowDefinitions>
-		<Label Grid.Row="0" VerticalAlignment="Center" HorizontalAlignment="Center" Content="Loading and checking for updates..." FontSize="24" FontWeight="Bold" />
-		<ProgressBar Grid.Row="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" IsIndeterminate="True" Value="1" />
+		<Label x:Name="mainLabel" Grid.Row="0" VerticalAlignment="Center" HorizontalAlignment="Center" Content="Loading and checking for updates..." FontSize="24" FontWeight="Bold" />
+		<ProgressBar x:Name="dlProgress" Grid.Row="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" />
 	</Grid>
 </Window>
