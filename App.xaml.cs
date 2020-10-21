@@ -24,14 +24,16 @@ namespace PingLogger.GUI
 			splashScreen = new Controls.SplashScreen();
 			splashScreen.dlProgress.IsIndeterminate = true;
 			splashScreen.dlProgress.Value = 1;
-			splashScreen.Show();
 			AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
 			Version version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
 			Logger.Info($"Application start, version {version}");
 			Logger.Info($"Application is running from directory {AppContext.BaseDirectory}");
 
-			if(Config.EnableAutoUpdate)
+			if (Config.EnableAutoUpdate)
+			{
+				splashScreen.Show();
 				await CheckForUpdates();
+			}
 
 			SetTheme();
 			MainWindow window = new MainWindow(this);

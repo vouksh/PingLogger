@@ -172,40 +172,43 @@ namespace PingLogger.GUI.Workers
 
 		private static void ReadConfig()
 		{
-			string dataPath = "./config.dat";
-			if (File.Exists("./config.dat"))
+			if (Options == null)
 			{
-				Logger.Info("Found existing config.dat, reading file");
-				InitialLoad = true;
-				using var archive = ZipFile.OpenRead(dataPath);
-				foreach (var entry in archive.Entries)
+				string dataPath = "./config.dat";
+				if (File.Exists("./config.dat"))
 				{
-					using StreamReader streamReader = new StreamReader(entry.Open());
-					var fileContents = streamReader.ReadToEnd();
-					switch (entry.FullName)
+					Logger.Info("Found existing config.dat, reading file");
+					InitialLoad = true;
+					using var archive = ZipFile.OpenRead(dataPath);
+					foreach (var entry in archive.Entries)
 					{
-						case "hosts.json":
-							Logger.Info("Reading hosts configuration");
-							Hosts = JsonSerializer.Deserialize<ObservableCollection<Host>>(fileContents);
-							break;
-						case "config.json":
-							Logger.Info("Reading application configuration");
-							Options = JsonSerializer.Deserialize<AppOptions>(fileContents);
-							break;
+						using StreamReader streamReader = new StreamReader(entry.Open());
+						var fileContents = streamReader.ReadToEnd();
+						switch (entry.FullName)
+						{
+							case "hosts.json":
+								Logger.Info("Reading hosts configuration");
+								Hosts = JsonSerializer.Deserialize<ObservableCollection<Host>>(fileContents);
+								break;
+							case "config.json":
+								Logger.Info("Reading application configuration");
+								Options = JsonSerializer.Deserialize<AppOptions>(fileContents);
+								break;
+						}
 					}
+					InitialLoad = false;
 				}
-				InitialLoad = false;
-			}
-			else
-			{
-				Logger.Info("Did not find existing config.dat");
-				if (!CheckForOldConfig())
+				else
 				{
-					Logger.Info("Old configuration not found, starting out fresh");
-					Hosts = new ObservableCollection<Host>();
-					Options = new AppOptions();
+					Logger.Info("Did not find existing config.dat");
+					if (!CheckForOldConfig())
+					{
+						Logger.Info("Old configuration not found, starting out fresh");
+						Hosts = new ObservableCollection<Host>();
+						Options = new AppOptions();
+					}
+					SaveConfig();
 				}
-				SaveConfig();
 			}
 		}
 		private static async void SaveConfig()
