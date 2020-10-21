@@ -115,11 +115,10 @@ namespace PingLogger.GUI
 										FileName = savePath + "\\PingLogger-Setup.exe",
 										Verb = "runas",
 										UseShellExecute = true,
-										Arguments = $"/SP- /VERYSILENT /SUPPRESSMSGBOXES /RESTARTAPPLICATIONS /LOG=\"{AppContext.BaseDirectory}\\Logs\\Installer-v{respVersion}.log\""
+										Arguments = $"/SP- /VERYSILENT /SUPPRESSMSGBOXES /CLOSEAPPLICATIONS /RESTARTAPPLICATIONS /LOG=\"{AppContext.BaseDirectory}\\Logs\\Installer-v{respVersion}.log\""
 									}
 								}.Start();
 								Logger.Info("Installer completed, closing.");
-								Environment.Exit(0);
 							}
 							else
 							{
