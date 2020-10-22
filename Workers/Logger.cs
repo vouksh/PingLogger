@@ -18,12 +18,13 @@ namespace PingLogger.Workers
 				.MinimumLevel.Verbose()
 #endif
 				.Enrich.With(new ThreadIdEnricher())
-				.WriteTo.RollingFile(
-				"./Logs/PingLogger-{Date}.log",
+				.WriteTo.File(
+				$"./Logs/PingLogger-.log",
 				restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Verbose,
 				shared: true,
 				outputTemplate: "[{Timestamp:HH:mm:ss.fff} {Level}] ({ThreadId}) {Message:lj}{NewLine}{Exception}",
-				flushToDiskInterval: TimeSpan.FromSeconds(1)
+				flushToDiskInterval: TimeSpan.FromSeconds(1),
+				rollingInterval: RollingInterval.Day
 				)
 				.CreateLogger();
 		}

@@ -39,14 +39,14 @@ namespace PingLogger.Workers
 				Directory.CreateDirectory($"./Logs/{Host.HostName}/");
 			var outputTemp = "[{Timestamp:HH:mm:ss} {Level:u4}] {Message:lj}{NewLine}{Exception}";
 			var errorOutputTemp = "[{Timestamp:HH:mm:ss} {Level:u5}] {Message:lj}{NewLine}{Exception}";
-
-			var filePath = "./Logs/" + Host.HostName + "/" + Host.HostName + "-{Date}.log";
-			var errorPathName = "./Logs/" + Host.HostName + "/" + Host.HostName + "-Errors-{Date}.log";
-			var warnPathName = "./Logs/" + Host.HostName + "/" + Host.HostName + "-Warnings-{Date}.log";
+			var initialPath = $"./Logs/{Host.HostName}/{Host.HostName}";
+			var filePath = $"{initialPath}-.log";
+			var errorPathName = $"{initialPath}-Errors-.log";
+			var warnPathName = $"{initialPath}-Warnings-.log";
 
 #if DEBUG
 			var debugOutputTemp = "[{Timestamp:HH:mm:ss.fff} {Level}] ({ThreadId}) {Message:lj}{NewLine}{Exception}";
-			var debugPathName = "./Logs/" + Host.HostName + "/" + Host.HostName + "-Debug-{Date}.log";
+			var debugPathName = $"{initialPath}-Debug-.log";
 #endif
 			Logger = new LoggerConfiguration()
 #if DEBUG
@@ -55,45 +55,49 @@ namespace PingLogger.Workers
 #endif
 				.WriteTo.Logger(
 					l => l.Filter.ByIncludingOnly(e => e.Level == Serilog.Events.LogEventLevel.Error)
-					.WriteTo.RollingFile(
+					.WriteTo.File(
 						errorPathName,
 						restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Error,
 						retainedFileCountLimit: Config.DaysToKeepLogs,
 						shared: true,
 						outputTemplate: errorOutputTemp,
-						flushToDiskInterval: TimeSpan.FromSeconds(2) //Added this because I noticed that it wasn't consistently flushing to disk at a good interval.
+						flushToDiskInterval: TimeSpan.FromSeconds(2), //Added this because I noticed that it wasn't consistently flushing to disk at a good interval.
+						rollingInterval: RollingInterval.Day
 						)
 					)
 				.WriteTo.Logger(
 					l => l.Filter.ByIncludingOnly(e => e.Level == Serilog.Events.LogEventLevel.Warning)
-					.WriteTo.RollingFile(
+					.WriteTo.File(
 						warnPathName,
 						shared: true,
 						retainedFileCountLimit: Config.DaysToKeepLogs,
 						outputTemplate: outputTemp,
-						flushToDiskInterval: TimeSpan.FromSeconds(2)
+						flushToDiskInterval: TimeSpan.FromSeconds(2),
+						rollingInterval: RollingInterval.Day
 						)
 					)
 #if DEBUG
 					.WriteTo.Logger(
 					l => l.Filter.ByIncludingOnly(e => e.Level == Serilog.Events.LogEventLevel.Debug)
-					.WriteTo.RollingFile(
+					.WriteTo.File(
 						debugPathName,
 						shared: true,
 						retainedFileCountLimit: Config.DaysToKeepLogs,
 						restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Debug,
 						outputTemplate: debugOutputTemp,
-						flushToDiskInterval: TimeSpan.FromSeconds(2)
+						flushToDiskInterval: TimeSpan.FromSeconds(2),
+						rollingInterval: RollingInterval.Day
 						)
 					)
 #endif
-				.WriteTo.RollingFile(
+				.WriteTo.File(
 						filePath,
 						shared: true,
 						outputTemplate: outputTemp,
 						retainedFileCountLimit: Config.DaysToKeepLogs,
 						restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Information,
-						flushToDiskInterval: TimeSpan.FromSeconds(2)
+						flushToDiskInterval: TimeSpan.FromSeconds(2),
+						rollingInterval: RollingInterval.Day
 					)
 				.CreateLogger();
 
