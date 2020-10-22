@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PingLogger.Controls"
         mc:Ignorable="d"
-        Title="UpdatePromptDialog" Height="200" Width="300"
+        Title="Update Available" Height="200" Width="300"
 		WindowStartupLocation="CenterScreen"
 		Style="{DynamicResource CustomDialogStyle}">
     <Grid>
