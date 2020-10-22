@@ -13,14 +13,9 @@ namespace PingLogger
 {
 	public static class Util
 	{
-
 		static Controls.SplashScreen splashScreen;
 		public static async Task CheckForUpdates()
 		{
-			splashScreen = new Controls.SplashScreen();
-			splashScreen.Show();
-			splashScreen.dlProgress.IsIndeterminate = true;
-			splashScreen.dlProgress.Value = 1;
 			if (Config.AppWasUpdated)
 			{
 				Logger.Info("Application was updated last time it ran, cleaning up.");
@@ -44,6 +39,10 @@ namespace PingLogger
 					Logger.Info("Application already checked for update today, skipping.");
 					return;
 				}
+				splashScreen = new Controls.SplashScreen();
+				splashScreen.Show();
+				splashScreen.dlProgress.IsIndeterminate = true;
+				splashScreen.dlProgress.Value = 1;
 				var localVersion = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
 				bool appIsInstalled = false;
 				string installerGUID = "{39E66F87-E17F-4311-A477-C5F47F7F7B1F}_is1";
@@ -129,6 +128,7 @@ namespace PingLogger
 					Logger.Error("Unable to auto update: " + ex.Message);
 				}
 			}
+			Config.LastUpdated = DateTime.Now;
 			return;
 		}
 
@@ -144,8 +144,15 @@ namespace PingLogger
 
 		public static void CloseSplashScreen()
 		{
-			splashScreen.Close();
-			splashScreen = null;
+			try
+			{
+				splashScreen?.Close();
+				splashScreen = null;
+			}
+			catch (NullReferenceException)
+			{
+				Logger.Debug("splashScreen was null.");
+			}
 		}
 
 		/// <summary>
