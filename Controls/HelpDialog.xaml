@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PingLogger.Controls" xmlns:local1="clr-namespace:PingLogger.Extensions"
 		mc:Ignorable="d"
-        Title="Help" Height="635" Width="750" Loaded="Window_Loaded" 
+        Title="Help" Height="635" Width="950" Loaded="Window_Loaded" 
 		ResizeMode="NoResize"
 		WindowStartupLocation="CenterScreen" Style="{DynamicResource CustomDialogStyle}"
 		DataContext="{Binding RelativeSource={RelativeSource Self}}"
