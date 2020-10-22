@@ -421,7 +421,7 @@ namespace PingLogger.Controls
 			helpDlg.ShowDialog();
 		}
 
-		private void openLogFolderBtn_Click(object sender, RoutedEventArgs e)
+		private void OpenLogFolderBtn_Click(object sender, RoutedEventArgs e)
 		{
 			_ = new Process
 			{
@@ -433,7 +433,7 @@ namespace PingLogger.Controls
 			}.Start();
 		}
 
-		private void viewLogBtn_Click(object sender, RoutedEventArgs e) => new LogViewerDialog(this.PingHost).Show();
+		private void ViewLogBtn_Click(object sender, RoutedEventArgs e) => new LogViewerDialog(this.PingHost).Show();
 
 		private void HostNameBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
 		{
@@ -444,7 +444,7 @@ namespace PingLogger.Controls
 			StartBtn.IsEnabled = false;
 		}
 
-		private void doTraceRteBtn_Click(object sender, RoutedEventArgs e)
+		private void DoTraceRteBtn_Click(object sender, RoutedEventArgs e)
 		{
 			try
 			{
@@ -453,8 +453,10 @@ namespace PingLogger.Controls
 					Pinger = new Pinger(PingHost);
 
 				}
-				var showTraceRteWindow = new TraceRouteControl(ref Pinger);
-				showTraceRteWindow.Owner = Window.GetWindow(this);
+				var showTraceRteWindow = new TraceRouteControl(ref Pinger)
+				{
+					Owner = Window.GetWindow(this)
+				};
 				showTraceRteWindow.ShowDialog();
 			}
 			catch (System.Net.Sockets.SocketException)
@@ -463,7 +465,7 @@ namespace PingLogger.Controls
 			}
 		}
 
-		private void resetCountersBtn_Click(object sender, RoutedEventArgs e)
+		private void ResetCountersBtn_Click(object sender, RoutedEventArgs e)
 		{
 			Timeouts = 0;
 			PacketLoss = 0.0;
@@ -472,7 +474,7 @@ namespace PingLogger.Controls
 			PingTimes.Clear();
 		}
 
-		private void pingWindowToggle_Click(object sender, RoutedEventArgs e)
+		private void PingWindowToggle_Click(object sender, RoutedEventArgs e)
 		{
 			if(Config.WindowExpanded)
 			{

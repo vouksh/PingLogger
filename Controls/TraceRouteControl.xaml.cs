@@ -20,12 +20,12 @@ namespace PingLogger.Controls
 	/// </summary>
 	public partial class TraceRouteControl : Window
 	{
-		private Pinger pinger;
-		private Host host;
+		private readonly Pinger pinger;
+		private readonly Host host;
 		public ICommand CloseWindowCommand { get; set; }
 		public ObservableCollection<TraceReply> TraceReplies = new ObservableCollection<TraceReply>();
 		private readonly SynchronizationContext syncCtx;
-		private CancellationTokenSource cancelToken = new CancellationTokenSource();
+		private readonly CancellationTokenSource cancelToken = new CancellationTokenSource();
 
 		public TraceRouteControl()
 		{
@@ -45,7 +45,7 @@ namespace PingLogger.Controls
 			syncCtx = SynchronizationContext.Current;
 		}
 
-		private async void startTraceRteBtn_Click(object sender, RoutedEventArgs e)
+		private async void StartTraceRteBtn_Click(object sender, RoutedEventArgs e)
 		{
 			var stopWatch = new System.Diagnostics.Stopwatch();
 			stopWatch.Start();
@@ -76,7 +76,7 @@ namespace PingLogger.Controls
 			catch { }
 			while (TraceReplies.Count != hostsLookedUp)
 			{
-				if(stopWatch.Elapsed == TimeSpan.FromMinutes(5))
+				if (stopWatch.Elapsed == TimeSpan.FromMinutes(5))
 				{
 					break;
 				}
@@ -109,6 +109,7 @@ namespace PingLogger.Controls
 		readonly List<Task> HostNameLookupTasks = new List<Task>();
 		int hostsLookedUp = 0;
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0042:Deconstruct variable declaration", Justification = "<Pending>")]
 		private async Task RunTraceRoute()
 		{
 			var result = new List<TraceReply>();

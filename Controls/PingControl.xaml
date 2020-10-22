@@ -29,7 +29,7 @@
 		</Grid.RowDefinitions>
 		<Label Grid.Row="0" Grid.Column="4" Content="Ping Responses" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" />
 		<TextBlock Grid.Row="1" Grid.Column="4" Padding="5,0,5,0" Grid.RowSpan="9" x:Name="PingStatusBox" HorizontalAlignment="Stretch" Margin="0" TextWrapping="NoWrap" VerticalAlignment="Stretch" IsEnabled="False" ScrollViewer.CanContentScroll="True"/>
-		<Button Grid.Column="3" Grid.Row="4" Margin="4,7,4,7" x:Name="pingWindowToggle" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" VerticalAlignment="Stretch" VerticalContentAlignment="Center" Content="&lt;&lt;" Click="pingWindowToggle_Click" />
+		<Button Grid.Column="3" Grid.Row="4" Margin="4,7,4,7" x:Name="pingWindowToggle" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" VerticalAlignment="Stretch" VerticalContentAlignment="Center" Content="&lt;&lt;" Click="PingWindowToggle_Click" />
 		<Label Grid.Row="1" Grid.Column="0" x:Name="label" Content="Host Name:" HorizontalAlignment="Stretch" Margin="0,0,0,0" VerticalAlignment="Stretch" HorizontalContentAlignment="Right" VerticalContentAlignment="Center"/>
 		<Label Grid.Row="2" Grid.Column="0" x:Name="label_Copy" Content="IP Address:" HorizontalAlignment="Stretch" Margin="0,0,0,0" VerticalAlignment="Stretch"  HorizontalContentAlignment="Right" VerticalContentAlignment="Center"/>
 		<Label Grid.Row="3" Grid.Column="0" x:Name="label_Copy1" Content="Interval:" HorizontalAlignment="Stretch" Margin="0,0,0,0" VerticalAlignment="Stretch" VerticalContentAlignment="Center" HorizontalContentAlignment="Right"/>
@@ -82,10 +82,10 @@
 				<ColumnDefinition Width="*"/>
 			</Grid.ColumnDefinitions>
 			<Button Grid.Column="0" Grid.Row="0" x:Name="HelpBtn" Content="Help" HorizontalAlignment="Stretch" Margin="6" Padding="4" VerticalAlignment="Stretch" Click="HelpBtn_Click"/>
-			<Button Grid.Row="0" Grid.Column="1" x:Name="openLogFolderBtn" Content="Logs" Visibility="Visible" HorizontalAlignment="Stretch" Margin="6" Padding="4" VerticalAlignment="Stretch" Click="openLogFolderBtn_Click"/>
+			<Button Grid.Row="0" Grid.Column="1" x:Name="openLogFolderBtn" Content="Logs" Visibility="Visible" HorizontalAlignment="Stretch" Margin="6" Padding="4" VerticalAlignment="Stretch" Click="OpenLogFolderBtn_Click"/>
 		</Grid>
-		<Button Grid.Row="0" Grid.Column="1" x:Name="viewLogBtn" Content="Watch Log" Visibility="Visible" HorizontalAlignment="Stretch" Margin="20,6,20,6" Padding="4" VerticalAlignment="Stretch" Click="viewLogBtn_Click" />
-		<Button Grid.Column="2" Grid.Row="0" x:Name="doTraceRteBtn" Content="Run Trace Route" HorizontalAlignment="Stretch" Margin="6" VerticalAlignment="Stretch" Click="doTraceRteBtn_Click" />
-		<Button Grid.Column="1" Grid.Row="9" x:Name="resetCountersBtn" Content="Reset Counters" HorizontalAlignment="Stretch" Margin="6" VerticalAlignment="Stretch" Click="resetCountersBtn_Click" />
+		<Button Grid.Row="0" Grid.Column="1" x:Name="viewLogBtn" Content="Watch Log" Visibility="Visible" HorizontalAlignment="Stretch" Margin="20,6,20,6" Padding="4" VerticalAlignment="Stretch" Click="ViewLogBtn_Click" />
+		<Button Grid.Column="2" Grid.Row="0" x:Name="doTraceRteBtn" Content="Run Trace Route" HorizontalAlignment="Stretch" Margin="6" VerticalAlignment="Stretch" Click="DoTraceRteBtn_Click" />
+		<Button Grid.Column="1" Grid.Row="9" x:Name="resetCountersBtn" Content="Reset Counters" HorizontalAlignment="Stretch" Margin="6" VerticalAlignment="Stretch" Click="ResetCountersBtn_Click" />
 	</Grid>
 </UserControl>

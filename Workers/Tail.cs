@@ -71,7 +71,7 @@ namespace PingLogger.Workers
 		{
 			while (!requestForExit)
 			{
-				await fw_Changed();
+				await Fw_Changed();
 				await Task.Delay(pollInterval);
 			}
 			me.Set();
@@ -79,7 +79,7 @@ namespace PingLogger.Workers
 		static readonly int pollInterval = 100;
 		static readonly int bufSize = 4096;
 		string previous = string.Empty;
-		async Task fw_Changed()
+		async Task Fw_Changed()
 		{
 			FileInfo fi = new FileInfo(path);
 			if (fi.Exists)

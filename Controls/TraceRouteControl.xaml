@@ -20,7 +20,7 @@
 			<RowDefinition Height="60" />
 			<RowDefinition Height="*" />
 		</Grid.RowDefinitions>
-		<Button x:Name="startTraceRteBtn" Grid.Column="0" Grid.Row="0" Content="Run Trace" Click="startTraceRteBtn_Click" Margin="5" />
+		<Button x:Name="startTraceRteBtn" Grid.Column="0" Grid.Row="0" Content="Run Trace" Click="StartTraceRteBtn_Click" Margin="5" />
 		<Grid Grid.Row="0" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Center">
 			<Grid.RowDefinitions>
 				<RowDefinition Height="35" />

@@ -21,7 +21,7 @@
 			<RowDefinition Height="*" />
 		</Grid.RowDefinitions>
 		<Label Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" Content="An update has been found. Do you want to update?" HorizontalAlignment="Center" VerticalAlignment="Center" />
-		<Button x:Name="yesBtn" Content="Yes" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Column="0" Grid.Row="4" Click="yesBtn_Click" />
-		<Button x:Name="noBtn" Content="No" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Column="3" Grid.Row="4" Click="noBtn_Click" />
+		<Button x:Name="yesBtn" Content="Yes" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Column="0" Grid.Row="4" Click="YesBtn_Click" />
+		<Button x:Name="noBtn" Content="No" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Column="3" Grid.Row="4" Click="NoBtn_Click" />
 	</Grid>
 </Window>

@@ -2,10 +2,8 @@
 using Serilog;
 using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Net;
 using System.Net.NetworkInformation;
 using System.Text;
@@ -266,7 +264,6 @@ namespace PingLogger.Workers
 			var reply = e.Reply;
 			bool timedOut = false;
 			bool success = false;
-			List<IPAddress> traceIPs = new List<IPAddress>();
 			switch (reply.Status)
 			{
 				case IPStatus.Success:

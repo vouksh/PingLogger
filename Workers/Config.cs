@@ -139,9 +139,9 @@ namespace PingLogger.Workers
 		static Config()
 		{
 			ReadConfig();
-			Hosts.CollectionChanged += optionsChanged;
+			Hosts.CollectionChanged += OptionsChanged;
 		}
-		private static void optionsChanged(object sender, NotifyCollectionChangedEventArgs e)
+		private static void OptionsChanged(object sender, NotifyCollectionChangedEventArgs e)
 		{
 			if (!InitialLoad)
 				SaveConfig();
@@ -217,7 +217,8 @@ namespace PingLogger.Workers
 		}
 		private static async void SaveConfig()
 		{
-			await Task.Run(() => {
+			await Task.Run(() =>
+			{
 				lock (fileLock)
 				{
 					Logger.Info("SaveConfig() Called");

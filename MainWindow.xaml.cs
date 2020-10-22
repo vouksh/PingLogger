@@ -34,9 +34,9 @@ namespace PingLogger
 			MinimizeWindowCommand = new Command(Minimize);
 			OptionsWindowCommand = new Command(OpenOptionsDialog);
 
-			CloseTabCommand = new CommandParam(tabDelBtn_Click);
+			CloseTabCommand = new CommandParam(TabDelBtn_Click);
 			NewTabCommand = new Command(AddTabItem);
-			
+
 			Version version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
 			Thread.CurrentThread.Name = "MainWindowThread";
 			InitializeComponent();
@@ -54,19 +54,21 @@ namespace PingLogger
 			{
 				this.Width = 805;
 				this.Height = 480;
-			} else
+			}
+			else
 			{
 				this.Width = 420;
 				await Task.Delay(50); // This is really dumb, but we gotta wait for the UI thread to update before adjusting the height.
 				if (scroller.ComputedHorizontalScrollBarVisibility == Visibility.Visible)
 				{
 					this.Height = 495;
-				} else
+				}
+				else
 				{
 					this.Height = 480;
 				}
 			}
-			foreach(var item in tabControl.Items.Cast<TabItem>())
+			foreach (var item in tabControl.Items.Cast<TabItem>())
 			{
 				(item.Content as PingControl).ToggleSideVisibility();
 			}
@@ -82,7 +84,7 @@ namespace PingLogger
 			CurrentApp.SetTheme();
 		}
 
-		private void tabDelBtn_Click(object sender)
+		private void TabDelBtn_Click(object sender)
 		{
 			string hostId = (sender as string);
 
@@ -134,7 +136,7 @@ namespace PingLogger
 				AddTabItem(newHost);
 			}
 			tabControl.SelectedIndex = 0;
-			if(Config.LoadWithWindows && Config.StartApplicationMinimized)
+			if (Config.LoadWithWindows && Config.StartApplicationMinimized)
 			{
 				this.Minimize();
 			}
@@ -143,8 +145,10 @@ namespace PingLogger
 
 		private void AddTabItem()
 		{
-			var addDialog = new AddHostDialog();
-			addDialog.Owner = Window.GetWindow(this);
+			var addDialog = new AddHostDialog
+			{
+				Owner = Window.GetWindow(this)
+			};
 			addDialog.ShowDialog();
 		}
 		public void AddTab(string hostName)
@@ -271,7 +275,7 @@ namespace PingLogger
 			WindowState = WindowState.Minimized;
 		}
 
-		private void tabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		private void TabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
 			TabControl tabControl = (TabControl)sender;
 			ScrollViewer scroller = (ScrollViewer)tabControl.Template.FindName("TabControlScroller", tabControl);
