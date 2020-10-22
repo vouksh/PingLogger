@@ -3,15 +3,44 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:PingLogger.Controls"
-        mc:Ignorable="d"
-        Title="Help" Height="635" Width="405" Loaded="Window_Loaded" 
+        xmlns:local="clr-namespace:PingLogger.Controls" xmlns:local1="clr-namespace:PingLogger.Extensions"
+		mc:Ignorable="d"
+        Title="Help" Height="635" Width="750" Loaded="Window_Loaded" 
 		ResizeMode="NoResize"
 		WindowStartupLocation="CenterScreen" Style="{DynamicResource CustomDialogStyle}"
 		DataContext="{Binding RelativeSource={RelativeSource Self}}"
 		WindowStyle="SingleBorderWindow">
+	<Window.Resources>
+		<local1:Markdown x:Key="Markdown"
+                        DocumentStyle="{StaticResource DocumentStyle}"
+                        Heading1Style="{StaticResource H1Style}"
+                        Heading2Style="{StaticResource H2Style}"
+                        Heading3Style="{StaticResource H3Style}"
+                        Heading4Style="{StaticResource H4Style}"
+                        LinkStyle="{StaticResource LinkStyle}"
+                        ImageStyle="{StaticResource ImageStyle}"
+                        SeparatorStyle="{StaticResource SeparatorStyle}"
+                        TableStyle="{StaticResource TableStyle}"
+                        TableHeaderStyle="{StaticResource TableHeaderStyle}"/>
+
+		<local1:TextToFlowDocumentConverter x:Key="TextToFlowDocumentConverter" 
+                                           Markdown="{StaticResource Markdown}"/>
+
+	</Window.Resources>
 	<Grid>
-		<TextBlock x:Name="helpText" HorizontalAlignment="Left" Margin="5,5,0,0" Text="TextBlock" TextWrapping="Wrap" VerticalAlignment="Top" Width="390" Height="587"/>
+		<TextBox x:Name="editSource"
+                 VerticalAlignment="Stretch"
+                 HorizontalAlignment="Stretch"
+                 TextWrapping="Wrap"
+                 AcceptsReturn="True"
+                 Margin="5" 
+                 VerticalScrollBarVisibility="Auto" FontFamily="Consolas"
+				 Visibility="Collapsed"/>
+		<FlowDocumentScrollViewer 
+                                  VerticalAlignment="Stretch"
+                                  HorizontalAlignment="Stretch"
+                                  Margin="5"
+                                  Document="{Binding ElementName=editSource, Path=Text, Converter={StaticResource TextToFlowDocumentConverter}}" />
 
 	</Grid>
 </Window>

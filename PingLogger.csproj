@@ -29,6 +29,33 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Resources\Help\AutoUpdateOption.jpg" />
+    <None Remove="Resources\Help\ExpandBox.jpg" />
+    <None Remove="Resources\Help\HostNameBox.jpg" />
+    <None Remove="Resources\Help\IntervalBox.jpg" />
+    <None Remove="Resources\Help\IPAddressBox.jpg" />
+    <None Remove="Resources\Help\KeepLogsOption.jpg" />
+    <None Remove="Resources\Help\LoadWithWindowsOption.jpg" />
+    <None Remove="Resources\Help\LogsButton.jpg" />
+    <None Remove="Resources\Help\LogViewerControl.jpg" />
+    <None Remove="Resources\Help\OptionsGear.jpg" />
+    <None Remove="Resources\Help\PacketSizeBox.jpg" />
+    <None Remove="Resources\Help\PingResponseBox.jpg" />
+    <None Remove="Resources\Help\ResetCountersButton.jpg" />
+    <None Remove="Resources\Help\RunTraceButton.jpg" />
+    <None Remove="Resources\Help\StartMinimizedOption.jpg" />
+    <None Remove="Resources\Help\StartOnAppStartOption.jpg" />
+    <None Remove="Resources\Help\StartStopAllButtons.jpg" />
+    <None Remove="Resources\Help\TabBar.jpg" />
+    <None Remove="Resources\Help\ThemeOption.jpg" />
+    <None Remove="Resources\Help\TimeoutBox.jpg" />
+    <None Remove="Resources\Help\TracePlus.jpg" />
+    <None Remove="Resources\Help\TraceRouteControl.jpg" />
+    <None Remove="Resources\Help\WarningBox.jpg" />
+    <None Remove="Resources\Help\WatchLogButton.jpg" />
+  </ItemGroup>
+
+  <ItemGroup>
     <COMReference Include="IWshRuntimeLibrary.dll">
       <Guid>f935dc20-1cf0-11d0-adb9-00c04fd58a0b</Guid>
       <VersionMajor>1</VersionMajor>
@@ -63,6 +90,30 @@
     <Resource Include="AppIcon.ico" />
     <Resource Include="Resources\closeWindow.png" />
     <Resource Include="Resources\closeWindowLight.png" />
+    <EmbeddedResource Include="Resources\Help\AutoUpdateOption.jpg" />
+    <EmbeddedResource Include="Resources\Help\ExpandBox.jpg" />
+    <EmbeddedResource Include="Resources\Help\HostNameBox.jpg" />
+    <EmbeddedResource Include="Resources\Help\IntervalBox.jpg" />
+    <EmbeddedResource Include="Resources\Help\IPAddressBox.jpg" />
+    <EmbeddedResource Include="Resources\Help\KeepLogsOption.jpg" />
+    <EmbeddedResource Include="Resources\Help\LoadWithWindowsOption.jpg" />
+    <EmbeddedResource Include="Resources\Help\LogsButton.jpg" />
+    <EmbeddedResource Include="Resources\Help\LogViewerControl.jpg" />
+    <EmbeddedResource Include="Resources\Help\OptionsGear.jpg" />
+    <EmbeddedResource Include="Resources\Help\PacketSizeBox.jpg" />
+    <EmbeddedResource Include="Resources\Help\PingResponseBox.jpg" />
+    <EmbeddedResource Include="Resources\Help\ResetCountersButton.jpg" />
+    <EmbeddedResource Include="Resources\Help\RunTraceButton.jpg" />
+    <EmbeddedResource Include="Resources\Help\StartMinimizedOption.jpg" />
+    <EmbeddedResource Include="Resources\Help\StartOnAppStartOption.jpg" />
+    <EmbeddedResource Include="Resources\Help\StartStopAllButtons.jpg" />
+    <EmbeddedResource Include="Resources\Help\TabBar.jpg" />
+    <EmbeddedResource Include="Resources\Help\ThemeOption.jpg" />
+    <EmbeddedResource Include="Resources\Help\TimeoutBox.jpg" />
+    <EmbeddedResource Include="Resources\Help\TracePlus.jpg" />
+    <EmbeddedResource Include="Resources\Help\TraceRouteControl.jpg" />
+    <EmbeddedResource Include="Resources\Help\WarningBox.jpg" />
+    <EmbeddedResource Include="Resources\Help\WatchLogButton.jpg" />
     <Resource Include="Resources\minimizeWindow.png" />
     <Resource Include="Resources\minimizeWindowLight.png" />
     <Resource Include="Resources\optionsGear.png" />
@@ -85,10 +136,6 @@
     <Page Update="Themes\DarkTheme.xaml">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Page>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Resources\Help\" />
   </ItemGroup>
   
 </Project>

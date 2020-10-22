@@ -4,16 +4,16 @@ Download the latest release from [Here](https://github.com/vouksh/PingLogger/rel
 
 ## Features ##
 * Offers 2 distribution methods
-  * Single-file that can be placed anywhere and ran. Tradeoffs are file size and more manual clean up if you want to remove it.
+  * Single-file that can be placed anywhere and ran. Trade offs are file size and more manual clean up if you want to remove it.
   * Installer that defaults to C:\PingLogger. Smaller download, and allows for easy removal.
 * Allows for many simultaneous hosts to be logged at one time.
   * Only limit is your network capabilities.
   * Verifies that the host exists before starting. 
-* Extremely flexibile
+* Extremely flexible
   * Change your timeout, packet size, ping interval, or warning threshold. 
   * Great for power users. 
 * Can start on demand, or with windows logon. 
-* Interface adapts to users dark/light mode prefences in Windows.
+* Interface adapts to users dark/light mode presences in Windows.
 
 ## Help!! ##
 #### Unsure of what something does? ####
@@ -24,14 +24,14 @@ Download the latest release from [Here](https://github.com/vouksh/PingLogger/rel
   * You can't edit this field. It is populated by the program with the IP address of what is input above. 
   * In this example, 172.217.6.14 is the IP address for google.com.
 * ![Interval](Resources/Help/IntervalBox.jpg)
-  * This is where you specify how long (in milliseconds) to wait inbetween pings. **This is regardless of Timeout!**
+  * This is where you specify how long (in milliseconds) to wait in between pings. **This is regardless of Timeout!**
   * If your timeout is longer than your interval, the responses can appear out of order!
 * ![WarningThreshold](Resources/Help/WarningBox.jpg)
   * This is where you specify the response time at which you consider it to be a little too long, but not long enough to be a timeout.
   * This can help you find network slowdowns. So if something is supposed to respond in 10-15ms, but you're getting over 100ms, then it's considered a warning, and is marked as such in the logs. 
 * ![localimage](Resources/Help/TimeoutBox.jpg)
   * This is where you specify how long you want to wait before considering a ping to be dropped, or timed out. 
-  * *Caveat: If you set this less than ~500ms, the application will still recieve the ping back, but it will still be marked timed out!
+  * *Caveat: If you set this less than ~500ms, the application will still receive the ping back, but it will still be marked timed out!
 * ![PacketSize](Resources/Help/PacketSizeBox.jpg)
   * *This should only be changed if you know what you're doing*
   * You can specify the size of the ICMP packet that gets sent. 
@@ -62,18 +62,19 @@ Download the latest release from [Here](https://github.com/vouksh/PingLogger/rel
 * ![LoadWithWindows](Resources/Help/LoadWithWindowsOption.jpg)
   * If you check this, it will create a shortcut in the Start Up folder of the start menu that causes it to load on Windows login. 
 * ![StartMinimized](Resources/Help/StartMinimizedOption.jpg)
-  * This option, which is only visable & applicable when the above Load With Windows option is checked, will cause the application to start in a minimized state.
+  * This option, which is only visible & applicable when the above Load With Windows option is checked, will cause the application to start in a minimized state.
 * ![DaysToKeepLogs](Resources/Help/KeepLogsOption.jpg)
   * The rolling number of days to keep log files. Defaults to 7 days.
 * ![ThemeChanger](Resources/Help/ThemeOption.jpg)
   * 3 options: Auto, Dark, and Light.
   * Auto will pick a theme based on your Windows settings.
-* ![StartStopButtons](Resources/Help/StarStopAllButtons.jpg)
+* ![StartStopButtons](Resources/Help/StartStopAllButtons.jpg)
   * Use these buttons to start or stop all of the loggers at the same time. 
 
 ## Trace Route ##
 There is a built-in trace route utility that will help you diagnose issues with timeouts and high latency.
 It's similar to the TRACERT command in Windows [Click here to find out more info about TRACERT](https://support.microsoft.com/en-us/help/314868/how-to-use-tracert-to-troubleshoot-tcp-ip-problems-in-windows)
+
 * Access it by clicking the Run Trace Route button ![RunTraceRoute](Resources/Help/RunTraceButton.jpg)
 * In the new window, click Run Trace to see the hops that are being taken to reach the destination.
   * ![TraceRouteControl](Resources/Help/TraceRouteControl.jpg)
