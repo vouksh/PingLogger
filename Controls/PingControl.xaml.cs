@@ -104,7 +104,7 @@ namespace PingLogger.Controls
 					if (success)
 					{
 						Logger.Debug("Ping Success");
-						var line = $"[{ reply.DateTime.ToLongTimeString()}] ";
+						var line = $"[{reply.DateTime:T}] ";
 						if (reply.RoundTrip > 0)
 						{
 							PingTimes.Add(reply.RoundTrip);
@@ -187,13 +187,14 @@ namespace PingLogger.Controls
 					openLogFolderBtn.Visibility = Visibility.Hidden;
 				}
 			}
-			if(!LogExists)
+			if (!LogExists)
 			{
 				if (File.Exists($"{Environment.CurrentDirectory}{Path.DirectorySeparatorChar}Logs{Path.DirectorySeparatorChar}{HostNameBox.Text}/{HostNameBox.Text}-{DateTime.Now:yyyyMMdd}.log"))
 				{
 					LogExists = true;
 					viewLogBtn.Visibility = Visibility.Visible;
-				} else
+				}
+				else
 				{
 					viewLogBtn.Visibility = Visibility.Hidden;
 				}
@@ -476,10 +477,11 @@ namespace PingLogger.Controls
 
 		private void PingWindowToggle_Click(object sender, RoutedEventArgs e)
 		{
-			if(Config.WindowExpanded)
+			if (Config.WindowExpanded)
 			{
 				Config.WindowExpanded = false;
-			} else
+			}
+			else
 			{
 				Config.WindowExpanded = true;
 			}
@@ -490,11 +492,12 @@ namespace PingLogger.Controls
 		{
 			// Funny enough, this is never called directly in this class.
 			// It just gets hit from the MainWindow calling it.
-			if(Config.WindowExpanded)
+			if (Config.WindowExpanded)
 			{
 				PingStatusBox.Visibility = Visibility.Visible;
 				pingWindowToggle.Content = "<<";
-			} else
+			}
+			else
 			{
 				PingStatusBox.Visibility = Visibility.Collapsed;
 				pingWindowToggle.Content = ">>";

@@ -109,15 +109,15 @@ namespace PingLogger.Workers
 			}
 		}
 
-		public static DateTime LastUpdated
+		public static DateTime UpdateLastChecked
 		{
 			get
 			{
-				return Options.LastUpdated;
+				return Options.UpdateLastChecked;
 			}
 			set
 			{
-				Options.LastUpdated = value;
+				Options.UpdateLastChecked = value;
 				SaveConfig();
 			}
 		}

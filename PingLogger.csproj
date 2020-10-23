@@ -26,6 +26,10 @@
 	<RunAnalyzersDuringBuild>false</RunAnalyzersDuringBuild>
 	<NoWin32Manifest>true</NoWin32Manifest>
 	<PackageIcon>AppIcon.ico</PackageIcon>
+	<Authors>Jack Butler</Authors>
+	<RepositoryUrl>https://github.com/vouksh/PingLogger</RepositoryUrl>
+	<RepositoryType>git</RepositoryType>
+	<PackageProjectUrl>https://github.com/vouksh/PingLogger</PackageProjectUrl>
   </PropertyGroup>
 
   <ItemGroup>

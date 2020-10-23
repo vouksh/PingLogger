@@ -11,7 +11,7 @@ namespace PingLogger.Models
 		public bool StartProgramMinimized { get; set; } = false;
 		public bool WindowExpanded { get; set; } = false;
 		public bool AppWasUpdated { get; set; } = false;
-		public DateTime LastUpdated { get; set; } = DateTime.Now.AddDays(-1);
+		public DateTime UpdateLastChecked { get; set; } = DateTime.Now.AddDays(-1);
 		public bool EnableAutoUpdate { get; set; } = true;
 	}
 	public enum Theme

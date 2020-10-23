@@ -1,10 +1,12 @@
 ﻿using Microsoft.Win32;
+using PingLogger.Models;
 using PingLogger.Workers;
 using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace PingLogger
@@ -12,6 +14,7 @@ namespace PingLogger
 	public static class Util
 	{
 		static Controls.SplashScreen splashScreen;
+		private static readonly string gitHubAPIToken = "9adeae2e5d78eb1bbc8e790e181f2e7b433216a7";
 		public static async Task CheckForUpdates()
 		{
 			if (Config.AppWasUpdated)
@@ -32,7 +35,7 @@ namespace PingLogger
 			}
 			else
 			{
-				if (Config.LastUpdated.Date >= DateTime.Today)
+				if (Config.UpdateLastChecked.Date >= DateTime.Today)
 				{
 					Logger.Info("Application already checked for update today, skipping.");
 					return;
@@ -54,6 +57,7 @@ namespace PingLogger
 				{
 					HttpClient httpClient = new HttpClient();
 					httpClient.DefaultRequestHeaders.Add("User-Agent", "PingLogger Auto-Update");
+					httpClient.DefaultRequestHeaders.Add("Authorization", "Basic " + Convert.ToBase64String(Encoding.ASCII.GetBytes($"vouksh:{gitHubAPIToken}")));
 					var resp = await httpClient.GetAsync("https://api.github.com/repos/vouksh/PingLogger/releases/latest");
 					var strResp = await resp.Content.ReadAsStringAsync();
 					Logger.Debug(strResp);
@@ -62,10 +66,10 @@ namespace PingLogger
 						Logger.Info("Unable to check for updates due to rate limit.");
 						return;
 					}
-					var parsedResp = System.Text.Json.JsonSerializer.Deserialize<Models.GitHubResponse>(strResp);
-					var respVersion = Version.Parse(parsedResp.tag_name.Replace("v", ""));
-					Logger.Info($"Most recent version is {respVersion}, currently running {localVersion}");
-					if (respVersion > localVersion)
+					var parsedResp = System.Text.Json.JsonSerializer.Deserialize<GitHubResponse>(strResp);
+					var remoteVersion = Version.Parse(parsedResp.tag_name.Replace("v", ""));
+					Logger.Info($"Most recent version is {remoteVersion}, currently running {localVersion}");
+					if (remoteVersion > localVersion)
 					{
 						Logger.Info("Remote contains a newer version");
 						File.WriteAllText("./ChangeLog.txt", parsedResp.body);
@@ -73,14 +77,15 @@ namespace PingLogger
 						{
 							if (appIsInstalled)
 							{
-								string tempDir = Util.RandomString(8);
-								string savePath = $"{Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData)}Temp\\{tempDir}";
+								string tempDir = RandomString(8);
+								string savePath = $"{Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData)}\\Temp\\{tempDir}";
 								File.WriteAllText("./tempDir.txt", savePath);
 								Logger.Info($"Downloading newest installer to {savePath}\\PingLogger-Setup.exe");
 								Directory.CreateDirectory(savePath);
 								var downloadURL = parsedResp.assets.First(a => a.name == "PingLogger-Setup.exe").browser_download_url;
-								using var downloader = new Workers.HttpClientDownloadWithProgress(downloadURL, savePath + "\\PingLogger-Setup.exe");
-								splashScreen.mainLabel.Text = $"Downloading PingLogger setup v{respVersion}";
+								Logger.Info($"Downloading from {downloadURL}");
+								using var downloader = new HttpClientDownloadWithProgress(downloadURL, savePath + "\\PingLogger-Setup.exe");
+								splashScreen.mainLabel.Text = $"Downloading PingLogger setup v{remoteVersion}";
 								downloader.ProgressChanged += Downloader_ProgressChanged;
 								await downloader.StartDownload();
 								Config.AppWasUpdated = true;
@@ -92,7 +97,7 @@ namespace PingLogger
 										FileName = savePath + "\\PingLogger-Setup.exe",
 										Verb = "runas",
 										UseShellExecute = true,
-										Arguments = $"/SP- /VERYSILENT /SUPPRESSMSGBOXES /CLOSEAPPLICATIONS /RESTARTAPPLICATIONS /LOG=\"{AppContext.BaseDirectory}\\Logs\\Installer-v{respVersion}.log\""
+										Arguments = $"/SP- /VERYSILENT /SUPPRESSMSGBOXES /CLOSEAPPLICATIONS /RESTARTAPPLICATIONS /LOG=\"{AppContext.BaseDirectory}Logs\\Installer-v{remoteVersion}.log\""
 									}
 								}.Start();
 								Logger.Info("Installer completed, closing.");
@@ -103,8 +108,9 @@ namespace PingLogger
 								File.Move("./PingLogger.exe", "./PingLogger-old.exe");
 								Logger.Info("Downloading new PingLogger.exe");
 								var downloadURL = parsedResp.assets.First(a => a.name == "PingLogger.exe").browser_download_url;
-								using var downloader = new Workers.HttpClientDownloadWithProgress(downloadURL, "./PingLogger.exe");
-								splashScreen.mainLabel.Text = $"Downloading PingLogger v{respVersion}";
+								Logger.Info($"Downloading from {downloadURL}");
+								using var downloader = new HttpClientDownloadWithProgress(downloadURL, "./PingLogger.exe");
+								splashScreen.mainLabel.Text = $"Downloading PingLogger v{remoteVersion}";
 								downloader.ProgressChanged += Downloader_ProgressChanged;
 								await downloader.StartDownload();
 								Config.AppWasUpdated = true;
@@ -124,9 +130,10 @@ namespace PingLogger
 				catch (HttpRequestException ex)
 				{
 					Logger.Error("Unable to auto update: " + ex.Message);
+					return;
 				}
 			}
-			Config.LastUpdated = DateTime.Now;
+			Config.UpdateLastChecked = DateTime.Now;
 			return;
 		}
 
@@ -164,6 +171,35 @@ namespace PingLogger
 			const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 			return new string(Enumerable.Repeat(chars, length)
 			  .Select(s => s[random.Next(s.Length)]).ToArray());
+		}
+
+		public static void SetTheme()
+		{
+			bool useLightTheme = false;
+			switch (Config.Theme)
+			{
+				case Theme.Auto:
+					int lightTheme = Convert.ToInt32(Registry.GetValue("HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize", "AppsUseLightTheme", 1));
+					if (lightTheme == 1)
+						useLightTheme = true;
+					else
+						useLightTheme = false;
+					break;
+				case Theme.Light:
+					useLightTheme = true;
+					break;
+				case Theme.Dark:
+					useLightTheme = false;
+					break;
+			}
+			if (useLightTheme)
+			{
+				App.Current.Resources.MergedDictionaries[0].Source = new Uri("/Themes/LightTheme.xaml", UriKind.Relative);
+			}
+			else
+			{
+				App.Current.Resources.MergedDictionaries[0].Source = new Uri("/Themes/DarkTheme.xaml", UriKind.Relative);
+			}
 		}
 	}
 }
