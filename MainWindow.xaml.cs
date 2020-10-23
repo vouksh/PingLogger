@@ -17,7 +17,6 @@ namespace PingLogger
 	/// </summary>
 	public partial class MainWindow : Window
 	{
-		public static App CurrentApp;
 		private readonly List<TabItem> _tabItems;
 
 		public ICommand CloseWindowCommand { get; set; }
@@ -27,9 +26,8 @@ namespace PingLogger
 		public ICommand NewTabCommand { get; set; }
 		public ICommand CloseTabCommand { get; set; }
 
-		public MainWindow(App curApp)
+		public MainWindow()
 		{
-			CurrentApp = curApp;
 			CloseWindowCommand = new Command(Close);
 			MinimizeWindowCommand = new Command(Minimize);
 			OptionsWindowCommand = new Command(OpenOptionsDialog);
@@ -77,11 +75,6 @@ namespace PingLogger
 		private void OpenOptionsDialog()
 		{
 			new Controls.SettingsDialog().ShowDialog();
-		}
-
-		public static void SetTheme()
-		{
-			CurrentApp.SetTheme();
 		}
 
 		private void TabDelBtn_Click(object sender)

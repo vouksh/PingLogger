@@ -113,12 +113,12 @@ namespace PingLogger.Controls
 			parentWindow.StopAllLoggers();
 		}
 
-		private void daysToKeep_PreviewTextInput(object sender, TextCompositionEventArgs e)
+		private void DaysToKeep_PreviewTextInput(object sender, TextCompositionEventArgs e)
 		{
 			e.Handled = !IsNumericInput(e.Text);
 		}
 
-		private void daysToKeep_TextChanged(object sender, TextChangedEventArgs e)
+		private void DaysToKeep_TextChanged(object sender, TextChangedEventArgs e)
 		{
 			if (!doingInitialLoad)
 			{
@@ -147,23 +147,15 @@ namespace PingLogger.Controls
 		{
 			if (!doingInitialLoad)
 			{
-				switch (ThemeBox.SelectedIndex)
+				Config.Theme = ThemeBox.SelectedIndex switch
 				{
-					case 0:
-						Config.Theme = Models.Theme.Auto;
-						break;
-					case 1:
-						Config.Theme = Models.Theme.Light;
-						break;
-					case 2:
-						Config.Theme = Models.Theme.Dark;
-						break;
-					default:
-						Config.Theme = Models.Theme.Auto;
-						break;
-				}
+					0 => Models.Theme.Auto,
+					1 => Models.Theme.Light,
+					2 => Models.Theme.Dark,
+					_ => Models.Theme.Auto,
+				};
 				Logger.Info($"Theme changed to {Config.Theme}.");
-				MainWindow.SetTheme();
+				Util.SetTheme();
 			}
 		}
 		bool doingInitialLoad = false;

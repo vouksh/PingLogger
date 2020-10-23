@@ -2,7 +2,7 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:local="clr-namespace:PingLogger"
                     xmlns:Themes="clr-namespace:Microsoft.Windows.Themes;assembly=PresentationFramework.Aero2">
-	<SolidColorBrush x:Key="BackgroundColour"  Color="White" />
+	<SolidColorBrush x:Key="BackgroundColour"  Color="{DynamicResource {x:Static SystemColors.WindowColorKey}}" />
 
 	<SolidColorBrush x:Key="WindowBorderColour"  Color="WhiteSmoke" />
 	<SolidColorBrush x:Key="WindowTitleColour"  Color="WhiteSmoke" />
@@ -1987,7 +1987,7 @@
 		<Setter Property="Template">
 			<Setter.Value>
 				<ControlTemplate TargetType="{x:Type Window}">
-					<Border BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}">
+					<Border BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{StaticResource ControlDarkerBorderBrush}">
 						<AdornerDecorator>
 							<ContentPresenter/>
 						</AdornerDecorator>
