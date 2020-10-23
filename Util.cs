@@ -14,7 +14,6 @@ namespace PingLogger
 	public static class Util
 	{
 		static Controls.SplashScreen splashScreen;
-		private static readonly string gitHubAPIToken = "9adeae2e5d78eb1bbc8e790e181f2e7b433216a7";
 		public static async Task CheckForUpdates()
 		{
 			if (Config.AppWasUpdated)
@@ -57,7 +56,7 @@ namespace PingLogger
 				{
 					HttpClient httpClient = new HttpClient();
 					httpClient.DefaultRequestHeaders.Add("User-Agent", "PingLogger Auto-Update");
-					httpClient.DefaultRequestHeaders.Add("Authorization", "Basic " + Convert.ToBase64String(Encoding.ASCII.GetBytes($"vouksh:{gitHubAPIToken}")));
+					//httpClient.DefaultRequestHeaders.Add("Authorization", "Basic " + Convert.ToBase64String(Encoding.ASCII.GetBytes($"vouksh:{gitHubAPIToken}")));
 					var resp = await httpClient.GetAsync("https://api.github.com/repos/vouksh/PingLogger/releases/latest");
 					var strResp = await resp.Content.ReadAsStringAsync();
 					Logger.Debug(strResp);
