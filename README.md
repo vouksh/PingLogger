@@ -31,7 +31,7 @@ Download the latest release from [Here](https://github.com/vouksh/PingLogger/rel
   * This can help you find network slowdowns. So if something is supposed to respond in 10-15ms, but you're getting over 100ms, then it's considered a warning, and is marked as such in the logs. 
 * ![localimage](Resources/Help/TimeoutBox.jpg)
   * This is where you specify how long you want to wait before considering a ping to be dropped, or timed out. 
-  * *Caveat: If you set this less than ~500ms, the application will still receive the ping back, but it will still be marked timed out!
+  * *Caveat: If you set this less than ~500ms, the application can still receive the ping back, but it will still be marked timed out!
 * ![PacketSize](Resources/Help/PacketSizeBox.jpg)
   * *This should only be changed if you know what you're doing*
   * You can specify the size of the ICMP packet that gets sent. 
@@ -53,7 +53,7 @@ Download the latest release from [Here](https://github.com/vouksh/PingLogger/rel
 
 ## Options ## 
 * ![AutoUpdate](Resources/Help/AutoUpdateOption.jpg)
-  * On by default, if this is checked, the program will GitHub for the latest version and download it
+  * On by default, if this is checked, the program will check GitHub for the latest version and download it
   * If you used the installer, it will download the newest installer and run it silently. 
   * If you chose to go with the single file, it will rename the current exe download the newest single-file executable.
   * Both options will clean up any downloaded/renamed files afterwards
