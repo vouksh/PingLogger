@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.IO;
 using System.IO.Compression;
+using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 
@@ -175,43 +176,40 @@ namespace PingLogger.Workers
 		{
 			if (Options == null)
 			{
-				lock (fileLock)
+				string dataPath = "./config.dat";
+				if (File.Exists("./config.dat"))
 				{
-					string dataPath = "./config.dat";
-					if (File.Exists("./config.dat"))
+					Logger.Debug("Waiting for config file lock..");
+					lock (fileLock)
 					{
 						Logger.Info("Found existing config.dat, reading file");
 						InitialLoad = true;
+
 						using var archive = ZipFile.OpenRead(dataPath);
-						foreach (var entry in archive.Entries)
-						{
-							using StreamReader streamReader = new StreamReader(entry.Open());
-							var fileContents = streamReader.ReadToEnd();
-							switch (entry.FullName)
-							{
-								case "hosts.json":
-									Logger.Info("Reading hosts configuration");
-									Hosts = JsonSerializer.Deserialize<ObservableCollection<Host>>(fileContents);
-									break;
-								case "config.json":
-									Logger.Info("Reading application configuration");
-									Options = JsonSerializer.Deserialize<AppOptions>(fileContents);
-									break;
-							}
-						}
+
+						Logger.Info("Reading hosts configuration");
+						using StreamReader hostReader = new StreamReader(archive.GetEntry("hosts.json").Open());
+						Hosts = JsonSerializer.Deserialize<ObservableCollection<Host>>(hostReader.ReadToEnd());
+						hostReader.Close();
+
+						Logger.Info("Reading application configuration");
+						using var configReader = new StreamReader(archive.GetEntry("config.json").Open());
+						Options = JsonSerializer.Deserialize<AppOptions>(configReader.ReadToEnd());
+						configReader.Close();
+
 						InitialLoad = false;
 					}
-					else
+				}
+				else
+				{
+					Logger.Info("Did not find existing config.dat");
+					if (!CheckForOldConfig())
 					{
-						Logger.Info("Did not find existing config.dat");
-						if (!CheckForOldConfig())
-						{
-							Logger.Info("Old configuration not found, starting out fresh");
-							Hosts = new ObservableCollection<Host>();
-							Options = new AppOptions();
-						}
-						SaveConfig();
+						Logger.Info("Old configuration not found, starting out fresh");
+						Hosts = new ObservableCollection<Host>();
+						Options = new AppOptions();
 					}
+					SaveConfig();
 				}
 			}
 		}
@@ -219,6 +217,7 @@ namespace PingLogger.Workers
 		{
 			await Task.Run(() =>
 			{
+				Logger.Debug("Waiting for config file lock..");
 				lock (fileLock)
 				{
 					Logger.Info("SaveConfig() Called");
@@ -232,41 +231,29 @@ namespace PingLogger.Workers
 						Logger.Info("Existing configuration found, overwriting");
 						Logger.Info("Saving host configuration");
 						var hostEntry = archive.GetEntry("hosts.json");
-						hostEntry.Delete();
-						hostEntry = archive.CreateEntry("hosts.json");
-						using StreamWriter hostWriter = new StreamWriter(hostEntry.Open());
-						foreach (var line in hostData.Split(Environment.NewLine))
-						{
-							hostWriter.WriteLine(line);
-						}
+						using var hostEntryStream = hostEntry.Open();
+						hostEntryStream.SetLength(hostData.Length);
+						using StreamWriter hostWriter = new StreamWriter(hostEntryStream);
+						hostWriter.Write(hostData);
 
 						Logger.Info("Saving application configuration");
 						var configEntry = archive.GetEntry("config.json");
-						configEntry.Delete();
-						configEntry = archive.CreateEntry("config.json");
-						using StreamWriter configWriter = new StreamWriter(configEntry.Open());
-						foreach (var line in configData.Split(Environment.NewLine))
-						{
-							configWriter.WriteLine(line);
-						}
+						using var configStream = configEntry.Open();
+						configStream.SetLength(configData.Length);
+						using StreamWriter configWriter = new StreamWriter(configStream);
+						configWriter.Write(configData);
 					}
 					else
 					{
 						Logger.Info("Saving host configuration");
 						var hostEntry = archive.CreateEntry("hosts.json");
 						using StreamWriter hostWriter = new StreamWriter(hostEntry.Open());
-						foreach (var line in hostData.Split(Environment.NewLine))
-						{
-							hostWriter.WriteLine(line);
-						}
+						hostWriter.Write(hostData);
 
 						Logger.Info("Saving application configuration");
 						var configEntry = archive.CreateEntry("config.json");
 						using StreamWriter configWriter = new StreamWriter(configEntry.Open());
-						foreach (var line in configData.Split(Environment.NewLine))
-						{
-							configWriter.WriteLine(line);
-						}
+						configWriter.Write(configData);
 					}
 					Logger.Info("Done saving config.dat");
 				}

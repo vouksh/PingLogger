@@ -58,7 +58,6 @@ namespace PingLogger
 					//httpClient.DefaultRequestHeaders.Add("Authorization", "Basic " + Convert.ToBase64String(Encoding.ASCII.GetBytes($"vouksh:{gitHubAPIToken}")));
 					var resp = await httpClient.GetAsync("https://api.github.com/repos/vouksh/PingLogger/releases/latest");
 					var strResp = await resp.Content.ReadAsStringAsync();
-					Logger.Debug(strResp);
 					if (strResp.Contains("API rate limit exceeded"))
 					{
 						Logger.Info("Unable to check for updates due to rate limit.");

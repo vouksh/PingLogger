@@ -32,6 +32,11 @@
 	<PackageProjectUrl>https://github.com/vouksh/PingLogger</PackageProjectUrl>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DebugType>none</DebugType>
+    <DebugSymbols>false</DebugSymbols>
+  </PropertyGroup>
+
   <ItemGroup>
     <None Remove="Resources\Help\AutoUpdateOption.jpg" />
     <None Remove="Resources\Help\ExpandBox.jpg" />

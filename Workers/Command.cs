@@ -22,8 +22,6 @@ namespace PingLogger.Workers
 			return true;
 		}
 
-#pragma warning disable 67
 		public event EventHandler CanExecuteChanged { add { } remove { } }
-#pragma warning restore 67
 	}
 }
