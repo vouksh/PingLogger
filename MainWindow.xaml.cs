@@ -36,7 +36,6 @@ namespace PingLogger
 			NewTabCommand = new Command(AddTabItem);
 
 			Version version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
-			Thread.CurrentThread.Name = "MainWindowThread";
 			InitializeComponent();
 			_tabItems = new List<TabItem>();
 
@@ -72,10 +71,7 @@ namespace PingLogger
 			}
 		}
 
-		private void OpenOptionsDialog()
-		{
-			new Controls.SettingsDialog().ShowDialog();
-		}
+		private void OpenOptionsDialog() => new SettingsDialog().ShowDialog();
 
 		private void TabDelBtn_Click(object sender)
 		{
@@ -128,7 +124,7 @@ namespace PingLogger
 				Config.Hosts.Add(newHost);
 				AddTabItem(newHost);
 			}
-			tabControl.SelectedIndex = 0;
+			tabControl.SelectedIndex = Config.LastSelectedTab;
 			if (Config.LoadWithWindows && Config.StartApplicationMinimized)
 			{
 				this.Minimize();
@@ -140,7 +136,7 @@ namespace PingLogger
 		{
 			var addDialog = new AddHostDialog
 			{
-				Owner = Window.GetWindow(this)
+				Owner = GetWindow(this)
 			};
 			addDialog.ShowDialog();
 		}
@@ -237,6 +233,7 @@ namespace PingLogger
 		private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
 		{
 			Logger.Debug("Application closing");
+			Config.LastSelectedTab = tabControl.SelectedIndex;
 			foreach (var item in _tabItems)
 			{
 				try
@@ -263,10 +260,7 @@ namespace PingLogger
 			}
 		}
 
-		private void Minimize()
-		{
-			WindowState = WindowState.Minimized;
-		}
+		private void Minimize() => WindowState = WindowState.Minimized;
 
 		private void TabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{

@@ -9,6 +9,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Net;
+using System.Threading;
 
 namespace PingLogger
 {
@@ -19,6 +20,7 @@ namespace PingLogger
 	{
 		private async void Application_Startup(object sender, StartupEventArgs e)
 		{
+			Thread.CurrentThread.Name = "PrimaryUIThread";
 			Util.SetTheme();
 			AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
 			Version version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
@@ -36,7 +38,7 @@ namespace PingLogger
 		private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
 		{
 			MessageBox.Show((e.ExceptionObject as Exception).Message, "An error has occurred", MessageBoxButton.OK, MessageBoxImage.Error);
-			Logger.Log.Fatal((e.ExceptionObject as Exception), "A fatal unhandled exception occurred");
+			Logger.Log.Fatal(e.ExceptionObject as Exception, "A fatal unhandled exception occurred");
 		}
 	}
 }

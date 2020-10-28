@@ -25,7 +25,7 @@ namespace PingLogger.Workers
 			}
 			set
 			{
-				Logger.Info("Options.Theme changed");
+				Logger.Info($"Options.Theme was changed from {Options.Theme} to {value}");
 				Options.Theme = value;
 				SaveConfig();
 			}
@@ -39,7 +39,7 @@ namespace PingLogger.Workers
 			}
 			set
 			{
-				Logger.Info("Options.DaysToKeepLogs changed");
+				Logger.Info($"Options.DaysToKeepLogs was changed from {Options.DaysToKeepLogs} to {value}");
 				Options.DaysToKeepLogs = value;
 				SaveConfig();
 			}
@@ -52,7 +52,7 @@ namespace PingLogger.Workers
 			}
 			set
 			{
-				Logger.Info("Options.LoadWithWindows changed");
+				Logger.Info($"Options.LoadOnSystemBoot was changed from {Options.LoadOnSystemBoot} to {value}");
 				Options.LoadOnSystemBoot = value;
 				SaveConfig();
 			}
@@ -65,7 +65,7 @@ namespace PingLogger.Workers
 			}
 			set
 			{
-				Logger.Info("Options.StartLoggersAutomatically changed");
+				Logger.Info($"Options.StartLoggersAutomatically was changed from {Options.StartLoggersAutomatically} to {value}");
 				Options.StartLoggersAutomatically = value;
 				SaveConfig();
 			}
@@ -78,7 +78,7 @@ namespace PingLogger.Workers
 			}
 			set
 			{
-				Logger.Info("Options.StartProgramMinimized changed");
+				Logger.Info($"Options.StartProgramMinimized was changed from {Options.StartProgramMinimized} to {value}");
 				Options.StartProgramMinimized = value;
 				SaveConfig();
 			}
@@ -92,6 +92,7 @@ namespace PingLogger.Workers
 			}
 			set
 			{
+				Logger.Info($"Options.WindowExpanded was changed from {Options.WindowExpanded} to {value}");
 				Options.WindowExpanded = value;
 				SaveConfig();
 			}
@@ -105,6 +106,7 @@ namespace PingLogger.Workers
 			}
 			set
 			{
+				Logger.Info($"Options.AppWasUpdated was changed from {Options.AppWasUpdated} to {value}");
 				Options.AppWasUpdated = value;
 				SaveConfig();
 			}
@@ -118,6 +120,7 @@ namespace PingLogger.Workers
 			}
 			set
 			{
+				Logger.Info($"Options.UpdateLastChecked was changed from {Options.UpdateLastChecked} to {value}");
 				Options.UpdateLastChecked = value;
 				SaveConfig();
 			}
@@ -131,8 +134,22 @@ namespace PingLogger.Workers
 			}
 			set
 			{
-				Logger.Info("Options.EnableAutoUpdate was changed");
+				Logger.Info($"Options.EnableAutoUpdate was changed from {Options.EnableAutoUpdate} to {value}");
 				Options.EnableAutoUpdate = value;
+				SaveConfig();
+			}
+		}
+
+		public static int LastSelectedTab
+		{
+			get
+			{
+				return Options.LastSelectedTab;
+			}
+			set
+			{
+				Logger.Info($"Options.LastSelectedTab was changed from {Options.LastSelectedTab} to {value}");
+				Options.LastSelectedTab = value;
 				SaveConfig();
 			}
 		}
