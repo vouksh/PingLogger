@@ -22,7 +22,6 @@ namespace PingLogger.Controls
 		private readonly SynchronizationContext syncCtx;
 		readonly DispatcherTimer Timer;
 		private readonly ImageAwesome spinnerImage;
-		//private readonly ImageAwesome blackSpinnerImage;
 		public AddHostDialog()
 		{
 			spinnerImage = new ImageAwesome()
@@ -48,7 +47,31 @@ namespace PingLogger.Controls
 
 		private async void Timer_Tick(object sender, EventArgs e)
 		{
-			if (Config.Hosts.Any(h => h.HostName == hostNameBox.Text))
+			var foundHost = Config.Hosts.Any(h => h.HostName == hostNameBox.Text);
+			if (!foundHost && !IsValidHost)
+			{
+				AddBtn.Content = spinnerImage;
+				try
+				{
+					foreach (var ip in await Dns.GetHostAddressesAsync(hostNameBox.Text))
+					{
+						if (ip.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
+						{
+							IsValidHost = true;
+							break;
+						}
+					}
+				}
+				catch (Exception)
+				{
+					IsValidHost = false;
+				}
+				syncCtx.Post(new SendOrPostCallback(o =>
+				{
+					AddBtn.IsEnabled = (bool)o;
+				}), IsValidHost);
+			}
+			if (foundHost)
 			{
 				AddBtn.Content = new ImageAwesome
 				{
@@ -59,35 +82,9 @@ namespace PingLogger.Controls
 				};
 				AddBtn.IsEnabled = false;
 			}
-			else
+			if (!foundHost && IsValidHost)
 			{
-				if (!IsValidHost)
-				{
-					AddBtn.Content = spinnerImage;
-					try
-					{
-						foreach (var ip in await Dns.GetHostAddressesAsync(hostNameBox.Text))
-						{
-							if (ip.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
-							{
-								IsValidHost = true;
-								break;
-							}
-						}
-					}
-					catch (Exception)
-					{
-						IsValidHost = false;
-					}
-					syncCtx.Post(new SendOrPostCallback(o =>
-					{
-						AddBtn.IsEnabled = (bool)o;
-					}), IsValidHost);
-				}
-				else
-				{
-					AddBtn.Content = "Add Host";
-				}
+				AddBtn.Content = "Add Host";
 			}
 		}
 
