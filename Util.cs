@@ -170,26 +170,25 @@ namespace PingLogger
 			  .Select(s => s[random.Next(s.Length)]).ToArray());
 		}
 
+		public static bool IsLightTheme()
+		{
+			if (Config.Theme == Theme.Auto)
+			{
+				int lightTheme = Convert.ToInt32(Registry.GetValue("HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize", "AppsUseLightTheme", 1));
+				if (lightTheme == 1)
+					return true;
+				else
+					return false;
+			}
+			else
+			{
+				return Config.Theme == Theme.Light;
+			}
+		}
+
 		public static void SetTheme()
 		{
-			bool useLightTheme = false;
-			switch (Config.Theme)
-			{
-				case Theme.Auto:
-					int lightTheme = Convert.ToInt32(Registry.GetValue("HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize", "AppsUseLightTheme", 1));
-					if (lightTheme == 1)
-						useLightTheme = true;
-					else
-						useLightTheme = false;
-					break;
-				case Theme.Light:
-					useLightTheme = true;
-					break;
-				case Theme.Dark:
-					useLightTheme = false;
-					break;
-			}
-			if (useLightTheme)
+			if (IsLightTheme())
 			{
 				App.Current.Resources.MergedDictionaries[0].Source = new Uri("/Themes/LightTheme.xaml", UriKind.Relative);
 			}

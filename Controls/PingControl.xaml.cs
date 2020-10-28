@@ -14,6 +14,8 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Threading;
+using FontAwesome.WPF;
+using System.Windows.Media;
 
 namespace PingLogger.Controls
 {
@@ -495,12 +497,24 @@ namespace PingLogger.Controls
 			if (Config.WindowExpanded)
 			{
 				PingStatusBox.Visibility = Visibility.Visible;
-				pingWindowToggle.Content = "<<";
+				pingWindowToggle.Content = new ImageAwesome
+				{
+					Icon = FontAwesomeIcon.AngleDoubleLeft,
+					Foreground = Util.IsLightTheme() ? Brushes.Black : Brushes.White,
+					Width = 14,
+					Height = 14
+				};
 			}
 			else
 			{
 				PingStatusBox.Visibility = Visibility.Collapsed;
-				pingWindowToggle.Content = ">>";
+				pingWindowToggle.Content = new ImageAwesome
+				{
+					Icon = FontAwesomeIcon.AngleDoubleRight,
+					Foreground = Util.IsLightTheme() ? Brushes.Black : Brushes.White,
+					Width = 14,
+					Height = 14
+				};
 			}
 		}
 	}

@@ -277,7 +277,7 @@ namespace PingLogger.Extensions
 
         private static readonly Regex _newlinesLeadingTrailing = new Regex(@"^\n+|\n+\z", RegexOptions.Compiled);
         private static readonly Regex _newlinesMultiple = new Regex(@"\n{2,}", RegexOptions.Compiled);
-        private static readonly Regex _leadingWhitespace = new Regex(@"^[ ]*", RegexOptions.Compiled);
+        //private static readonly Regex _leadingWhitespace = new Regex(@"^[ ]*", RegexOptions.Compiled);
 
         /// <summary>
         /// splits on two or more newlines, to form "paragraphs";    
@@ -497,11 +497,13 @@ namespace PingLogger.Extensions
             // Bind size so document is updated when image is downloaded
             if (imgSource.IsDownloading)
             {
-                Binding binding = new Binding(nameof(BitmapImage.Width));
-                binding.Source = imgSource;
-                binding.Mode = BindingMode.OneWay;
+				Binding binding = new Binding(nameof(BitmapImage.Width))
+				{
+					Source = imgSource,
+					Mode = BindingMode.OneWay
+				};
 
-                BindingExpressionBase bindingExpression = BindingOperations.SetBinding(image, Image.WidthProperty, binding);
+				BindingExpressionBase bindingExpression = BindingOperations.SetBinding(image, Image.WidthProperty, binding);
 
                 void downloadCompletedHandler(object sender, EventArgs e)
                 {
@@ -904,12 +906,12 @@ namespace PingLogger.Extensions
             var style = match.Groups[4].Value.Trim();
             var row = match.Groups[6].Value.Trim();
 
-            var styles = style.Substring(1, style.Length - 2).Split('|');
-            var headers = header.Substring(1, header.Length - 2).Split('|');
+            var styles = style[1..^1].Split('|');
+            var headers = header[1..^1].Split('|');
             var rowList = row.Split('\n').Select(ritm =>
             {
                 var trimRitm = ritm.Trim();
-                return trimRitm.Substring(1, trimRitm.Length - 2).Split('|');
+                return trimRitm[1..^1].Split('|');
             }).ToList();
 
             int maxColCount =
@@ -1251,7 +1253,7 @@ namespace PingLogger.Extensions
             {
                 if (m.Index > index)
                 {
-                    var prefix = text.Substring(index, m.Index - index);
+                    var prefix = text[index..m.Index];
                     foreach (var t in rest(prefix))
                     {
                         yield return t;
@@ -1265,7 +1267,7 @@ namespace PingLogger.Extensions
 
             if (index < text.Length)
             {
-                var suffix = text.Substring(index, text.Length - index);
+                var suffix = text[index..];
                 foreach (var t in rest(suffix))
                 {
                     yield return t;

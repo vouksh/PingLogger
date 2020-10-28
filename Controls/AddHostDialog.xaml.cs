@@ -4,8 +4,12 @@ using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 using System.Windows.Threading;
+using FontAwesome.WPF;
+using System.Linq;
 
 namespace PingLogger.Controls
 {
@@ -17,8 +21,19 @@ namespace PingLogger.Controls
 		public ICommand CloseWindowCommand { get; set; }
 		private readonly SynchronizationContext syncCtx;
 		readonly DispatcherTimer Timer;
+		private readonly ImageAwesome spinnerImage;
+		//private readonly ImageAwesome blackSpinnerImage;
 		public AddHostDialog()
 		{
+			spinnerImage = new ImageAwesome()
+			{
+				Icon = FontAwesomeIcon.Spinner,
+				Spin = true,
+				SpinDuration = 10,
+				Foreground = Util.IsLightTheme() ? Brushes.Black : Brushes.White,
+				Width = 14,
+				Height = 14
+			};
 			InitializeComponent();
 			CloseWindowCommand = new Command(Close);
 			syncCtx = SynchronizationContext.Current;
@@ -33,28 +48,46 @@ namespace PingLogger.Controls
 
 		private async void Timer_Tick(object sender, EventArgs e)
 		{
-			if (!IsValidHost)
+			if (Config.Hosts.Any(h => h.HostName == hostNameBox.Text))
 			{
-				try
+				AddBtn.Content = new ImageAwesome
 				{
-					foreach (var ip in await Dns.GetHostAddressesAsync(hostNameBox.Text))
+					Icon = FontAwesomeIcon.Times,
+					Foreground = Brushes.Red,
+					Width = 14,
+					Height = 14
+				};
+				AddBtn.IsEnabled = false;
+			}
+			else
+			{
+				if (!IsValidHost)
+				{
+					AddBtn.Content = spinnerImage;
+					try
 					{
-						if (ip.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
+						foreach (var ip in await Dns.GetHostAddressesAsync(hostNameBox.Text))
 						{
-							IsValidHost = true;
-
-							break;
+							if (ip.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
+							{
+								IsValidHost = true;
+								break;
+							}
 						}
 					}
+					catch (Exception)
+					{
+						IsValidHost = false;
+					}
+					syncCtx.Post(new SendOrPostCallback(o =>
+					{
+						AddBtn.IsEnabled = (bool)o;
+					}), IsValidHost);
 				}
-				catch (Exception)
+				else
 				{
-					IsValidHost = false;
+					AddBtn.Content = "Add Host";
 				}
-				syncCtx.Post(new SendOrPostCallback(o =>
-				{
-					AddBtn.IsEnabled = (bool)o;
-				}), IsValidHost);
 			}
 		}
 
@@ -92,9 +125,12 @@ namespace PingLogger.Controls
 			}
 		}
 
-		private void hostNameBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
+		private void HostNameBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
 		{
 			IsValidHost = false;
+			AddBtn.Content = spinnerImage;
+			Timer.Stop();
+			Timer.Start();
 			e.Handled = false;
 			AddBtn.IsEnabled = false;
 		}

@@ -1,6 +1,7 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:local="clr-namespace:PingLogger"
+					xmlns:fa="http://schemas.fontawesome.io/icons/"
                     xmlns:Themes="clr-namespace:Microsoft.Windows.Themes;assembly=PresentationFramework.Aero2">
 	<SolidColorBrush x:Key="BackgroundColour"  Color="{DynamicResource {x:Static SystemColors.WindowColorKey}}" />
 
@@ -1119,7 +1120,9 @@
                                               VerticalAlignment="{Binding VerticalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"/>
 			<Border CornerRadius="3" Height="20" VerticalAlignment="Center" HorizontalAlignment="Right" Width="19" Margin="0,8,8,7">
 				<Button Background="Transparent" Foreground="DarkRed" Template="{DynamicResource CloseWindowButton}" Command="{Binding Path=CloseTabCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType={x:Type TabItem}}, Path=Uid}" BorderBrush="{x:Null}" 
-                                        VerticalAlignment="Stretch" HorizontalAlignment="Stretch" FontFamily="Consolas" Content="x"/>
+                                        VerticalAlignment="Stretch" HorizontalAlignment="Stretch" FontFamily="Consolas">
+					<fa:ImageAwesome Icon="Times" Width="10" Height="10" Foreground="DarkRed" HorizontalAlignment="Center" VerticalAlignment="Center" />
+				</Button>
 			</Border>
 		</Grid>
 		<ControlTemplate.Triggers>
@@ -1308,9 +1311,11 @@
 				<Border CornerRadius="3" Height="28"
                                         VerticalAlignment="Center" Background="{StaticResource ContainerBackground}"
                                         HorizontalAlignment="Center" Width="28" Margin="8 0 0 0">
-					<Button Background="Transparent" Content="+" Command="{Binding NewTabCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}" BorderBrush="{x:Null}"
-                                            VerticalAlignment="Stretch" HorizontalAlignment="Stretch" FontFamily="Consolas" FontSize="16" Foreground="{DynamicResource ControlDefaultForeground}" />
-				</Border>
+						<Button Background="Transparent" Command="{Binding NewTabCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}" BorderBrush="{x:Null}"
+                                            VerticalAlignment="Stretch" HorizontalAlignment="Stretch" FontFamily="Consolas" FontSize="16" Foreground="{DynamicResource ControlDefaultForeground}">
+							<fa:ImageAwesome Icon="Plus" Width="10" Height="10" Foreground="{DynamicResource ControlDefaultForeground}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+						</Button>
+					</Border>
 				</StackPanel>
 			</ScrollViewer>
 			<Border x:Name="contentPanel" 
@@ -2051,29 +2056,29 @@
                                         Background="Transparent"
                                         BorderBrush="Transparent"
 										Template="{DynamicResource OptionsWindowButton}"
-                                        Width="50"
+                                        Width="30"
                                         VerticalContentAlignment="Bottom"
                                         WindowChrome.IsHitTestVisibleInChrome="True" Command="{Binding OptionsWindowCommand}">
-									<Image Source="/Resources/optionsGearLight.png" Margin="2"/>
+									<fa:ImageAwesome Width="14" Height="14" Foreground="Black" Icon="Gear" VerticalAlignment="Center" HorizontalAlignment="Center" />
 								</Button>
 								<Button x:Name="btnMinimize"
                                         Background="Transparent"
                                         BorderBrush="Transparent"
 										Template="{DynamicResource MinimizeWindowButton}"
-                                        Width="50"
+                                        Width="30"
                                         VerticalContentAlignment="Bottom"
                                         WindowChrome.IsHitTestVisibleInChrome="True" Command="{Binding MinimizeWindowCommand}">
-									<Image Source="/Resources/minimizeWindowLight.png" Margin="4"/>
+									<fa:ImageAwesome Width="14" Height="14" Foreground="Black" Icon="WindowMinimize" VerticalAlignment="Bottom" HorizontalAlignment="Center" />
 								</Button>
 
 								<Button x:Name="btnClose"
                                         Background="Transparent"
                                         BorderBrush="Transparent"
                                         Template="{DynamicResource CloseWindowButton}"
-                                        Width="50"
+                                        Width="30"
                                         WindowChrome.IsHitTestVisibleInChrome="True" 
                                         Command="{Binding CloseWindowCommand}">
-									<Image Source="/Resources/closeWindowLight.png" Margin="4"/>
+									<fa:ImageAwesome Width="14" Height="14" Foreground="Black" Icon="WindowClose" VerticalAlignment="Center" HorizontalAlignment="Center" />
 								</Button>
 
 							</StackPanel>
@@ -2132,10 +2137,10 @@
                                         Background="Transparent"
                                         BorderBrush="Transparent"
                                         Template="{DynamicResource CloseWindowButton}"
-                                        Width="50"
+                                        Width="30"
                                         WindowChrome.IsHitTestVisibleInChrome="True" 
                                         Command="{Binding CloseWindowCommand}">
-									<Image Source="/Resources/closeWindowLight.png" Margin="4"/>
+									<fa:ImageAwesome Width="14" Height="14" Foreground="Black" Icon="WindowClose" VerticalAlignment="Center" HorizontalAlignment="Center" />
 								</Button>
 
 							</StackPanel>

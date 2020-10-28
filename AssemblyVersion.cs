@@ -8,5 +8,5 @@ using System.Resources;
 
 [assembly: AssemblyTitle("PingLogger")]
 [assembly: AssemblyDescription("Advanced multi-threaded ping logging application")]
-[assembly: AssemblyVersion("2.1.0.22")]
+[assembly: AssemblyVersion("2.1.0.23")]
 [assembly: NeutralResourcesLanguage("en-US")]

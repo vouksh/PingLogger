@@ -9,7 +9,7 @@
 		WindowStartupLocation="CenterScreen" Style="{DynamicResource CustomDialogStyle}"
 		DataContext="{Binding RelativeSource={RelativeSource Self}}"
         Title="Add New Host" Height="150" Width="250" KeyUp="Window_KeyUp" WindowStyle="SingleBorderWindow">
-    <Grid>
+	<Grid>
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition Width="121" />
 			<ColumnDefinition Width="121" />
@@ -20,7 +20,7 @@
 			<RowDefinition Height="37"/>
 		</Grid.RowDefinitions>
 		<Label Content="Host Name or IP Address" Grid.Row="0" Grid.ColumnSpan="2" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" VerticalAlignment="Stretch" VerticalContentAlignment="Center" />
-		<TextBox Margin="5" FontSize="12" x:Name="hostNameBox" Grid.Row="1" Grid.ColumnSpan="2" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" VerticalAlignment="Stretch" VerticalContentAlignment="Center" Text="google.com" PreviewTextInput="hostNameBox_PreviewTextInput" />
+		<TextBox Margin="5" FontSize="12" x:Name="hostNameBox" Grid.Row="1" Grid.ColumnSpan="2" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" VerticalAlignment="Stretch" VerticalContentAlignment="Center" Text="google.com" PreviewTextInput="HostNameBox_PreviewTextInput" />
 		<Button x:Name="AddBtn" Grid.Column="0" Grid.Row="2" Content="Add Host" VerticalAlignment="Stretch" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" HorizontalAlignment="Stretch" Margin="5" Click="AddBtn_Click" />
 		<Button x:Name="CancelBtn" Grid.Column="1" Grid.Row="2" Content="Cancel" VerticalAlignment="Stretch" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" HorizontalAlignment="Stretch" Margin="5" Click="CancelBtn_Click" />
 	</Grid>
