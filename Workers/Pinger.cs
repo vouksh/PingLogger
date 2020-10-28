@@ -152,13 +152,7 @@ namespace PingLogger.Workers
 			{
 				Name = $"{Host.HostName}-MainThread"
 			};
-			Logger.Information("Starting ping logging for host {0} ({1})", Host.HostName, Host.IP);
-			Logger.Information("Using the following options:");
-			Logger.Information("Threshold: {0}ms", Host.Threshold);
-			Logger.Information("Timeout: {0}ms", Host.Timeout);
-			Logger.Information("Interval: {0}ms", Host.Interval);
-			Logger.Information("Packet Size: {0} bytes", Host.PacketSize);
-
+			Logger.Information($"Starting ping logging for host with settings:\n{Host}");
 			Logger.Debug("RunThread.Start()");
 			RunThread.Start();
 		}
