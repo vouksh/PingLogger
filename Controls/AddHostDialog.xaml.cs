@@ -30,7 +30,7 @@ namespace PingLogger.Controls
 			{
 				Icon = FontAwesomeIcon.Spinner,
 				Spin = true,
-				SpinDuration = 10,
+				SpinDuration = 2,
 				Foreground = Util.IsLightTheme() ? Brushes.Black : Brushes.White,
 				Width = 14,
 				Height = 14,
@@ -64,17 +64,22 @@ namespace PingLogger.Controls
 				{
 					buttonDock.Children.Clear();
 					buttonDock.Children.Add(spinnerImage);
-					buttonDock.Children.Add(new TextBlock { Text = "Looking up...", Padding = new Thickness(5, 0, 0, 0) });
+					buttonDock.Children.Add(new TextBlock { Text = "Looking up host IP...", Padding = new Thickness(5, 0, 0, 0) });
 					AddBtn.ToolTip = "Please wait..";
 				}
+				string ipAddr = "0.0.0.0";
 				try
 				{
-					foreach (var ip in await Dns.GetHostAddressesAsync(hostNameBox.Text))
+					if (hostNameBox.Text != string.Empty)
 					{
-						if (ip.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
+						foreach (var ip in await Dns.GetHostAddressesAsync(hostNameBox.Text))
 						{
-							IsValidHost = true;
-							break;
+							if (ip.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
+							{
+								IsValidHost = true;
+								ipAddr = ip.ToString();
+								break;
+							}
 						}
 					}
 				}
@@ -84,6 +89,7 @@ namespace PingLogger.Controls
 				}
 				syncCtx.Post(new SendOrPostCallback(o =>
 				{
+					ipBox.Text = ipAddr;
 					AddBtn.IsEnabled = (bool)o;
 				}), IsValidHost);
 			}
@@ -99,7 +105,7 @@ namespace PingLogger.Controls
 					Height = 14,
 					ToolTip = "You already have a host with this address."
 				});
-				buttonDock.Children.Add(new TextBlock { Text = "Duplicate", Padding = new Thickness(5, 0, 0, 0) });
+				buttonDock.Children.Add(new TextBlock { Text = "Duplicate Host", Padding = new Thickness(5, 0, 0, 0) });
 				AddBtn.IsEnabled = false;
 				AddBtn.ToolTip = "You already have a host with this address.";
 			}
@@ -115,7 +121,7 @@ namespace PingLogger.Controls
 					Height = 14,
 					ToolTip = "Add Host."
 				});
-				buttonDock.Children.Add(new TextBlock { Text = "Add Host", Padding = new Thickness(5, 0, 0, 0) });
+				buttonDock.Children.Add(new TextBlock { Text = "Add New Host", Padding = new Thickness(5, 0, 0, 0) });
 				AddBtn.ToolTip = "Add Host";
 			}
 		}
@@ -161,6 +167,14 @@ namespace PingLogger.Controls
 			Timer.Start();
 			e.Handled = false;
 			AddBtn.IsEnabled = false;
+		}
+
+		private void hostNameBox_TextChanged(object sender, TextChangedEventArgs e)
+		{
+			IsValidHost = false;
+			Timer?.Stop();
+			Timer?.Start();
+			e.Handled = false;
 		}
 	}
 }
