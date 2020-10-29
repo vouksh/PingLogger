@@ -27,8 +27,17 @@
 			<RowDefinition Height="40" />
 			<RowDefinition Height="40" />
 		</Grid.RowDefinitions>
-		<Label Grid.Row="0" Grid.Column="4" Content="Ping Responses" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" />
-		<TextBlock Grid.Row="1" Grid.Column="4" Padding="5,0,5,0" Grid.RowSpan="9" x:Name="PingStatusBox" HorizontalAlignment="Stretch" Margin="0" TextWrapping="NoWrap" VerticalAlignment="Stretch" IsEnabled="False" ScrollViewer.CanContentScroll="True"/>
+		<TabControl Grid.Row="0" Grid.Column="4" Grid.RowSpan="10">
+			<TabItem Header="Ping Responses">
+				<TextBlock Padding="5,0,5,0" x:Name="PingStatusBox" HorizontalAlignment="Stretch" Margin="0" TextWrapping="NoWrap" VerticalAlignment="Stretch" IsEnabled="False" ScrollViewer.CanContentScroll="True"/>
+			</TabItem>
+			<TabItem Header="Ping Graph">
+				<local:GraphControl x:Name="pingGraphControl" />
+			</TabItem>
+			<TabItem Header="Status Graph">
+				<local:GraphControl x:Name="statusGraphControl" />
+			</TabItem>
+		</TabControl>
 		<Button Grid.Column="3" Grid.Row="4" Margin="4,7,4,7" x:Name="pingWindowToggle" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" VerticalAlignment="Stretch" VerticalContentAlignment="Center" Content="&lt;&lt;" Click="PingWindowToggle_Click" />
 		<Label Grid.Row="1" Grid.Column="0" x:Name="label" Content="Host Name:" HorizontalAlignment="Stretch" Margin="0,0,0,0" VerticalAlignment="Stretch" HorizontalContentAlignment="Right" VerticalContentAlignment="Center"/>
 		<Label Grid.Row="2" Grid.Column="0" x:Name="label_Copy" Content="IP Address:" HorizontalAlignment="Stretch" Margin="0,0,0,0" VerticalAlignment="Stretch"  HorizontalContentAlignment="Right" VerticalContentAlignment="Center"/>

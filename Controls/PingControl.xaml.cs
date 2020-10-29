@@ -46,6 +46,7 @@ namespace PingLogger.Controls
 			PingHost = new Host();
 			syncCtx = SynchronizationContext.Current;
 			Timer.Start();
+			statusGraphControl.StylePlot(true);
 		}
 
 		public PingControl(Host _host, bool RunTimeAdded = false)
@@ -62,6 +63,7 @@ namespace PingLogger.Controls
 			Timer.Start();
 			if (!RunTimeAdded)
 				AutoStart();
+			statusGraphControl.StylePlot(true);
 		}
 		void AutoStart()
 		{
@@ -94,6 +96,11 @@ namespace PingLogger.Controls
 		{
 			if (Pinger != null && Pinger.Running)
 			{
+				if (Config.WindowExpanded)
+				{
+					pingGraphControl.UpdatePlot();
+					statusGraphControl.UpdatePieChart(PingHost.Threshold);
+				}
 				StartBtn.Visibility = Visibility.Hidden;
 				StopBtn.Visibility = Visibility.Visible;
 				doTraceRteBtn.Visibility = Visibility.Hidden;
@@ -103,6 +110,11 @@ namespace PingLogger.Controls
 					TotalPings++;
 					// Logger.Info($"{PingHost.HostName} TotalPings: {TotalPings}");
 					var success = Pinger.Replies.TryTake(out Reply reply);
+					if (Config.WindowExpanded)
+					{
+						pingGraphControl.PingTimes.Add(reply.DateTime, reply.RoundTrip);
+						statusGraphControl.PingTimes.Add(reply.DateTime, reply.RoundTrip);
+					}
 					if (success)
 					{
 						Logger.Debug("Ping Success");
@@ -207,6 +219,8 @@ namespace PingLogger.Controls
 		{
 			try
 			{
+				pingGraphControl.PingTimes.Clear();
+				statusGraphControl.PingTimes.Clear();
 				Logger.Debug($"StartBtn_Click");
 				StopBtn.IsEnabled = true;
 				StartBtn.IsEnabled = false;

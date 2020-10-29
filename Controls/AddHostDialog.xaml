@@ -23,7 +23,7 @@
 			<RowDefinition Height="35"/>
 		</Grid.RowDefinitions>
 		<Label Content="Host Name or IP Address" FontSize="13" Grid.Row="0" Grid.ColumnSpan="4" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" VerticalAlignment="Stretch" VerticalContentAlignment="Center" />
-		<TextBox Margin="4" FontSize="13" x:Name="hostNameBox" Grid.Row="1" Grid.ColumnSpan="4" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" VerticalAlignment="Stretch" VerticalContentAlignment="Center" Text="google.com" PreviewTextInput="HostNameBox_PreviewTextInput" TextChanged="hostNameBox_TextChanged" />
+		<TextBox Margin="4" FontSize="13" x:Name="hostNameBox" Grid.Row="1" Grid.ColumnSpan="4" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" VerticalAlignment="Stretch" VerticalContentAlignment="Center" Text="google.com" PreviewTextInput="HostNameBox_PreviewTextInput" TextChanged="HostNameBox_TextChanged" />
 		<Label Content="Resolved IP:" FontSize="12" HorizontalAlignment="Stretch" HorizontalContentAlignment="Right" Grid.Row="2" Grid.Column="0" VerticalAlignment="Stretch" VerticalContentAlignment="Center" />
 		<TextBox Margin="2" FontSize="14" IsEnabled="False" x:Name="ipBox" Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="3" HorizontalAlignment="Stretch" VerticalAlignment="Center" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Text="0.0.0.0" />
 		<Button x:Name="AddBtn" Grid.Column="0" Grid.Row="3" Grid.ColumnSpan="3" Content="Add Host" VerticalAlignment="Stretch" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" HorizontalAlignment="Stretch" Margin="3" Click="AddBtn_Click" />

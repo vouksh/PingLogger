@@ -169,7 +169,7 @@ namespace PingLogger.Controls
 			AddBtn.IsEnabled = false;
 		}
 
-		private void hostNameBox_TextChanged(object sender, TextChangedEventArgs e)
+		private void HostNameBox_TextChanged(object sender, TextChangedEventArgs e)
 		{
 			IsValidHost = false;
 			Timer?.Stop();
