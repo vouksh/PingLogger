@@ -24,7 +24,6 @@ namespace PingLogger.Controls
 		public GraphControl()
 		{
 			InitializeComponent();
-			StylePlot();
 		}
 
 		public void UpdatePieChart(int warningValue)
@@ -72,8 +71,6 @@ namespace PingLogger.Controls
 				pingPlot.plt.Grid(false);
 				pingPlot.plt.Frame(false);
 				pingPlot.plt.Ticks(false, false);
-				pingPlot.plt.XLabel(null);
-				pingPlot.plt.YLabel(null);
 			}
 			pingPlot.plt.Legend();
 		}
@@ -104,7 +101,7 @@ namespace PingLogger.Controls
 					yIndex++;
 				}
 
-				pingPlot.plt.Ticks(dateTimeX: true, displayTicksX: true, dateTimeFormatStringX: "hh:MM:ss");
+				pingPlot.plt.Ticks(dateTimeX: true, displayTicksX: true, dateTimeFormatStringX: "hh:mm:ss");
 				pingPlot.plt.PlotScatter(xAxis, yAxis, lineWidth: 1.5);
 				pingPlot.Render();
 			}

@@ -47,6 +47,7 @@ namespace PingLogger.Controls
 			syncCtx = SynchronizationContext.Current;
 			Timer.Start();
 			statusGraphControl.StylePlot(true);
+			pingGraphControl.StylePlot(false);
 		}
 
 		public PingControl(Host _host, bool RunTimeAdded = false)
@@ -64,6 +65,7 @@ namespace PingLogger.Controls
 			if (!RunTimeAdded)
 				AutoStart();
 			statusGraphControl.StylePlot(true);
+			pingGraphControl.StylePlot(false);
 		}
 		void AutoStart()
 		{
