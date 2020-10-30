@@ -16,6 +16,7 @@ using System.Windows.Input;
 using System.Windows.Threading;
 using FontAwesome.WPF;
 using System.Windows.Media;
+using PingLogger.Extensions;
 
 namespace PingLogger.Controls
 {
@@ -27,7 +28,7 @@ namespace PingLogger.Controls
 		readonly DispatcherTimer Timer;
 		public Host PingHost;
 		private Pinger Pinger;
-		private readonly List<long> PingTimes = new List<long>();
+		private readonly FixedList<long> PingTimes = new FixedList<long>(22);
 		private int Timeouts = 0;
 		private int Warnings = 0;
 		private readonly SynchronizationContext syncCtx;
@@ -46,6 +47,8 @@ namespace PingLogger.Controls
 			PingHost = new Host();
 			syncCtx = SynchronizationContext.Current;
 			Timer.Start();
+			statusGraphControl.StylePlot(true);
+			pingGraphControl.StylePlot(false);
 		}
 
 		public PingControl(Host _host, bool RunTimeAdded = false)
@@ -62,6 +65,8 @@ namespace PingLogger.Controls
 			Timer.Start();
 			if (!RunTimeAdded)
 				AutoStart();
+			statusGraphControl.StylePlot(true);
+			pingGraphControl.StylePlot(false);
 		}
 		void AutoStart()
 		{
@@ -94,15 +99,29 @@ namespace PingLogger.Controls
 		{
 			if (Pinger != null && Pinger.Running)
 			{
+				if (Config.WindowExpanded)
+				{
+					switch (rightTabs.SelectedIndex)
+					{
+						case 1:
+							pingGraphControl.UpdatePlot();
+							break;
+						case 2:
+							statusGraphControl.UpdatePieChart(PingHost.Threshold, PingHost.Timeout);
+							break;
+					}
+				}
 				StartBtn.Visibility = Visibility.Hidden;
 				StopBtn.Visibility = Visibility.Visible;
 				doTraceRteBtn.Visibility = Visibility.Hidden;
 				StringBuilder sb = new StringBuilder();
 				for (int i = 0; i < Pinger.Replies.Count - 1; i++)
 				{
-					TotalPings++;
+					TotalPings++; 
 					// Logger.Info($"{PingHost.HostName} TotalPings: {TotalPings}");
 					var success = Pinger.Replies.TryTake(out Reply reply);
+					pingGraphControl.AddData(reply.DateTime, reply.RoundTrip);
+					statusGraphControl.AddData(reply.DateTime, reply.RoundTrip);
 					if (success)
 					{
 						Logger.Debug("Ping Success");
@@ -143,9 +162,6 @@ namespace PingLogger.Controls
 
 				if (PingTimes.Count > 0)
 				{
-					if (PingTimes.Count > 22)
-						PingTimes.RemoveAt(0);
-
 					avgPingLbl.Content = Math.Ceiling(PingTimes.Average()).ToString() + "ms";
 				}
 				timeoutLbl.Content = Timeouts.ToString();
@@ -207,6 +223,8 @@ namespace PingLogger.Controls
 		{
 			try
 			{
+				pingGraphControl.PingTimes.Clear();
+				statusGraphControl.PingTimes.Clear();
 				Logger.Debug($"StartBtn_Click");
 				StopBtn.IsEnabled = true;
 				StartBtn.IsEnabled = false;
@@ -496,7 +514,7 @@ namespace PingLogger.Controls
 			// It just gets hit from the MainWindow calling it.
 			if (Config.WindowExpanded)
 			{
-				PingStatusBox.Visibility = Visibility.Visible;
+				rightTabs.Visibility = Visibility.Visible;
 				pingWindowToggle.Content = new ImageAwesome
 				{
 					Icon = FontAwesomeIcon.AngleDoubleLeft,
@@ -504,10 +522,11 @@ namespace PingLogger.Controls
 					Width = 14,
 					Height = 14
 				};
+
 			}
 			else
 			{
-				PingStatusBox.Visibility = Visibility.Collapsed;
+				rightTabs.Visibility = Visibility.Collapsed;
 				pingWindowToggle.Content = new ImageAwesome
 				{
 					Icon = FontAwesomeIcon.AngleDoubleRight,

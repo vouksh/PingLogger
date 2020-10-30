@@ -91,6 +91,7 @@
     <PackageReference Include="FontAwesome.WPF" Version="4.7.0.9">
       <NoWarn>NU1701</NoWarn>
     </PackageReference>
+    <PackageReference Include="ScottPlot.WPF" Version="4.0.42" />
     <PackageReference Include="Serilog" Version="2.10.0" />
     <PackageReference Include="Serilog.Sinks.File" Version="4.1.0" />
     <PackageReference Include="System.Net.NetworkInformation" Version="4.3.0" />
