@@ -22,8 +22,8 @@ namespace PingLogger.Controls
 	public partial class GraphControl : UserControl
 	{
 		public FixedDictionary<DateTime, long> PingTimes { get; set; } = new FixedDictionary<DateTime, long>(100);
-		private FixedList<double> xAxis = new FixedList<double>(60);
-		private FixedList<double> yAxis = new FixedList<double>(60);
+		private readonly FixedList<double> xAxis = new FixedList<double>(60);
+		private readonly FixedList<double> yAxis = new FixedList<double>(60);
 		public GraphControl()
 		{
 			InitializeComponent();
@@ -40,10 +40,21 @@ namespace PingLogger.Controls
 				var successCount = (double)PingTimes.Values.Where(v => v > 0 && v < warningValue).Count();
 				var timeoutCount = (double)PingTimes.Values.Where(v => v == 0 || v >= timeoutValue).Count();
 				var warningCount = (double)PingTimes.Values.Where(v => v >= warningValue && v < timeoutValue).Count();
-				double[] values = { successCount, timeoutCount, warningCount };
+				List<double> values = new List<double>
+				{
+					successCount
+				};
+				if (timeoutCount > 0)
+				{
+					values.Add(timeoutCount);
+				}
+				if(warningCount > 0)
+				{
+					values.Add(warningCount);
+				}
 				string[] labels = { "Success", "Timeout", "Warning" };
 				System.Drawing.Color[] colors = { System.Drawing.Color.Green, System.Drawing.Color.Red, System.Drawing.Color.Orange };
-				pingPlot.plt.PlotPie(values, labels, colors, showLabels: false, showPercentages: true);
+				pingPlot.plt.PlotPie(values.ToArray(), labels, colors, showLabels: false, showPercentages: true);
 				pingPlot.Render();
 			}
 		}

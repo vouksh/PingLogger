@@ -149,6 +149,7 @@ namespace PingLogger.Controls
 				};
 				Logger.Info($"Theme changed to {Config.Theme}.");
 				Util.SetTheme();
+				(this.Owner as MainWindow).UpdateGraphStyles();
 			}
 		}
 		bool doingInitialLoad = false;

@@ -71,6 +71,15 @@ namespace PingLogger
 			}
 		}
 
+		public void UpdateGraphStyles()
+		{
+			foreach (var item in tabControl.Items.Cast<TabItem>())
+			{
+				(item.Content as PingControl).statusGraphControl.StylePlot(true);
+				(item.Content as PingControl).pingGraphControl.StylePlot(false);
+			}
+		}
+
 		private void OpenOptionsDialog() => new SettingsDialog(this).ShowDialog();
 
 		private void TabDelBtn_Click(object sender)
