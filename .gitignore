@@ -7,6 +7,7 @@
 /obj
 /Properties/PublishProfiles
 /PingLogger.csproj.user
-/Installer/
+/Installer/Release
+/Installer/Debug
 /.vscode
 /packages
