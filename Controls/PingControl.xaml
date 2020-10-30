@@ -27,7 +27,7 @@
 			<RowDefinition Height="40" />
 			<RowDefinition Height="40" />
 		</Grid.RowDefinitions>
-		<TabControl Grid.Row="0" Grid.Column="4" Grid.RowSpan="10">
+		<TabControl x:Name="rightTabs" Grid.Row="0" Grid.Column="4" Grid.RowSpan="10">
 			<TabItem Header="Ping Responses">
 				<TextBlock Padding="5,0,5,0" x:Name="PingStatusBox" HorizontalAlignment="Stretch" Margin="0" TextWrapping="NoWrap" VerticalAlignment="Stretch" IsEnabled="False" ScrollViewer.CanContentScroll="True"/>
 			</TabItem>

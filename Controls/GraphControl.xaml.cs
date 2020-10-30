@@ -12,6 +12,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using System.Drawing;
 using ScottPlot;
+using PingLogger.Extensions;
 
 namespace PingLogger.Controls
 {
@@ -20,24 +21,25 @@ namespace PingLogger.Controls
 	/// </summary>
 	public partial class GraphControl : UserControl
 	{
-		public Dictionary<DateTime, long> PingTimes { get; set; } = new Dictionary<DateTime, long>();
+		public FixedDictionary<DateTime, long> PingTimes { get; set; } = new FixedDictionary<DateTime, long>(100);
+		private FixedList<double> xAxis = new FixedList<double>(60);
+		private FixedList<double> yAxis = new FixedList<double>(60);
 		public GraphControl()
 		{
 			InitializeComponent();
+			PingTimes.EnsureCapacity(100);
 		}
 
-		public void UpdatePieChart(int warningValue)
+		public void UpdatePieChart(int warningValue, int timeoutValue)
 		{
-			if (PingTimes.Count > 100)
-			{
-				PingTimes = PingTimes.OrderByDescending(x => x.Key).Take(100).ToDictionary(x => x.Key, y => y.Value);
-			}
+			xAxis.Clear();
+			yAxis.Clear();
 			if (PingTimes.Count > 0)
 			{
 				pingPlot.plt.Clear();
 				var successCount = (double)PingTimes.Values.Where(v => v > 0 && v < warningValue).Count();
-				var timeoutCount = (double)PingTimes.Values.Where(v => v == 0).Count();
-				var warningCount = (double)PingTimes.Values.Where(v => v > warningValue).Count();
+				var timeoutCount = (double)PingTimes.Values.Where(v => v == 0 || v >= timeoutValue).Count();
+				var warningCount = (double)PingTimes.Values.Where(v => v >= warningValue && v < timeoutValue).Count();
 				double[] values = { successCount, timeoutCount, warningCount };
 				string[] labels = { "Success", "Timeout", "Warning" };
 				System.Drawing.Color[] colors = { System.Drawing.Color.Green, System.Drawing.Color.Red, System.Drawing.Color.Orange };
@@ -62,6 +64,10 @@ namespace PingLogger.Controls
 			{
 				pingPlot.plt.XLabel("Time");
 				pingPlot.plt.YLabel("Ping");
+				pingPlot.plt.Layout(xScaleHeight: 5);
+				pingPlot.plt.Ticks(dateTimeX: true, dateTimeFormatStringX: "hh:mm:ss", xTickRotation: 45);
+				//pingPlot.plt.Grid(xSpacing: 1);
+				//pingPlot.plt.PlotScatter(xAxis.ToArray(), yAxis.ToArray(), lineWidth: 1.5);
 			} else
 			{
 				double[] values = { 0, 0, 0 };
@@ -75,34 +81,27 @@ namespace PingLogger.Controls
 			pingPlot.plt.Legend();
 		}
 
+		public void AddData(DateTime time, long ping)
+		{
+			PingTimes.Add(time, ping);
+			xAxis.Add(time.ToOADate());
+			if (ping > 0)
+			{
+				yAxis.Add(ping);
+			} else
+			{
+				yAxis.Add(999);
+			}
+			//pingPlot.Render();
+		}
+
 		public void UpdatePlot()
 		{
-			if (PingTimes.Count > 100)
-			{
-				PingTimes = PingTimes.OrderByDescending(x => x.Key).Take(100).ToDictionary(x => x.Key, y => y.Value);
-			}
-			if (PingTimes.Count > 0)
+			PingTimes.Clear();
+			if (xAxis.Count > 0)
 			{
 				pingPlot.plt.Clear();
-				var pingTimes = PingTimes.OrderByDescending(x => x.Key).Take(20).ToDictionary(x => x.Key, y => y.Value);
-				int pingTimeCount = pingTimes.Keys.Count > 20 ? 20 : pingTimes.Keys.Count;
-				double[] xAxis = new double[pingTimeCount];
-				int xIndex = 0;
-				foreach (var time in pingTimes.Keys.Take(20))
-				{
-					xAxis[xIndex] = time.ToOADate();
-					xIndex++;
-				}
-				double[] yAxis = new double[pingTimeCount];
-				int yIndex = 0;
-				foreach (var ping in pingTimes.Values)
-				{
-					yAxis[yIndex] = ping;
-					yIndex++;
-				}
-
-				pingPlot.plt.Ticks(dateTimeX: true, displayTicksX: true, dateTimeFormatStringX: "hh:mm:ss");
-				pingPlot.plt.PlotScatter(xAxis, yAxis, lineWidth: 1.5);
+				pingPlot.plt.PlotScatter(xAxis.ToArray(), yAxis.ToArray(), lineWidth: 1.5);
 				pingPlot.Render();
 			}
 		}

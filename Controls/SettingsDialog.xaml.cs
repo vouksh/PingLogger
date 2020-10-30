@@ -14,8 +14,9 @@ namespace PingLogger.Controls
 	public partial class SettingsDialog : Window
 	{
 		public ICommand CloseWindowCommand { get; set; }
-		public SettingsDialog()
+		public SettingsDialog(MainWindow ownerWindow)
 		{
+			this.Owner = ownerWindow;
 			InitializeComponent();
 			CloseWindowCommand = new Command(Close);
 		}
@@ -101,17 +102,9 @@ namespace PingLogger.Controls
 			}
 		}
 
-		private void StartAllLoggersBtn_Click(object sender, RoutedEventArgs e)
-		{
-			var parentWindow = Window.GetWindow(this) as MainWindow;
-			parentWindow.StartAllLoggers();
-		}
+		private void StartAllLoggersBtn_Click(object sender, RoutedEventArgs e) => (this.Owner as MainWindow).StartAllLoggers();
 
-		private void StopAllLoggersBtn_Click(object sender, RoutedEventArgs e)
-		{
-			var parentWindow = Window.GetWindow(this) as MainWindow;
-			parentWindow.StopAllLoggers();
-		}
+		private void StopAllLoggersBtn_Click(object sender, RoutedEventArgs e) => (this.Owner as MainWindow).StopAllLoggers();
 
 		private void DaysToKeep_PreviewTextInput(object sender, TextCompositionEventArgs e)
 		{

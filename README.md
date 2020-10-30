@@ -93,3 +93,4 @@ Application is fully self-contained and does not require .NET Core 3.1 to be ins
 * FontAwesome https://fontawesome.com/
 * FontAwesome.WPF https://github.com/charri/Font-Awesome-WPF
 * theunrepentantgeek https://github.com/theunrepentantgeek/Markdown.XAML
+* ScottPlot https://github.com/swharden/ScottPlot

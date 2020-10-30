@@ -71,7 +71,7 @@ namespace PingLogger
 			}
 		}
 
-		private void OpenOptionsDialog() => new SettingsDialog().ShowDialog();
+		private void OpenOptionsDialog() => new SettingsDialog(this).ShowDialog();
 
 		private void TabDelBtn_Click(object sender)
 		{
