@@ -115,9 +115,8 @@ namespace PingLogger.Controls
 		{
 			if (!doingInitialLoad)
 			{
-				try
+				if (int.TryParse(daysToKeep.Text, out int input))
 				{
-					var input = Convert.ToInt32(daysToKeep.Text);
 					if (input > 0)
 					{
 						Config.DaysToKeepLogs = input;
@@ -128,10 +127,10 @@ namespace PingLogger.Controls
 						daysToKeep.Text = "1";
 						Config.DaysToKeepLogs = 1;
 					}
-				}
-				catch (FormatException)
+				} else
 				{
 					MessageBox.Show("Input must be a number.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+					daysToKeep.Text = Config.DaysToKeepLogs.ToString();
 				}
 			}
 		}
@@ -209,7 +208,7 @@ namespace PingLogger.Controls
 
 		private void AutoUpdateToggle_Checked(object sender, RoutedEventArgs e)
 		{
-			if(!doingInitialLoad)
+			if (!doingInitialLoad)
 			{
 				Logger.Info("AutoUpdateToggle checked");
 				Config.EnableAutoUpdate = true;

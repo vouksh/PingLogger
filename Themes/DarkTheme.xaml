@@ -1,8 +1,8 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:local="clr-namespace:PingLogger"
+					xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+					xmlns:local="clr-namespace:PingLogger"
 					xmlns:fa="http://schemas.fontawesome.io/icons/"
-                    xmlns:Themes="clr-namespace:Microsoft.Windows.Themes;assembly=PresentationFramework.Aero">
+					xmlns:Themes="clr-namespace:Microsoft.Windows.Themes;assembly=PresentationFramework.Aero2">
 	<SolidColorBrush x:Key="BackgroundColour"  Color="#FF171717" />
 	<SolidColorBrush x:Key="WindowBorderColour"  Color="#FF1E1E1E" />
 	<SolidColorBrush x:Key="WindowTitleColour"  Color="#FF1B1B1B" />
@@ -69,9 +69,9 @@
 							<RowDefinition Height="6"/>
 						</Grid.RowDefinitions>
 						<Border BorderBrush="Transparent" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" 
-                                        Grid.ColumnSpan="4" Grid.Column="0" CornerRadius="4" Grid.Row="1" Grid.RowSpan="3"/>
+										Grid.ColumnSpan="4" Grid.Column="0" CornerRadius="4" Grid.Row="1" Grid.RowSpan="3"/>
 						<Border BorderBrush="{StaticResource ControlDefaultBorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Grid.ColumnSpan="4" 
-                                        CornerRadius="4" Grid.Row="1" Grid.RowSpan="3">
+										CornerRadius="4" Grid.Row="1" Grid.RowSpan="3">
 							<Border.OpacityMask>
 								<MultiBinding ConverterParameter="7" Converter="{StaticResource BorderGapMaskConverter}">
 									<Binding ElementName="Header" Path="ActualWidth"/>
@@ -86,10 +86,10 @@
 						<Rectangle Fill="{TemplateBinding BorderBrush}" Grid.ColumnSpan="4" Grid.RowSpan="2"/>
 						<Border x:Name="Header" Grid.Column="1" Padding="3,1,3,0" Grid.Row="0" Grid.RowSpan="2">
 							<ContentPresenter VerticalAlignment="Center" ContentSource="Header" RecognizesAccessKey="True" 
-                                              SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+											  SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
 						</Border>
 						<ContentPresenter Grid.ColumnSpan="2" Grid.Column="1" Margin="0,3,0,0" Grid.Row="2"
-                                          SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+										  SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
 					</Grid>
 				</ControlTemplate>
 			</Setter.Value>
@@ -137,11 +137,11 @@
 			<Setter.Value>
 				<ControlTemplate TargetType="{x:Type ListBox}">
 					<Border x:Name="Bd" 
-                                BorderBrush="{TemplateBinding BorderBrush}" 
-                                BorderThickness="{TemplateBinding BorderThickness}" 
-                                Background="{TemplateBinding Background}" 
-                                Padding="1" 
-                                SnapsToDevicePixels="True">
+								BorderBrush="{TemplateBinding BorderBrush}" 
+								BorderThickness="{TemplateBinding BorderThickness}" 
+								Background="{TemplateBinding Background}" 
+								Padding="1" 
+								SnapsToDevicePixels="True">
 						<ScrollViewer Focusable="false" Padding="{TemplateBinding Padding}" Template="{DynamicResource MainScrollViewerTemplate}">
 							<ItemsPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
 						</ScrollViewer>
@@ -245,10 +245,10 @@
 	<ControlTemplate x:Key="SliderThumbHorizontalBottom" TargetType="{x:Type Thumb}">
 		<Grid HorizontalAlignment="Center" UseLayoutRounding="True" VerticalAlignment="Center">
 			<Path x:Name="grip" Data="M 0,12 C0,12 5.5,18 5.5,18 5.5,18 11,12 11,12 11,12 11,0 11,0 11,0 0,0 0,0 0,0 0,12 0,12 z" 
-                          Fill="{StaticResource SliderThumb.Static.Background}" 
-                          Stretch="Fill" SnapsToDevicePixels="True" 
-                          Stroke="{StaticResource SliderThumb.Static.Border}" 
-                          StrokeThickness="1" UseLayoutRounding="True" VerticalAlignment="Center"/>
+						  Fill="{StaticResource SliderThumb.Static.Background}" 
+						  Stretch="Fill" SnapsToDevicePixels="True" 
+						  Stroke="{StaticResource SliderThumb.Static.Border}" 
+						  StrokeThickness="1" UseLayoutRounding="True" VerticalAlignment="Center"/>
 		</Grid>
 		<ControlTemplate.Triggers>
 			<Trigger Property="IsMouseOver" Value="true">
@@ -285,9 +285,9 @@
 	<ControlTemplate x:Key="SliderThumbHorizontalDefault" TargetType="{x:Type Thumb}">
 		<Grid HorizontalAlignment="Center" UseLayoutRounding="True" VerticalAlignment="Center">
 			<Path x:Name="grip"
-                  Fill="{DynamicResource ControlBrightDefaultBackground}" Stretch="Fill" SnapsToDevicePixels="True" 
-                  Stroke="{DynamicResource ControlBrightDefaultBorderBrush}" StrokeThickness="1" UseLayoutRounding="True" 
-                  VerticalAlignment="Center" Margin="0,-1" Height="21">
+				  Fill="{DynamicResource ControlBrightDefaultBackground}" Stretch="Fill" SnapsToDevicePixels="True" 
+				  Stroke="{DynamicResource ControlBrightDefaultBorderBrush}" StrokeThickness="1" UseLayoutRounding="True" 
+				  VerticalAlignment="Center" Margin="0,-1" Height="21">
 				<Path.Data>
 					<CombinedGeometry GeometryCombineMode="Union">
 						<CombinedGeometry.Geometry1>
@@ -335,11 +335,11 @@
 					</Track.IncreaseRepeatButton>
 					<Track.Thumb>
 						<Thumb x:Name="Thumb" 
-                                       Focusable="False" 
-                                       Height="Auto" 
-                                       OverridesDefaultStyle="True" 
-                                       Template="{StaticResource SliderThumbHorizontalDefault}" 
-                                       Width="12"/>
+									   Focusable="False" 
+									   Height="Auto" 
+									   OverridesDefaultStyle="True" 
+									   Template="{StaticResource SliderThumbHorizontalDefault}" 
+									   Width="12"/>
 					</Track.Thumb>
 				</Track>
 			</Grid>
@@ -517,24 +517,24 @@
 							<ColumnDefinition/>
 						</Grid.ColumnDefinitions>
 						<Border x:Name="checkBoxBorder" 
-                                        BorderBrush="{TemplateBinding BorderBrush}" 
-                                        BorderThickness="{TemplateBinding BorderThickness}" 
-                                        Background="{TemplateBinding Background}" 
-                                        HorizontalAlignment="Center" 
-                                        VerticalAlignment="Center" Height="20" Width="20" Margin="0">
+										BorderBrush="{TemplateBinding BorderBrush}" 
+										BorderThickness="{TemplateBinding BorderThickness}" 
+										Background="{TemplateBinding Background}" 
+										HorizontalAlignment="Center" 
+										VerticalAlignment="Center" Height="20" Width="20" Margin="0">
 							<Grid x:Name="markGrid">
 								<Path x:Name="optionMark" 
-                                              Data="F1 M 9.97498,1.22334L 4.6983,9.09834L 4.52164,9.09834L 0,5.19331L 1.27664,3.52165L 4.255,6.08833L 8.33331,1.52588e-005L 9.97498,1.22334 Z " 
-                                              Fill="{StaticResource ControlGlythColour}" Margin="1" Opacity="0" Stretch="None"
-                                              VerticalAlignment="Center" HorizontalAlignment="Center"/>
+											  Data="F1 M 9.97498,1.22334L 4.6983,9.09834L 4.52164,9.09834L 0,5.19331L 1.27664,3.52165L 4.255,6.08833L 8.33331,1.52588e-005L 9.97498,1.22334 Z " 
+											  Fill="{StaticResource ControlGlythColour}" Margin="1" Opacity="0" Stretch="None"
+											  VerticalAlignment="Center" HorizontalAlignment="Center"/>
 								<Rectangle x:Name="indeterminateMark" Fill="{StaticResource ControlGlythColour}" Margin="0" Opacity="0"/>
 							</Grid>
 						</Border>
 						<ContentPresenter x:Name="contentPresenter" 
-                                                  Grid.Column="1" Focusable="False" 
-                                                  HorizontalAlignment="Stretch"  RecognizesAccessKey="True" 
-                                                  SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" 
-                                                  VerticalAlignment="Center" Margin="3,3,0,2" Height="22"/>
+												  Grid.Column="1" Focusable="False" 
+												  HorizontalAlignment="Stretch"  RecognizesAccessKey="True" 
+												  SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" 
+												  VerticalAlignment="Center" Margin="3,3,0,2" Height="22"/>
 					</Grid>
 					<ControlTemplate.Triggers>
 						<Trigger Property="HasContent" Value="true">
@@ -587,22 +587,22 @@
 			<Setter.Value>
 				<ControlTemplate TargetType="{x:Type Button}">
 					<Border x:Name="border" 
-                                    BorderBrush="{TemplateBinding BorderBrush}" 
-                                    BorderThickness="{TemplateBinding BorderThickness}" 
-                                    Background="{TemplateBinding Background}" 
-                                    SnapsToDevicePixels="true"
-                                    HorizontalAlignment="Stretch" 
-                                    VerticalAlignment="Stretch">
+									BorderBrush="{TemplateBinding BorderBrush}" 
+									BorderThickness="{TemplateBinding BorderThickness}" 
+									Background="{TemplateBinding Background}" 
+									SnapsToDevicePixels="true"
+									HorizontalAlignment="Stretch" 
+									VerticalAlignment="Stretch">
 						<!-- <Border.BitmapEffect>
-                            <DropShadowBitmapEffect Color="Black" Direction="320" Softness="0.7" ShadowDepth="4" Opacity="0.5" />
-                        </Border.BitmapEffect>-->
+							<DropShadowBitmapEffect Color="Black" Direction="320" Softness="0.7" ShadowDepth="4" Opacity="0.5" />
+						</Border.BitmapEffect>-->
 						<ContentPresenter x:Name="contentPresenter" 
-                                                  Focusable="False" 
-                                                  Margin="{TemplateBinding Padding}" 
-                                                  RecognizesAccessKey="True" 
-                                                  SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" 
-                                                  VerticalAlignment="Center"
-                                                  HorizontalAlignment="Center"/>
+												  Focusable="False" 
+												  Margin="{TemplateBinding Padding}" 
+												  RecognizesAccessKey="True" 
+												  SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" 
+												  VerticalAlignment="Center"
+												  HorizontalAlignment="Center"/>
 					</Border>
 					<ControlTemplate.Triggers>
 						<Trigger Property="IsDefaulted" Value="true">
@@ -629,22 +629,22 @@
 
 	<ControlTemplate x:Key="CloseWindowButton" TargetType="{x:Type Button}">
 		<Border x:Name="border" 
-                                    BorderBrush="{TemplateBinding BorderBrush}" 
-                                    BorderThickness="{TemplateBinding BorderThickness}" 
-                                    Background="{TemplateBinding Background}" 
-                                    SnapsToDevicePixels="true"
-                                    HorizontalAlignment="Stretch" 
-                                    VerticalAlignment="Stretch">
+									BorderBrush="{TemplateBinding BorderBrush}" 
+									BorderThickness="{TemplateBinding BorderThickness}" 
+									Background="{TemplateBinding Background}" 
+									SnapsToDevicePixels="true"
+									HorizontalAlignment="Stretch" 
+									VerticalAlignment="Stretch">
 			<!-- <Border.BitmapEffect>
-                            <DropShadowBitmapEffect Color="Black" Direction="320" Softness="0.7" ShadowDepth="4" Opacity="0.5" />
-                        </Border.BitmapEffect>-->
+							<DropShadowBitmapEffect Color="Black" Direction="320" Softness="0.7" ShadowDepth="4" Opacity="0.5" />
+						</Border.BitmapEffect>-->
 			<ContentPresenter x:Name="contentPresenter" 
-                                                  Focusable="False" 
-                                                  Margin="{TemplateBinding Padding}" 
-                                                  RecognizesAccessKey="True" 
-                                                  SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" 
-                                                  VerticalAlignment="Center"
-                                                  HorizontalAlignment="Center"/>
+												  Focusable="False" 
+												  Margin="{TemplateBinding Padding}" 
+												  RecognizesAccessKey="True" 
+												  SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" 
+												  VerticalAlignment="Center"
+												  HorizontalAlignment="Center"/>
 		</Border>
 		<ControlTemplate.Triggers>
 			<Trigger Property="IsDefaulted" Value="true">
@@ -668,23 +668,23 @@
 
 	<ControlTemplate x:Key="MinimizeWindowButton" TargetType="{x:Type Button}">
 		<Border x:Name="border" 
-                                    BorderBrush="{TemplateBinding BorderBrush}" 
-                                    BorderThickness="{TemplateBinding BorderThickness}" 
-                                    Background="{TemplateBinding Background}" 
-                                    SnapsToDevicePixels="true"
-                                    HorizontalAlignment="Stretch" 
-                                    VerticalAlignment="Stretch">
+									BorderBrush="{TemplateBinding BorderBrush}" 
+									BorderThickness="{TemplateBinding BorderThickness}" 
+									Background="{TemplateBinding Background}" 
+									SnapsToDevicePixels="true"
+									HorizontalAlignment="Stretch" 
+									VerticalAlignment="Stretch">
 			<!-- <Border.BitmapEffect>
-                            <DropShadowBitmapEffect Color="Black" Direction="320" Softness="0.7" ShadowDepth="4" Opacity="0.5" />
-                        </Border.BitmapEffect>-->
+							<DropShadowBitmapEffect Color="Black" Direction="320" Softness="0.7" ShadowDepth="4" Opacity="0.5" />
+						</Border.BitmapEffect>-->
 			<ContentPresenter x:Name="contentPresenter" 
 												  ToolTip="Click to minimize application to task bar"
-                                                  Focusable="False" 
-                                                  Margin="{TemplateBinding Padding}" 
-                                                  RecognizesAccessKey="True" 
-                                                  SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" 
-                                                  VerticalAlignment="Center"
-                                                  HorizontalAlignment="Center"/>
+												  Focusable="False" 
+												  Margin="{TemplateBinding Padding}" 
+												  RecognizesAccessKey="True" 
+												  SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" 
+												  VerticalAlignment="Center"
+												  HorizontalAlignment="Center"/>
 		</Border>
 		<ControlTemplate.Triggers>
 			<Trigger Property="IsDefaulted" Value="true">
@@ -708,23 +708,23 @@
 
 	<ControlTemplate x:Key="OptionsWindowButton" TargetType="{x:Type Button}">
 		<Border x:Name="border" 
-                                    BorderBrush="{TemplateBinding BorderBrush}" 
-                                    BorderThickness="{TemplateBinding BorderThickness}" 
-                                    Background="{TemplateBinding Background}" 
-                                    SnapsToDevicePixels="true"
-                                    HorizontalAlignment="Stretch" 
-                                    VerticalAlignment="Stretch">
+									BorderBrush="{TemplateBinding BorderBrush}" 
+									BorderThickness="{TemplateBinding BorderThickness}" 
+									Background="{TemplateBinding Background}" 
+									SnapsToDevicePixels="true"
+									HorizontalAlignment="Stretch" 
+									VerticalAlignment="Stretch">
 			<!-- <Border.BitmapEffect>
-                            <DropShadowBitmapEffect Color="Black" Direction="320" Softness="0.7" ShadowDepth="4" Opacity="0.5" />
-                        </Border.BitmapEffect>-->
+							<DropShadowBitmapEffect Color="Black" Direction="320" Softness="0.7" ShadowDepth="4" Opacity="0.5" />
+						</Border.BitmapEffect>-->
 			<ContentPresenter x:Name="contentPresenter" 
 												  ToolTip="Click to open options dialog"
-                                                  Focusable="False" 
-                                                  Margin="{TemplateBinding Padding}" 
-                                                  RecognizesAccessKey="True" 
-                                                  SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" 
-                                                  VerticalAlignment="Center"
-                                                  HorizontalAlignment="Center"/>
+												  Focusable="False" 
+												  Margin="{TemplateBinding Padding}" 
+												  RecognizesAccessKey="True" 
+												  SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" 
+												  VerticalAlignment="Center"
+												  HorizontalAlignment="Center"/>
 		</Border>
 		<ControlTemplate.Triggers>
 			<Trigger Property="IsDefaulted" Value="true">
@@ -771,7 +771,7 @@
 			<Setter.Value>
 				<ControlTemplate TargetType="{x:Type TextBox}">
 					<Border x:Name="border" BorderBrush="{TemplateBinding BorderBrush}" 
-                            BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" SnapsToDevicePixels="True">
+							BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" SnapsToDevicePixels="True">
 						<ScrollViewer Template="{DynamicResource MainScrollViewerTemplate}" x:Name="PART_ContentHost" Focusable="false" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden"/>
 					</Border>
 					<ControlTemplate.Triggers>
@@ -848,17 +848,17 @@
 							<RowDefinition x:Name="RowDefinition1" Height="*"/>
 						</Grid.RowDefinitions>
 						<DockPanel>
-								<TabPanel x:Name="headerPanel"
-                                      Grid.Column="0" IsItemsHost="true" Margin="0 2 0 0"
-                                      Grid.Row="0" KeyboardNavigation.TabIndex="1" 
-                                      Panel.ZIndex="1"/>
-								<Rectangle Fill="{TemplateBinding BorderBrush}" Height="1" VerticalAlignment="Bottom"/>
+							<TabPanel x:Name="headerPanel"
+									  Grid.Column="0" IsItemsHost="true" Margin="0 2 0 0"
+									  Grid.Row="0" KeyboardNavigation.TabIndex="1" 
+									  Panel.ZIndex="1"/>
+							<Rectangle Fill="{TemplateBinding BorderBrush}" Height="1" VerticalAlignment="Bottom"/>
 						</DockPanel>
 						<Border x:Name="contentPanel" 
-                                        BorderBrush="{TemplateBinding BorderBrush }" 
-                                        BorderThickness="{TemplateBinding BorderThickness}"
-                                        Background="{TemplateBinding Background}" 
-                                        Grid.Column="0" KeyboardNavigation.DirectionalNavigation="Contained" Grid.Row="1" KeyboardNavigation.TabIndex="2" KeyboardNavigation.TabNavigation="Local">
+										BorderBrush="{TemplateBinding BorderBrush }" 
+										BorderThickness="{TemplateBinding BorderThickness}"
+										Background="{TemplateBinding Background}" 
+										Grid.Column="0" KeyboardNavigation.DirectionalNavigation="Contained" Grid.Row="1" KeyboardNavigation.TabIndex="2" KeyboardNavigation.TabNavigation="Local">
 							<ContentPresenter x:Name="PART_SelectedContentHost" ContentSource="SelectedContent" Margin="{TemplateBinding Padding}" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
 						</Border>
 					</Grid>
@@ -926,14 +926,14 @@
 				<ControlTemplate TargetType="{x:Type TabItem}">
 					<Grid x:Name="templateRoot" SnapsToDevicePixels="true">
 						<Border x:Name="mainBorder" BorderBrush="{TemplateBinding BorderBrush}" 
-                                BorderThickness="0,1,1,1" Background="{TemplateBinding Background}" Margin="0">
+								BorderThickness="0,1,1,1" Background="{TemplateBinding Background}" Margin="0">
 							<Border x:Name="innerBorder" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="0,1,1,0"
-                                    Background="{TemplateBinding Background}" Margin="-1" Opacity="0"/>
+									Background="{TemplateBinding Background}" Margin="-1" Opacity="0"/>
 						</Border>
 						<ContentPresenter x:Name="contentPresenter" ContentSource="Header" Focusable="False"
-                                              HorizontalAlignment="{Binding HorizontalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}" 
-                                              Margin="10,9,10,9" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" 
-                                              VerticalAlignment="{Binding VerticalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"/>
+											  HorizontalAlignment="{Binding HorizontalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}" 
+											  Margin="10,9,10,9" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" 
+											  VerticalAlignment="{Binding VerticalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"/>
 					</Grid>
 					<ControlTemplate.Triggers>
 						<MultiDataTrigger>
@@ -1109,17 +1109,17 @@
 	<ControlTemplate x:Key="CloseButton" TargetType="{x:Type TabItem}">
 		<Grid x:Name="templateRoot" SnapsToDevicePixels="true">
 			<Border x:Name="mainBorder" BorderBrush="{TemplateBinding BorderBrush}" 
-                                BorderThickness="0,1,1,1" Background="{TemplateBinding Background}" Margin="0">
+								BorderThickness="0,1,1,1" Background="{TemplateBinding Background}" Margin="0">
 				<Border x:Name="innerBorder" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="0,1,1,0"
-                                    Background="{TemplateBinding Background}" Margin="-1" Opacity="0"/>
+									Background="{TemplateBinding Background}" Margin="-1" Opacity="0"/>
 			</Border>
 			<ContentPresenter x:Name="contentPresenter" ContentSource="Header" Focusable="False"
-                                              HorizontalAlignment="{Binding HorizontalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}" 
-                                              Margin="10,9,36,9" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" 
-                                              VerticalAlignment="{Binding VerticalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"/>
+											  HorizontalAlignment="{Binding HorizontalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}" 
+											  Margin="10,9,36,9" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" 
+											  VerticalAlignment="{Binding VerticalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"/>
 			<Border CornerRadius="3" Height="20" VerticalAlignment="Center" HorizontalAlignment="Right" Width="19" Margin="0,8,8,8">
 				<Button Background="Transparent" Foreground="DarkRed" Template="{DynamicResource CloseWindowButton}" Command="{Binding Path=CloseTabCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType={x:Type TabItem}}, Path=Uid}" BorderBrush="{x:Null}" 
-                                        VerticalAlignment="Stretch" HorizontalAlignment="Stretch" FontFamily="Consolas" FontWeight="Heavy" FontSize="14">
+										VerticalAlignment="Stretch" HorizontalAlignment="Stretch" FontFamily="Consolas" FontWeight="Heavy" FontSize="14">
 					<fa:ImageAwesome Icon="Times" Width="10" Height="10" Foreground="DarkRed" HorizontalAlignment="Center" VerticalAlignment="Center" />
 				</Button>
 			</Border>
@@ -1302,26 +1302,26 @@
 				<RowDefinition x:Name="RowDefinition1" Height="*"/>
 			</Grid.RowDefinitions>
 			<ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Hidden" x:Name="TabControlScroller">
-			<StackPanel Orientation="Horizontal">
-				<TabPanel x:Name="headerPanel"
-                                      Grid.Column="0" IsItemsHost="true" Margin="0 2 0 0"
-                                      Grid.Row="0" KeyboardNavigation.TabIndex="1" 
-                                      Panel.ZIndex="1"/>
-				<Border CornerRadius="3" Height="28"
-                                        VerticalAlignment="Center" Background="{StaticResource ContainerBackground}"
-                                        HorizontalAlignment="Center" Width="28" Margin="8 0 0 0">
+				<StackPanel Orientation="Horizontal">
+					<TabPanel x:Name="headerPanel"
+									  Grid.Column="0" IsItemsHost="true" Margin="0 2 0 0"
+									  Grid.Row="0" KeyboardNavigation.TabIndex="1" 
+									  Panel.ZIndex="1"/>
+					<Border CornerRadius="3" Height="28"
+										VerticalAlignment="Center" Background="{StaticResource ContainerBackground}"
+										HorizontalAlignment="Center" Width="28" Margin="8 0 0 0">
 						<Button Background="Transparent" Command="{Binding NewTabCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}" BorderBrush="{x:Null}"
-                                            VerticalAlignment="Stretch" HorizontalAlignment="Stretch" FontFamily="Consolas" FontSize="16" Foreground="{DynamicResource ControlDefaultForeground}">
+											VerticalAlignment="Stretch" HorizontalAlignment="Stretch" FontFamily="Consolas" FontSize="16" Foreground="{DynamicResource ControlDefaultForeground}">
 							<fa:ImageAwesome Icon="Plus" Width="10" Height="10" Foreground="{DynamicResource ControlDefaultForeground}" HorizontalAlignment="Center" VerticalAlignment="Center" />
 						</Button>
 					</Border>
 				</StackPanel>
 			</ScrollViewer>
 			<Border x:Name="contentPanel" 
-                                        BorderBrush="{TemplateBinding BorderBrush }" 
-                                        BorderThickness="{TemplateBinding BorderThickness}"
-                                        Background="{TemplateBinding Background}" 
-                                        Grid.Column="0" KeyboardNavigation.DirectionalNavigation="Contained" Grid.Row="1" KeyboardNavigation.TabIndex="2" KeyboardNavigation.TabNavigation="Local">
+										BorderBrush="{TemplateBinding BorderBrush }" 
+										BorderThickness="{TemplateBinding BorderThickness}"
+										Background="{TemplateBinding Background}" 
+										Grid.Column="0" KeyboardNavigation.DirectionalNavigation="Contained" Grid.Row="1" KeyboardNavigation.TabIndex="2" KeyboardNavigation.TabNavigation="Local">
 				<ContentPresenter x:Name="PART_SelectedContentHost" ContentSource="SelectedContent" Margin="{TemplateBinding Padding}" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
 			</Border>
 		</Grid>
@@ -1391,20 +1391,20 @@
 							<ColumnDefinition/>
 						</Grid.ColumnDefinitions>
 						<Border x:Name="radioButtonBorder" 
-                                        BorderBrush="{TemplateBinding BorderBrush}" 
-                                        BorderThickness="{TemplateBinding BorderThickness}" 
-                                        Background="{TemplateBinding Background}" CornerRadius="6" 
-                                HorizontalAlignment="Center" VerticalAlignment="Center" 
-                                Height="16" Width="16">
+										BorderBrush="{TemplateBinding BorderBrush}" 
+										BorderThickness="{TemplateBinding BorderThickness}" 
+										Background="{TemplateBinding Background}" CornerRadius="6" 
+								HorizontalAlignment="Center" VerticalAlignment="Center" 
+								Height="16" Width="16">
 							<Grid x:Name="markGrid" Margin="2">
 								<Ellipse x:Name="optionMark" Fill="{StaticResource RadioButton.Static.Glyph}" MinWidth="6" MinHeight="6" Opacity="0"/>
 							</Grid>
 						</Border>
 						<ContentPresenter x:Name="contentPresenter" 
-                                                  Grid.Column="1" Focusable="False"
-                                                  HorizontalAlignment="Center" Margin="4,3" RecognizesAccessKey="True" 
-                                                  SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" 
-                                                  VerticalAlignment="Center" Height="22"/>
+												  Grid.Column="1" Focusable="False"
+												  HorizontalAlignment="Center" Margin="4,3" RecognizesAccessKey="True" 
+												  SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" 
+												  VerticalAlignment="Center" Height="22"/>
 					</Grid>
 					<ControlTemplate.Triggers>
 						<Trigger Property="HasContent" Value="true">
@@ -1453,11 +1453,11 @@
 			<Setter.Value>
 				<ControlTemplate TargetType="{x:Type RepeatButton}">
 					<Border x:Name="border" BorderBrush="{StaticResource ControlDefaultBorderBrush}" BorderThickness="1" 
-                                    Background="{StaticResource ControlDefaultBackground}" SnapsToDevicePixels="true">
+									Background="{StaticResource ControlDefaultBackground}" SnapsToDevicePixels="true">
 						<ContentPresenter x:Name="contentPresenter" Focusable="False" 
-                                                  HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                                  Margin="{TemplateBinding Padding}" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" 
-                                                  VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+												  HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+												  Margin="{TemplateBinding Padding}" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" 
+												  VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
 					</Border>
 					<ControlTemplate.Triggers>
 						<Trigger Property="IsMouseOver" Value="true">
@@ -1489,7 +1489,7 @@
 			<Setter.Value>
 				<ControlTemplate TargetType="{x:Type Thumb}">
 					<Rectangle x:Name="rectangle" Fill="{StaticResource ControlBrightDefaultBackground}" Height="{TemplateBinding Height}" 
-                               SnapsToDevicePixels="True" Width="{TemplateBinding Width}"/>
+							   SnapsToDevicePixels="True" Width="{TemplateBinding Width}"/>
 					<ControlTemplate.Triggers>
 						<Trigger Property="IsMouseOver" Value="true">
 							<Setter Property="Fill" TargetName="rectangle" Value="{StaticResource ControlMouseOverBorderBrush}"/>
@@ -1509,7 +1509,7 @@
 			<Setter.Value>
 				<ControlTemplate TargetType="{x:Type Thumb}">
 					<Rectangle x:Name="rectangle" Fill="{StaticResource ControlBrightDefaultBackground}" Height="{TemplateBinding Height}" 
-                               SnapsToDevicePixels="True" Width="{TemplateBinding Width}"/>
+							   SnapsToDevicePixels="True" Width="{TemplateBinding Width}"/>
 					<ControlTemplate.Triggers>
 						<Trigger Property="IsMouseOver" Value="true">
 							<Setter Property="Fill" TargetName="rectangle" Value="{StaticResource ControlMouseOverBackground}"/>
@@ -1541,13 +1541,13 @@
 							<RowDefinition MaxHeight="{DynamicResource {x:Static SystemParameters.VerticalScrollBarButtonHeightKey}}"/>
 						</Grid.RowDefinitions>
 						<Border BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}"
-                                Background="{TemplateBinding Background}" 
-                                Grid.Row="1"/>
+								Background="{TemplateBinding Background}" 
+								Grid.Row="1"/>
 						<Button x:Name="PART_LineUpButton" 
-                                        Command="{x:Static ScrollBar.LineUpCommand}" 
-                                        IsEnabled="{TemplateBinding IsMouseOver}">
+										Command="{x:Static ScrollBar.LineUpCommand}" 
+										IsEnabled="{TemplateBinding IsMouseOver}">
 							<Path x:Name="ArrowTop" Data="M 0,4 C0,4 0,6 0,6 0,6 3.5,2.5 3.5,2.5 3.5,2.5 7,6 7,6 7,6 7,4 7,4 7,4 3.5,0.5 3.5,0.5 3.5,0.5 0,4 0,4 z"
-                                  Fill="{StaticResource ControlGlythColour}" Margin="3,4,3,3" Stretch="Uniform"/>
+								  Fill="{StaticResource ControlGlythColour}" Margin="3,4,3,3" Stretch="Uniform"/>
 						</Button>
 						<Track x:Name="PART_Track" IsDirectionReversed="true" IsEnabled="{TemplateBinding IsMouseOver}" Grid.Row="1">
 							<Track.DecreaseRepeatButton>
@@ -1561,12 +1561,12 @@
 							</Track.Thumb>
 						</Track>
 						<Button x:Name="PART_LineDownButton" 
-                                        Command="{x:Static ScrollBar.LineDownCommand}"
-                                        IsEnabled="{TemplateBinding IsMouseOver}" 
-                                        Grid.Row="2">
+										Command="{x:Static ScrollBar.LineDownCommand}"
+										IsEnabled="{TemplateBinding IsMouseOver}" 
+										Grid.Row="2">
 							<Path x:Name="ArrowBottom"
-                                  Data="M 0,2.5 C0,2.5 0,0.5 0,0.5 0,0.5 3.5,4 3.5,4 3.5,4 7,0.5 7,0.5 7,0.5 7,2.5 7,2.5 7,2.5 3.5,6 3.5,6 3.5,6 0,2.5 0,2.5 z" 
-                                  Fill="{StaticResource ControlGlythColour}" Margin="3,4,3,3" Stretch="Uniform"/>
+								  Data="M 0,2.5 C0,2.5 0,0.5 0,0.5 0,0.5 3.5,4 3.5,4 3.5,4 7,0.5 7,0.5 7,0.5 7,2.5 7,2.5 7,2.5 3.5,6 3.5,6 3.5,6 0,2.5 0,2.5 z" 
+								  Fill="{StaticResource ControlGlythColour}" Margin="3,4,3,3" Stretch="Uniform"/>
 						</Button>
 					</Grid>
 					<ControlTemplate.Triggers>
@@ -1734,21 +1734,23 @@
 	<!-- Menu -->
 
 	<Style TargetType="{x:Type Menu}">
-		<Setter Property="Background" Value="Transparent"/>
+		<Setter Property="Background" Value="{StaticResource ControlDefaultBackground}"/>
 		<Setter Property="FontFamily" Value="{DynamicResource {x:Static SystemFonts.MenuFontFamilyKey}}"/>
 		<Setter Property="FontSize" Value="{DynamicResource {x:Static SystemFonts.MenuFontSizeKey}}"/>
 		<Setter Property="FontStyle" Value="{DynamicResource {x:Static SystemFonts.MenuFontStyleKey}}"/>
 		<Setter Property="FontWeight" Value="{DynamicResource {x:Static SystemFonts.MenuFontWeightKey}}"/>
 		<Setter Property="Foreground" Value="{StaticResource ControlDefaultForeground}"/>
 		<Setter Property="VerticalContentAlignment" Value="Center"/>
+		<Setter Property="BorderBrush" Value="{StaticResource ControlDefaultBorderBrush}" />
+		<Setter Property="Padding" Value="0" />
 		<Setter Property="Template">
 			<Setter.Value>
 				<ControlTemplate TargetType="{x:Type Menu}">
 					<Border BorderBrush="{TemplateBinding BorderBrush}" 
-                                    BorderThickness="{TemplateBinding BorderThickness}" 
-                                    Background="{TemplateBinding Background}" 
-                                    Padding="{TemplateBinding Padding}" 
-                                    SnapsToDevicePixels="true">
+									BorderThickness="{TemplateBinding BorderThickness}" 
+									Background="{TemplateBinding Background}" 
+									Padding="{TemplateBinding Padding}" 
+									SnapsToDevicePixels="true">
 						<ItemsPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
 					</Border>
 				</ControlTemplate>
@@ -1759,61 +1761,65 @@
 	<!-- MenuItem -->
 
 	<Style TargetType="{x:Type MenuItem}">
-		<Setter Property="Background" Value="Transparent"/>
-		<Setter Property="BorderBrush" Value="Transparent"/>
+		<Setter Property="Background" Value="{StaticResource ControlDefaultBackground}"/>
+		<Setter Property="BorderBrush" Value="{StaticResource ControlDefaultBackground}"/>
+		<Setter Property="BorderThickness" Value="0" />
 		<Setter Property="Height" Value="Auto"/>
 		<Setter Property="Template">
 			<Setter.Value>
 				<ControlTemplate TargetType="{x:Type MenuItem}">
 					<Border x:Name="templateRoot"
-                                    BorderBrush="{TemplateBinding BorderBrush}" 
-                                    BorderThickness="{TemplateBinding BorderThickness}" 
-                                    Background="{TemplateBinding Background}"
-                                    SnapsToDevicePixels="True">
+									BorderBrush="{TemplateBinding BorderBrush}" 
+									BorderThickness="{TemplateBinding BorderThickness}" 
+									Background="{TemplateBinding Background}"
+									SnapsToDevicePixels="True">
 						<Grid VerticalAlignment="Center">
 							<Grid.ColumnDefinitions>
 								<ColumnDefinition Width="Auto"/>
 								<ColumnDefinition Width="Auto"/>
 							</Grid.ColumnDefinitions>
 							<ContentPresenter x:Name="Icon" 
-                                                      Content="{TemplateBinding Icon}"
-                                                      ContentSource="Icon" HorizontalAlignment="Center"
-                                                      Height="16" Margin="3" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
-                                                      VerticalAlignment="Center" Width="16"/>
+													  Content="{TemplateBinding Icon}"
+													  ContentSource="Icon" HorizontalAlignment="Center"
+													  Height="16" Margin="3" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+													  VerticalAlignment="Center" Width="16" />
 							<Path x:Name="GlyphPanel" Data="F1M10,1.2L4.7,9.1 4.5,9.1 0,5.2 1.3,3.5 4.3,6.1 8.3,0 10,1.2z" 
-                                          Fill="{TemplateBinding Foreground}" 
-                                          FlowDirection="LeftToRight" Margin="3"
-                                          Visibility="Collapsed" VerticalAlignment="Center"/>
+										  Fill="{TemplateBinding Background}" 
+										  FlowDirection="LeftToRight" Margin="3"
+										  Visibility="Collapsed" VerticalAlignment="Center"/>
 							<ContentPresenter ContentTemplate="{TemplateBinding HeaderTemplate}" 
-                                                      Content="{TemplateBinding Header}" Grid.Column="1"
-                                                      ContentStringFormat="{TemplateBinding HeaderStringFormat}" 
-                                                      ContentSource="Header" Margin="{TemplateBinding Padding}" 
-                                                      RecognizesAccessKey="True" 
-                                                      SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+													  Content="{TemplateBinding Header}" Grid.Column="1"
+													  ContentStringFormat="{TemplateBinding HeaderStringFormat}" 
+													  ContentSource="Header" Margin="{TemplateBinding Padding}" 
+													  RecognizesAccessKey="True" 
+													  SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
 							<Popup x:Name="PART_Popup"
-                                           AllowsTransparency="True" 
-                                           Focusable="False" 
-                                           IsOpen="{Binding IsSubmenuOpen, RelativeSource={RelativeSource TemplatedParent}}"
-                                           PopupAnimation="{DynamicResource {x:Static SystemParameters.MenuPopupAnimationKey}}" 
-                                           Placement="Bottom">
+										   AllowsTransparency="True" 
+										   Focusable="False" 
+										   IsOpen="{Binding IsSubmenuOpen, RelativeSource={RelativeSource TemplatedParent}}"
+										   PopupAnimation="{DynamicResource {x:Static SystemParameters.MenuPopupAnimationKey}}" 
+										   Placement="Bottom">
 								<Border x:Name="SubMenuBorder" BorderBrush="{StaticResource ControlDefaultBorderBrush}" 
-                                                BorderThickness="2" Background="{StaticResource ControlDefaultBorderBrush}" Padding="2">
+												BorderThickness="2" Background="{StaticResource ControlDefaultBorderBrush}" Padding="2">
 									<ScrollViewer x:Name="SubMenuScrollViewer" 
-                                                          Style="{DynamicResource {ComponentResourceKey ResourceId=MenuScrollViewer, 
-                                                                  TypeInTargetAssembly={x:Type FrameworkElement}}}">
+												  Background="{StaticResource ControlDefaultBackground}"
+														  Style="{DynamicResource {ComponentResourceKey ResourceId=MenuScrollViewer, 
+																  TypeInTargetAssembly={x:Type FrameworkElement}}}">
 										<Grid RenderOptions.ClearTypeHint="Enabled">
 											<Canvas HorizontalAlignment="Left" Height="0" 
-                                                            VerticalAlignment="Top" Width="0">
+															VerticalAlignment="Top" Width="0">
 												<Rectangle x:Name="OpaqueRect" 
-                                                                   Fill="{Binding Background, ElementName=SubMenuBorder}" 
-                                                                   Height="{Binding ActualHeight, ElementName=SubMenuBorder}"
-                                                                   Width="{Binding ActualWidth, ElementName=SubMenuBorder}"/>
+																   Fill="{Binding Background, ElementName=SubMenuBorder}" 
+																   Height="{Binding ActualHeight, ElementName=SubMenuBorder}"
+																   Width="{Binding ActualWidth, ElementName=SubMenuBorder}"
+																   Stroke="{StaticResource ControlDefaultBackground}" />
 											</Canvas>
+											<Rectangle Fill="#383838" HorizontalAlignment="Left" Margin="0" Width="0"/>
 											<ItemsPresenter x:Name="ItemsPresenter" 
-                                                                    KeyboardNavigation.DirectionalNavigation="Cycle" 
-                                                                    Grid.IsSharedSizeScope="True" 
-                                                                    SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" 
-                                                                    KeyboardNavigation.TabNavigation="Cycle"/>
+																	KeyboardNavigation.DirectionalNavigation="Cycle" 
+																	Grid.IsSharedSizeScope="True" 
+																	SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" 
+																	KeyboardNavigation.TabNavigation="Cycle"/>
 										</Grid>
 									</ScrollViewer>
 								</Border>
@@ -1853,10 +1859,10 @@
 
 	<ControlTemplate x:Key="DropDownMenuItemTemplate" TargetType="{x:Type MenuItem}">
 		<Border x:Name="templateRoot" 
-                        BorderBrush="{StaticResource ControlDefaultBorderBrush}" 
-                        BorderThickness="0" 
-                        Background="{StaticResource ControlDefaultBackground}" 
-                        SnapsToDevicePixels="False">
+						BorderBrush="{StaticResource ControlDefaultBorderBrush}" 
+						BorderThickness="0" 
+						Background="{StaticResource ControlDefaultBackground}" 
+						SnapsToDevicePixels="False">
 			<Grid Margin="0">
 				<Grid.ColumnDefinitions>
 					<ColumnDefinition MinWidth="25" SharedSizeGroup="MenuItemIconColumnGroup" Width="Auto"/>
@@ -1867,67 +1873,67 @@
 					<ColumnDefinition Width="20"/>
 				</Grid.ColumnDefinitions>
 				<Border Background="{StaticResource ControlDefaultBorderBrush}" 
-                                BorderBrush="{StaticResource ControlBrightDefaultBackground}" 
-                                BorderThickness="0 0 1 0" Grid.ColumnSpan="1" Margin="0"/>
+								BorderBrush="{StaticResource ControlBrightDefaultBackground}" 
+								BorderThickness="0 0 1 0" Grid.ColumnSpan="1" Margin="0"/>
 				<Border Background="{StaticResource ControlDefaultBorderBrush}" 
-                                BorderBrush="{StaticResource ControlBrightDefaultBorderBrush}" 
-                                BorderThickness="0 0 1 0" Grid.ColumnSpan="1" Margin="0,0,1,0"/>
+								BorderBrush="{StaticResource ControlBrightDefaultBorderBrush}" 
+								BorderThickness="0 0 1 0" Grid.ColumnSpan="1" Margin="0,0,1,0"/>
 				<ContentPresenter x:Name="Icon" Content="{TemplateBinding Icon}" 
-                                          ContentSource="Icon" 
-                                          HorizontalAlignment="Center"
-                                          Height="16" Margin="4,3,5,3" 
-                                          SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" 
-                                          VerticalAlignment="Center" Width="16"/>
+										  ContentSource="Icon" 
+										  HorizontalAlignment="Center"
+										  Height="16" Margin="4,3,5,3" 
+										  SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" 
+										  VerticalAlignment="Center" Width="16"/>
 				<Border x:Name="GlyphPanel" 
-                                BorderBrush="#FF26A0DA" 
-                                BorderThickness="1"
-                                Background="#3D26A0DA" ClipToBounds="False" 
-                                HorizontalAlignment="Center" 
-                                Height="22" Margin="2,0,1,0" 
-                                Visibility="Hidden" VerticalAlignment="Center" 
-                                Width="22">
+								BorderBrush="#FF26A0DA" 
+								BorderThickness="1"
+								Background="#3D26A0DA" ClipToBounds="False" 
+								HorizontalAlignment="Center" 
+								Height="22" Margin="2,0,1,0" 
+								Visibility="Hidden" VerticalAlignment="Center" 
+								Width="22">
 					<Path x:Name="Glyph" Data="F1M10,1.2L4.7,9.1 4.5,9.1 0,5.2 1.3,3.5 4.3,6.1 8.3,0 10,1.2z"
-                                  Fill="{StaticResource ControlDefaultForeground}" FlowDirection="LeftToRight" 
-                                  Height="11" Width="10"/>
+								  Fill="{StaticResource ControlDefaultForeground}" FlowDirection="LeftToRight" 
+								  Height="11" Width="10"/>
 				</Border>
 				<ContentPresenter x:Name="menuHeaderContainer" 
-                                          ContentTemplate="{TemplateBinding HeaderTemplate}" 
-                                          Content="{TemplateBinding Header}" Grid.Column="2" 
-                                          ContentStringFormat="{TemplateBinding HeaderStringFormat}"
-                                          ContentSource="Header" HorizontalAlignment="Stretch" 
-                                          RecognizesAccessKey="True" 
-                                          SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" 
-                                          VerticalAlignment="Center" Height="Auto" Width="Auto"/>
+										  ContentTemplate="{TemplateBinding HeaderTemplate}" 
+										  Content="{TemplateBinding Header}" Grid.Column="2" 
+										  ContentStringFormat="{TemplateBinding HeaderStringFormat}"
+										  ContentSource="Header" HorizontalAlignment="Stretch" 
+										  RecognizesAccessKey="True" 
+										  SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" 
+										  VerticalAlignment="Center" Height="Auto" Width="Auto"/>
 				<TextBlock x:Name="menuGestureText" Grid.Column="4" 
-                                   Margin="0,0,20,0" Opacity="0.7"
-                                   Text="{TemplateBinding InputGestureText}" VerticalAlignment="Center" Grid.ColumnSpan="2" Height="Auto"/>
+								   Margin="0,0,20,0" Opacity="0.7"
+								   Text="{TemplateBinding InputGestureText}" VerticalAlignment="Center" Grid.ColumnSpan="2" Height="Auto"/>
 
 				<Popup x:Name="PART_Popup"
-                                           AllowsTransparency="True" 
-                                           Focusable="False" 
-                                           IsOpen="{Binding IsSubmenuOpen, RelativeSource={RelativeSource TemplatedParent}}"
-                                           PopupAnimation="{DynamicResource {x:Static SystemParameters.MenuPopupAnimationKey}}" 
-                                           Placement="Right">
+										   AllowsTransparency="True" 
+										   Focusable="False" 
+										   IsOpen="{Binding IsSubmenuOpen, RelativeSource={RelativeSource TemplatedParent}}"
+										   PopupAnimation="{DynamicResource {x:Static SystemParameters.MenuPopupAnimationKey}}" 
+										   Placement="Right">
 					<Border x:Name="SubMenuBorder" BorderBrush="{StaticResource ControlDefaultBorderBrush}" 
-                                                BorderThickness="2" Background="{StaticResource ControlDefaultBorderBrush}" Padding="2">
+												BorderThickness="2" Background="{StaticResource ControlDefaultBorderBrush}" Padding="2">
 						<ScrollViewer x:Name="SubMenuScrollViewer" 
-                                                          Style="{DynamicResource {ComponentResourceKey ResourceId=MenuScrollViewer, 
-                                                                  TypeInTargetAssembly={x:Type FrameworkElement}}}">
+														  Style="{DynamicResource {ComponentResourceKey ResourceId=MenuScrollViewer, 
+																  TypeInTargetAssembly={x:Type FrameworkElement}}}">
 							<Grid RenderOptions.ClearTypeHint="Enabled">
 								<Canvas HorizontalAlignment="Left" Height="0" 
-                                                            VerticalAlignment="Top" Width="0">
+															VerticalAlignment="Top" Width="0">
 									<Rectangle x:Name="OpaqueRect" 
-                                                                   Fill="{Binding Background, ElementName=SubMenuBorder}" 
-                                                                   Height="{Binding ActualHeight, ElementName=SubMenuBorder}"
-                                                                   Width="{Binding ActualWidth, ElementName=SubMenuBorder}"/>
+																   Fill="{Binding Background, ElementName=SubMenuBorder}" 
+																   Height="{Binding ActualHeight, ElementName=SubMenuBorder}"
+																   Width="{Binding ActualWidth, ElementName=SubMenuBorder}"/>
 								</Canvas>
 								<Rectangle Fill="#FFD7D7D7" HorizontalAlignment="Left" 
-                                                               Margin="29,2,0,2" Width="1"/>
+															   Margin="29,2,0,2" Width="1"/>
 								<ItemsPresenter x:Name="ItemsPresenter" 
-                                                                    KeyboardNavigation.DirectionalNavigation="Cycle" 
-                                                                    Grid.IsSharedSizeScope="True" 
-                                                                    SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" 
-                                                                    KeyboardNavigation.TabNavigation="Cycle"/>
+																	KeyboardNavigation.DirectionalNavigation="Cycle" 
+																	Grid.IsSharedSizeScope="True" 
+																	SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" 
+																	KeyboardNavigation.TabNavigation="Cycle"/>
 							</Grid>
 						</ScrollViewer>
 					</Border>
@@ -1966,8 +1972,8 @@
 
 	<ControlTemplate x:Key="WindowTemplateKey" TargetType="{x:Type Window}">
 		<Border BorderBrush="{TemplateBinding BorderBrush}" 
-                BorderThickness="{TemplateBinding BorderThickness}" 
-                Background="{TemplateBinding Background}">
+				BorderThickness="{TemplateBinding BorderThickness}" 
+				Background="{TemplateBinding Background}">
 			<Grid>
 				<AdornerDecorator>
 					<ContentPresenter/>
@@ -2012,8 +2018,8 @@
 		<Setter Property="WindowChrome.WindowChrome">
 			<Setter.Value>
 				<WindowChrome CornerRadius="2" 
-                              CaptionHeight="37"
-                              GlassFrameThickness="1"/>
+							  CaptionHeight="37"
+							  GlassFrameThickness="1"/>
 			</Setter.Value>
 		</Setter>
 
@@ -2022,16 +2028,16 @@
 				<ControlTemplate TargetType="{x:Type Window}">
 					<Grid>
 						<Border Background="{TemplateBinding Background}"
-                                BorderBrush="{TemplateBinding BorderBrush}"
-                                BorderThickness="4,35,4,4">
+								BorderBrush="{TemplateBinding BorderBrush}"
+								BorderThickness="4,35,4,4">
 							<AdornerDecorator>
 								<ContentPresenter />
 							</AdornerDecorator>
 						</Border>
 
 						<Grid Height="28"
-                              Background="{StaticResource WindowTitleColour}"
-                            VerticalAlignment="Top" Margin="4,4,4,0">
+							  Background="{StaticResource WindowTitleColour}"
+							VerticalAlignment="Top" Margin="4,4,4,0">
 
 							<Grid.ColumnDefinitions>
 								<ColumnDefinition Width="32"/>
@@ -2041,44 +2047,44 @@
 
 							<Image HorizontalAlignment="Left" VerticalAlignment="Stretch" Width="18" Margin="6" Source="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Icon}"  />
 							<TextBlock Margin="5,0,0,0"
-                                       VerticalAlignment="Center"
-                                       HorizontalAlignment="Left"
-                                       FontSize="14"
-                                       Foreground="{DynamicResource ControlDefaultForeground}"
-                                       Text="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Title}"   
-                                       Grid.Column="1"/>
+									   VerticalAlignment="Center"
+									   HorizontalAlignment="Left"
+									   FontSize="14"
+									   Foreground="{DynamicResource ControlDefaultForeground}"
+									   Text="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Title}"   
+									   Grid.Column="1"/>
 
 
 							<StackPanel Orientation="Horizontal"
-                                        Grid.Column="2">
+										Grid.Column="2">
 								<Button x:Name="btnOptions"
-                                        Background="Transparent"
-                                        BorderBrush="Transparent"
+										Background="Transparent"
+										BorderBrush="Transparent"
 										Template="{DynamicResource OptionsWindowButton}"
-                                        Width="30"
-                                        VerticalContentAlignment="Bottom"
-                                        WindowChrome.IsHitTestVisibleInChrome="True" Command="{Binding OptionsWindowCommand}">
+										Width="30"
+										VerticalContentAlignment="Bottom"
+										WindowChrome.IsHitTestVisibleInChrome="True" Command="{Binding OptionsWindowCommand}">
 									<!-- <Image Source="/Resources/optionsGear.png" Margin="2"/> -->
 									<fa:ImageAwesome Width="14" Height="14" Foreground="White"  Icon="Gear" VerticalAlignment="Center" HorizontalAlignment="Center" />
 								</Button>
 								<Button x:Name="btnMinimize"
-                                        Background="Transparent"
-                                        BorderBrush="Transparent"
+										Background="Transparent"
+										BorderBrush="Transparent"
 										Template="{DynamicResource MinimizeWindowButton}"
-                                        Width="30"
-                                        VerticalContentAlignment="Bottom"
-                                        WindowChrome.IsHitTestVisibleInChrome="True" Command="{Binding MinimizeWindowCommand}">
+										Width="30"
+										VerticalContentAlignment="Bottom"
+										WindowChrome.IsHitTestVisibleInChrome="True" Command="{Binding MinimizeWindowCommand}">
 									<!-- <Image Source="/Resources/minimizeWindow.png" Margin="4"/> -->
 									<fa:ImageAwesome Width="14" Height="14" Foreground="White" Icon="WindowMinimize" VerticalAlignment="Bottom" HorizontalAlignment="Center" />
 								</Button>
 
 								<Button x:Name="btnClose"
-                                        Background="Transparent"
-                                        BorderBrush="Transparent"
-                                        Template="{DynamicResource CloseWindowButton}"
-                                        Width="30"
-                                        WindowChrome.IsHitTestVisibleInChrome="True" 
-                                        Command="{Binding CloseWindowCommand}">
+										Background="Transparent"
+										BorderBrush="Transparent"
+										Template="{DynamicResource CloseWindowButton}"
+										Width="30"
+										WindowChrome.IsHitTestVisibleInChrome="True" 
+										Command="{Binding CloseWindowCommand}">
 									<!-- <Image Source="/Resources/closeWindow.png" Margin="4"/> -->
 									<fa:ImageAwesome Width="14" Height="14" Foreground="White" Icon="WindowClose" VerticalAlignment="Center" HorizontalAlignment="Center" />
 								</Button>
@@ -2099,8 +2105,8 @@
 		<Setter Property="WindowChrome.WindowChrome">
 			<Setter.Value>
 				<WindowChrome CornerRadius="2" 
-                              CaptionHeight="37"
-                              GlassFrameThickness="1"/>
+							  CaptionHeight="37"
+							  GlassFrameThickness="1"/>
 			</Setter.Value>
 		</Setter>
 
@@ -2109,40 +2115,40 @@
 				<ControlTemplate TargetType="{x:Type Window}">
 					<Grid>
 						<Border Background="{TemplateBinding Background}"
-                                BorderBrush="{TemplateBinding BorderBrush}"
-                                BorderThickness="4,35,4,4">
+								BorderBrush="{TemplateBinding BorderBrush}"
+								BorderThickness="4,35,4,4">
 							<AdornerDecorator>
 								<ContentPresenter />
 							</AdornerDecorator>
 						</Border>
 
 						<Grid Height="28"
-                              Background="{StaticResource WindowTitleColour}"
-                            VerticalAlignment="Top" Margin="4,4,4,0">
+							  Background="{StaticResource WindowTitleColour}"
+							VerticalAlignment="Top" Margin="4,4,4,0">
 
 							<Grid.ColumnDefinitions>
 								<ColumnDefinition Width="*"/>
 								<ColumnDefinition Width="Auto"/>
 							</Grid.ColumnDefinitions>
-							
+
 							<TextBlock Margin="5,0,0,0"
-                                       VerticalAlignment="Center"
-                                       HorizontalAlignment="Left"
-                                       FontSize="14"
-                                       Foreground="{DynamicResource ControlDefaultForeground}"
-                                       Text="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Title}"   
-                                       Grid.Column="0"/>
+									   VerticalAlignment="Center"
+									   HorizontalAlignment="Left"
+									   FontSize="14"
+									   Foreground="{DynamicResource ControlDefaultForeground}"
+									   Text="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Title}"   
+									   Grid.Column="0"/>
 
 
 							<StackPanel Orientation="Horizontal"
-                                        Grid.Column="1">
+										Grid.Column="1">
 								<Button x:Name="btnClose"
-                                        Background="Transparent"
-                                        BorderBrush="Transparent"
-                                        Template="{DynamicResource CloseWindowButton}"
-                                        Width="30"
-                                        WindowChrome.IsHitTestVisibleInChrome="True" 
-                                        Command="{Binding CloseWindowCommand}">
+										Background="Transparent"
+										BorderBrush="Transparent"
+										Template="{DynamicResource CloseWindowButton}"
+										Width="30"
+										WindowChrome.IsHitTestVisibleInChrome="True" 
+										Command="{Binding CloseWindowCommand}">
 									<fa:ImageAwesome Width="14" Height="14" Foreground="White" Icon="WindowClose" VerticalAlignment="Center" HorizontalAlignment="Center" />
 								</Button>
 
@@ -2174,8 +2180,8 @@
 			<Setter.Value>
 				<ControlTemplate TargetType="{x:Type GridSplitter}">
 					<Border BorderBrush="{TemplateBinding BorderBrush}" 
-                            BorderThickness="{TemplateBinding BorderThickness}" 
-                            Background="{TemplateBinding Background}"/>
+							BorderThickness="{TemplateBinding BorderThickness}" 
+							Background="{TemplateBinding Background}"/>
 				</ControlTemplate>
 			</Setter.Value>
 		</Setter>
@@ -2436,9 +2442,9 @@
 									</TransformGroup>
 								</Grid.LayoutTransform>
 								<Ellipse x:Name="circle" Fill="{StaticResource ControlDefaultBackground}" HorizontalAlignment="Center" Height="19" 
-                                         Stroke="{StaticResource ControlDefaultBorderBrush}" VerticalAlignment="Center" Width="19"/>
+										 Stroke="{StaticResource ControlDefaultBorderBrush}" VerticalAlignment="Center" Width="19"/>
 								<Path x:Name="arrow" Data="M 1,1.5 L 4.5,5 L 8,1.5" HorizontalAlignment="Center" SnapsToDevicePixels="false"
-                                      Stroke="{StaticResource ControlGlythColour}" StrokeThickness="2" VerticalAlignment="Center"/>
+									  Stroke="{StaticResource ControlGlythColour}" StrokeThickness="2" VerticalAlignment="Center"/>
 							</Grid>
 							<ContentPresenter Grid.Column="1" HorizontalAlignment="Left" Margin="4,0,0,0" RecognizesAccessKey="True" SnapsToDevicePixels="True" VerticalAlignment="Center"/>
 						</Grid>
@@ -2489,9 +2495,9 @@
 									</TransformGroup>
 								</Grid.LayoutTransform>
 								<Ellipse x:Name="circle" Fill="{StaticResource ControlDefaultBackground}" HorizontalAlignment="Center" Height="19" 
-                                         Stroke="{StaticResource ControlDefaultBorderBrush}" VerticalAlignment="Center" Width="19"/>
+										 Stroke="{StaticResource ControlDefaultBorderBrush}" VerticalAlignment="Center" Width="19"/>
 								<Path x:Name="arrow" Data="M 1,1.5 L 4.5,5 L 8,1.5" HorizontalAlignment="Center" SnapsToDevicePixels="false" 
-                                      Stroke="{StaticResource ControlGlythColour}" StrokeThickness="2" VerticalAlignment="Center"/>
+									  Stroke="{StaticResource ControlGlythColour}" StrokeThickness="2" VerticalAlignment="Center"/>
 							</Grid>
 							<ContentPresenter HorizontalAlignment="Center" Margin="0,4,0,0" Grid.Row="1" RecognizesAccessKey="True" SnapsToDevicePixels="True" VerticalAlignment="Top"/>
 						</Grid>
@@ -2543,11 +2549,11 @@
 								<ColumnDefinition Width="*"/>
 							</Grid.ColumnDefinitions>
 							<Ellipse x:Name="circle" Fill="{DynamicResource ControlDefaultBackground}" HorizontalAlignment="Center" Height="19"
-                                     Stroke="{StaticResource ControlDefaultBorderBrush}" VerticalAlignment="Center" Width="19"/>
+									 Stroke="{StaticResource ControlDefaultBorderBrush}" VerticalAlignment="Center" Width="19"/>
 							<Path x:Name="arrow" Data="M 1,1.5 L 4.5,5 L 8,1.5" HorizontalAlignment="Center" SnapsToDevicePixels="false" 
-                                  Stroke="{DynamicResource ControlDefaultForeground}" StrokeThickness="2" VerticalAlignment="Center"/>
+								  Stroke="{DynamicResource ControlDefaultForeground}" StrokeThickness="2" VerticalAlignment="Center"/>
 							<ContentPresenter Grid.Column="1" HorizontalAlignment="Left" Margin="4,0,0,0" RecognizesAccessKey="True" 
-                                              SnapsToDevicePixels="True" VerticalAlignment="Center"/>
+											  SnapsToDevicePixels="True" VerticalAlignment="Center"/>
 						</Grid>
 					</Border>
 					<ControlTemplate.Triggers>
@@ -2693,18 +2699,18 @@
 			<Setter.Value>
 				<ControlTemplate TargetType="{x:Type ToggleButton}">
 					<Border x:Name="templateRoot"
-                            BorderBrush="{StaticResource ControlDefaultBorderBrush}" 
-                            BorderThickness="{TemplateBinding BorderThickness}"
-                            Background="{StaticResource ControlDefaultBackground}" 
-                            SnapsToDevicePixels="true">
+							BorderBrush="{StaticResource ControlDefaultBorderBrush}" 
+							BorderThickness="{TemplateBinding BorderThickness}"
+							Background="{StaticResource ControlDefaultBackground}" 
+							SnapsToDevicePixels="true">
 						<Border x:Name="splitBorder" BorderBrush="Transparent" 
-                                BorderThickness="1" HorizontalAlignment="Right"
-                                Margin="0" SnapsToDevicePixels="true" 
-                                Width="{DynamicResource {x:Static SystemParameters.VerticalScrollBarWidthKey}}">
+								BorderThickness="1" HorizontalAlignment="Right"
+								Margin="0" SnapsToDevicePixels="true" 
+								Width="{DynamicResource {x:Static SystemParameters.VerticalScrollBarWidthKey}}">
 							<Path x:Name="arrow" Data="F1 M 0,0 L 2.667,2.66665 L 5.3334,0 L 5.3334,-1.78168 L 2.6667,0.88501 L0,-1.78168 L0,0 Z"
-                                  Fill="{StaticResource ControlGlythColour}" 
-                                  HorizontalAlignment="Center" Margin="0"
-                                  VerticalAlignment="Center"/>
+								  Fill="{StaticResource ControlGlythColour}" 
+								  HorizontalAlignment="Center" Margin="0"
+								  VerticalAlignment="Center"/>
 						</Border>
 					</Border>
 					<ControlTemplate.Triggers>
@@ -2796,37 +2802,37 @@
 				<ColumnDefinition MinWidth="{DynamicResource {x:Static SystemParameters.VerticalScrollBarWidthKey}}" Width="0"/>
 			</Grid.ColumnDefinitions>
 			<Popup x:Name="PART_Popup" AllowsTransparency="true" Grid.ColumnSpan="2" 
-                   IsOpen="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}" Margin="1" 
-                   PopupAnimation="{DynamicResource {x:Static SystemParameters.ComboBoxPopupAnimationKey}}" Placement="Bottom">
+				   IsOpen="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}" Margin="1" 
+				   PopupAnimation="{DynamicResource {x:Static SystemParameters.ComboBoxPopupAnimationKey}}" Placement="Bottom">
 				<Themes:SystemDropShadowChrome x:Name="shadow" Color="Transparent" MaxHeight="{TemplateBinding MaxDropDownHeight}" 
-                                               MinWidth="{Binding ActualWidth, ElementName=templateRoot}">
+											   MinWidth="{Binding ActualWidth, ElementName=templateRoot}">
 					<Border x:Name="dropDownBorder" BorderBrush="{StaticResource ControlDefaultBorderBrush}" 
-                            BorderThickness="1" Background="{StaticResource ControlDefaultBackground}">
+							BorderThickness="1" Background="{StaticResource ControlDefaultBackground}">
 						<ScrollViewer x:Name="DropDownScrollViewer">
 							<Grid x:Name="grid" RenderOptions.ClearTypeHint="Enabled">
 								<Canvas x:Name="canvas" HorizontalAlignment="Left" Height="0" VerticalAlignment="Top" Width="0">
 									<Rectangle x:Name="opaqueRect" Fill="{Binding Background, ElementName=dropDownBorder}"
-                                               Height="{Binding ActualHeight, ElementName=dropDownBorder}"
-                                               Width="{Binding ActualWidth, ElementName=dropDownBorder}"/>
+											   Height="{Binding ActualHeight, ElementName=dropDownBorder}"
+											   Width="{Binding ActualWidth, ElementName=dropDownBorder}"/>
 								</Canvas>
 								<ItemsPresenter x:Name="ItemsPresenter" KeyboardNavigation.DirectionalNavigation="Contained"
-                                                SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+												SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
 							</Grid>
 						</ScrollViewer>
 					</Border>
 				</Themes:SystemDropShadowChrome>
 			</Popup>
 			<ToggleButton x:Name="toggleButton" BorderBrush="{TemplateBinding BorderBrush}" 
-                          BorderThickness="{TemplateBinding BorderThickness}"
-                          Background="{TemplateBinding Background}" Grid.ColumnSpan="2" 
-                          IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}" 
-                          Style="{StaticResource ComboBoxToggleButton}"/>
+						  BorderThickness="{TemplateBinding BorderThickness}"
+						  Background="{TemplateBinding Background}" Grid.ColumnSpan="2" 
+						  IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}" 
+						  Style="{StaticResource ComboBoxToggleButton}"/>
 			<ContentPresenter x:Name="contentPresenter" ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}" 
-                              ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}" Content="{TemplateBinding SelectionBoxItem}" 
-                              ContentStringFormat="{TemplateBinding SelectionBoxItemStringFormat}"
-                              HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" IsHitTestVisible="false"
-                              Margin="{TemplateBinding Padding}" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
-                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+							  ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}" Content="{TemplateBinding SelectionBoxItem}" 
+							  ContentStringFormat="{TemplateBinding SelectionBoxItemStringFormat}"
+							  HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" IsHitTestVisible="false"
+							  Margin="{TemplateBinding Padding}" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+							  VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
 		</Grid>
 		<ControlTemplate.Triggers>
 			<Trigger Property="HasDropShadow" SourceName="PART_Popup" Value="true">
@@ -2861,8 +2867,8 @@
 			<Setter.Value>
 				<ControlTemplate TargetType="{x:Type TextBox}">
 					<ScrollViewer x:Name="PART_ContentHost" Background="Transparent" 
-                                  Focusable="false" HorizontalScrollBarVisibility="Hidden"
-                                  VerticalScrollBarVisibility="Hidden"/>
+								  Focusable="false" HorizontalScrollBarVisibility="Hidden"
+								  VerticalScrollBarVisibility="Hidden"/>
 				</ControlTemplate>
 			</Setter.Value>
 		</Setter>
@@ -2875,35 +2881,35 @@
 				<ColumnDefinition MinWidth="{DynamicResource {x:Static SystemParameters.VerticalScrollBarWidthKey}}" Width="0"/>
 			</Grid.ColumnDefinitions>
 			<Popup x:Name="PART_Popup" AllowsTransparency="true" Grid.ColumnSpan="2" 
-                   IsOpen="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}}" 
-                   PopupAnimation="{DynamicResource {x:Static SystemParameters.ComboBoxPopupAnimationKey}}" 
-                   Placement="Bottom">
+				   IsOpen="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}}" 
+				   PopupAnimation="{DynamicResource {x:Static SystemParameters.ComboBoxPopupAnimationKey}}" 
+				   Placement="Bottom">
 				<Themes:SystemDropShadowChrome x:Name="shadow" Color="Transparent" MaxHeight="{TemplateBinding MaxDropDownHeight}" 
-                                               MinWidth="{Binding ActualWidth, ElementName=templateRoot}">
+											   MinWidth="{Binding ActualWidth, ElementName=templateRoot}">
 					<Border x:Name="dropDownBorder" BorderBrush="{StaticResource ControlDefaultBorderBrush}" 
-                            BorderThickness="1" Background="{StaticResource ControlDefaultBorderBrush}">
+							BorderThickness="1" Background="{StaticResource ControlDefaultBorderBrush}">
 						<ScrollViewer x:Name="DropDownScrollViewer">
 							<Grid x:Name="grid" RenderOptions.ClearTypeHint="Enabled">
 								<Canvas x:Name="canvas" HorizontalAlignment="Left" Height="0" VerticalAlignment="Top" Width="0">
 									<Rectangle x:Name="opaqueRect" Fill="{Binding Background, ElementName=dropDownBorder}" 
-                                               Height="{Binding ActualHeight, ElementName=dropDownBorder}"
-                                               Width="{Binding ActualWidth, ElementName=dropDownBorder}"/>
+											   Height="{Binding ActualHeight, ElementName=dropDownBorder}"
+											   Width="{Binding ActualWidth, ElementName=dropDownBorder}"/>
 								</Canvas>
 								<ItemsPresenter x:Name="ItemsPresenter" KeyboardNavigation.DirectionalNavigation="Contained"
-                                                SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+												SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
 							</Grid>
 						</ScrollViewer>
 					</Border>
 				</Themes:SystemDropShadowChrome>
 			</Popup>
 			<ToggleButton x:Name="toggleButton" BorderBrush="{TemplateBinding BorderBrush}" 
-                          BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" 
-                          Grid.ColumnSpan="2" IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}" 
-                          Style="{StaticResource ComboBoxToggleButton}"/>
+						  BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" 
+						  Grid.ColumnSpan="2" IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}" 
+						  Style="{StaticResource ComboBoxToggleButton}"/>
 			<Border x:Name="border" Background="{StaticResource ContainerBackground}" Margin="{TemplateBinding BorderThickness}">
 				<TextBox x:Name="PART_EditableTextBox" HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" 
-                         IsReadOnly="{Binding IsReadOnly, RelativeSource={RelativeSource TemplatedParent}}" Margin="{TemplateBinding Padding}" 
-                         Style="{StaticResource ComboBoxEditableTextBox}" VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
+						 IsReadOnly="{Binding IsReadOnly, RelativeSource={RelativeSource TemplatedParent}}" Margin="{TemplateBinding Padding}" 
+						 Style="{StaticResource ComboBoxEditableTextBox}" VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
 			</Border>
 		</Grid>
 		<ControlTemplate.Triggers>
@@ -2971,10 +2977,10 @@
 			<Setter.Value>
 				<ControlTemplate TargetType="{x:Type ComboBoxItem}">
 					<Border x:Name="Bd" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" 
-                            Background="{TemplateBinding Background}" Padding="{TemplateBinding Padding}" SnapsToDevicePixels="true">
+							Background="{TemplateBinding Background}" Padding="{TemplateBinding Padding}" SnapsToDevicePixels="true">
 						<ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" 
-                                          SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
-                                          VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+										  SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+										  VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
 					</Border>
 					<ControlTemplate.Triggers>
 						<Trigger Property="IsEnabled" Value="False">
@@ -3068,11 +3074,11 @@
 			<Setter.Value>
 				<ControlTemplate TargetType="{x:Type ListView}">
 					<Border x:Name="Bd" 
-                        BorderBrush="{TemplateBinding BorderBrush}" 
-                        BorderThickness="{TemplateBinding BorderThickness}" 
-                        Background="{TemplateBinding Background}" 
-                        Padding="1" 
-                        SnapsToDevicePixels="True">
+						BorderBrush="{TemplateBinding BorderBrush}" 
+						BorderThickness="{TemplateBinding BorderThickness}" 
+						Background="{TemplateBinding Background}" 
+						Padding="1" 
+						SnapsToDevicePixels="True">
 						<ScrollViewer Focusable="false" Padding="{TemplateBinding Padding}" Template="{DynamicResource MainScrollViewerTemplate}">
 							<ItemsPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
 						</ScrollViewer>
@@ -3160,10 +3166,10 @@
 			<Setter.Value>
 				<ControlTemplate TargetType="{x:Type DataGrid}">
 					<Border BorderBrush="{TemplateBinding BorderBrush}" 
-                            BorderThickness="{TemplateBinding BorderThickness}" 
-                            Background="{TemplateBinding Background}" 
-                            Padding="{TemplateBinding Padding}" 
-                            SnapsToDevicePixels="True">
+							BorderThickness="{TemplateBinding BorderThickness}" 
+							Background="{TemplateBinding Background}" 
+							Padding="{TemplateBinding Padding}" 
+							SnapsToDevicePixels="True">
 						<ScrollViewer x:Name="DG_ScrollViewer" Focusable="false">
 							<ScrollViewer.Template>
 								<ControlTemplate TargetType="{x:Type ScrollViewer}">
@@ -3179,28 +3185,28 @@
 											<RowDefinition Height="Auto"/>
 										</Grid.RowDefinitions>
 										<Button Command="{x:Static DataGrid.SelectAllCommand}" Focusable="false"  Background="Orange"
-                                                Style="{DynamicResource {ComponentResourceKey ResourceId=DataGridSelectAllButtonStyle, TypeInTargetAssembly={x:Type DataGrid}}}" 
-                                                Visibility="{Binding HeadersVisibility, ConverterParameter={x:Static DataGridHeadersVisibility.All}, Converter={x:Static DataGrid.HeadersVisibilityConverter}, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}"
-                                                Width="{Binding CellsPanelHorizontalOffset, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}"/>
+												Style="{DynamicResource {ComponentResourceKey ResourceId=DataGridSelectAllButtonStyle, TypeInTargetAssembly={x:Type DataGrid}}}" 
+												Visibility="{Binding HeadersVisibility, ConverterParameter={x:Static DataGridHeadersVisibility.All}, Converter={x:Static DataGrid.HeadersVisibilityConverter}, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}"
+												Width="{Binding CellsPanelHorizontalOffset, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}"/>
 										<DataGridColumnHeadersPresenter x:Name="PART_ColumnHeadersPresenter" Grid.Column="1"  Background="Red"
-                                                                        Visibility="{Binding HeadersVisibility, ConverterParameter={x:Static DataGridHeadersVisibility.Column}, Converter={x:Static DataGrid.HeadersVisibilityConverter}, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}"/>
+																		Visibility="{Binding HeadersVisibility, ConverterParameter={x:Static DataGridHeadersVisibility.Column}, Converter={x:Static DataGrid.HeadersVisibilityConverter}, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}"/>
 										<ScrollContentPresenter x:Name="PART_ScrollContentPresenter"
-                                                                CanContentScroll="{TemplateBinding CanContentScroll}"
-                                                                Grid.ColumnSpan="2" Grid.Row="1"/>
+																CanContentScroll="{TemplateBinding CanContentScroll}"
+																Grid.ColumnSpan="2" Grid.Row="1"/>
 										<ScrollBar x:Name="PART_VerticalScrollBar" Grid.Column="2" Maximum="{TemplateBinding ScrollableHeight}"
-                                                   Orientation="Vertical" Grid.Row="1" Visibility="{TemplateBinding ComputedVerticalScrollBarVisibility}"
-                                                   Value="{Binding VerticalOffset, Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}}" 
-                                                   ViewportSize="{TemplateBinding ViewportHeight}"/>
+												   Orientation="Vertical" Grid.Row="1" Visibility="{TemplateBinding ComputedVerticalScrollBarVisibility}"
+												   Value="{Binding VerticalOffset, Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}}" 
+												   ViewportSize="{TemplateBinding ViewportHeight}"/>
 										<Grid Grid.Column="1" Grid.Row="2">
 											<Grid.ColumnDefinitions>
 												<ColumnDefinition Width="{Binding NonFrozenColumnsViewportHorizontalOffset, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}"/>
 												<ColumnDefinition Width="*"/>
 											</Grid.ColumnDefinitions>
 											<ScrollBar x:Name="PART_HorizontalScrollBar" Grid.Column="1" 
-                                                       Maximum="{TemplateBinding ScrollableWidth}"
-                                                       Orientation="Horizontal" Visibility="{TemplateBinding ComputedHorizontalScrollBarVisibility}" 
-                                                       Value="{Binding HorizontalOffset, Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}}"
-                                                       ViewportSize="{TemplateBinding ViewportWidth}"/>
+													   Maximum="{TemplateBinding ScrollableWidth}"
+													   Orientation="Horizontal" Visibility="{TemplateBinding ComputedHorizontalScrollBarVisibility}" 
+													   Value="{Binding HorizontalOffset, Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}}"
+													   ViewportSize="{TemplateBinding ViewportWidth}"/>
 										</Grid>
 									</Grid>
 								</ControlTemplate>
@@ -3225,87 +3231,87 @@
 
 	<Style TargetType="FlowDocument" x:Key="DocumentStyle">
 		<Setter Property="FontFamily"
-                Value="Calibri" />
+				Value="Calibri" />
 		<Setter Property="TextAlignment"
-                Value="Left" />
+				Value="Left" />
 		<Setter Property="Foreground"
-                    Value="#ffffff" />
+					Value="#ffffff" />
 	</Style>
 
 	<Style x:Key="H1Style"
-               TargetType="Paragraph">
+			   TargetType="Paragraph">
 		<Setter Property="FontSize"
-                    Value="42" />
+					Value="42" />
 		<Setter Property="Foreground"
-                    Value="#ffffff" />
+					Value="#ffffff" />
 		<Setter Property="FontWeight"
-                    Value="Light" />
+					Value="Light" />
 	</Style>
 
 	<Style x:Key="H2Style"
-               TargetType="Paragraph">
+			   TargetType="Paragraph">
 		<Setter Property="FontSize"
-                    Value="20" />
+					Value="20" />
 		<Setter Property="Foreground"
-                    Value="#ffffff" />
+					Value="#ffffff" />
 		<Setter Property="FontWeight"
-                    Value="Light" />
+					Value="Light" />
 	</Style>
 
 	<Style x:Key="H3Style"
-               TargetType="Paragraph">
+			   TargetType="Paragraph">
 		<Setter Property="FontSize"
-                    Value="20" />
+					Value="20" />
 		<Setter Property="Foreground"
-                    Value="#ffffff" />
+					Value="#ffffff" />
 		<Setter Property="FontWeight"
-                    Value="Light" />
+					Value="Light" />
 	</Style>
 
 	<Style x:Key="H4Style"
-               TargetType="Paragraph">
+			   TargetType="Paragraph">
 		<Setter Property="FontSize"
-                    Value="14" />
+					Value="14" />
 		<Setter Property="Foreground"
-                    Value="#ffffff" />
+					Value="#ffffff" />
 		<Setter Property="FontWeight"
-                    Value="Light" />
+					Value="Light" />
 	</Style>
 
 	<Style x:Key="LinkStyle"
-               TargetType="Hyperlink">
+			   TargetType="Hyperlink">
 		<Setter Property="TextDecorations"
-                    Value="None" />
+					Value="None" />
 	</Style>
 
 	<Style x:Key="ImageStyle"
-               TargetType="Image">
+			   TargetType="Image">
 		<Setter Property="RenderOptions.BitmapScalingMode"
-                  Value="NearestNeighbor" />
+				  Value="NearestNeighbor" />
 		<Style.Triggers>
 			<Trigger Property="Tag"
-                       Value="imageright">
+					   Value="imageright">
 				<Setter Property="Margin" 
-                          Value="20,0,0,0" />
+						  Value="20,0,0,0" />
 			</Trigger>
 		</Style.Triggers>
 	</Style>
 
 	<Style x:Key="SeparatorStyle"
-             TargetType="Separator">
+			 TargetType="Separator">
 		<!--<Setter Property="X2"
-                  Value="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=FlowDocumentScrollViewer}}" />
-          <Setter Property="Stroke"
-                  Value="#99000000" />
-          <Setter Property="StrokeThickness"
-                  Value="2" />-->
+				  Value="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=FlowDocumentScrollViewer}}" />
+		  <Setter Property="Stroke"
+				  Value="#99000000" />
+		  <Setter Property="StrokeThickness"
+				  Value="2" />-->
 	</Style>
 
 	<!-- 
-         The Table's style don't seem to support border-collapse. 
-         By making the ruled line width 0.5 and applying it to cell and table, 
-         it looks like the ruled lines are not doubled. 
-     -->
+		 The Table's style don't seem to support border-collapse. 
+		 By making the ruled line width 0.5 and applying it to cell and table, 
+		 it looks like the ruled lines are not doubled. 
+	 -->
 	<Style x:Key="TableStyle" TargetType="Table">
 		<Setter Property="CellSpacing" Value="0"/>
 		<Setter Property="BorderThickness" Value="0.5"/>

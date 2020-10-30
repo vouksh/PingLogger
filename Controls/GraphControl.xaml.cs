@@ -76,7 +76,7 @@ namespace PingLogger.Controls
 				PingTimes.MaxSize = 1;
 				pingPlot.plt.XLabel("Time");
 				pingPlot.plt.YLabel("Ping");
-				pingPlot.plt.Layout(xScaleHeight: 5);
+				pingPlot.plt.Layout(xScaleHeight: 5, yScaleWidth: 1);
 				pingPlot.plt.Ticks(dateTimeX: true, dateTimeFormatStringX: "hh:mm:ss", xTickRotation: 45);
 				//pingPlot.plt.Grid(xSpacing: 1);
 				//pingPlot.plt.PlotScatter(xAxis.ToArray(), yAxis.ToArray(), lineWidth: 1.5);

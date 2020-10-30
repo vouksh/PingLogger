@@ -834,7 +834,7 @@
 		<Setter Property="VerticalContentAlignment" Value="Center"/>
 		<Setter Property="Background" Value="{StaticResource ContainerBackground}"/>
 		<Setter Property="BorderBrush" Value="{StaticResource ContainerBorder}"/>
-		<Setter Property="BorderThickness" Value="1 0 1 1"/>
+		<Setter Property="BorderThickness" Value="1 1 1 1"/>
 		<Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
 		<Setter Property="Template">
 			<Setter.Value>
@@ -850,7 +850,7 @@
 						</Grid.RowDefinitions>
 						<DockPanel>
 								<TabPanel x:Name="headerPanel"
-                                      Grid.Column="0" IsItemsHost="true" Margin="0 2 0 0"
+                                      Grid.Column="0" IsItemsHost="true" Margin="0 1 0 0"
                                       Grid.Row="0" KeyboardNavigation.TabIndex="1" 
                                       Panel.ZIndex="1"/>
 								<Rectangle Fill="{TemplateBinding BorderBrush}" Height="1" VerticalAlignment="Bottom"/>
@@ -918,8 +918,8 @@
 		<Setter Property="Foreground" Value="White"/>
 		<Setter Property="Background" Value="{StaticResource ContainerBackground}"/>
 		<Setter Property="BorderBrush" Value="{StaticResource ContainerBorder}"/>
-		<Setter Property="Margin" Value="1,0,2,0"/>
-		<Setter Property="Padding" Value="20, 9, 20, 9"/>
+		<Setter Property="Margin" Value="1,0,1,0"/>
+		<Setter Property="Padding" Value="10, 10, 10, 10"/>
 		<Setter Property="HorizontalContentAlignment" Value="Stretch"/>
 		<Setter Property="VerticalContentAlignment" Value="Stretch"/>
 		<Setter Property="Template">
@@ -927,7 +927,7 @@
 				<ControlTemplate TargetType="{x:Type TabItem}">
 					<Grid x:Name="templateRoot" SnapsToDevicePixels="true">
 						<Border x:Name="mainBorder" BorderBrush="{TemplateBinding BorderBrush}" 
-                                BorderThickness="0,1,1,1" Background="{TemplateBinding Background}" Margin="0">
+                                BorderThickness="1,1,1,0" Background="{TemplateBinding Background}" Margin="2">
 							<Border x:Name="innerBorder" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="0,1,1,0"
                                     Background="{TemplateBinding Background}" Margin="-1" Opacity="0"/>
 						</Border>
@@ -974,8 +974,9 @@
 							</MultiDataTrigger.Conditions>
 							<Setter Property="Background" TargetName="mainBorder" Value="{StaticResource ControlMouseOverBackground}"/>
 							<Setter Property="BorderBrush" TargetName="mainBorder" Value="{StaticResource ControlMouseOverBorderBrush}"/>
-							<Setter Property="BorderThickness" TargetName="innerBorder" Value="1,1,1,0"/>
-							<Setter Property="BorderThickness" TargetName="mainBorder" Value="1,1,1,0"/>
+							<Setter Property="BorderThickness" TargetName="innerBorder" Value="1,1,1,1"/>
+							<Setter Property="BorderThickness" TargetName="mainBorder" Value="1,1,1,1"/>
+							<Setter Property="Padding" Value="-1"/>
 						</MultiDataTrigger>
 						<MultiDataTrigger>
 							<MultiDataTrigger.Conditions>
@@ -1088,6 +1089,7 @@
 							</MultiDataTrigger.Conditions>
 							<Setter Property="BorderThickness" TargetName="innerBorder" Value="1"/>
 							<Setter Property="BorderThickness" TargetName="mainBorder" Value="1"/>
+							<Setter Property="Margin" Value="1,0,1,0"/>
 						</MultiDataTrigger>
 						<MultiDataTrigger>
 							<MultiDataTrigger.Conditions>
@@ -1096,10 +1098,11 @@
 							</MultiDataTrigger.Conditions>
 							<Setter Property="Background" Value="{StaticResource ControlSelectedBackground}"/>
 							<Setter Property="Panel.ZIndex" Value="1"/>
-							<Setter Property="Margin" Value="0,-2,-3,0"/>
+							<Setter Property="Padding" Value="1,1,1,0"/>
+							<Setter Property="Margin" Value="-1"/>
 							<Setter Property="Opacity" TargetName="innerBorder" Value="1"/>
-							<Setter Property="BorderThickness" TargetName="innerBorder" Value="1,1,1,0"/>
-							<Setter Property="BorderThickness" TargetName="mainBorder" Value="1,1,1,0"/>
+							<Setter Property="BorderThickness" TargetName="innerBorder" Value="1,1,1,1"/>
+							<Setter Property="BorderThickness" TargetName="mainBorder" Value="1,1,1,1"/>
 						</MultiDataTrigger>
 					</ControlTemplate.Triggers>
 				</ControlTemplate>
@@ -1116,7 +1119,7 @@
 			</Border>
 			<ContentPresenter x:Name="contentPresenter" ContentSource="Header" Focusable="False"
                                               HorizontalAlignment="{Binding HorizontalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}" 
-                                              Margin="10,9,36,9" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" 
+                                              Margin="8,9,30,9" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" 
                                               VerticalAlignment="{Binding VerticalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"/>
 			<Border CornerRadius="3" Height="20" VerticalAlignment="Center" HorizontalAlignment="Right" Width="19" Margin="0,8,8,7">
 				<Button Background="Transparent" Foreground="DarkRed" Template="{DynamicResource CloseWindowButton}" Command="{Binding Path=CloseTabCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType={x:Type TabItem}}, Path=Uid}" BorderBrush="{x:Null}" 
@@ -1308,8 +1311,8 @@
                                       Grid.Column="0" IsItemsHost="true" Margin="0 2 0 0"
                                       Grid.Row="0" KeyboardNavigation.TabIndex="1" 
                                       Panel.ZIndex="1"/>
-				<Border CornerRadius="3" Height="28"
-                                        VerticalAlignment="Center" Background="{StaticResource ContainerBackground}"
+				<Border CornerRadius="0" Height="28"
+                                        VerticalAlignment="Center" Background="{StaticResource ControlDefaultBackground}"
                                         HorizontalAlignment="Center" Width="28" Margin="8 0 0 0">
 						<Button Background="Transparent" Command="{Binding NewTabCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}" BorderBrush="{x:Null}"
                                             VerticalAlignment="Stretch" HorizontalAlignment="Stretch" FontFamily="Consolas" FontSize="16" Foreground="{DynamicResource ControlDefaultForeground}">
@@ -1444,7 +1447,7 @@
 	<Style x:Key="ScrollBarButton" TargetType="{x:Type RepeatButton}">
 		<Setter Property="FocusVisualStyle" Value="{StaticResource FocusVisual}"/>
 		<Setter Property="BorderThickness" Value="1"/>
-		<Setter Property="Background" Value="{StaticResource ControlDefaultBackground}"/>
+		<Setter Property="Background" Value="{StaticResource ControlDarkerBackground}"/>
 		<Setter Property="HorizontalContentAlignment" Value="Center"/>
 		<Setter Property="VerticalContentAlignment" Value="Center"/>
 		<Setter Property="Padding" Value="1"/>
@@ -1489,14 +1492,14 @@
 		<Setter Property="Template">
 			<Setter.Value>
 				<ControlTemplate TargetType="{x:Type Thumb}">
-					<Rectangle x:Name="rectangle" Fill="{StaticResource ControlBrightDefaultBackground}" Height="{TemplateBinding Height}" 
+					<Rectangle x:Name="rectangle" Fill="{StaticResource ControlDarkerBackground}" Height="{TemplateBinding Height}" 
                                SnapsToDevicePixels="True" Width="{TemplateBinding Width}"/>
 					<ControlTemplate.Triggers>
 						<Trigger Property="IsMouseOver" Value="true">
 							<Setter Property="Fill" TargetName="rectangle" Value="{StaticResource ControlMouseOverBorderBrush}"/>
 						</Trigger>
 						<Trigger Property="IsDragging" Value="true">
-							<Setter Property="Fill" TargetName="rectangle" Value="{StaticResource ControlBrightDefaultBackground}"/>
+							<Setter Property="Fill" TargetName="rectangle" Value="{StaticResource ControlDarkerBackground}"/>
 						</Trigger>
 					</ControlTemplate.Triggers>
 				</ControlTemplate>
@@ -1509,14 +1512,14 @@
 		<Setter Property="Template">
 			<Setter.Value>
 				<ControlTemplate TargetType="{x:Type Thumb}">
-					<Rectangle x:Name="rectangle" Fill="{StaticResource ControlBrightDefaultBackground}" Height="{TemplateBinding Height}" 
+					<Rectangle x:Name="rectangle" Fill="{StaticResource ControlDarkerBackground}" Height="{TemplateBinding Height}" 
                                SnapsToDevicePixels="True" Width="{TemplateBinding Width}"/>
 					<ControlTemplate.Triggers>
 						<Trigger Property="IsMouseOver" Value="true">
 							<Setter Property="Fill" TargetName="rectangle" Value="{StaticResource ControlMouseOverBackground}"/>
 						</Trigger>
 						<Trigger Property="IsDragging" Value="true">
-							<Setter Property="Fill" TargetName="rectangle" Value="{StaticResource ControlBrightDefaultBackground}"/>
+							<Setter Property="Fill" TargetName="rectangle" Value="{StaticResource ControlDarkerBackground}"/>
 						</Trigger>
 					</ControlTemplate.Triggers>
 				</ControlTemplate>

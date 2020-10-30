@@ -492,6 +492,7 @@ namespace PingLogger.Controls
 			PingTimes.Clear();
 			pingGraphControl.ClearData();
 			statusGraphControl.ClearData();
+			PingStatusBox.Text = string.Empty;
 		}
 
 		private void PingWindowToggle_Click(object sender, RoutedEventArgs e)

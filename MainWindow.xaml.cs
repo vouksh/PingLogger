@@ -169,7 +169,7 @@ namespace PingLogger
 				Uid = host.Id.ToString()
 			};
 
-			tab.SetResourceReference(Control.TemplateProperty, "CloseButton");
+			tab.SetResourceReference(TemplateProperty, "CloseButton");
 			PingControl pingControl = new PingControl(host, AddOnRuntime);
 			tab.Content = pingControl;
 			_tabItems.Insert(count, tab);
