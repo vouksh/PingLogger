@@ -1,7 +1,8 @@
-﻿using PingLogger.Models;
+﻿using FontAwesome.WPF;
+using PingLogger.Extensions;
+using PingLogger.Models;
 using PingLogger.Workers;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -13,10 +14,8 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using System.Windows.Threading;
-using FontAwesome.WPF;
 using System.Windows.Media;
-using PingLogger.Extensions;
+using System.Windows.Threading;
 
 namespace PingLogger.Controls
 {
@@ -117,7 +116,7 @@ namespace PingLogger.Controls
 				StringBuilder sb = new StringBuilder();
 				for (int i = 0; i < Pinger.Replies.Count - 1; i++)
 				{
-					TotalPings++; 
+					TotalPings++;
 					// Logger.Info($"{PingHost.HostName} TotalPings: {TotalPings}");
 					var success = Pinger.Replies.TryTake(out Reply reply);
 					pingGraphControl.AddData(reply.DateTime, reply.RoundTrip);
@@ -223,8 +222,6 @@ namespace PingLogger.Controls
 		{
 			try
 			{
-				pingGraphControl.PingTimes.Clear();
-				statusGraphControl.PingTimes.Clear();
 				Logger.Debug($"StartBtn_Click");
 				StopBtn.IsEnabled = true;
 				StartBtn.IsEnabled = false;
@@ -493,6 +490,8 @@ namespace PingLogger.Controls
 			TotalPings = 0;
 			Warnings = 0;
 			PingTimes.Clear();
+			pingGraphControl.ClearData();
+			statusGraphControl.ClearData();
 		}
 
 		private void PingWindowToggle_Click(object sender, RoutedEventArgs e)

@@ -6,6 +6,8 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 
 namespace PingLogger
@@ -42,9 +44,10 @@ namespace PingLogger
 				splashScreen.Show();
 				splashScreen.dlProgress.IsIndeterminate = true;
 				splashScreen.dlProgress.Value = 1;
-				var localVersion = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
+				var localVersion = Assembly.GetExecutingAssembly().GetName().Version;
+				var appGUID = Assembly.GetExecutingAssembly().GetCustomAttribute<GuidAttribute>().Value.ToUpper();
 				bool appIsInstalled = false;
-				string installerGUID = "{39E66F87-E17F-4311-A477-C5F47F7F7B1F}_is1";
+				string installerGUID = $"{appGUID}_is1";
 				var key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall");
 				if (key.GetSubKeyNames().Contains(installerGUID))
 				{

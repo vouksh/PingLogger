@@ -11,7 +11,7 @@ namespace PingLogger.Extensions
 		{
 			MaxSize = maxSize;
 		}
-		private Queue<T> orderedQueue = new Queue<T>();
+		private readonly Queue<T> orderedQueue = new Queue<T>();
 
 		public new void Add(T obj)
 		{
@@ -19,11 +19,16 @@ namespace PingLogger.Extensions
 
 			if(MaxSize > 0 && orderedQueue.Count >= MaxSize)
 			{
-				this.Remove(orderedQueue.Dequeue());
+				Remove(orderedQueue.Dequeue());
 			}
 
 			base.Add(obj);
 		}
 
+		public new void Clear()
+		{
+			orderedQueue.Clear();
+			base.Clear();
+		}
 	}
 }

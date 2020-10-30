@@ -8,11 +8,11 @@ namespace PingLogger.Extensions
 	{
 		public FixedDictionary(int maxSize = 0)
 		{
-			this.MaxSize = maxSize;
+			MaxSize = maxSize;
 		}
 
 		public int MaxSize { get; set; }
-		private Queue<TKey> orderedKeys = new Queue<TKey>();
+		private readonly Queue<TKey> orderedKeys = new Queue<TKey>();
 
 		public new void Add(TKey key, TValue value)
 		{
@@ -24,6 +24,12 @@ namespace PingLogger.Extensions
 			}
 
 			base.Add(key, value);
+		}
+
+		public new void Clear()
+		{
+			orderedKeys.Clear();
+			base.Clear();
 		}
 	}
 }

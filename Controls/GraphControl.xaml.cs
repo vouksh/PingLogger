@@ -73,6 +73,7 @@ namespace PingLogger.Controls
 			}
 			if (!isPieChart)
 			{
+				PingTimes.MaxSize = 1;
 				pingPlot.plt.XLabel("Time");
 				pingPlot.plt.YLabel("Ping");
 				pingPlot.plt.Layout(xScaleHeight: 5);
@@ -81,6 +82,8 @@ namespace PingLogger.Controls
 				//pingPlot.plt.PlotScatter(xAxis.ToArray(), yAxis.ToArray(), lineWidth: 1.5);
 			} else
 			{
+				xAxis.MaxSize = 1;
+				yAxis.MaxSize = 1;
 				double[] values = { 0, 0, 0 };
 				string[] labels = { "Success", "Timeout", "Warning" };
 				System.Drawing.Color[] colors = { System.Drawing.Color.Green, System.Drawing.Color.Red, System.Drawing.Color.Orange };
@@ -115,6 +118,13 @@ namespace PingLogger.Controls
 				pingPlot.plt.PlotScatter(xAxis.ToArray(), yAxis.ToArray(), lineWidth: 1.5);
 				pingPlot.Render();
 			}
+		}
+
+		public void ClearData()
+		{
+			PingTimes.Clear();
+			xAxis.Clear();
+			yAxis.Clear();
 		}
 
 	}
