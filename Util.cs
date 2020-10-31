@@ -5,9 +5,11 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace PingLogger
@@ -27,7 +29,8 @@ namespace PingLogger
 				if (File.Exists("./tempDir.txt"))
 				{
 					var installerPath = File.ReadAllText("./tempDir.txt");
-					File.Delete(installerPath + "/PingLogger-Setup.exe");
+					File.Delete(installerPath + "latest.json");
+					File.Delete(installerPath + "/PingLogger-Setup.msi");
 					Directory.Delete(installerPath);
 					File.Delete("./tempDir.txt");
 				}
@@ -45,9 +48,10 @@ namespace PingLogger
 				splashScreen.dlProgress.IsIndeterminate = true;
 				splashScreen.dlProgress.Value = 1;
 				var localVersion = Assembly.GetExecutingAssembly().GetName().Version;
+				File.WriteAllText("./version.json", JsonSerializer.Serialize(localVersion));
 				var appGUID = Assembly.GetExecutingAssembly().GetCustomAttribute<GuidAttribute>().Value.ToUpper();
 				bool appIsInstalled = false;
-				string installerGUID = $"{appGUID}_is1";
+				string installerGUID = $"{{{appGUID}}}";
 				var key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall");
 				if (key.GetSubKeyNames().Contains(installerGUID))
 				{
@@ -56,35 +60,30 @@ namespace PingLogger
 				}
 				try
 				{
-					HttpClient httpClient = new HttpClient();
-					httpClient.DefaultRequestHeaders.Add("User-Agent", "PingLogger Auto-Update");
-					//httpClient.DefaultRequestHeaders.Add("Authorization", "Basic " + Convert.ToBase64String(Encoding.ASCII.GetBytes($"vouksh:{gitHubAPIToken}")));
-					var resp = await httpClient.GetAsync("https://api.github.com/repos/vouksh/PingLogger/releases/latest");
-					var strResp = await resp.Content.ReadAsStringAsync();
-					if (strResp.Contains("API rate limit exceeded"))
-					{
-						Logger.Info("Unable to check for updates due to rate limit.");
-						return;
-					}
-					var parsedResp = System.Text.Json.JsonSerializer.Deserialize<GitHubResponse>(strResp);
-					var remoteVersion = Version.Parse(parsedResp.tag_name.Replace("v", ""));
+					string tempDir = RandomString(8);
+					string savePath = $"{Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData)}\\Temp\\{tempDir}";
+					File.WriteAllText("./tempDir.txt", savePath);
+					Directory.CreateDirectory(savePath);
+					Logger.Info($"Creating temporary path {savePath}");
+
+					var httpClient = new WebClient();
+
+					string azureURL = "https://pingloggerfiles.blob.core.windows.net/";
+					await httpClient.DownloadFileTaskAsync($"{azureURL}version/latest.json", $"{savePath}/latest.json");
+					var remoteVersion = JsonSerializer.Deserialize<Version>(File.ReadAllText($"{savePath}/latest.json"));
+
 					Logger.Info($"Most recent version is {remoteVersion}, currently running {localVersion}");
 					if (remoteVersion > localVersion)
 					{
 						Logger.Info("Remote contains a newer version");
-						File.WriteAllText("./ChangeLog.txt", parsedResp.body);
 						if (Controls.UpdatePromptDialog.Show())
 						{
 							if (appIsInstalled)
 							{
-								string tempDir = RandomString(8);
-								string savePath = $"{Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData)}\\Temp\\{tempDir}";
-								File.WriteAllText("./tempDir.txt", savePath);
-								Logger.Info($"Downloading newest installer to {savePath}\\PingLogger-Setup.exe");
-								Directory.CreateDirectory(savePath);
-								var downloadURL = parsedResp.assets.First(a => a.name == "PingLogger-Setup.exe").browser_download_url;
+								Logger.Info($"Downloading newest installer to {savePath}\\PingLogger-Setup.msi");
+								var downloadURL = $"{azureURL}v{remoteVersion.Major}{remoteVersion.Minor}{remoteVersion.Build}/PingLogger-Setup.msi";
 								Logger.Info($"Downloading from {downloadURL}");
-								using var downloader = new HttpClientDownloadWithProgress(downloadURL, savePath + "\\PingLogger-Setup.exe");
+								using var downloader = new HttpClientDownloadWithProgress(downloadURL, savePath + "\\PingLogger-Setup.msi");
 								splashScreen.mainLabel.Text = $"Downloading PingLogger setup v{remoteVersion}";
 								downloader.ProgressChanged += Downloader_ProgressChanged;
 								await downloader.StartDownload();
@@ -94,20 +93,20 @@ namespace PingLogger
 								{
 									StartInfo = new ProcessStartInfo
 									{
-										FileName = savePath + "\\PingLogger-Setup.exe",
-										Verb = "runas",
+										FileName = "msiexec.exe",
 										UseShellExecute = true,
-										Arguments = $"/SP- /VERYSILENT /SUPPRESSMSGBOXES /CLOSEAPPLICATIONS /RESTARTAPPLICATIONS /LOG=\"{AppContext.BaseDirectory}Logs\\Installer-v{remoteVersion}.log\""
+										Arguments = $"/q /l* \"{AppContext.BaseDirectory}Logs\\Installer-v{remoteVersion}.log\" /i {savePath}\\PingLogger-Setup.msi"
 									}
 								}.Start();
 								Logger.Info("Installer completed, closing.");
+								Environment.Exit(0);
 							}
 							else
 							{
 								Logger.Info("Renamed PingLogger.exe to PingLogger-old.exe");
 								File.Move("./PingLogger.exe", "./PingLogger-old.exe");
 								Logger.Info("Downloading new PingLogger.exe");
-								var downloadURL = parsedResp.assets.First(a => a.name == "PingLogger.exe").browser_download_url;
+								var downloadURL = $"{azureURL}v{remoteVersion.Major}{remoteVersion.Minor}{remoteVersion.Build}/PingLogger.exe";
 								Logger.Info($"Downloading from {downloadURL}");
 								using var downloader = new HttpClientDownloadWithProgress(downloadURL, "./PingLogger.exe");
 								splashScreen.mainLabel.Text = $"Downloading PingLogger v{remoteVersion}";
