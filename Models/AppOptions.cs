@@ -14,6 +14,7 @@ namespace PingLogger.Models
 		public DateTime UpdateLastChecked { get; set; } = DateTime.Now.AddDays(-1);
 		public bool EnableAutoUpdate { get; set; } = true;
 		public int LastSelectedTab { get; set; } = 0;
+		public string LastTempDir { get; set; } = string.Empty;
 	}
 	public enum Theme
 	{

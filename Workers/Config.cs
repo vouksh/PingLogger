@@ -154,6 +154,20 @@ namespace PingLogger.Workers
 			}
 		}
 
+		public static string LastTempDir
+		{
+			get
+			{
+				return Options.LastTempDir;
+			}
+			set
+			{
+				Logger.Info($"Options.LastTempDir was changed from {Options.LastTempDir} to {value}");
+				Options.LastTempDir = value;
+				SaveConfig();
+			}
+		}
+
 		static Config()
 		{
 			ReadConfig();

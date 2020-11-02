@@ -26,13 +26,11 @@ namespace PingLogger
 				{
 					File.Delete("./PingLogger-old.exe");
 				}
-				if (File.Exists("./tempDir.txt"))
+				if (Config.LastTempDir != string.Empty && Directory.Exists(Config.LastTempDir))
 				{
-					var installerPath = File.ReadAllText("./tempDir.txt");
-					File.Delete(installerPath + "latest.json");
-					File.Delete(installerPath + "/PingLogger-Setup.msi");
-					Directory.Delete(installerPath);
-					File.Delete("./tempDir.txt");
+					File.Delete(Config.LastTempDir + "/PingLogger-Setup.msi");
+					Directory.Delete(Config.LastTempDir);
+					Config.LastTempDir = string.Empty;
 				}
 				Config.AppWasUpdated = false;
 			}
@@ -48,7 +46,6 @@ namespace PingLogger
 				splashScreen.dlProgress.IsIndeterminate = true;
 				splashScreen.dlProgress.Value = 1;
 				var localVersion = Assembly.GetExecutingAssembly().GetName().Version;
-				File.WriteAllText("./version.json", JsonSerializer.Serialize(localVersion));
 				var appGUID = Assembly.GetExecutingAssembly().GetCustomAttribute<GuidAttribute>().Value.ToUpper();
 				bool appIsInstalled = false;
 				string installerGUID = $"{{{appGUID}}}";
@@ -60,17 +57,14 @@ namespace PingLogger
 				}
 				try
 				{
-					string tempDir = RandomString(8);
-					string savePath = $"{Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData)}\\Temp\\{tempDir}";
-					File.WriteAllText("./tempDir.txt", savePath);
-					Directory.CreateDirectory(savePath);
-					Logger.Info($"Creating temporary path {savePath}");
 
 					var httpClient = new WebClient();
 
 					string azureURL = "https://pingloggerfiles.blob.core.windows.net/";
-					await httpClient.DownloadFileTaskAsync($"{azureURL}version/latest.json", $"{savePath}/latest.json");
-					var remoteVersion = JsonSerializer.Deserialize<Version>(File.ReadAllText($"{savePath}/latest.json"));
+
+					await httpClient.DownloadFileTaskAsync($"{azureURL}version/latest.json", $"./latest.json");
+					var remoteVersion = JsonSerializer.Deserialize<Version>(File.ReadAllText($"./latest.json"));
+					File.Delete("./latest.json");
 
 					Logger.Info($"Most recent version is {remoteVersion}, currently running {localVersion}");
 					if (remoteVersion > localVersion)
@@ -80,24 +74,24 @@ namespace PingLogger
 						{
 							if (appIsInstalled)
 							{
-								Logger.Info($"Downloading newest installer to {savePath}\\PingLogger-Setup.msi");
+								Config.LastTempDir = $"{Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData)}\\Temp\\{RandomString(8)}";
+								Directory.CreateDirectory(Config.LastTempDir);
+								Logger.Info($"Creating temporary path {Config.LastTempDir}");
+								Logger.Info($"Downloading newest installer to {Config.LastTempDir}\\PingLogger-Setup.msi");
 								var downloadURL = $"{azureURL}v{remoteVersion.Major}{remoteVersion.Minor}{remoteVersion.Build}/PingLogger-Setup.msi";
 								Logger.Info($"Downloading from {downloadURL}");
-								using var downloader = new HttpClientDownloadWithProgress(downloadURL, savePath + "\\PingLogger-Setup.msi");
+								using var downloader = new HttpClientDownloadWithProgress(downloadURL, Config.LastTempDir + "\\PingLogger-Setup.msi");
 								splashScreen.mainLabel.Text = $"Downloading PingLogger setup v{remoteVersion}";
 								downloader.ProgressChanged += Downloader_ProgressChanged;
 								await downloader.StartDownload();
 								Config.AppWasUpdated = true;
 								Logger.Info("Running installer");
-								new Process
+								Process.Start(new ProcessStartInfo
 								{
-									StartInfo = new ProcessStartInfo
-									{
-										FileName = "msiexec.exe",
-										UseShellExecute = true,
-										Arguments = $"/q /l* \"{AppContext.BaseDirectory}Logs\\Installer-v{remoteVersion}.log\" /i {savePath}\\PingLogger-Setup.msi"
-									}
-								}.Start();
+									FileName = "msiexec.exe",
+									UseShellExecute = true,
+									Arguments = $"/q /l* \"{AppContext.BaseDirectory}Logs\\Installer-v{remoteVersion}.log\" /i {Config.LastTempDir}\\PingLogger-Setup.msi"
+								});
 								Logger.Info("Installer completed, closing.");
 								Environment.Exit(0);
 							}
@@ -113,13 +107,12 @@ namespace PingLogger
 								downloader.ProgressChanged += Downloader_ProgressChanged;
 								await downloader.StartDownload();
 								Config.AppWasUpdated = true;
-								new Process
+
+								Process.Start(new ProcessStartInfo
 								{
-									StartInfo = new ProcessStartInfo
-									{
-										FileName = "./PingLogger.exe"
-									}
-								}.Start();
+									FileName = "./PingLogger.exe"
+								});
+
 								Logger.Info("Starting new version of PingLogger");
 								Environment.Exit(0);
 							}

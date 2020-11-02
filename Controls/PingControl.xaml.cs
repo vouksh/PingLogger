@@ -27,7 +27,7 @@ namespace PingLogger.Controls
 		readonly DispatcherTimer Timer;
 		public Host PingHost;
 		private Pinger Pinger;
-		private readonly FixedList<long> PingTimes = new FixedList<long>(22);
+		private readonly FixedList<long> PingTimes = new FixedList<long>(23);
 		private int Timeouts = 0;
 		private int Warnings = 0;
 		private readonly SynchronizationContext syncCtx;
@@ -66,6 +66,7 @@ namespace PingLogger.Controls
 				AutoStart();
 			statusGraphControl.StylePlot(true);
 			pingGraphControl.StylePlot(false);
+
 		}
 		void AutoStart()
 		{
@@ -96,6 +97,7 @@ namespace PingLogger.Controls
 		}
 		void Timer_Tick(object sender, EventArgs e)
 		{
+
 			if (Pinger != null && Pinger.Running)
 			{
 				if (Config.WindowExpanded)
@@ -152,9 +154,9 @@ namespace PingLogger.Controls
 				}
 				PingStatusBox.Text += sb.ToString();
 				var lines = PingStatusBox.Text.Split(Environment.NewLine).ToList();
-				if (lines.Count() > 22)
+				if (lines.Count() > PingTimes.MaxSize)
 				{
-					Logger.Debug($"{PingHost.HostName} Lines in text box greater than 22, removing a line.");
+					Logger.Debug($"{PingHost.HostName} Lines in text box greater than {PingTimes.MaxSize}, removing a line.");
 					lines.RemoveAt(0);
 					PingStatusBox.Text = string.Join(Environment.NewLine, lines);
 				}
