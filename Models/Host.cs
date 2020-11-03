@@ -14,7 +14,6 @@ namespace PingLogger.Models
 		public int Timeout { get; set; } = 1000;
 		public bool DontFragment { get; set; } = true;
 
-		// override object.Equals
 		public override bool Equals(object obj)
 		{
 			if (obj == null || GetType() != obj.GetType())
@@ -54,7 +53,6 @@ namespace PingLogger.Models
 			return JsonSerializer.Serialize(this, new JsonSerializerOptions { WriteIndented = true });
 		}
 
-		// override object.GetHashCode
 		public override int GetHashCode()
 		{
 			return Tuple.Create(HostName, IP).GetHashCode();

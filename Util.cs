@@ -46,27 +46,25 @@ namespace PingLogger
 				splashScreen.dlProgress.IsIndeterminate = true;
 				splashScreen.dlProgress.Value = 1;
 				var localVersion = Assembly.GetExecutingAssembly().GetName().Version;
-				var appGUID = Assembly.GetExecutingAssembly().GetCustomAttribute<GuidAttribute>().Value.ToUpper();
-				bool appIsInstalled = false;
-				string installerGUID = $"{{{appGUID}}}";
-				var key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall");
-				if (key.GetSubKeyNames().Contains(installerGUID))
-				{
-					appIsInstalled = true;
-					Logger.Info($"Application was installed in {AppContext.BaseDirectory}.");
-				}
+				
+				bool appIsInstalled = File.Exists($"{AppContext.BaseDirectory}installFlag");
 				try
 				{
-
 					var httpClient = new WebClient();
+					bool downloadComplete = false;
+					httpClient.DownloadFileCompleted += (o, i) => { downloadComplete = true; };
 
 					string azureURL = "https://pingloggerfiles.blob.core.windows.net/";
 
 					await httpClient.DownloadFileTaskAsync($"{azureURL}version/latest.json", $"./latest.json");
-					var remoteVersion = JsonSerializer.Deserialize<Version>(File.ReadAllText($"./latest.json"));
+
+					while(!downloadComplete) { await Task.Delay(100); }
+					var latestJson = File.ReadAllText("./latest.json");
+					/// File.WriteAllText("./local.json", JsonSerializer.Serialize(localVersion, new JsonSerializerOptions { WriteIndented = true }));
+					var remoteVersion = JsonSerializer.Deserialize<SerializableVersion>(latestJson);
 					File.Delete("./latest.json");
 
-					Logger.Info($"Most recent version is {remoteVersion}, currently running {localVersion}");
+					Logger.Info($"Remote version is {remoteVersion}, currently running {localVersion}");
 					if (remoteVersion > localVersion)
 					{
 						Logger.Info("Remote contains a newer version");
@@ -85,14 +83,19 @@ namespace PingLogger
 								downloader.ProgressChanged += Downloader_ProgressChanged;
 								await downloader.StartDownload();
 								Config.AppWasUpdated = true;
-								Logger.Info("Running installer");
+								Logger.Info("Uninstalling current version.");
+								string batchFile = $@"@echo off
+msiexec.exe /q /l* '{ AppContext.BaseDirectory}Logs\\Installer - v{localVersion}.log' /x {File.ReadAllText("./installFlag")}
+msiexec.exe /q /l* '{ AppContext.BaseDirectory}Logs\\Installer - v{remoteVersion}.log' /i {Config.LastTempDir}/PingLogger-Setup.msi";
+								File.WriteAllText(Config.LastTempDir + "/install.bat", batchFile);
 								Process.Start(new ProcessStartInfo
 								{
-									FileName = "msiexec.exe",
+									FileName = "cmd.exe",
 									UseShellExecute = true,
-									Arguments = $"/q /l* \"{AppContext.BaseDirectory}Logs\\Installer-v{remoteVersion}.log\" /i {Config.LastTempDir}\\PingLogger-Setup.msi"
+									Arguments = $"{Config.LastTempDir}/install.bat"
 								});
-								Logger.Info("Installer completed, closing.");
+
+								Logger.Info("Installer started, closing.");
 								Environment.Exit(0);
 							}
 							else

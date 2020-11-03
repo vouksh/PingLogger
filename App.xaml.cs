@@ -1,5 +1,7 @@
 ﻿using PingLogger.Workers;
 using System;
+using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Windows;
 
@@ -13,11 +15,20 @@ namespace PingLogger
 		private async void Application_Startup(object sender, StartupEventArgs e)
 		{
 			Thread.CurrentThread.Name = "PrimaryUIThread";
-			Util.SetTheme();
-			AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
 			Version version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
 			Logger.Info($"Application start, version {version}");
 			Logger.Info($"Application is running from directory {AppContext.BaseDirectory}");
+			if (e.Args.Length > 0)
+			{
+				if(e.Args.Contains("--installerGUID"))
+				{
+					string installerGUID = e.Args[Array.IndexOf(e.Args, "--installerGUID") + 1];
+					File.WriteAllText("./installFlag", installerGUID);
+					Logger.Info("Installer GUID specified, writing to file.");
+				}
+			}
+			Util.SetTheme();
+			AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
 
 			if (Config.EnableAutoUpdate)
 				await Util.CheckForUpdates();
