@@ -7,5 +7,5 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("PingLogger")]
 [assembly: AssemblyDescription("Advanced multi-threaded ping logging application")]
 [assembly: NeutralResourcesLanguage("en-US")]
-[assembly: AssemblyVersion("2.2.2.10")]
-[assembly: AssemblyFileVersion("2.2.2.10")]
+[assembly: AssemblyVersion("2.2.2.11")]
+[assembly: AssemblyFileVersion("2.2.2.11")]

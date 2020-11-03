@@ -27,32 +27,20 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_6BFAB867CEB1035699F4F1989F04C1BB"
-        "OwnerKey" = "8:_F3A9C234068243BDBB195E7957C4A04E"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_70B55D3ED968489CAEB8B6EDB9AD4802"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
-        "MsmKey" = "8:_F3A9C234068243BDBB195E7957C4A04E"
+        "MsmKey" = "8:_E95404AE77F64B2AAD5BA8287C15077B"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_F3A9C234068243BDBB195E7957C4A04E"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_6BFAB867CEB1035699F4F1989F04C1BB"
+        "OwnerKey" = "8:_E95404AE77F64B2AAD5BA8287C15077B"
         "MsmSig" = "8:_UNDEFINED"
         }
     }
@@ -127,35 +115,33 @@
     {
         "CustomAction"
         {
-            "{4AA51A2D-7D85-4A59-BA75-B0809FC8B380}:_A1521B7F5F4349D6BEA4383D184C21A1"
+            "{4AA51A2D-7D85-4A59-BA75-B0809FC8B380}:_53B1523C010849DDBD13A5577EAE0E72"
             {
-            "Name" = "8:Primary output from RunInstall (Active)"
+            "Name" = "8:RunInstall.dll"
             "Condition" = "8:"
-            "Object" = "8:_F3A9C234068243BDBB195E7957C4A04E"
+            "Object" = "8:_E95404AE77F64B2AAD5BA8287C15077B"
             "FileType" = "3:1"
             "InstallAction" = "3:1"
             "Arguments" = "8:"
             "EntryPoint" = "8:"
             "Sequence" = "3:1"
-            "Identifier" = "8:_A063E241_D19A_48E9_A438_A14F1E1F224E"
+            "Identifier" = "8:_040E1B32_744C_476D_812E_16C53C902526"
             "InstallerClass" = "11:TRUE"
             "CustomActionData" = "8:"
-            "Run64Bit" = "11:TRUE"
             }
-            "{4AA51A2D-7D85-4A59-BA75-B0809FC8B380}:_E728872706AA4E99BB25CC1E157A13E6"
+            "{4AA51A2D-7D85-4A59-BA75-B0809FC8B380}:_B35042F81CCA496A9781D9B6893E2921"
             {
-            "Name" = "8:Primary output from RunInstall (Active)"
+            "Name" = "8:RunInstall.dll"
             "Condition" = "8:"
-            "Object" = "8:_F3A9C234068243BDBB195E7957C4A04E"
+            "Object" = "8:_E95404AE77F64B2AAD5BA8287C15077B"
             "FileType" = "3:1"
             "InstallAction" = "3:2"
             "Arguments" = "8:"
             "EntryPoint" = "8:"
             "Sequence" = "3:1"
-            "Identifier" = "8:_045443CE_CE96_4A83_B3DE_4639763CC552"
+            "Identifier" = "8:_3A152ACE_1DFF_4063_A23B_6BF992CD410C"
             "InstallerClass" = "11:TRUE"
             "CustomActionData" = "8:"
-            "Run64Bit" = "11:TRUE"
             }
         }
         "DefaultFeature"
@@ -230,20 +216,20 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_6BFAB867CEB1035699F4F1989F04C1BB"
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_E95404AE77F64B2AAD5BA8287C15077B"
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:System.Net.Http, Version=4.2.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"
+            "AssemblyAsmDisplayName" = "8:RunInstall, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
-                    "_6BFAB867CEB1035699F4F1989F04C1BB"
+                    "_E95404AE77F64B2AAD5BA8287C15077B"
                     {
-                    "Name" = "8:System.Net.Http.dll"
+                    "Name" = "8:RunInstall.dll"
                     "Attributes" = "3:512"
                     }
                 }
-            "SourcePath" = "8:System.Net.Http.dll"
+            "SourcePath" = "8:RunInstall.dll"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_541E9B5A38774B8684861123A876B28C"
@@ -257,8 +243,8 @@
             "SharedLegacy" = "11:FALSE"
             "PackageAs" = "3:1"
             "Register" = "3:1"
-            "Exclude" = "11:TRUE"
-            "IsDependency" = "11:TRUE"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
         }
@@ -926,34 +912,6 @@
             "OutputProjectGuid" = "8:{34590190-EC23-4876-96CB-66234BC18ADE}"
             "ShowKeyOutput" = "11:TRUE"
             "PublishProfilePath" = "8:Properties\\PublishProfiles\\InstallerPublish.pubxml"
-                "ExcludeFilters"
-                {
-                }
-            }
-            "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_F3A9C234068243BDBB195E7957C4A04E"
-            {
-            "SourcePath" = "8:..\\..\\RunInstall\\obj\\Release\\RunInstall.dll"
-            "TargetName" = "8:"
-            "Tag" = "8:"
-            "Folder" = "8:_541E9B5A38774B8684861123A876B28C"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            "ProjectOutputGroupRegister" = "3:1"
-            "OutputConfiguration" = "8:"
-            "OutputGroupCanonicalName" = "8:Built"
-            "OutputProjectGuid" = "8:{E0D4BADE-7EE2-4476-9A62-8899CFB737C3}"
-            "ShowKeyOutput" = "11:TRUE"
                 "ExcludeFilters"
                 {
                 }
