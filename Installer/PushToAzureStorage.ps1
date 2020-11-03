@@ -2,7 +2,7 @@ $parentDir = Split-Path -Path (Get-Location) -Parent
 $Assembly = [Reflection.Assembly]::LoadFile("$parentDir\bin\Release\netcoreapp3.1\win-x64\PingLogger.dll")
 $version = $Assembly.GetName().Version;
 $versionPath = "v$($version.Major)$($version.Minor)$($version.Build)" 
-$acctKey = Get-item -Path "./azureKey"
+$acctKey = Get-Content -Path "./azureKey"
 $Context = New-AzStorageContext -ConnectionString "DefaultEndpointsProtocol=https;AccountName=pingloggerfiles;AccountKey=$acctKey;EndpointSuffix=core.windows.net"
 try {
     New-AzStorageContainer -Context $Context -Name $versionPath -Permission Container -ErrorAction SilentlyContinue
