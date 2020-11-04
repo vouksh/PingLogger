@@ -13,7 +13,7 @@ namespace PingLogger.Models
 
 		public override string ToString()
 		{
-			return $"{Major}.{Minor}.{Revision}.{Build}";
+			return $"{Major}.{Minor}.{Build}.{Revision}";
 		}
 
 		public override bool Equals(object obj)
@@ -95,11 +95,11 @@ namespace PingLogger.Models
 			{
 				return true;
 			}
-			if(a.Major == b.Major && a.Minor == b.Minor && a.Revision > b.Revision)
+			if(a.Major == b.Major && a.Minor == b.Minor && a.Build > b.Build)
 			{
 				return true;
 			}
-			if(a.Major == b.Major && a.Minor == b.Minor && a.Revision == b.Revision && a.Build > b.Build)
+			if(a.Major == b.Major && a.Minor == b.Minor && a.Build == b.Build && a.Revision > b.Revision)
 			{
 				return true;
 			}
@@ -115,11 +115,11 @@ namespace PingLogger.Models
 			{
 				return true;
 			}
-			if (a.Major == b.Major && a.Minor == b.Minor && a.Revision < b.Revision)
+			if (a.Major == b.Major && a.Minor == b.Minor && a.Build < b.Build)
 			{
 				return true;
 			}
-			if (a.Major == b.Major && a.Minor == b.Minor && a.Revision == b.Revision && a.Build < b.Build)
+			if (a.Major == b.Major && a.Minor == b.Minor && a.Build == b.Build && a.Revision < b.Revision)
 			{
 				return true;
 			}
@@ -136,11 +136,11 @@ namespace PingLogger.Models
 			{
 				return true;
 			}
-			if (a.Major == b.Major && a.Minor == b.Minor && a.Revision > b.Revision)
+			if (a.Major == b.Major && a.Minor == b.Minor && a.Build > b.Build)
 			{
 				return true;
 			}
-			if (a.Major == b.Major && a.Minor == b.Minor && a.Revision == b.Revision && a.Build > b.Build)
+			if (a.Major == b.Major && a.Minor == b.Minor && a.Build == b.Build && a.Revision > b.Revision)
 			{
 				return true;
 			}
@@ -156,11 +156,11 @@ namespace PingLogger.Models
 			{
 				return true;
 			}
-			if (a.Major == b.Major && a.Minor == b.Minor && a.Revision < b.Revision)
+			if (a.Major == b.Major && a.Minor == b.Minor && a.Build < b.Build)
 			{
 				return true;
 			}
-			if (a.Major == b.Major && a.Minor == b.Minor && a.Revision == b.Revision && a.Build < b.Build)
+			if (a.Major == b.Major && a.Minor == b.Minor && a.Build == b.Build && a.Revision < b.Revision)
 			{
 				return true;
 			}
