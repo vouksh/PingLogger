@@ -47,7 +47,6 @@ namespace PingLogger
 				splashScreen.dlProgress.Value = 1;
 				var localVersion = Assembly.GetExecutingAssembly().GetName().Version;
 				
-				bool appIsInstalled = File.Exists($"{AppContext.BaseDirectory}installFlag");
 				try
 				{
 					var httpClient = new WebClient();
@@ -60,7 +59,6 @@ namespace PingLogger
 
 					while(!downloadComplete) { await Task.Delay(100); }
 					var latestJson = File.ReadAllText("./latest.json");
-					/// File.WriteAllText("./local.json", JsonSerializer.Serialize(localVersion, new JsonSerializerOptions { WriteIndented = true }));
 					var remoteVersion = JsonSerializer.Deserialize<SerializableVersion>(latestJson);
 					File.Delete("./latest.json");
 
@@ -70,7 +68,7 @@ namespace PingLogger
 						Logger.Info("Remote contains a newer version");
 						if (Controls.UpdatePromptDialog.Show())
 						{
-							if (appIsInstalled)
+							if (Config.IsInstalled)
 							{
 								Config.LastTempDir = $"{Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData)}\\Temp\\{RandomString(8)}";
 								Directory.CreateDirectory(Config.LastTempDir);
@@ -85,8 +83,8 @@ namespace PingLogger
 								Config.AppWasUpdated = true;
 								Logger.Info("Uninstalling current version.");
 								string batchFile = $@"@echo off
-msiexec.exe /q /l* '{ AppContext.BaseDirectory}Logs\\Installer - v{localVersion}.log' /x {File.ReadAllText("./installFlag")}
-msiexec.exe /q /l* '{ AppContext.BaseDirectory}Logs\\Installer - v{remoteVersion}.log' /i {Config.LastTempDir}/PingLogger-Setup.msi";
+msiexec.exe /q /l* '{ AppContext.BaseDirectory}Logs\Installer - v{localVersion}.log' /x {Config.InstallerGUID}
+msiexec.exe /l* '{ AppContext.BaseDirectory}Logs\Installer - v{remoteVersion}.log' /i {Config.LastTempDir}/PingLogger-Setup.msi";
 								File.WriteAllText(Config.LastTempDir + "/install.bat", batchFile);
 								Process.Start(new ProcessStartInfo
 								{

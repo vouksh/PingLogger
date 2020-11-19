@@ -103,7 +103,7 @@ namespace PingLogger
 					_tabItems.Remove(tab);
 					Config.Hosts.Remove(selectedHost);
 					tabControl.DataContext = _tabItems;
-					if (!(tabControl.SelectedItem is TabItem selectedTab) || selectedTab.Equals(tab))
+					if (tabControl.SelectedItem is not TabItem selectedTab || selectedTab.Equals(tab))
 					{
 						selectedTab = _tabItems[0];
 					}

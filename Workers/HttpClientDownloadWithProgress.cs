@@ -48,21 +48,21 @@ namespace PingLogger.Workers
 		{
 			var totalBytesRead = 0L;
 			var readCount = 0L;
-			var buffer = new byte[8192];
+			//var buffer = new byte[8192];
 			var isMoreToRead = true;
-
+			Memory<byte> bufferMem = new Memory<byte>();
 			using var fileStream = new FileStream(_destinationFilePath, FileMode.Create, FileAccess.Write, FileShare.None, 8192, true);
 			do
 			{
-				var bytesRead = await contentStream.ReadAsync(buffer, 0, buffer.Length);
+				var bytesRead = await contentStream.ReadAsync(bufferMem);
 				if (bytesRead == 0)
 				{
 					isMoreToRead = false;
 					TriggerProgressChanged(totalDownloadSize, totalBytesRead);
 					continue;
 				}
-
-				await fileStream.WriteAsync(buffer, 0, bytesRead);
+				ReadOnlyMemory<byte> roBuffer = new ReadOnlyMemory<byte>(bufferMem.ToArray());
+				await fileStream.WriteAsync(roBuffer);
 
 				totalBytesRead += bytesRead;
 				readCount += 1;
@@ -87,6 +87,7 @@ namespace PingLogger.Workers
 
 		public void Dispose()
 		{
+			GC.SuppressFinalize(this);
 			_httpClient?.Dispose();
 		}
 	}

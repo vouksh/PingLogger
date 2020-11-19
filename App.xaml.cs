@@ -22,9 +22,8 @@ namespace PingLogger
 			{
 				if(e.Args.Contains("--installerGUID"))
 				{
-					string installerGUID = e.Args[Array.IndexOf(e.Args, "--installerGUID") + 1];
-					File.WriteAllText("./installFlag", installerGUID);
-					Logger.Info("Installer GUID specified, writing to file.");
+					Config.InstallerGUID = e.Args[Array.IndexOf(e.Args, "--installerGUID") + 1];
+					Config.IsInstalled = true;
 				}
 			}
 			Util.SetTheme();

@@ -68,7 +68,7 @@ namespace PingLogger.Controls
 			}
 		}
 
-		private void CreateStartupShortcut()
+		private static void CreateStartupShortcut()
 		{
 			if (File.Exists(Environment.GetFolderPath(Environment.SpecialFolder.Startup) + "\\PingLogger.bat"))
 				File.Delete(Environment.GetFolderPath(Environment.SpecialFolder.Startup) + "\\PingLogger.bat");
@@ -88,7 +88,7 @@ namespace PingLogger.Controls
 			}
 		}
 
-		private void DeleteStartupShortcut()
+		private static void DeleteStartupShortcut()
 		{
 			if (File.Exists(Environment.GetFolderPath(Environment.SpecialFolder.Startup) + "\\PingLogger.bat"))
 				File.Delete(Environment.GetFolderPath(Environment.SpecialFolder.Startup) + "\\PingLogger.bat");

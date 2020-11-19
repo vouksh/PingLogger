@@ -154,7 +154,7 @@ namespace PingLogger.Controls
 				}
 				PingStatusBox.Text += sb.ToString();
 				var lines = PingStatusBox.Text.Split(Environment.NewLine).ToList();
-				if (lines.Count() > PingTimes.MaxSize)
+				if (lines.Count > PingTimes.MaxSize)
 				{
 					Logger.Debug($"{PingHost.HostName} Lines in text box greater than {PingTimes.MaxSize}, removing a line.");
 					lines.RemoveAt(0);

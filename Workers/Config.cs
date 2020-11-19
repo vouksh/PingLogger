@@ -7,6 +7,7 @@ using System.IO.Compression;
 using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
+using System.Timers;
 
 namespace PingLogger.Workers
 {
@@ -16,6 +17,7 @@ namespace PingLogger.Workers
 		public static ObservableCollection<Host> Hosts { get; set; } = new ObservableCollection<Host>();
 		private static bool InitialLoad = false;
 		private static AppOptions Options { get; set; }
+		private static readonly Timer saveTimer;
 
 		public static Theme Theme
 		{
@@ -168,11 +170,94 @@ namespace PingLogger.Workers
 			}
 		}
 
+		public static bool IsInstalled
+		{
+			get 
+			{
+				return Options.IsInstalled;
+			}
+			set
+			{
+				Logger.Info($"Options.IsInstalled was changed from {Options.IsInstalled} to {value}");
+				Options.IsInstalled = value;
+				SaveConfig();
+			}
+		}
+		
+		public static string InstallerGUID
+		{
+			get
+			{
+				return Options.InstallerGUID;
+			}
+			set
+			{
+				Logger.Info($"Options.InstallerGUID was changed from {Options.InstallerGUID} to {value}");
+				Options.InstallerGUID = value;
+				SaveConfig();
+			}
+		}
+
 		static Config()
 		{
+			if(saveTimer is null)
+			{
+				saveTimer = new Timer(1500)
+				{
+					AutoReset = false,
+					Enabled = false
+				};
+				saveTimer.Elapsed += SaveTimer_Elapsed;
+			}
 			ReadConfig();
 			Hosts.CollectionChanged += OptionsChanged;
 		}
+
+		private static void SaveTimer_Elapsed(object sender, ElapsedEventArgs e)
+		{
+			Logger.Debug("Waiting for config file lock..");
+			lock (fileLock)
+			{
+				Logger.Info("SaveConfig() Called");
+				var hostData = JsonSerializer.Serialize(Hosts, new JsonSerializerOptions { WriteIndented = true });
+				var configData = JsonSerializer.Serialize(Options, new JsonSerializerOptions { WriteIndented = true });
+				var fileStream = File.Open("./config.dat", FileMode.OpenOrCreate);
+				Logger.Info("config.dat opened");
+				using var archive = new ZipArchive(fileStream, ZipArchiveMode.Update);
+				if (archive.Entries.Count > 0)
+				{
+					Logger.Info("Existing configuration found, overwriting");
+					Logger.Info("Saving host configuration");
+					var hostEntry = archive.GetEntry("hosts.json");
+					using var hostEntryStream = hostEntry.Open();
+					hostEntryStream.SetLength(hostData.Length);
+					using StreamWriter hostWriter = new StreamWriter(hostEntryStream);
+					hostWriter.Write(hostData);
+
+					Logger.Info("Saving application configuration");
+					var configEntry = archive.GetEntry("config.json");
+					using var configStream = configEntry.Open();
+					configStream.SetLength(configData.Length);
+					using StreamWriter configWriter = new StreamWriter(configStream);
+					configWriter.Write(configData);
+				}
+				else
+				{
+					Logger.Info("Saving host configuration");
+					var hostEntry = archive.CreateEntry("hosts.json");
+					using StreamWriter hostWriter = new StreamWriter(hostEntry.Open());
+					hostWriter.Write(hostData);
+
+					Logger.Info("Saving application configuration");
+					var configEntry = archive.CreateEntry("config.json");
+					using StreamWriter configWriter = new StreamWriter(configEntry.Open());
+					configWriter.Write(configData);
+				}
+				Logger.Info("Done saving config.dat");
+			}
+			saveTimer.Stop();
+		}
+
 		private static void OptionsChanged(object sender, NotifyCollectionChangedEventArgs e)
 		{
 			if (!InitialLoad)
@@ -244,51 +329,10 @@ namespace PingLogger.Workers
 				}
 			}
 		}
-		private static async void SaveConfig()
+		private static void SaveConfig()
 		{
-			await Task.Run(() =>
-			{
-				Logger.Debug("Waiting for config file lock..");
-				lock (fileLock)
-				{
-					Logger.Info("SaveConfig() Called");
-					var hostData = JsonSerializer.Serialize(Hosts, new JsonSerializerOptions { WriteIndented = true });
-					var configData = JsonSerializer.Serialize(Options, new JsonSerializerOptions { WriteIndented = true });
-					var fileStream = File.Open("./config.dat", FileMode.OpenOrCreate);
-					Logger.Info("config.dat opened");
-					using var archive = new ZipArchive(fileStream, ZipArchiveMode.Update);
-					if (archive.Entries.Count > 0)
-					{
-						Logger.Info("Existing configuration found, overwriting");
-						Logger.Info("Saving host configuration");
-						var hostEntry = archive.GetEntry("hosts.json");
-						using var hostEntryStream = hostEntry.Open();
-						hostEntryStream.SetLength(hostData.Length);
-						using StreamWriter hostWriter = new StreamWriter(hostEntryStream);
-						hostWriter.Write(hostData);
-
-						Logger.Info("Saving application configuration");
-						var configEntry = archive.GetEntry("config.json");
-						using var configStream = configEntry.Open();
-						configStream.SetLength(configData.Length);
-						using StreamWriter configWriter = new StreamWriter(configStream);
-						configWriter.Write(configData);
-					}
-					else
-					{
-						Logger.Info("Saving host configuration");
-						var hostEntry = archive.CreateEntry("hosts.json");
-						using StreamWriter hostWriter = new StreamWriter(hostEntry.Open());
-						hostWriter.Write(hostData);
-
-						Logger.Info("Saving application configuration");
-						var configEntry = archive.CreateEntry("config.json");
-						using StreamWriter configWriter = new StreamWriter(configEntry.Open());
-						configWriter.Write(configData);
-					}
-					Logger.Info("Done saving config.dat");
-				}
-			});
+			saveTimer.Stop();
+			saveTimer.Start();
 		}
 	}
 }

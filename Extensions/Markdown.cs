@@ -430,7 +430,7 @@ namespace PingLogger.Extensions
             return Evaluate(text, _imageInline, ImageInlineEvaluator, defaultHandler);
         }
 
-        private BitmapImage GetSourceForOnRender(string uri)
+        private static BitmapImage GetSourceForOnRender(string uri)
         {
             var assmURI = "PingLogger." + uri.Replace('/', '.');
             var assembly = System.Reflection.Assembly.GetExecutingAssembly();
@@ -1146,7 +1146,7 @@ namespace PingLogger.Extensions
         /// <summary>
         /// Remove one level of line-leading spaces
         /// </summary>
-        private string Outdent(string block)
+        private static string Outdent(string block)
         {
             return _outDent.Replace(block, "");
         }
@@ -1157,7 +1157,7 @@ namespace PingLogger.Extensions
         /// makes sure text ends with a couple of newlines; 
         /// removes any blank lines (only spaces) in the text
         /// </summary>
-        private string Normalize(string text)
+        private static string Normalize(string text)
         {
             if (text is null)
             {
@@ -1228,7 +1228,7 @@ namespace PingLogger.Extensions
             return sb.ToString();
         }
 
-        private TResult Create<TResult, TContent>(IEnumerable<TContent> content)
+        private static TResult Create<TResult, TContent>(IEnumerable<TContent> content)
             where TResult : IAddChild, new()
         {
             var result = new TResult();
@@ -1240,7 +1240,7 @@ namespace PingLogger.Extensions
             return result;
         }
 
-        private IEnumerable<T> Evaluate<T>(string text, Regex expression, Func<Match, T> build, Func<string, IEnumerable<T>> rest)
+        private static IEnumerable<T> Evaluate<T>(string text, Regex expression, Func<Match, T> build, Func<string, IEnumerable<T>> rest)
         {
             if (text is null)
             {
@@ -1278,7 +1278,7 @@ namespace PingLogger.Extensions
         private static readonly Regex _eoln = new Regex("\\s+");
         private static readonly Regex _lbrk = new Regex(@"\ {2,}\n");
 
-        public IEnumerable<Inline> DoText(string text)
+        public static IEnumerable<Inline> DoText(string text)
         {
             if (text is null)
             {
