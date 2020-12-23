@@ -45,12 +45,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_A113C247874A4E5D8284657A449A721E"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_UNDEFINED"
         "OwnerKey" = "8:_53732F84727347C6801FAE83757A811C"
         "MsmSig" = "8:_UNDEFINED"
@@ -279,26 +273,6 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_A113C247874A4E5D8284657A449A721E"
-            {
-            "SourcePath" = "8:installFlag"
-            "TargetName" = "8:installFlag"
-            "Tag" = "8:"
-            "Folder" = "8:_541E9B5A38774B8684861123A876B28C"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
         }
         "FileType"
         {
@@ -377,15 +351,15 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:PingLogger"
-        "ProductCode" = "8:{91BF8EEA-F6FD-421A-B4F6-FA189B21181C}"
-        "PackageCode" = "8:{E3411410-0B9F-4D1E-AC73-86BEB32B2F82}"
+        "ProductCode" = "8:{0202C301-CCD5-4FAD-9CE5-55300AE02C19}"
+        "PackageCode" = "8:{708C3BF9-6402-4789-9AFB-6DEA51690406}"
         "UpgradeCode" = "8:{ACE44561-FE19-47B5-9EBF-CE773366ADFD}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:TRUE"
-        "ProductVersion" = "8:2.2.4"
+        "ProductVersion" = "8:2.3.0"
         "Manufacturer" = "8:Jack Butler"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"

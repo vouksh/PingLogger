@@ -2,7 +2,7 @@
 
 namespace PingLogger.Models
 {
-	public class Reply
+	public record Reply
 	{
 		public Host Host { get; set; }
 		public int? Ttl { get; set; } = 0;

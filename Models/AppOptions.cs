@@ -2,7 +2,7 @@
 
 namespace PingLogger.Models
 {
-	public class AppOptions
+	public record AppOptions
 	{
 		public bool LoadOnSystemBoot { get; set; } = false;
 		public bool StartLoggersAutomatically { get; set; } = false;
@@ -15,6 +15,9 @@ namespace PingLogger.Models
 		public bool EnableAutoUpdate { get; set; } = true;
 		public int LastSelectedTab { get; set; } = 0;
 		public string LastTempDir { get; set; } = string.Empty;
+		public bool IsInstalled { get; set; } = false;
+		public string InstallerGUID { get; set; } = string.Empty;
+		public string LogSavePath { get; set; } = $"{Util.FileBasePath}Logs";
 	}
 	public enum Theme
 	{

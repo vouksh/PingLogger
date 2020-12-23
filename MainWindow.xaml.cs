@@ -103,7 +103,7 @@ namespace PingLogger
 					_tabItems.Remove(tab);
 					Config.Hosts.Remove(selectedHost);
 					tabControl.DataContext = _tabItems;
-					if (!(tabControl.SelectedItem is TabItem selectedTab) || selectedTab.Equals(tab))
+					if (tabControl.SelectedItem is not TabItem selectedTab || selectedTab.Equals(tab))
 					{
 						selectedTab = _tabItems[0];
 					}
@@ -281,6 +281,27 @@ namespace PingLogger
 				double offset = index * (scroller.ScrollableWidth / (double)(tabControl.Items.Count));
 				scroller.ScrollToHorizontalOffset(offset);
 			}
+		}
+
+		public bool CheckIfAnyPingersRunning()
+		{
+			foreach (var item in _tabItems)
+			{
+				try
+				{
+					if (item != null && (item.Header as string).Contains("Host:"))
+					{
+						var pingCtrl = item.Content as PingControl;
+						if (pingCtrl.PingerRunning)
+							return true;
+					}
+				}
+				catch (Exception e)
+				{
+					Logger.Debug(e.ToString());
+				}
+			}
+			return false;
 		}
 	}
 }

@@ -1,10 +1,13 @@
-﻿using PingLogger.Workers;
+﻿using FontAwesome.WPF;
+using PingLogger.Workers;
 using System;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
+using Ookii.Dialogs.Wpf;
 
 namespace PingLogger.Controls
 {
@@ -68,7 +71,7 @@ namespace PingLogger.Controls
 			}
 		}
 
-		private void CreateStartupShortcut()
+		private static void CreateStartupShortcut()
 		{
 			if (File.Exists(Environment.GetFolderPath(Environment.SpecialFolder.Startup) + "\\PingLogger.bat"))
 				File.Delete(Environment.GetFolderPath(Environment.SpecialFolder.Startup) + "\\PingLogger.bat");
@@ -88,7 +91,7 @@ namespace PingLogger.Controls
 			}
 		}
 
-		private void DeleteStartupShortcut()
+		private static void DeleteStartupShortcut()
 		{
 			if (File.Exists(Environment.GetFolderPath(Environment.SpecialFolder.Startup) + "\\PingLogger.bat"))
 				File.Delete(Environment.GetFolderPath(Environment.SpecialFolder.Startup) + "\\PingLogger.bat");
@@ -155,6 +158,17 @@ namespace PingLogger.Controls
 		private void Window_Loaded(object sender, RoutedEventArgs e)
 		{
 			doingInitialLoad = true;
+			customPathBtn.Content = new ImageAwesome()
+			{
+				Icon = FontAwesomeIcon.FolderOpen,
+				SpinDuration = 2,
+				Foreground = Util.IsLightTheme ? Brushes.Black : Brushes.White,
+				Width = 14,
+				Height = 14,
+				ToolTip = "Browse"
+			};
+			customPathBox.Text = Config.LogSavePath;
+			AutoUpdateToggle.Visibility = Util.AppIsClickOnce ? Visibility.Hidden : Visibility.Visible;
 			LoadOnBoot.IsChecked = Config.LoadWithWindows;
 			StartAllLoggers.IsChecked = Config.StartLoggersAutomatically;
 			daysToKeep.Text = Config.DaysToKeepLogs.ToString();
@@ -221,6 +235,33 @@ namespace PingLogger.Controls
 			{
 				Logger.Info("AutoUpdateToggle unchecked");
 				Config.EnableAutoUpdate = false;
+			}
+		}
+
+		private void customPathBtn_Click(object sender, RoutedEventArgs e)
+		{
+			var continueDialog = new TaskDialog()
+			{
+				WindowTitle = "Are you sure?",
+				MainInstruction = "Changing this setting has many consequences.",
+				Content = "If you modify this setting, all currently running pingers will be stopped. Once you change the folder path, the existing files will NOT be moved and you will start with fresh logs. By clicking Yes, you acknowledge this, and will be prompted for the new path."
+			};
+			TaskDialogButton yesButton = new TaskDialogButton(ButtonType.Yes);
+			TaskDialogButton noButton = new TaskDialogButton(ButtonType.No);
+			continueDialog.Buttons.Add(yesButton);
+			continueDialog.Buttons.Add(noButton);
+			var resultBtn = continueDialog.ShowDialog();
+			if(resultBtn.ButtonType == ButtonType.No)
+			{
+				return;
+			}
+			var folderDialog = new VistaFolderBrowserDialog();
+			folderDialog.SelectedPath = Path.GetFullPath(Config.LogSavePath);
+			if(folderDialog.ShowDialog() == true)
+			{
+				Config.LogSavePath = folderDialog.SelectedPath;
+				customPathBox.Text = Config.LogSavePath;
+				(this.Owner as MainWindow).StopAllLoggers();
 			}
 		}
 	}

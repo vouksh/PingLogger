@@ -3,7 +3,7 @@ using System.Windows;
 
 namespace PingLogger.Models
 {
-	public class TraceReply
+	public record TraceReply
 	{
 		public Guid ID { get; set; }
 		public string IPAddress { get; set; }

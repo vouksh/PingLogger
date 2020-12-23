@@ -31,13 +31,14 @@ namespace PingLogger.Workers
 		public Pinger(Host host)
 		{
 			Host = host;
-			if (!Directory.Exists("./Logs"))
-				Directory.CreateDirectory("./Logs");
-			if (!Directory.Exists($"./Logs/{Host.HostName}/"))
-				Directory.CreateDirectory($"./Logs/{Host.HostName}/");
+			var hostLogPath = $"{Config.LogSavePath}{Host.HostName}";
+			if (!Directory.Exists(Config.LogSavePath))
+				Directory.CreateDirectory(Config.LogSavePath);
+			if (!Directory.Exists(hostLogPath))
+				Directory.CreateDirectory(hostLogPath);
 			var outputTemp = "[{Timestamp:HH:mm:ss} {Level:u4}] {Message:lj}{NewLine}{Exception}";
 			var errorOutputTemp = "[{Timestamp:HH:mm:ss} {Level:u5}] {Message:lj}{NewLine}{Exception}";
-			var initialPath = $"./Logs/{Host.HostName}/{Host.HostName}";
+			var initialPath = $"{hostLogPath}{Path.DirectorySeparatorChar}{Host.HostName}";
 			var filePath = $"{initialPath}-.log";
 			var errorPathName = $"{initialPath}-Errors-.log";
 			var warnPathName = $"{initialPath}-Warnings-.log";
@@ -373,6 +374,7 @@ namespace PingLogger.Workers
 		public void Dispose()
 		{
 			// Do not change this code. Put cleanup code in Dispose(bool disposing) above.
+			GC.SuppressFinalize(this);
 			Dispose(true);
 		}
 		#endregion

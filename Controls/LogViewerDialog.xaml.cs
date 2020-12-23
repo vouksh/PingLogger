@@ -23,7 +23,7 @@ namespace PingLogger.Controls
 			InitializeComponent();
 			CloseWindowCommand = new Command(Close);
 
-			Tail = new Tail($"./Logs/{host.HostName}/{host.HostName}-{DateTime.Now:yyyyMMdd}.log", 1024);
+			Tail = new Tail($"{Config.LogSavePath}{host.HostName}{Path.DirectorySeparatorChar}{host.HostName}-{DateTime.Now:yyyyMMdd}.log", 1024);
 			Tail.Changed += Tail_Changed;
 			syncCtx = SynchronizationContext.Current;
 		}

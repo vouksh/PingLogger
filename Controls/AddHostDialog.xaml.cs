@@ -31,7 +31,7 @@ namespace PingLogger.Controls
 				Icon = FontAwesomeIcon.Spinner,
 				Spin = true,
 				SpinDuration = 2,
-				Foreground = Util.IsLightTheme() ? Brushes.Black : Brushes.White,
+				Foreground = Util.IsLightTheme ? Brushes.Black : Brushes.White,
 				Width = 14,
 				Height = 14,
 				ToolTip = "Please wait..."
