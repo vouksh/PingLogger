@@ -17,6 +17,7 @@ namespace PingLogger.Models
 		public string LastTempDir { get; set; } = string.Empty;
 		public bool IsInstalled { get; set; } = false;
 		public string InstallerGUID { get; set; } = string.Empty;
+		public string LogSavePath { get; set; } = $"{Util.FileBasePath}Logs";
 	}
 	public enum Theme
 	{

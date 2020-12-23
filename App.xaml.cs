@@ -18,6 +18,7 @@ namespace PingLogger
 			Version version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
 			Logger.Info($"Application start, version {version}");
 			Logger.Info($"Application is running from directory {AppContext.BaseDirectory}");
+			Logger.Info($"Using {Util.FileBasePath} to save config and logs");
 			if (e.Args.Length > 0)
 			{
 				if(e.Args.Contains("--installerGUID"))

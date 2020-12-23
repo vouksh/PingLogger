@@ -61,7 +61,7 @@ namespace PingLogger.Controls
 
 		public void StylePlot(bool isPieChart = false)
 		{
-			if (Util.IsLightTheme())
+			if (Util.IsLightTheme)
 			{
 				pingPlot.plt.Frame(left: true, right: false, bottom: true, top: false, frameColor: System.Drawing.Color.Black);
 				pingPlot.plt.Style(figBg: System.Drawing.Color.Transparent, dataBg: System.Drawing.Color.Transparent, label: System.Drawing.Color.Black, grid: System.Drawing.Color.Black, title: System.Drawing.Color.Black);

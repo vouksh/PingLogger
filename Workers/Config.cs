@@ -198,6 +198,31 @@ namespace PingLogger.Workers
 			}
 		}
 
+		public static string LogSavePath
+		{
+			get
+			{
+				if(!Options.LogSavePath.EndsWith(Path.DirectorySeparatorChar))
+				{
+					Options.LogSavePath += Path.DirectorySeparatorChar;
+				}
+				return Options.LogSavePath;
+			}
+			set
+			{
+				if (!value.EndsWith(Path.DirectorySeparatorChar))
+				{
+					Options.LogSavePath = value + Path.DirectorySeparatorChar;
+				}
+				else
+				{
+					Options.LogSavePath = value;
+				}
+				Logger.Info($"Options.LogSavePath was changed from {Options.LogSavePath} to {value}");
+				SaveConfig();
+			}
+		}
+
 		static Config()
 		{
 			if(saveTimer is null)
@@ -218,10 +243,11 @@ namespace PingLogger.Workers
 			Logger.Debug("Waiting for config file lock..");
 			lock (fileLock)
 			{
+				string dataPath = $"{Util.FileBasePath}/config.dat";
 				Logger.Info("SaveConfig() Called");
 				var hostData = JsonSerializer.Serialize(Hosts, new JsonSerializerOptions { WriteIndented = true });
 				var configData = JsonSerializer.Serialize(Options, new JsonSerializerOptions { WriteIndented = true });
-				var fileStream = File.Open("./config.dat", FileMode.OpenOrCreate);
+				var fileStream = File.Open(dataPath, FileMode.OpenOrCreate);
 				Logger.Info("config.dat opened");
 				using var archive = new ZipArchive(fileStream, ZipArchiveMode.Update);
 				if (archive.Entries.Count > 0)
@@ -292,8 +318,8 @@ namespace PingLogger.Workers
 		{
 			if (Options == null)
 			{
-				string dataPath = "./config.dat";
-				if (File.Exists("./config.dat"))
+				string dataPath = $"{Util.FileBasePath}/config.dat";
+				if (File.Exists(dataPath))
 				{
 					Logger.Debug("Waiting for config file lock..");
 					lock (fileLock)
@@ -323,7 +349,11 @@ namespace PingLogger.Workers
 					{
 						Logger.Info("Old configuration not found, starting out fresh");
 						Hosts = new ObservableCollection<Host>();
-						Options = new AppOptions();
+						Options = new AppOptions()
+						{
+							EnableAutoUpdate = !Util.AppIsClickOnce,
+							LogSavePath = Util.FileBasePath + Path.DirectorySeparatorChar + "Logs"
+						};
 					}
 					SaveConfig();
 				}

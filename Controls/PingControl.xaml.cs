@@ -196,7 +196,7 @@ namespace PingLogger.Controls
 		{
 			if (!DirExists)
 			{
-				if (Directory.Exists($"{Environment.CurrentDirectory}{Path.DirectorySeparatorChar}Logs{Path.DirectorySeparatorChar}{HostNameBox.Text}"))
+				if (Directory.Exists($"{Config.LogSavePath}{HostNameBox.Text}"))
 				{
 					DirExists = true;
 					openLogFolderBtn.Visibility = Visibility.Visible;
@@ -208,7 +208,7 @@ namespace PingLogger.Controls
 			}
 			if (!LogExists)
 			{
-				if (File.Exists($"{Environment.CurrentDirectory}{Path.DirectorySeparatorChar}Logs{Path.DirectorySeparatorChar}{HostNameBox.Text}/{HostNameBox.Text}-{DateTime.Now:yyyyMMdd}.log"))
+				if (File.Exists($"{Config.LogSavePath}{HostNameBox.Text}{Path.DirectorySeparatorChar}{HostNameBox.Text}-{DateTime.Now:yyyyMMdd}.log"))
 				{
 					LogExists = true;
 					viewLogBtn.Visibility = Visibility.Visible;
@@ -255,6 +255,7 @@ namespace PingLogger.Controls
 			if (Pinger != null)
 			{
 				Pinger.Stop();
+				Pinger = null;
 			}
 		}
 
@@ -290,7 +291,7 @@ namespace PingLogger.Controls
 				(this.Parent as TabItem).Header = $"Host: {HostNameBox.Text}";
 				UpdateHost();
 			}
-			if (!Directory.Exists($"{Environment.CurrentDirectory}{Path.DirectorySeparatorChar}Logs{Path.DirectorySeparatorChar}{HostNameBox.Text}"))
+			if (!Directory.Exists($"{Config.LogSavePath}{HostNameBox.Text}"))
 			{
 				viewLogBtn.Visibility = Visibility.Hidden;
 			}
@@ -448,7 +449,7 @@ namespace PingLogger.Controls
 				StartInfo = new ProcessStartInfo
 				{
 					FileName = "explorer.exe",
-					Arguments = $"{Environment.CurrentDirectory}{Path.DirectorySeparatorChar}Logs{Path.DirectorySeparatorChar}{HostNameBox.Text}"
+					Arguments = $"{Config.LogSavePath}{HostNameBox.Text}"
 				}
 			}.Start();
 		}
@@ -462,6 +463,14 @@ namespace PingLogger.Controls
 				viewLogBtn.Visibility = Visibility.Hidden;
 			}
 			StartBtn.IsEnabled = false;
+		}
+
+		public bool PingerRunning
+		{
+			get
+			{
+				return Pinger?.Running ?? false;
+			}
 		}
 
 		private void DoTraceRteBtn_Click(object sender, RoutedEventArgs e)
@@ -520,7 +529,7 @@ namespace PingLogger.Controls
 				pingWindowToggle.Content = new ImageAwesome
 				{
 					Icon = FontAwesomeIcon.AngleDoubleLeft,
-					Foreground = Util.IsLightTheme() ? Brushes.Black : Brushes.White,
+					Foreground = Util.IsLightTheme ? Brushes.Black : Brushes.White,
 					Width = 14,
 					Height = 14
 				};
@@ -532,7 +541,7 @@ namespace PingLogger.Controls
 				pingWindowToggle.Content = new ImageAwesome
 				{
 					Icon = FontAwesomeIcon.AngleDoubleRight,
-					Foreground = Util.IsLightTheme() ? Brushes.Black : Brushes.White,
+					Foreground = Util.IsLightTheme ? Brushes.Black : Brushes.White,
 					Width = 14,
 					Height = 14
 				};

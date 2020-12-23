@@ -10,21 +10,19 @@ namespace PingLogger.Workers
 		public static readonly ILogger Log;
 		static Logger()
 		{
-			if (!Directory.Exists("./Logs"))
-				Directory.CreateDirectory("./Logs");
-
 			Log = new LoggerConfiguration()
 #if DEBUG
 				.MinimumLevel.Verbose()
 #endif
 				.Enrich.With(new ThreadIdEnricher())
 				.WriteTo.File(
-				$"./Logs/PingLogger-.log",
+				$"./PingLogger-.log",
 				restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Verbose,
 				shared: true,
 				outputTemplate: "[{Timestamp:HH:mm:ss.fff} {Level}] ({ThreadId}) {Message:lj}{NewLine}{Exception}",
 				flushToDiskInterval: TimeSpan.FromSeconds(1),
-				rollingInterval: RollingInterval.Day
+				rollingInterval: RollingInterval.Day,
+				retainedFileCountLimit: 2
 				)
 				.CreateLogger();
 		}

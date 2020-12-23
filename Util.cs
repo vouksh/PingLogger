@@ -17,8 +17,50 @@ namespace PingLogger
 	public static class Util
 	{
 		static Controls.SplashScreen splashScreen;
+
+		public static string FileBasePath 
+		{
+			get
+			{
+				if (AppIsClickOnce)
+				{
+					var appDataDir = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + Path.DirectorySeparatorChar + "PingLogger" + Path.DirectorySeparatorChar;
+					if (!Directory.Exists(appDataDir))
+					{
+						Directory.CreateDirectory(appDataDir);
+					}
+					return appDataDir;
+				}
+				else
+				{
+					var appExePath = Environment.CurrentDirectory;
+					if (!appExePath.EndsWith(Path.DirectorySeparatorChar))
+					{
+						appExePath += Path.DirectorySeparatorChar;
+					}
+					return appExePath;
+				}
+			}
+		}
+
+		public static bool AppIsClickOnce
+		{
+			get
+			{
+				if (File.Exists(AppContext.BaseDirectory + "Launcher.exe") && File.Exists(AppContext.BaseDirectory + "Launcher.manifest"))
+				{
+					return true;
+				}
+				else
+				{
+					return false;
+				}
+			}
+		}
+
 		public static async Task CheckForUpdates()
 		{
+
 			if (Config.AppWasUpdated)
 			{
 				Logger.Info("Application was updated last time it ran, cleaning up.");
@@ -46,7 +88,7 @@ namespace PingLogger
 				splashScreen.dlProgress.IsIndeterminate = true;
 				splashScreen.dlProgress.Value = 1;
 				var localVersion = Assembly.GetExecutingAssembly().GetName().Version;
-				
+
 				try
 				{
 					var httpClient = new WebClient();
@@ -57,7 +99,7 @@ namespace PingLogger
 
 					await httpClient.DownloadFileTaskAsync($"{azureURL}version/latest.json", $"./latest.json");
 
-					while(!downloadComplete) { await Task.Delay(100); }
+					while (!downloadComplete) { await Task.Delay(100); }
 					var latestJson = File.ReadAllText("./latest.json");
 					var remoteVersion = JsonSerializer.Deserialize<SerializableVersion>(latestJson);
 					File.Delete("./latest.json");
@@ -166,25 +208,28 @@ msiexec.exe /l* '{ AppContext.BaseDirectory}Logs\Installer - v{remoteVersion}.lo
 			  .Select(s => s[random.Next(s.Length)]).ToArray());
 		}
 
-		public static bool IsLightTheme()
+		public static bool IsLightTheme 
 		{
-			if (Config.Theme == Theme.Auto)
+			get
 			{
-				int lightTheme = Convert.ToInt32(Registry.GetValue("HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize", "AppsUseLightTheme", 1));
-				if (lightTheme == 1)
-					return true;
+				if (Config.Theme == Theme.Auto)
+				{
+					int lightTheme = Convert.ToInt32(Registry.GetValue("HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize", "AppsUseLightTheme", 1));
+					if (lightTheme == 1)
+						return true;
+					else
+						return false;
+				}
 				else
-					return false;
-			}
-			else
-			{
-				return Config.Theme == Theme.Light;
+				{
+					return Config.Theme == Theme.Light;
+				}
 			}
 		}
 
 		public static void SetTheme()
 		{
-			if (IsLightTheme())
+			if (IsLightTheme)
 			{
 				App.Current.Resources.MergedDictionaries[0].Source = new Uri("/Themes/LightTheme.xaml", UriKind.Relative);
 			}
