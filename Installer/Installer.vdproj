@@ -1009,7 +1009,7 @@
         {
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_70B55D3ED968489CAEB8B6EDB9AD4802"
             {
-            "SourcePath" = "8:..\\obj\\Release\\netcoreapp3.1\\win-x64\\PingLogger.exe"
+            "SourcePath" = "8:..\\obj\\Debug\\netcoreapp3.1\\win-x64\\PingLogger.exe"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_541E9B5A38774B8684861123A876B28C"
