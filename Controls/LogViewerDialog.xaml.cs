@@ -15,51 +15,48 @@ namespace PingLogger.Controls
 	public partial class LogViewerDialog : Window
 	{
 		public ICommand CloseWindowCommand { get; set; }
-		private readonly Tail Tail;
-		private readonly SynchronizationContext syncCtx;
-		private bool isRunning = false;
+		private readonly Tail _tail;
+		private readonly SynchronizationContext _syncCtx;
+		private bool _isRunning;
 		public LogViewerDialog(Host host)
 		{
 			InitializeComponent();
 			CloseWindowCommand = new Command(Close);
 
-			Tail = new Tail($"{Config.LogSavePath}{host.HostName}{Path.DirectorySeparatorChar}{host.HostName}-{DateTime.Now:yyyyMMdd}.log", 1024);
-			Tail.Changed += Tail_Changed;
-			syncCtx = SynchronizationContext.Current;
+			_tail = new Tail($"{Config.LogSavePath}{host.HostName}{Path.DirectorySeparatorChar}{host.HostName}-{DateTime.Now:yyyyMMdd}.log", 1024);
+			_tail.Changed += Tail_Changed;
+			_syncCtx = SynchronizationContext.Current;
 		}
 
 		private async void Tail_Changed(object sender, Tail.TailEventArgs e)
 		{
 			await Task.Run(() =>
 			{
-				bool scrollToBottom = false;
-				if (scrollViewer.VerticalOffset == scrollViewer.ScrollableHeight)
-				{
-					scrollToBottom = true;
-				}
-				syncCtx.Post(new SendOrPostCallback(o =>
-				{
-					textBlock.Text += (string)o;
-					if (scrollToBottom)
-						scrollViewer.ScrollToBottom();
-				}),
-				e.Line);
+				bool scrollToBottom = Math.Abs(ScrollViewer.VerticalOffset - ScrollViewer.ScrollableHeight) < 1.0;
+
+				_syncCtx.Post(o =>
+							{
+								TextBlock.Text += (string)o;
+								if (scrollToBottom)
+									ScrollViewer.ScrollToBottom();
+							},
+							e.Line);
 			});
 		}
 
 		private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
 		{
-			textBlock.Text = "";
-			if (isRunning)
-				Tail.Stop();
+			TextBlock.Text = "";
+			if (_isRunning)
+				_tail.Stop();
 		}
 
 		private async void Window_Loaded(object sender, RoutedEventArgs e)
 		{
 			try
 			{
-				await Task.Run(() => { Tail.Run(); });
-				isRunning = true;
+				await Task.Run(() => { _tail.Run(); });
+				_isRunning = true;
 			}
 			catch (FileNotFoundException)
 			{

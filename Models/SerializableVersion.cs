@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace PingLogger.Models
 {
@@ -23,7 +21,7 @@ namespace PingLogger.Models
 				return false;
 			}
 
-			if(obj as SerializableVersion == this || obj as Version == this)
+			if (ReferenceEquals(obj as SerializableVersion, this) || obj as Version == this)
 			{
 				return true;
 			}
@@ -40,49 +38,22 @@ namespace PingLogger.Models
 
 		public static bool operator ==(Version a, SerializableVersion b)
 		{
-			if (a.Major == b.Major && a.Minor == b.Minor && a.Build == b.Build && a.Revision == b.Revision)
-			{
-				return true;
-			}
-			else
-			{
-				return false;
-			}
+			return b is not null && a is not null && a.Major == b.Major && a.Minor == b.Minor && a.Build == b.Build && a.Revision == b.Revision;
 		}
 
 		public static bool operator !=(Version a, SerializableVersion b)
 		{
-			if (a.Major != b.Major || a.Minor != b.Minor || a.Build != b.Build || a.Revision != b.Revision)
-			{
-				return true;
-			}
-			else
-			{
-				return false;
-			}
+			return b is not null && a is not null && (a.Major != b.Major || a.Minor != b.Minor || a.Build != b.Build || a.Revision != b.Revision);
 		}
 
 		public static bool operator ==(SerializableVersion a, Version b)
 		{
-			if(a.Major == b.Major && a.Minor == b.Minor && a.Build == b.Build && a.Revision == b.Revision)
-			{
-				return true;
-			} else
-			{
-				return false;
-			}
+			return b is not null && a is not null && a.Major == b.Major && a.Minor == b.Minor && a.Build == b.Build && a.Revision == b.Revision;
 		}
 
 		public static bool operator !=(SerializableVersion a, Version b)
 		{
-			if (a.Major != b.Major || a.Minor != b.Minor || a.Build != b.Build || a.Revision != b.Revision)
-			{
-				return true;
-			}
-			else
-			{
-				return false;
-			}
+			return b is not null && a is not null && (a.Major != b.Major || a.Minor != b.Minor || a.Build != b.Build || a.Revision != b.Revision);
 		}
 
 		public static bool operator >(SerializableVersion a, Version b)
@@ -91,19 +62,15 @@ namespace PingLogger.Models
 			{
 				return true;
 			}
-			if(a.Major == b.Major && a.Minor > b.Minor)
+			if (a.Major == b.Major && a.Minor > b.Minor)
 			{
 				return true;
 			}
-			if(a.Major == b.Major && a.Minor == b.Minor && a.Build > b.Build)
+			if (a.Major == b.Major && a.Minor == b.Minor && a.Build > b.Build)
 			{
 				return true;
 			}
-			if(a.Major == b.Major && a.Minor == b.Minor && a.Build == b.Build && a.Revision > b.Revision)
-			{
-				return true;
-			}
-			return false;
+			return a.Major == b.Major && a.Minor == b.Minor && a.Build == b.Build && a.Revision > b.Revision;
 		}
 		public static bool operator <(SerializableVersion a, Version b)
 		{
@@ -119,11 +86,7 @@ namespace PingLogger.Models
 			{
 				return true;
 			}
-			if (a.Major == b.Major && a.Minor == b.Minor && a.Build == b.Build && a.Revision < b.Revision)
-			{
-				return true;
-			}
-			return false;
+			return a.Major == b.Major && a.Minor == b.Minor && a.Build == b.Build && a.Revision < b.Revision;
 		}
 
 		public static bool operator >(Version a, SerializableVersion b)
@@ -140,11 +103,7 @@ namespace PingLogger.Models
 			{
 				return true;
 			}
-			if (a.Major == b.Major && a.Minor == b.Minor && a.Build == b.Build && a.Revision > b.Revision)
-			{
-				return true;
-			}
-			return false;
+			return a.Major == b.Major && a.Minor == b.Minor && a.Build == b.Build && a.Revision > b.Revision;
 		}
 		public static bool operator <(Version a, SerializableVersion b)
 		{
@@ -160,11 +119,7 @@ namespace PingLogger.Models
 			{
 				return true;
 			}
-			if (a.Major == b.Major && a.Minor == b.Minor && a.Build == b.Build && a.Revision < b.Revision)
-			{
-				return true;
-			}
-			return false;
+			return a.Major == b.Major && a.Minor == b.Minor && a.Build == b.Build && a.Revision < b.Revision;
 		}
 	}
 }

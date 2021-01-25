@@ -3,7 +3,6 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:PingLogger.Controls"
         mc:Ignorable="d"
         Title="Update Available" Height="200" Width="300"
 		WindowStartupLocation="CenterScreen"
@@ -21,7 +20,7 @@
 			<RowDefinition Height="*" />
 		</Grid.RowDefinitions>
 		<Label Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" Content="An update has been found. Do you want to update?" HorizontalAlignment="Center" VerticalAlignment="Center" />
-		<Button x:Name="yesBtn" Content="Yes" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Column="0" Grid.Row="4" Click="YesBtn_Click" />
-		<Button x:Name="noBtn" Content="No" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Column="3" Grid.Row="4" Click="NoBtn_Click" />
+		<Button x:Name="YesBtn" Content="Yes" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Column="0" Grid.Row="3" Click="YesBtn_Click" />
+		<Button x:Name="NoBtn" Content="No" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Column="2" Grid.Row="3" Click="NoBtn_Click" />
 	</Grid>
 </Window>

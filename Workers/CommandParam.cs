@@ -29,7 +29,7 @@ namespace PingLogger.Workers
 		/// <param name="canExecute">The execution status logic.</param>
 		public CommandParam(Action<object> execute, Predicate<object> canExecute)
 		{
-			_execute = execute ?? throw new ArgumentNullException("execute");
+			_execute = execute ?? throw new ArgumentNullException(nameof(execute));
 			_canExecute = canExecute;
 		}
 
@@ -45,8 +45,8 @@ namespace PingLogger.Workers
 
 		public event EventHandler CanExecuteChanged
 		{
-			add { CommandManager.RequerySuggested += value; }
-			remove { CommandManager.RequerySuggested -= value; }
+			add => CommandManager.RequerySuggested += value;
+			remove => CommandManager.RequerySuggested -= value;
 		}
 
 		public void Execute(object parameter)

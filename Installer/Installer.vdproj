@@ -113,6 +113,11 @@
                     "Name" = "8:Microsoft .NET Framework 4.7.2 (x86 and x64)"
                     "ProductCode" = "8:.NETFramework,Version=v4.7.2"
                     }
+                    "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:Microsoft.NetCore.CoreRuntime.5.0.x64"
+                    {
+                    "Name" = "8:.NET Runtime 5.0.1 (x64)"
+                    "ProductCode" = "8:Microsoft.NetCore.CoreRuntime.5.0.x64"
+                    }
                 }
             }
         }
@@ -351,15 +356,15 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:PingLogger"
-        "ProductCode" = "8:{0202C301-CCD5-4FAD-9CE5-55300AE02C19}"
-        "PackageCode" = "8:{708C3BF9-6402-4789-9AFB-6DEA51690406}"
+        "ProductCode" = "8:{89A2BE71-02C6-43EC-B2C1-185516BAA267}"
+        "PackageCode" = "8:{2110FF01-CA4A-4BD5-B4A6-A40BBCD06BF1}"
         "UpgradeCode" = "8:{ACE44561-FE19-47B5-9EBF-CE773366ADFD}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:TRUE"
-        "ProductVersion" = "8:2.3.0"
+        "ProductVersion" = "8:2.4.0"
         "Manufacturer" = "8:Jack Butler"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"
@@ -1009,7 +1014,7 @@
         {
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_70B55D3ED968489CAEB8B6EDB9AD4802"
             {
-            "SourcePath" = "8:..\\obj\\Debug\\netcoreapp3.1\\win-x64\\PingLogger.exe"
+            "SourcePath" = "8:..\\obj\\Release\\net5.0-windows\\win-x64\\apphost.exe"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_541E9B5A38774B8684861123A876B28C"

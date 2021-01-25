@@ -4,7 +4,6 @@ using PingLogger.Workers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -39,14 +38,14 @@ namespace PingLogger
 			InitializeComponent();
 			_tabItems = new List<TabItem>();
 
-			tabControl.DataContext = _tabItems;
-			tabControl.SelectedIndex = 0;
+			TabControl.DataContext = _tabItems;
+			TabControl.SelectedIndex = 0;
 			this.Title = $"PingLogger v{version}";
 		}
 
 		public async void ToggleWindowSize()
 		{
-			ScrollViewer scroller = (ScrollViewer)tabControl.Template.FindName("TabControlScroller", tabControl);
+			ScrollViewer scroller = (ScrollViewer)TabControl.Template.FindName("TabControlScroller", TabControl);
 			if (Config.WindowExpanded)
 			{
 				this.Width = 805;
@@ -56,27 +55,20 @@ namespace PingLogger
 			{
 				this.Width = 420;
 				await Task.Delay(50); // This is really dumb, but we gotta wait for the UI thread to update before adjusting the height.
-				if (scroller.ComputedHorizontalScrollBarVisibility == Visibility.Visible)
-				{
-					this.Height = 495;
-				}
-				else
-				{
-					this.Height = 480;
-				}
+				this.Height = scroller.ComputedHorizontalScrollBarVisibility == Visibility.Visible ? 495 : 480;
 			}
-			foreach (var item in tabControl.Items.Cast<TabItem>())
+			foreach (var item in TabControl.Items.Cast<TabItem>())
 			{
-				(item.Content as PingControl).ToggleSideVisibility();
+				(item.Content as PingControl)?.ToggleSideVisibility();
 			}
 		}
 
 		public void UpdateGraphStyles()
 		{
-			foreach (var item in tabControl.Items.Cast<TabItem>())
+			foreach (var item in TabControl.Items.Cast<TabItem>())
 			{
-				(item.Content as PingControl).statusGraphControl.StylePlot(true);
-				(item.Content as PingControl).pingGraphControl.StylePlot(false);
+				(item.Content as PingControl)?.StatusGraphControl.StylePlot(true);
+				(item.Content as PingControl)?.PingGraphControl.StylePlot();
 			}
 		}
 
@@ -86,10 +78,10 @@ namespace PingLogger
 		{
 			string hostId = (sender as string);
 
-			var item = tabControl.Items.Cast<TabItem>().First(i => i.Uid.Equals(hostId));
+			var item = TabControl.Items.Cast<TabItem>().First(i => i.Uid.Equals(hostId));
 
 			var selectedHost = Config.Hosts.First(h => h.Id.ToString() == hostId);
-			if (item is TabItem tab)
+			if (item is { } tab)
 			{
 				var question = MessageBox.Show(
 					$"Are you sure you want to remove host {selectedHost.HostName}",
@@ -98,17 +90,17 @@ namespace PingLogger
 					MessageBoxImage.Question);
 				if (question == MessageBoxResult.Yes)
 				{
-					(tab.Content as PingControl).DoStop();
-					tabControl.DataContext = null;
+					(tab.Content as PingControl)?.DoStop();
+					TabControl.DataContext = null;
 					_tabItems.Remove(tab);
 					Config.Hosts.Remove(selectedHost);
-					tabControl.DataContext = _tabItems;
-					if (tabControl.SelectedItem is not TabItem selectedTab || selectedTab.Equals(tab))
+					TabControl.DataContext = _tabItems;
+					if (TabControl.SelectedItem is not TabItem selectedTab || selectedTab.Equals(tab))
 					{
 						selectedTab = _tabItems[0];
 					}
 
-					tabControl.SelectedItem = selectedTab;
+					TabControl.SelectedItem = selectedTab;
 				}
 			}
 			ToggleWindowSize();
@@ -133,7 +125,7 @@ namespace PingLogger
 				Config.Hosts.Add(newHost);
 				AddTabItem(newHost);
 			}
-			tabControl.SelectedIndex = Config.LastSelectedTab;
+			TabControl.SelectedIndex = Config.LastSelectedTab;
 			if (Config.LoadWithWindows && Config.StartApplicationMinimized)
 			{
 				this.Minimize();
@@ -154,42 +146,26 @@ namespace PingLogger
 			var newHost = new Host { HostName = hostName, Id = Guid.NewGuid() };
 			Config.Hosts.Add(newHost);
 			AddTabItem(newHost, true);
-			tabControl.SelectedIndex = tabControl.Items.Count - 1;
+			TabControl.SelectedIndex = TabControl.Items.Count - 1;
 			ToggleWindowSize();
 		}
-		private TabItem AddTabItem(Host host, bool AddOnRuntime = false)
+		private void AddTabItem(Host host, bool addOnRuntime = false)
 		{
-			tabControl.DataContext = null;
+			TabControl.DataContext = null;
 			int count = _tabItems.Count;
 			TabItem tab = new TabItem
 			{
-				Header = string.Format("Host: {0}", host.HostName),
-				Name = string.Format("tab{0}", count),
-				HeaderTemplate = tabControl.FindResource("TabHeader") as DataTemplate,
+				Header = $"Host: {host.HostName}",
+				Name = $"tab{count}",
+				HeaderTemplate = TabControl.FindResource("TabHeader") as DataTemplate,
 				Uid = host.Id.ToString()
 			};
 
 			tab.SetResourceReference(TemplateProperty, "CloseButton");
-			PingControl pingControl = new PingControl(host, AddOnRuntime);
+			PingControl pingControl = new PingControl(host, addOnRuntime);
 			tab.Content = pingControl;
 			_tabItems.Insert(count, tab);
-			tabControl.DataContext = _tabItems;
-			ToggleWindowSize();
-			return tab;
-		}
-
-		public void UpdateHeader(string hostName, string hostId)
-		{
-			var item = tabControl.Items.Cast<TabItem>().First(i => i.Uid.Equals(hostId.ToString()));
-
-			if (item is TabItem tab)
-			{
-				tabControl.SelectedItem = tab;
-				var curIndex = _tabItems.IndexOf(tab);
-				_tabItems.Remove(tab);
-				tab.Header = $"Host: {hostName}";
-				_tabItems.Insert(curIndex, tab);
-			}
+			TabControl.DataContext = _tabItems;
 			ToggleWindowSize();
 		}
 
@@ -202,10 +178,10 @@ namespace PingLogger
 				{
 					try
 					{
-						if (item != null && (item.Header as string).Contains("Host:"))
+						if (item != null && ((string)item.Header).Contains("Host:"))
 						{
 							var pingCtrl = item.Content as PingControl;
-							pingCtrl.DoStop();
+							pingCtrl?.DoStop();
 						}
 					}
 					catch (Exception e)
@@ -225,10 +201,10 @@ namespace PingLogger
 				{
 					try
 					{
-						if (item != null && (item.Header as string).Contains("Host:"))
+						if (item != null && ((string)item.Header).Contains("Host:"))
 						{
 							var pingCtrl = item.Content as PingControl;
-							pingCtrl.DoStart();
+							pingCtrl?.DoStart();
 						}
 					}
 					catch (Exception e)
@@ -242,15 +218,15 @@ namespace PingLogger
 		private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
 		{
 			Logger.Debug("Application closing");
-			Config.LastSelectedTab = tabControl.SelectedIndex;
+			Config.LastSelectedTab = TabControl.SelectedIndex;
 			foreach (var item in _tabItems)
 			{
 				try
 				{
-					if (item != null && item.Content != null && item.Header != null && (item.Header as string).Contains("Host:"))
+					if (item?.Content != null && item.Header != null && ((string)item.Header).Contains("Host:"))
 					{
 						var pingCtrl = item.Content as PingControl;
-						pingCtrl.DoStop();
+						pingCtrl?.DoStop();
 					}
 				}
 				catch (Exception ex)
@@ -273,35 +249,15 @@ namespace PingLogger
 
 		private void TabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
-			TabControl tabControl = (TabControl)sender;
-			ScrollViewer scroller = (ScrollViewer)tabControl.Template.FindName("TabControlScroller", tabControl);
+			TabControl tabControl = (TabControl) sender;
+			ScrollViewer scroller = (ScrollViewer) tabControl.Template.FindName("TabControlScroller", tabControl);
+
 			if (scroller != null && tabControl.SelectedIndex > 0)
 			{
-				double index = (double)(tabControl.SelectedIndex);
-				double offset = index * (scroller.ScrollableWidth / (double)(tabControl.Items.Count));
+				double index = tabControl.SelectedIndex;
+				double offset = index * (scroller.ScrollableWidth / tabControl.Items.Count);
 				scroller.ScrollToHorizontalOffset(offset);
 			}
-		}
-
-		public bool CheckIfAnyPingersRunning()
-		{
-			foreach (var item in _tabItems)
-			{
-				try
-				{
-					if (item != null && (item.Header as string).Contains("Host:"))
-					{
-						var pingCtrl = item.Content as PingControl;
-						if (pingCtrl.PingerRunning)
-							return true;
-					}
-				}
-				catch (Exception e)
-				{
-					Logger.Debug(e.ToString());
-				}
-			}
-			return false;
 		}
 	}
 }

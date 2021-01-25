@@ -4,27 +4,22 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.IO;
 using System.IO.Compression;
-using System.Linq;
 using System.Text.Json;
-using System.Threading.Tasks;
 using System.Timers;
 
 namespace PingLogger.Workers
 {
 	public static class Config
 	{
-		private static readonly object fileLock = new object();
-		public static ObservableCollection<Host> Hosts { get; set; } = new ObservableCollection<Host>();
-		private static bool InitialLoad = false;
+		private static readonly object _fileLock = new();
+		public static ObservableCollection<Host> Hosts { get; set; } = new();
+		private static bool _initialLoad;
 		private static AppOptions Options { get; set; }
-		private static readonly Timer saveTimer;
+		private static readonly Timer _saveTimer;
 
 		public static Theme Theme
 		{
-			get
-			{
-				return Options.Theme;
-			}
+			get => Options.Theme;
 			set
 			{
 				Logger.Info($"Options.Theme was changed from {Options.Theme} to {value}");
@@ -35,10 +30,7 @@ namespace PingLogger.Workers
 
 		public static int DaysToKeepLogs
 		{
-			get
-			{
-				return Options.DaysToKeepLogs;
-			}
+			get => Options.DaysToKeepLogs;
 			set
 			{
 				Logger.Info($"Options.DaysToKeepLogs was changed from {Options.DaysToKeepLogs} to {value}");
@@ -48,10 +40,7 @@ namespace PingLogger.Workers
 		}
 		public static bool LoadWithWindows
 		{
-			get
-			{
-				return Options.LoadOnSystemBoot;
-			}
+			get => Options.LoadOnSystemBoot;
 			set
 			{
 				Logger.Info($"Options.LoadOnSystemBoot was changed from {Options.LoadOnSystemBoot} to {value}");
@@ -61,10 +50,7 @@ namespace PingLogger.Workers
 		}
 		public static bool StartLoggersAutomatically
 		{
-			get
-			{
-				return Options.StartLoggersAutomatically;
-			}
+			get => Options.StartLoggersAutomatically;
 			set
 			{
 				Logger.Info($"Options.StartLoggersAutomatically was changed from {Options.StartLoggersAutomatically} to {value}");
@@ -74,10 +60,7 @@ namespace PingLogger.Workers
 		}
 		public static bool StartApplicationMinimized
 		{
-			get
-			{
-				return Options.StartProgramMinimized;
-			}
+			get => Options.StartProgramMinimized;
 			set
 			{
 				Logger.Info($"Options.StartProgramMinimized was changed from {Options.StartProgramMinimized} to {value}");
@@ -88,10 +71,7 @@ namespace PingLogger.Workers
 
 		public static bool WindowExpanded
 		{
-			get
-			{
-				return Options.WindowExpanded;
-			}
+			get => Options.WindowExpanded;
 			set
 			{
 				Logger.Info($"Options.WindowExpanded was changed from {Options.WindowExpanded} to {value}");
@@ -102,10 +82,7 @@ namespace PingLogger.Workers
 
 		public static bool AppWasUpdated
 		{
-			get
-			{
-				return Options.AppWasUpdated;
-			}
+			get => Options.AppWasUpdated;
 			set
 			{
 				Logger.Info($"Options.AppWasUpdated was changed from {Options.AppWasUpdated} to {value}");
@@ -116,10 +93,7 @@ namespace PingLogger.Workers
 
 		public static DateTime UpdateLastChecked
 		{
-			get
-			{
-				return Options.UpdateLastChecked;
-			}
+			get => Options.UpdateLastChecked;
 			set
 			{
 				Logger.Info($"Options.UpdateLastChecked was changed from {Options.UpdateLastChecked} to {value}");
@@ -130,10 +104,7 @@ namespace PingLogger.Workers
 
 		public static bool EnableAutoUpdate
 		{
-			get
-			{
-				return Options.EnableAutoUpdate;
-			}
+			get => Options.EnableAutoUpdate;
 			set
 			{
 				Logger.Info($"Options.EnableAutoUpdate was changed from {Options.EnableAutoUpdate} to {value}");
@@ -144,10 +115,7 @@ namespace PingLogger.Workers
 
 		public static int LastSelectedTab
 		{
-			get
-			{
-				return Options.LastSelectedTab;
-			}
+			get => Options.LastSelectedTab;
 			set
 			{
 				Logger.Info($"Options.LastSelectedTab was changed from {Options.LastSelectedTab} to {value}");
@@ -158,10 +126,7 @@ namespace PingLogger.Workers
 
 		public static string LastTempDir
 		{
-			get
-			{
-				return Options.LastTempDir;
-			}
+			get => Options.LastTempDir;
 			set
 			{
 				Logger.Info($"Options.LastTempDir was changed from {Options.LastTempDir} to {value}");
@@ -172,10 +137,7 @@ namespace PingLogger.Workers
 
 		public static bool IsInstalled
 		{
-			get 
-			{
-				return Options.IsInstalled;
-			}
+			get => Options.IsInstalled;
 			set
 			{
 				Logger.Info($"Options.IsInstalled was changed from {Options.IsInstalled} to {value}");
@@ -183,13 +145,11 @@ namespace PingLogger.Workers
 				SaveConfig();
 			}
 		}
-		
+
+		// ReSharper disable once InconsistentNaming
 		public static string InstallerGUID
 		{
-			get
-			{
-				return Options.InstallerGUID;
-			}
+			get => Options.InstallerGUID;
 			set
 			{
 				Logger.Info($"Options.InstallerGUID was changed from {Options.InstallerGUID} to {value}");
@@ -202,7 +162,7 @@ namespace PingLogger.Workers
 		{
 			get
 			{
-				if(!Options.LogSavePath.EndsWith(Path.DirectorySeparatorChar))
+				if (!Options.LogSavePath.EndsWith(Path.DirectorySeparatorChar))
 				{
 					Options.LogSavePath += Path.DirectorySeparatorChar;
 				}
@@ -225,14 +185,14 @@ namespace PingLogger.Workers
 
 		static Config()
 		{
-			if(saveTimer is null)
+			if (_saveTimer is null)
 			{
-				saveTimer = new Timer(1500)
+				_saveTimer = new Timer(1500)
 				{
 					AutoReset = false,
 					Enabled = false
 				};
-				saveTimer.Elapsed += SaveTimer_Elapsed;
+				_saveTimer.Elapsed += SaveTimer_Elapsed;
 			}
 			ReadConfig();
 			Hosts.CollectionChanged += OptionsChanged;
@@ -241,7 +201,7 @@ namespace PingLogger.Workers
 		private static void SaveTimer_Elapsed(object sender, ElapsedEventArgs e)
 		{
 			Logger.Debug("Waiting for config file lock..");
-			lock (fileLock)
+			lock (_fileLock)
 			{
 				string dataPath = $"{Util.FileBasePath}/config.dat";
 				Logger.Info("SaveConfig() Called");
@@ -255,17 +215,25 @@ namespace PingLogger.Workers
 					Logger.Info("Existing configuration found, overwriting");
 					Logger.Info("Saving host configuration");
 					var hostEntry = archive.GetEntry("hosts.json");
-					using var hostEntryStream = hostEntry.Open();
-					hostEntryStream.SetLength(hostData.Length);
-					using StreamWriter hostWriter = new StreamWriter(hostEntryStream);
-					hostWriter.Write(hostData);
+
+					if (hostEntry != null)
+					{
+						using var hostEntryStream = hostEntry.Open();
+						hostEntryStream.SetLength(hostData.Length);
+						using StreamWriter hostWriter = new StreamWriter(hostEntryStream);
+						hostWriter.Write(hostData);
+					}
 
 					Logger.Info("Saving application configuration");
 					var configEntry = archive.GetEntry("config.json");
-					using var configStream = configEntry.Open();
-					configStream.SetLength(configData.Length);
-					using StreamWriter configWriter = new StreamWriter(configStream);
-					configWriter.Write(configData);
+
+					if (configEntry != null)
+					{
+						using var configStream = configEntry.Open();
+						configStream.SetLength(configData.Length);
+						using StreamWriter configWriter = new StreamWriter(configStream);
+						configWriter.Write(configData);
+					}
 				}
 				else
 				{
@@ -281,12 +249,12 @@ namespace PingLogger.Workers
 				}
 				Logger.Info("Done saving config.dat");
 			}
-			saveTimer.Stop();
+			_saveTimer.Stop();
 		}
 
 		private static void OptionsChanged(object sender, NotifyCollectionChangedEventArgs e)
 		{
-			if (!InitialLoad)
+			if (!_initialLoad)
 				SaveConfig();
 		}
 
@@ -322,24 +290,24 @@ namespace PingLogger.Workers
 				if (File.Exists(dataPath))
 				{
 					Logger.Debug("Waiting for config file lock..");
-					lock (fileLock)
+					lock (_fileLock)
 					{
 						Logger.Info("Found existing config.dat, reading file");
-						InitialLoad = true;
+						_initialLoad = true;
 
 						using var archive = ZipFile.OpenRead(dataPath);
 
 						Logger.Info("Reading hosts configuration");
-						using StreamReader hostReader = new StreamReader(archive.GetEntry("hosts.json").Open());
+						using StreamReader hostReader = new StreamReader(archive.GetEntry("hosts.json")?.Open()!);
 						Hosts = JsonSerializer.Deserialize<ObservableCollection<Host>>(hostReader.ReadToEnd());
 						hostReader.Close();
 
 						Logger.Info("Reading application configuration");
-						using var configReader = new StreamReader(archive.GetEntry("config.json").Open());
+						using var configReader = new StreamReader(archive.GetEntry("config.json")?.Open()!);
 						Options = JsonSerializer.Deserialize<AppOptions>(configReader.ReadToEnd());
 						configReader.Close();
 
-						InitialLoad = false;
+						_initialLoad = false;
 					}
 				}
 				else
@@ -361,8 +329,8 @@ namespace PingLogger.Workers
 		}
 		private static void SaveConfig()
 		{
-			saveTimer.Stop();
-			saveTimer.Start();
+			_saveTimer.Stop();
+			_saveTimer.Start();
 		}
 	}
 }

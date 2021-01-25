@@ -3,7 +3,6 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:PingLogger.Controls"
         mc:Ignorable="d"
         Title="Route Trace Utility" Height="450" Width="650"
 		ResizeMode="NoResize"
@@ -20,17 +19,17 @@
 			<RowDefinition Height="60" />
 			<RowDefinition Height="*" />
 		</Grid.RowDefinitions>
-		<Button x:Name="startTraceRteBtn" Grid.Column="0" Grid.Row="0" Content="Run Trace" Click="StartTraceRteBtn_Click" Margin="5" />
+		<Button x:Name="StartTraceRteBtn" Grid.Column="0" Grid.Row="0" Content="Run Trace" Click="StartTraceRteBtn_Click" Margin="5" />
 		<Grid Grid.Row="0" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Center">
 			<Grid.RowDefinitions>
 				<RowDefinition Height="35" />
 				<RowDefinition Height="25" />
 			</Grid.RowDefinitions>
-			<Label Grid.Row="0" FontSize="16" Content="HostName" HorizontalAlignment="Center" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" VerticalAlignment="Center" x:Name="hostNameLabel" />
-			<Label Grid.Row="1" FontSize="11" Content="Click &quot;Run Trace&quot; To Begin" HorizontalAlignment="Center" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" VerticalAlignment="Center" x:Name="pingTimeLabel" />
+			<Label Grid.Row="0" FontSize="16" Content="HostName" HorizontalAlignment="Center" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" VerticalAlignment="Center" x:Name="HostNameLabel" />
+			<Label Grid.Row="1" FontSize="11" Content="Click &quot;Run Trace&quot; To Begin" HorizontalAlignment="Center" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" VerticalAlignment="Center" x:Name="PingTimeLabel" />
 		</Grid>
-		<ProgressBar Grid.Row="0" Grid.Column="2" Value="0" IsIndeterminate="True" Height="24" Visibility="Hidden" x:Name="fakeProgressBar" Padding="5" />
-		<DataGrid SelectionUnit="Cell" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Auto" CanUserSortColumns="False" Grid.Row="1" Grid.ColumnSpan="3" Grid.Column="0" x:Name="traceView" VerticalGridLinesBrush="Transparent" CanUserResizeColumns="False" AutoGenerateColumns="False" RowBackground="{DynamicResource ControlDarkerBackground}" AlternatingRowBackground="{DynamicResource ControlDisabledBackground}" SelectionMode="Extended" CanUserAddRows="False" CanUserDeleteRows="False" CanUserResizeRows="False">
+		<ProgressBar Grid.Row="0" Grid.Column="2" Value="0" IsIndeterminate="True" Height="24" Visibility="Hidden" x:Name="FakeProgressBar" Padding="5" />
+		<DataGrid SelectionUnit="Cell" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Auto" CanUserSortColumns="False" Grid.Row="1" Grid.ColumnSpan="3" Grid.Column="0" x:Name="TraceView" VerticalGridLinesBrush="Transparent" CanUserResizeColumns="False" AutoGenerateColumns="False" RowBackground="{DynamicResource ControlDarkerBackground}" AlternatingRowBackground="{DynamicResource ControlDisabledBackground}" SelectionMode="Extended" CanUserAddRows="False" CanUserDeleteRows="False" CanUserResizeRows="False">
 			<DataGrid.RowHeaderStyle>
 				<Style TargetType="DataGridRowHeader">
 					<Setter Property="Background" Value="{DynamicResource ControlDarkerBackground}" />
@@ -44,7 +43,7 @@
 			</DataGrid.CellStyle>
 			<DataGrid.ColumnHeaderStyle>
 				<Style TargetType="DataGridColumnHeader">
-					<Setter Property="Background" Value="{DynamicResource ControlSecondarySpecialColour}" />
+					<Setter Property="Background" Value="{DynamicResource ControlSecondarySpecialColor}" />
 					<Setter Property="BorderBrush" Value="{DynamicResource ContainerBorder}" />
 					<Setter Property="BorderThickness" Value="1" />
 					<Setter Property="HorizontalAlignment" Value="Stretch" />

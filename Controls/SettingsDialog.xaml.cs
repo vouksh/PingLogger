@@ -23,17 +23,17 @@ namespace PingLogger.Controls
 			InitializeComponent();
 			CloseWindowCommand = new Command(Close);
 		}
-		private static readonly Regex regex = new Regex("[^0-9.-]+");
+		private static readonly Regex _regex = new("[^0-9.-]+");
 
 		private static bool IsNumericInput(string text)
 		{
 			Logger.Info($"Checking if {text} is numerical");
-			return !regex.IsMatch(text);
+			return !_regex.IsMatch(text);
 		}
 
 		private void LoadOnBoot_Unchecked(object sender, RoutedEventArgs e)
 		{
-			if (!doingInitialLoad)
+			if (!_doingInitialLoad)
 			{
 				Logger.Info("LoadOnBoot unchecked");
 				Config.LoadWithWindows = false;
@@ -44,7 +44,7 @@ namespace PingLogger.Controls
 
 		private void LoadOnBoot_Checked(object sender, RoutedEventArgs e)
 		{
-			if (!doingInitialLoad)
+			if (!_doingInitialLoad)
 			{
 				Logger.Info("LoadOnBoot checked");
 				Config.LoadWithWindows = true;
@@ -55,7 +55,7 @@ namespace PingLogger.Controls
 
 		private void StartAllLoggers_Checked(object sender, RoutedEventArgs e)
 		{
-			if (!doingInitialLoad)
+			if (!_doingInitialLoad)
 			{
 				Logger.Info("StartAllLoggers checked");
 				Config.StartLoggersAutomatically = true;
@@ -64,7 +64,7 @@ namespace PingLogger.Controls
 
 		private void StartAllLoggers_Unchecked(object sender, RoutedEventArgs e)
 		{
-			if (!doingInitialLoad)
+			if (!_doingInitialLoad)
 			{
 				Logger.Info("StartAllLoggers unchecked");
 				Config.StartLoggersAutomatically = false;
@@ -105,9 +105,9 @@ namespace PingLogger.Controls
 			}
 		}
 
-		private void StartAllLoggersBtn_Click(object sender, RoutedEventArgs e) => (this.Owner as MainWindow).StartAllLoggers();
+		private void StartAllLoggersBtn_Click(object sender, RoutedEventArgs e) => (Owner as MainWindow)?.StartAllLoggers();
 
-		private void StopAllLoggersBtn_Click(object sender, RoutedEventArgs e) => (this.Owner as MainWindow).StopAllLoggers();
+		private void StopAllLoggersBtn_Click(object sender, RoutedEventArgs e) => (Owner as MainWindow)?.StopAllLoggers();
 
 		private void DaysToKeep_PreviewTextInput(object sender, TextCompositionEventArgs e)
 		{
@@ -116,9 +116,9 @@ namespace PingLogger.Controls
 
 		private void DaysToKeep_TextChanged(object sender, TextChangedEventArgs e)
 		{
-			if (!doingInitialLoad)
+			if (!_doingInitialLoad)
 			{
-				if (int.TryParse(daysToKeep.Text, out int input))
+				if (int.TryParse(DaysToKeep.Text, out int input))
 				{
 					if (input > 0)
 					{
@@ -127,20 +127,20 @@ namespace PingLogger.Controls
 					else
 					{
 						MessageBox.Show("Input can not be less than 1", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-						daysToKeep.Text = "1";
+						DaysToKeep.Text = "1";
 						Config.DaysToKeepLogs = 1;
 					}
 				} else
 				{
 					MessageBox.Show("Input must be a number.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-					daysToKeep.Text = Config.DaysToKeepLogs.ToString();
+					DaysToKeep.Text = Config.DaysToKeepLogs.ToString();
 				}
 			}
 		}
 
 		private void ThemeBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
-			if (!doingInitialLoad)
+			if (!_doingInitialLoad)
 			{
 				Config.Theme = ThemeBox.SelectedIndex switch
 				{
@@ -151,14 +151,15 @@ namespace PingLogger.Controls
 				};
 				Logger.Info($"Theme changed to {Config.Theme}.");
 				Util.SetTheme();
-				(this.Owner as MainWindow).UpdateGraphStyles();
+				(Owner as MainWindow)?.UpdateGraphStyles();
 			}
 		}
-		bool doingInitialLoad = false;
+
+		private bool _doingInitialLoad;
 		private void Window_Loaded(object sender, RoutedEventArgs e)
 		{
-			doingInitialLoad = true;
-			customPathBtn.Content = new ImageAwesome()
+			_doingInitialLoad = true;
+			CustomPathBtn.Content = new ImageAwesome()
 			{
 				Icon = FontAwesomeIcon.FolderOpen,
 				SpinDuration = 2,
@@ -167,21 +168,14 @@ namespace PingLogger.Controls
 				Height = 14,
 				ToolTip = "Browse"
 			};
-			customPathBox.Text = Config.LogSavePath;
+			CustomPathBox.Text = Config.LogSavePath;
 			AutoUpdateToggle.Visibility = Util.AppIsClickOnce ? Visibility.Hidden : Visibility.Visible;
 			LoadOnBoot.IsChecked = Config.LoadWithWindows;
 			StartAllLoggers.IsChecked = Config.StartLoggersAutomatically;
-			daysToKeep.Text = Config.DaysToKeepLogs.ToString();
+			DaysToKeep.Text = Config.DaysToKeepLogs.ToString();
 			StartMinimized.IsChecked = Config.StartApplicationMinimized;
 			AutoUpdateToggle.IsChecked = Config.EnableAutoUpdate;
-			if (Config.LoadWithWindows)
-			{
-				StartMinimized.Visibility = Visibility.Visible;
-			}
-			else
-			{
-				StartMinimized.Visibility = Visibility.Hidden;
-			}
+			StartMinimized.Visibility = Config.LoadWithWindows ? Visibility.Visible : Visibility.Hidden;
 			if (Config.LoadWithWindows)
 			{
 				CreateStartupShortcut();
@@ -198,13 +192,13 @@ namespace PingLogger.Controls
 					ThemeBox.SelectedIndex = 2;
 					break;
 			}
-			doingInitialLoad = false;
+			_doingInitialLoad = false;
 			Logger.Info("SettingsControl loaded");
 		}
 
 		private void StartMinimized_Checked(object sender, RoutedEventArgs e)
 		{
-			if (!doingInitialLoad)
+			if (!_doingInitialLoad)
 			{
 				Logger.Info("StartMinimized Checked");
 				Config.StartApplicationMinimized = true;
@@ -213,7 +207,7 @@ namespace PingLogger.Controls
 
 		private void StartMinimized_Unchecked(object sender, RoutedEventArgs e)
 		{
-			if (!doingInitialLoad)
+			if (!_doingInitialLoad)
 			{
 				Logger.Info("StartMinimized Unchecked");
 				Config.StartApplicationMinimized = false;
@@ -222,7 +216,7 @@ namespace PingLogger.Controls
 
 		private void AutoUpdateToggle_Checked(object sender, RoutedEventArgs e)
 		{
-			if (!doingInitialLoad)
+			if (!_doingInitialLoad)
 			{
 				Logger.Info("AutoUpdateToggle checked");
 				Config.EnableAutoUpdate = true;
@@ -231,7 +225,7 @@ namespace PingLogger.Controls
 
 		private void AutoUpdateToggle_Unchecked(object sender, RoutedEventArgs e)
 		{
-			if (!doingInitialLoad)
+			if (!_doingInitialLoad)
 			{
 				Logger.Info("AutoUpdateToggle unchecked");
 				Config.EnableAutoUpdate = false;
@@ -255,13 +249,14 @@ namespace PingLogger.Controls
 			{
 				return;
 			}
-			var folderDialog = new VistaFolderBrowserDialog();
-			folderDialog.SelectedPath = Path.GetFullPath(Config.LogSavePath);
+
+			var folderDialog = new VistaFolderBrowserDialog {SelectedPath = Path.GetFullPath(Config.LogSavePath)};
+
 			if(folderDialog.ShowDialog() == true)
 			{
 				Config.LogSavePath = folderDialog.SelectedPath;
-				customPathBox.Text = Config.LogSavePath;
-				(this.Owner as MainWindow).StopAllLoggers();
+				CustomPathBox.Text = Config.LogSavePath;
+				(Owner as MainWindow)?.StopAllLoggers();
 			}
 		}
 	}

@@ -12,7 +12,6 @@ namespace PingLogger.Models
 		public int PacketSize { get; set; } = 32;
 		public int Interval { get; set; } = 1000;
 		public int Timeout { get; set; } = 1000;
-		public bool DontFragment { get; set; } = true;
 
 		public override bool Equals(object obj)
 		{
@@ -21,7 +20,7 @@ namespace PingLogger.Models
 				return false;
 			}
 
-			if((obj as Host).HostName == HostName || (obj as Host).IP == IP)
+			if(((Host) obj).HostName == HostName || ((Host) obj).IP == IP)
 			{
 				return true;
 			}
@@ -30,22 +29,22 @@ namespace PingLogger.Models
 
 		public static bool operator ==(Host a, Host b)
 		{
-			return a.HostName == b.HostName || a.IP == b.IP;
+			return a?.HostName == b?.HostName || a?.IP == b?.IP;
 		}
 
 		public static bool operator !=(Host a, Host b)
 		{
-			return a.HostName != b.HostName && a.IP != b.IP;
+			return a?.HostName != b?.HostName && a?.IP != b?.IP;
 		}
 
 		public static bool operator ==(Host a, string b)
 		{
-			return a.HostName == b || a.IP == b;
+			return a?.HostName == b || a?.IP == b;
 		}
 
 		public static bool operator !=(Host a, string b)
 		{
-			return a.HostName != b && a.IP != b;
+			return a?.HostName != b && a?.IP != b;
 		}
 
 		public override string ToString()

@@ -1,6 +1,5 @@
 ﻿using PingLogger.Workers;
 using System;
-using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Windows;
@@ -40,7 +39,7 @@ namespace PingLogger
 
 		private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
 		{
-			MessageBox.Show((e.ExceptionObject as Exception).Message, "An error has occurred", MessageBoxButton.OK, MessageBoxImage.Error);
+			MessageBox.Show((e.ExceptionObject as Exception)?.Message, "An error has occurred", MessageBoxButton.OK, MessageBoxImage.Error);
 			Logger.Log.Fatal(e.ExceptionObject as Exception, "A fatal unhandled exception occurred");
 		}
 	}

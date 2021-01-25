@@ -1,18 +1,8 @@
-﻿using System;
-using System.Linq;
+﻿using PingLogger.Extensions;
+using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Windows;
+using System.Linq;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
-using System.Drawing;
-using ScottPlot;
-using PingLogger.Extensions;
 
 namespace PingLogger.Controls
 {
@@ -21,9 +11,9 @@ namespace PingLogger.Controls
 	/// </summary>
 	public partial class GraphControl : UserControl
 	{
-		public FixedDictionary<DateTime, long> PingTimes { get; set; } = new FixedDictionary<DateTime, long>(100);
-		private readonly FixedList<double> xAxis = new FixedList<double>(60);
-		private readonly FixedList<double> yAxis = new FixedList<double>(60);
+		public FixedDictionary<DateTime, long> PingTimes { get; set; } = new(100);
+		private readonly FixedList<double> _xAxis = new(60);
+		private readonly FixedList<double> _yAxis = new(60);
 		public GraphControl()
 		{
 			InitializeComponent();
@@ -32,15 +22,15 @@ namespace PingLogger.Controls
 
 		public void UpdatePieChart(int warningValue, int timeoutValue)
 		{
-			xAxis.Clear();
-			yAxis.Clear();
+			_xAxis.Clear();
+			_yAxis.Clear();
 			if (PingTimes.Count > 0)
 			{
-				pingPlot.plt.Clear();
-				var successCount = (double)PingTimes.Values.Where(v => v > 0 && v < warningValue).Count();
-				var timeoutCount = (double)PingTimes.Values.Where(v => v == 0 || v >= timeoutValue).Count();
-				var warningCount = (double)PingTimes.Values.Where(v => v >= warningValue && v < timeoutValue).Count();
-				List<double> values = new List<double>
+				PingPlot.plt.Clear();
+				var successCount = (double)PingTimes.Values.Count(v => v > 0 && v < warningValue);
+				var timeoutCount = (double)PingTimes.Values.Count(v => v == 0 || v >= timeoutValue);
+				var warningCount = (double)PingTimes.Values.Count(v => v >= warningValue && v < timeoutValue);
+				var values = new List<double>
 				{
 					successCount
 				};
@@ -48,14 +38,14 @@ namespace PingLogger.Controls
 				{
 					values.Add(timeoutCount);
 				}
-				if(warningCount > 0)
+				if (warningCount > 0)
 				{
 					values.Add(warningCount);
 				}
 				string[] labels = { "Success", "Timeout", "Warning" };
 				System.Drawing.Color[] colors = { System.Drawing.Color.Green, System.Drawing.Color.Red, System.Drawing.Color.Orange };
-				pingPlot.plt.PlotPie(values.ToArray(), labels, colors, showLabels: false, showPercentages: true);
-				pingPlot.Render();
+				PingPlot.plt.PlotPie(values.ToArray(), labels, colors, showLabels: false, showPercentages: true);
+				PingPlot.Render();
 			}
 		}
 
@@ -63,68 +53,63 @@ namespace PingLogger.Controls
 		{
 			if (Util.IsLightTheme)
 			{
-				pingPlot.plt.Frame(left: true, right: false, bottom: true, top: false, frameColor: System.Drawing.Color.Black);
-				pingPlot.plt.Style(figBg: System.Drawing.Color.Transparent, dataBg: System.Drawing.Color.Transparent, label: System.Drawing.Color.Black, grid: System.Drawing.Color.Black, title: System.Drawing.Color.Black);
+				PingPlot.plt.Frame(left: true, right: false, bottom: true, top: false, frameColor: System.Drawing.Color.Black);
+				PingPlot.plt.Style(figBg: System.Drawing.Color.Transparent, dataBg: System.Drawing.Color.Transparent, label: System.Drawing.Color.Black, grid: System.Drawing.Color.Black, title: System.Drawing.Color.Black);
 			}
 			else
 			{
-				pingPlot.plt.Frame(left: true, right: false, bottom: true, top: false, frameColor: System.Drawing.Color.White);
-				pingPlot.plt.Style(figBg: System.Drawing.Color.Transparent, dataBg: System.Drawing.Color.Transparent, label: System.Drawing.Color.DarkGray, grid: System.Drawing.Color.DarkGray, title: System.Drawing.Color.DarkGray);
+				PingPlot.plt.Frame(left: true, right: false, bottom: true, top: false, frameColor: System.Drawing.Color.White);
+				PingPlot.plt.Style(figBg: System.Drawing.Color.Transparent, dataBg: System.Drawing.Color.Transparent, label: System.Drawing.Color.DarkGray, grid: System.Drawing.Color.DarkGray, title: System.Drawing.Color.DarkGray);
 			}
 			if (!isPieChart)
 			{
 				PingTimes.MaxSize = 1;
-				pingPlot.plt.XLabel("Time");
-				pingPlot.plt.YLabel("Ping");
-				pingPlot.plt.Layout(xScaleHeight: 5, yScaleWidth: 1);
-				pingPlot.plt.Ticks(dateTimeX: true, dateTimeFormatStringX: "hh:mm:ss", xTickRotation: 45);
+				PingPlot.plt.XLabel("Time");
+				PingPlot.plt.YLabel("Ping");
+				PingPlot.plt.Layout(xScaleHeight: 5, yScaleWidth: 1);
+				PingPlot.plt.Ticks(dateTimeX: true, dateTimeFormatStringX: "hh:mm:ss", xTickRotation: 45);
 				//pingPlot.plt.Grid(xSpacing: 1);
 				//pingPlot.plt.PlotScatter(xAxis.ToArray(), yAxis.ToArray(), lineWidth: 1.5);
-			} else
+			}
+			else
 			{
-				xAxis.MaxSize = 1;
-				yAxis.MaxSize = 1;
+				_xAxis.MaxSize = 1;
+				_yAxis.MaxSize = 1;
 				double[] values = { 0, 0, 0 };
 				string[] labels = { "Success", "Timeout", "Warning" };
 				System.Drawing.Color[] colors = { System.Drawing.Color.Green, System.Drawing.Color.Red, System.Drawing.Color.Orange };
-				pingPlot.plt.PlotPie(values, labels, colors, showLabels: false, showPercentages: true);
-				pingPlot.plt.Grid(false);
-				pingPlot.plt.Frame(false);
-				pingPlot.plt.Ticks(false, false);
+				PingPlot.plt.PlotPie(values, labels, colors, showLabels: false, showPercentages: true);
+				PingPlot.plt.Grid(false);
+				PingPlot.plt.Frame(false);
+				PingPlot.plt.Ticks(false, false);
 			}
-			pingPlot.plt.Legend();
+			PingPlot.plt.Legend();
 		}
 
 		public void AddData(DateTime time, long ping)
 		{
 			PingTimes.Add(time, ping);
-			xAxis.Add(time.ToOADate());
-			if (ping > 0)
-			{
-				yAxis.Add(ping);
-			} else
-			{
-				yAxis.Add(999);
-			}
+			_xAxis.Add(time.ToOADate());
+			_yAxis.Add(ping > 0 ? ping : 999);
 			//pingPlot.Render();
 		}
 
 		public void UpdatePlot()
 		{
 			PingTimes.Clear();
-			if (xAxis.Count > 0)
+			if (_xAxis.Count > 0)
 			{
-				pingPlot.plt.Clear();
-				pingPlot.plt.PlotScatter(xAxis.ToArray(), yAxis.ToArray(), lineWidth: 1.5);
-				pingPlot.Render();
+				PingPlot.plt.Clear();
+				PingPlot.plt.PlotScatter(_xAxis.ToArray(), _yAxis.ToArray(), lineWidth: 1.5);
+				PingPlot.Render();
 			}
 		}
 
 		public void ClearData()
 		{
 			PingTimes.Clear();
-			xAxis.Clear();
-			yAxis.Clear();
+			_xAxis.Clear();
+			_yAxis.Clear();
 		}
 
 	}

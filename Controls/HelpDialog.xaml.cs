@@ -1,10 +1,8 @@
 ﻿using PingLogger.Workers;
-using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Windows;
-using System.Windows.Documents;
 using System.Windows.Input;
 
 namespace PingLogger.Controls
@@ -27,10 +25,10 @@ namespace PingLogger.Controls
 			var resourceNames = assembly.GetManifestResourceNames();
 			var resourceName = resourceNames.Single(s => s.EndsWith("README.md"));
 			using Stream stream = assembly.GetManifestResourceStream(resourceName);
-			using StreamReader reader = new StreamReader(stream);
+			using StreamReader reader = new StreamReader(stream!);
 			string result = reader.ReadToEnd();
 
-			editSource.Text = result;
+			EditSource.Text = result;
 		}
 	}
 }

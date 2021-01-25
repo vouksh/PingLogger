@@ -8,17 +8,17 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Reflection;
-using System.Runtime.InteropServices;
 using System.Text.Json;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace PingLogger
 {
 	public static class Util
 	{
-		static Controls.SplashScreen splashScreen;
+		static Controls.SplashScreen _splashScreen;
 
-		public static string FileBasePath 
+		public static string FileBasePath
 		{
 			get
 			{
@@ -43,20 +43,7 @@ namespace PingLogger
 			}
 		}
 
-		public static bool AppIsClickOnce
-		{
-			get
-			{
-				if (File.Exists(AppContext.BaseDirectory + "Launcher.exe") && File.Exists(AppContext.BaseDirectory + "Launcher.manifest"))
-				{
-					return true;
-				}
-				else
-				{
-					return false;
-				}
-			}
-		}
+		public static bool AppIsClickOnce => File.Exists(AppContext.BaseDirectory + "Launcher.exe") && File.Exists(AppContext.BaseDirectory + "Launcher.manifest");
 
 		public static async Task CheckForUpdates()
 		{
@@ -83,24 +70,24 @@ namespace PingLogger
 					Logger.Info("Application already checked for update today, skipping.");
 					return;
 				}
-				splashScreen = new Controls.SplashScreen();
-				splashScreen.Show();
-				splashScreen.dlProgress.IsIndeterminate = true;
-				splashScreen.dlProgress.Value = 1;
+				_splashScreen = new Controls.SplashScreen();
+				_splashScreen.Show();
+				_splashScreen.DlProgress.IsIndeterminate = true;
+				_splashScreen.DlProgress.Value = 1;
 				var localVersion = Assembly.GetExecutingAssembly().GetName().Version;
 
 				try
 				{
 					var httpClient = new WebClient();
 					bool downloadComplete = false;
-					httpClient.DownloadFileCompleted += (o, i) => { downloadComplete = true; };
+					httpClient.DownloadFileCompleted += (_, _) => { downloadComplete = true; };
 
 					string azureURL = "https://pingloggerfiles.blob.core.windows.net/";
 
-					await httpClient.DownloadFileTaskAsync($"{azureURL}version/latest.json", $"./latest.json");
+					await httpClient.DownloadFileTaskAsync($"{azureURL}version/latest.json", "./latest.json");
 
 					while (!downloadComplete) { await Task.Delay(100); }
-					var latestJson = File.ReadAllText("./latest.json");
+					var latestJson = await File.ReadAllTextAsync("./latest.json");
 					var remoteVersion = JsonSerializer.Deserialize<SerializableVersion>(latestJson);
 					File.Delete("./latest.json");
 
@@ -116,18 +103,23 @@ namespace PingLogger
 								Directory.CreateDirectory(Config.LastTempDir);
 								Logger.Info($"Creating temporary path {Config.LastTempDir}");
 								Logger.Info($"Downloading newest installer to {Config.LastTempDir}\\PingLogger-Setup.msi");
-								var downloadURL = $"{azureURL}v{remoteVersion.Major}{remoteVersion.Minor}{remoteVersion.Build}/PingLogger-Setup.msi";
-								Logger.Info($"Downloading from {downloadURL}");
-								using var downloader = new HttpClientDownloadWithProgress(downloadURL, Config.LastTempDir + "\\PingLogger-Setup.msi");
-								splashScreen.mainLabel.Text = $"Downloading PingLogger setup v{remoteVersion}";
-								downloader.ProgressChanged += Downloader_ProgressChanged;
-								await downloader.StartDownload();
+
+								if (remoteVersion is not null)
+								{
+									var downloadURL = $"{azureURL}v{remoteVersion.Major}{remoteVersion.Minor}{remoteVersion.Build}/PingLogger-Setup.msi";
+									Logger.Info($"Downloading from {downloadURL}");
+									using var downloader = new HttpClientDownloadWithProgress(downloadURL, Config.LastTempDir + "\\PingLogger-Setup.msi");
+									_splashScreen.MainLabel.Text = $"Downloading PingLogger setup v{remoteVersion}";
+									downloader.ProgressChanged += Downloader_ProgressChanged;
+									await downloader.StartDownload();
+								}
+
 								Config.AppWasUpdated = true;
 								Logger.Info("Uninstalling current version.");
 								string batchFile = $@"@echo off
 msiexec.exe /q /l* '{ AppContext.BaseDirectory}Logs\Installer - v{localVersion}.log' /x {Config.InstallerGUID}
 msiexec.exe /l* '{ AppContext.BaseDirectory}Logs\Installer - v{remoteVersion}.log' /i {Config.LastTempDir}/PingLogger-Setup.msi";
-								File.WriteAllText(Config.LastTempDir + "/install.bat", batchFile);
+								await File.WriteAllTextAsync(Config.LastTempDir + "/install.bat", batchFile);
 								Process.Start(new ProcessStartInfo
 								{
 									FileName = "cmd.exe",
@@ -143,12 +135,17 @@ msiexec.exe /l* '{ AppContext.BaseDirectory}Logs\Installer - v{remoteVersion}.lo
 								Logger.Info("Renamed PingLogger.exe to PingLogger-old.exe");
 								File.Move("./PingLogger.exe", "./PingLogger-old.exe");
 								Logger.Info("Downloading new PingLogger.exe");
-								var downloadURL = $"{azureURL}v{remoteVersion.Major}{remoteVersion.Minor}{remoteVersion.Build}/PingLogger.exe";
-								Logger.Info($"Downloading from {downloadURL}");
-								using var downloader = new HttpClientDownloadWithProgress(downloadURL, "./PingLogger.exe");
-								splashScreen.mainLabel.Text = $"Downloading PingLogger v{remoteVersion}";
-								downloader.ProgressChanged += Downloader_ProgressChanged;
-								await downloader.StartDownload();
+
+								if (remoteVersion is not null)
+								{
+									var downloadUrl = $"{azureURL}v{remoteVersion.Major}{remoteVersion.Minor}{remoteVersion.Build}/PingLogger.exe";
+									Logger.Info($"Downloading from {downloadUrl}");
+									using var downloader = new HttpClientDownloadWithProgress(downloadUrl, "./PingLogger.exe");
+									_splashScreen.MainLabel.Text = $"Downloading PingLogger v{remoteVersion}";
+									downloader.ProgressChanged += Downloader_ProgressChanged;
+									await downloader.StartDownload();
+								}
+
 								Config.AppWasUpdated = true;
 
 								Process.Start(new ProcessStartInfo
@@ -169,16 +166,15 @@ msiexec.exe /l* '{ AppContext.BaseDirectory}Logs\Installer - v{remoteVersion}.lo
 				}
 			}
 			Config.UpdateLastChecked = DateTime.Now;
-			return;
 		}
 
 		private static void Downloader_ProgressChanged(long? totalFileSize, long totalBytesDownloaded, double? progressPercentage)
 		{
 			if (progressPercentage.HasValue && totalFileSize.HasValue)
 			{
-				splashScreen.dlProgress.Maximum = 100;
-				splashScreen.dlProgress.Value = progressPercentage.Value;
-				splashScreen.dlProgress.IsIndeterminate = false;
+				_splashScreen.DlProgress.Maximum = 100;
+				_splashScreen.DlProgress.Value = progressPercentage.Value;
+				_splashScreen.DlProgress.IsIndeterminate = false;
 			}
 		}
 
@@ -186,8 +182,8 @@ msiexec.exe /l* '{ AppContext.BaseDirectory}Logs\Installer - v{remoteVersion}.lo
 		{
 			try
 			{
-				splashScreen?.Close();
-				splashScreen = null;
+				_splashScreen?.Close();
+				_splashScreen = null;
 			}
 			catch (NullReferenceException)
 			{
@@ -208,7 +204,7 @@ msiexec.exe /l* '{ AppContext.BaseDirectory}Logs\Installer - v{remoteVersion}.lo
 			  .Select(s => s[random.Next(s.Length)]).ToArray());
 		}
 
-		public static bool IsLightTheme 
+		public static bool IsLightTheme
 		{
 			get
 			{
@@ -229,14 +225,7 @@ msiexec.exe /l* '{ AppContext.BaseDirectory}Logs\Installer - v{remoteVersion}.lo
 
 		public static void SetTheme()
 		{
-			if (IsLightTheme)
-			{
-				App.Current.Resources.MergedDictionaries[0].Source = new Uri("/Themes/LightTheme.xaml", UriKind.Relative);
-			}
-			else
-			{
-				App.Current.Resources.MergedDictionaries[0].Source = new Uri("/Themes/DarkTheme.xaml", UriKind.Relative);
-			}
+			Application.Current.Resources.MergedDictionaries[0].Source = IsLightTheme ? new Uri("/Themes/LightTheme.xaml", UriKind.Relative) : new Uri("/Themes/DarkTheme.xaml", UriKind.Relative);
 		}
 	}
 }

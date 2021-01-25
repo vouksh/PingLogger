@@ -9,27 +9,30 @@ namespace PingLogger.Controls
 	/// </summary>
 	public partial class UpdatePromptDialog : Window
 	{
-		public bool buttonClicked = false;
+		public bool ButtonClicked;
 		public UpdatePromptDialog()
 		{
 			InitializeComponent();
 
 		}
 
-		public static new bool Show()
+		public new static bool Show()
 		{
 			var promptWindow = new UpdatePromptDialog();
 			Task.Factory.StartNew(() =>
 			{
 				for (var i = 15; i > 0; i--)
 				{
-					if (promptWindow.buttonClicked)
+					if (promptWindow.ButtonClicked)
 					{
 						break;
 					}
+
+					var i1 = i;
+
 					promptWindow.Dispatcher.Invoke(() =>
 					{
-						promptWindow.yesBtn.Content = $"Yes ({i}s)";
+						promptWindow.YesBtn.Content = $"Yes ({i1}s)";
 					});
 					Thread.Sleep(1000);
 				}
@@ -37,7 +40,7 @@ namespace PingLogger.Controls
 			});
 
 			promptWindow.ShowDialog();
-			if (!promptWindow.buttonClicked)
+			if (!promptWindow.ButtonClicked)
 			{
 				return true;
 			}
@@ -48,13 +51,13 @@ namespace PingLogger.Controls
 		private void YesBtn_Click(object sender, RoutedEventArgs e)
 		{
 			this.DialogResult = true;
-			buttonClicked = true;
+			ButtonClicked = true;
 		}
 
 		private void NoBtn_Click(object sender, RoutedEventArgs e)
 		{
 			this.DialogResult = false;
-			buttonClicked = true;
+			ButtonClicked = true;
 		}
 	}
 }

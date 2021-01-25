@@ -4,6 +4,7 @@ using PingLogger.Models;
 using PingLogger.Workers;
 using System;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -24,51 +25,51 @@ namespace PingLogger.Controls
 	/// </summary>
 	public partial class PingControl : UserControl
 	{
-		readonly DispatcherTimer Timer;
 		public Host PingHost;
-		private Pinger Pinger;
-		private readonly FixedList<long> PingTimes = new FixedList<long>(23);
-		private int Timeouts = 0;
-		private int Warnings = 0;
-		private readonly SynchronizationContext syncCtx;
-		private readonly bool LoadFromVar = false;
-		private double PacketLoss = 0.0;
-		private long TotalPings = 0;
+		private Pinger _pinger;
+		private readonly FixedList<long> _pingTimes = new(23);
+		private int _timeouts;
+		private int _warnings;
+		private readonly SynchronizationContext _syncCtx;
+		private readonly bool _loadFromVar;
+		private double _packetLoss;
+		private long _totalPings;
 		public ICommand CloseTabCommand { get; set; }
 		public PingControl()
 		{
 			InitializeComponent();
-			Timer = new DispatcherTimer
+			var timer = new DispatcherTimer
 			{
 				Interval = TimeSpan.FromMilliseconds(100)
 			};
-			Timer.Tick += Timer_Tick;
+			timer.Tick += Timer_Tick;
 			PingHost = new Host();
-			syncCtx = SynchronizationContext.Current;
-			Timer.Start();
-			statusGraphControl.StylePlot(true);
-			pingGraphControl.StylePlot(false);
+			_syncCtx = SynchronizationContext.Current;
+			timer.Start();
+			StatusGraphControl.StylePlot(true);
+			PingGraphControl.StylePlot();
 		}
 
-		public PingControl(Host _host, bool RunTimeAdded = false)
+		public PingControl(Host host, bool runTimeAdded = false)
 		{
 			InitializeComponent();
-			Timer = new DispatcherTimer
+			var timer = new DispatcherTimer
 			{
 				Interval = TimeSpan.FromMilliseconds(100)
 			};
-			Timer.Tick += Timer_Tick;
-			PingHost = _host;
-			LoadFromVar = true;
-			syncCtx = SynchronizationContext.Current;
-			Timer.Start();
-			if (!RunTimeAdded)
+			timer.Tick += Timer_Tick;
+			PingHost = host;
+			_loadFromVar = true;
+			_syncCtx = SynchronizationContext.Current;
+			timer.Start();
+			if (!runTimeAdded)
 				AutoStart();
-			statusGraphControl.StylePlot(true);
-			pingGraphControl.StylePlot(false);
+			StatusGraphControl.StylePlot(true);
+			PingGraphControl.StylePlot();
 
 		}
-		void AutoStart()
+
+		private void AutoStart()
 		{
 			if (Config.StartLoggersAutomatically)
 			{
@@ -79,8 +80,8 @@ namespace PingLogger.Controls
 				WarningBox.IsEnabled = false;
 				TimeoutBox.IsEnabled = false;
 				PacketSizeBox.IsEnabled = false;
-				Pinger = new Pinger(PingHost);
-				Pinger.Start();
+				_pinger = new Pinger(PingHost);
+				_pinger.Start();
 			}
 		}
 		public void DoStart()
@@ -92,130 +93,139 @@ namespace PingLogger.Controls
 			WarningBox.IsEnabled = false;
 			TimeoutBox.IsEnabled = false;
 			PacketSizeBox.IsEnabled = false;
-			Pinger = new Pinger(PingHost);
-			Pinger.Start();
+			_pinger = new Pinger(PingHost);
+			_pinger.Start();
 		}
-		void Timer_Tick(object sender, EventArgs e)
+
+		private void Timer_Tick(object sender, EventArgs e)
 		{
 
-			if (Pinger != null && Pinger.Running)
+			if (_pinger != null && _pinger.Running)
 			{
 				if (Config.WindowExpanded)
 				{
-					switch (rightTabs.SelectedIndex)
+					switch (RightTabs.SelectedIndex)
 					{
 						case 1:
-							pingGraphControl.UpdatePlot();
+							PingGraphControl.UpdatePlot();
 							break;
 						case 2:
-							statusGraphControl.UpdatePieChart(PingHost.Threshold, PingHost.Timeout);
+							StatusGraphControl.UpdatePieChart(PingHost.Threshold, PingHost.Timeout);
 							break;
 					}
 				}
 				StartBtn.Visibility = Visibility.Hidden;
 				StopBtn.Visibility = Visibility.Visible;
-				doTraceRteBtn.Visibility = Visibility.Hidden;
+				DoTraceRteBtn.Visibility = Visibility.Hidden;
 				StringBuilder sb = new StringBuilder();
-				for (int i = 0; i < Pinger.Replies.Count - 1; i++)
+				for (int i = 0; i < _pinger.Replies.Count - 1; i++)
 				{
-					TotalPings++;
+					_totalPings++;
 					// Logger.Info($"{PingHost.HostName} TotalPings: {TotalPings}");
-					var success = Pinger.Replies.TryTake(out Reply reply);
-					pingGraphControl.AddData(reply.DateTime, reply.RoundTrip);
-					statusGraphControl.AddData(reply.DateTime, reply.RoundTrip);
-					if (success)
-					{
-						Logger.Debug("Ping Success");
-						var line = $"[{reply.DateTime:T}] ";
-						if (reply.RoundTrip > 0)
-						{
-							PingTimes.Add(reply.RoundTrip);
-							Logger.Debug($"{PingHost.HostName} RoundTrip Time > 0: {reply.RoundTrip}");
-						}
+					var success = _pinger.Replies.TryTake(out Reply reply);
 
-						if (reply.TimedOut)
+					if (reply is not null)
+					{
+						PingGraphControl.AddData(reply.DateTime, reply.RoundTrip);
+						StatusGraphControl.AddData(reply.DateTime, reply.RoundTrip);
+
+						if (success)
 						{
-							Timeouts++;
-							Logger.Debug($"{PingHost.HostName} Reply timed out. Number of Timeouts: {Timeouts}");
-							line += $"Timed out to host";
-						}
-						else
-						{
-							line += $"Ping round trip: {reply.RoundTrip}ms";
-							if (reply.RoundTrip >= PingHost.Threshold)
+							Logger.Debug("Ping Success");
+							var line = $"[{reply.DateTime:T}] ";
+
+							if (reply.RoundTrip > 0)
 							{
-								Warnings++;
-								line += " [Warning]";
+								_pingTimes.Add(reply.RoundTrip);
+								Logger.Debug($"{PingHost.HostName} RoundTrip Time > 0: {reply.RoundTrip}");
 							}
+
+							if (reply.TimedOut)
+							{
+								_timeouts++;
+								Logger.Debug($"{PingHost.HostName} Reply timed out. Number of Timeouts: {_timeouts}");
+								line += "Timed out to host";
+							}
+							else
+							{
+								line += $"Ping round trip: {reply.RoundTrip}ms";
+
+								if (reply.RoundTrip >= PingHost.Threshold)
+								{
+									_warnings++;
+									line += " [Warning]";
+								}
+							}
+
+							sb.Append(line);
+							sb.Append(Environment.NewLine);
 						}
-						sb.Append(line);
-						sb.Append(Environment.NewLine);
 					}
 				}
 				PingStatusBox.Text += sb.ToString();
 				var lines = PingStatusBox.Text.Split(Environment.NewLine).ToList();
-				if (lines.Count > PingTimes.MaxSize)
+				if (lines.Count > _pingTimes.MaxSize)
 				{
-					Logger.Debug($"{PingHost.HostName} Lines in text box greater than {PingTimes.MaxSize}, removing a line.");
+					Logger.Debug($"{PingHost.HostName} Lines in text box greater than {_pingTimes.MaxSize}, removing a line.");
 					lines.RemoveAt(0);
 					PingStatusBox.Text = string.Join(Environment.NewLine, lines);
 				}
 
-				if (PingTimes.Count > 0)
+				if (_pingTimes.Count > 0)
 				{
-					avgPingLbl.Content = Math.Ceiling(PingTimes.Average()).ToString() + "ms";
+					AvgPingLbl.Content = Math.Ceiling(_pingTimes.Average()).ToString(CultureInfo.CurrentCulture) + "ms";
 				}
-				timeoutLbl.Content = Timeouts.ToString();
-				warningLbl.Content = Warnings.ToString();
-				PacketLoss = ((double)Timeouts / (double)TotalPings) * 100;
-				packetLossLabel.Content = $"{Math.Round(PacketLoss, 2)}%";
+				TimeoutLbl.Content = _timeouts.ToString();
+				WarningLbl.Content = _warnings.ToString();
+				_packetLoss = ((double)_timeouts / _totalPings) * 100;
+				PacketLossLabel.Content = $"{Math.Round(_packetLoss, 2)}%";
 			}
 			else
 			{
 				StartBtn.Visibility = Visibility.Visible;
 				StopBtn.Visibility = Visibility.Hidden;
-				doTraceRteBtn.Visibility = Visibility.Visible;
-				if (IPAddressBox.Text == "Invalid Host Name")
+				DoTraceRteBtn.Visibility = Visibility.Visible;
+				if (IpAddressBox.Text == "Invalid Host Name")
 				{
 					StartBtn.IsEnabled = false;
-					doTraceRteBtn.IsEnabled = false;
+					DoTraceRteBtn.IsEnabled = false;
 				}
 				else
 				{
 					StartBtn.IsEnabled = true;
-					doTraceRteBtn.IsEnabled = true;
+					DoTraceRteBtn.IsEnabled = true;
 				}
 			}
 			CheckForFolder();
 		}
 
-		private bool DirExists = false;
-		private bool LogExists = false;
+		private bool _dirExists;
+		private bool _logExists;
 
 		private void CheckForFolder()
 		{
-			if (!DirExists)
+			if (!_dirExists)
 			{
 				if (Directory.Exists($"{Config.LogSavePath}{HostNameBox.Text}"))
 				{
-					DirExists = true;
-					openLogFolderBtn.Visibility = Visibility.Visible;
+					_dirExists = true;
+					OpenLogFolderBtn.Visibility = Visibility.Visible;
 				}
 				else
 				{
-					openLogFolderBtn.Visibility = Visibility.Hidden;
+					OpenLogFolderBtn.Visibility = Visibility.Hidden;
 				}
 			}
-			if (!LogExists)
+			if (!_logExists)
 			{
 				if (File.Exists($"{Config.LogSavePath}{HostNameBox.Text}{Path.DirectorySeparatorChar}{HostNameBox.Text}-{DateTime.Now:yyyyMMdd}.log"))
 				{
-					LogExists = true;
-					viewLogBtn.Visibility = Visibility.Visible;
+					_logExists = true;
+					ViewLogBtn.Visibility = Visibility.Visible;
 				}
 				else
 				{
-					viewLogBtn.Visibility = Visibility.Hidden;
+					ViewLogBtn.Visibility = Visibility.Hidden;
 				}
 			}
 		}
@@ -224,7 +234,7 @@ namespace PingLogger.Controls
 		{
 			try
 			{
-				Logger.Debug($"StartBtn_Click");
+				Logger.Debug("StartBtn_Click");
 				StopBtn.IsEnabled = true;
 				StartBtn.IsEnabled = false;
 				HostNameBox.IsEnabled = false;
@@ -232,10 +242,10 @@ namespace PingLogger.Controls
 				WarningBox.IsEnabled = false;
 				TimeoutBox.IsEnabled = false;
 				PacketSizeBox.IsEnabled = false;
-				Pinger = new Pinger(PingHost);
-				Logger.Debug($"Pinger instance created.");
-				Pinger.Start();
-				Logger.Debug($"Pinger started.");
+				_pinger = new Pinger(PingHost);
+				Logger.Debug("Pinger instance created.");
+				_pinger.Start();
+				Logger.Debug("Pinger started.");
 			}
 			catch (Exception ex)
 			{
@@ -252,10 +262,10 @@ namespace PingLogger.Controls
 			WarningBox.IsEnabled = true;
 			TimeoutBox.IsEnabled = true;
 			PacketSizeBox.IsEnabled = true;
-			if (Pinger != null)
+			if (_pinger != null)
 			{
-				Pinger.Stop();
-				Pinger = null;
+				_pinger.Stop();
+				_pinger = null;
 			}
 		}
 
@@ -268,13 +278,13 @@ namespace PingLogger.Controls
 			WarningBox.IsEnabled = true;
 			TimeoutBox.IsEnabled = true;
 			PacketSizeBox.IsEnabled = true;
-			Pinger.Stop();
+			_pinger.Stop();
 		}
 		private void UpdateHost()
 		{
 			var index = Config.Hosts.IndexOf(PingHost);
 			PingHost.HostName = HostNameBox.Text;
-			PingHost.IP = IPAddressBox.Text;
+			PingHost.IP = IpAddressBox.Text;
 			PingHost.Interval = Convert.ToInt32(IntervalBox.Text);
 			PingHost.PacketSize = Convert.ToInt32(PacketSizeBox.Text);
 			PingHost.Threshold = Convert.ToInt32(WarningBox.Text);
@@ -288,22 +298,16 @@ namespace PingLogger.Controls
 				StartBtn.IsEnabled = false;
 
 				await UpdateIPBox();
-				(this.Parent as TabItem).Header = $"Host: {HostNameBox.Text}";
+				((TabItem) Parent).Header = $"Host: {HostNameBox.Text}";
 				UpdateHost();
 			}
-			if (!Directory.Exists($"{Config.LogSavePath}{HostNameBox.Text}"))
-			{
-				viewLogBtn.Visibility = Visibility.Hidden;
-			}
-			else
-			{
-				viewLogBtn.Visibility = Visibility.Visible;
-			}
+
+			ViewLogBtn.Visibility = !Directory.Exists($"{Config.LogSavePath}{HostNameBox.Text}") ? Visibility.Hidden : Visibility.Visible;
 		}
 
 		private async void MainControl_Loaded(object sender, RoutedEventArgs e)
 		{
-			if (LoadFromVar)
+			if (_loadFromVar)
 			{
 				HostNameBox.Text = PingHost.HostName;
 				IntervalBox.Text = PingHost.Interval.ToString();
@@ -323,10 +327,10 @@ namespace PingLogger.Controls
 				{
 					if (ip.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
 					{
-						syncCtx.Post(new SendOrPostCallback(o =>
-						{
-							IPAddressBox.Text = (string)o;
-						}),
+						_syncCtx.Post(o =>
+									{
+										IpAddressBox.Text = ((string)o)!;
+									},
 						ip.ToString()
 						);
 						PingHost.IP = ip.ToString();
@@ -337,16 +341,15 @@ namespace PingLogger.Controls
 			}
 			catch (Exception)
 			{
-				IPAddressBox.Text = "Invalid Host Name";
-				doTraceRteBtn.IsEnabled = false;
+				IpAddressBox.Text = "Invalid Host Name";
+				DoTraceRteBtn.IsEnabled = false;
 			}
-			return;
 		}
 
-		private static readonly Regex regex = new Regex("[^0-9.-]+");
+		private static readonly Regex _regex = new("[^0-9.-]+");
 		private static bool IsNumericInput(string text)
 		{
-			return !regex.IsMatch(text);
+			return !_regex.IsMatch(text);
 		}
 
 		private void IntervalBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
@@ -460,29 +463,18 @@ namespace PingLogger.Controls
 		{
 			if (e.Text != PingHost.HostName)
 			{
-				viewLogBtn.Visibility = Visibility.Hidden;
+				ViewLogBtn.Visibility = Visibility.Hidden;
 			}
-			StartBtn.IsEnabled = false;
-		}
 
-		public bool PingerRunning
-		{
-			get
-			{
-				return Pinger?.Running ?? false;
-			}
+			StartBtn.IsEnabled = false;
 		}
 
 		private void DoTraceRteBtn_Click(object sender, RoutedEventArgs e)
 		{
 			try
 			{
-				if (null == Pinger)
-				{
-					Pinger = new Pinger(PingHost);
-
-				}
-				var showTraceRteWindow = new TraceRouteControl(ref Pinger)
+				_pinger ??= new Pinger(PingHost);
+				var showTraceRteWindow = new TraceRouteControl(ref _pinger)
 				{
 					Owner = Window.GetWindow(this)
 				};
@@ -496,27 +488,20 @@ namespace PingLogger.Controls
 
 		private void ResetCountersBtn_Click(object sender, RoutedEventArgs e)
 		{
-			Timeouts = 0;
-			PacketLoss = 0.0;
-			TotalPings = 0;
-			Warnings = 0;
-			PingTimes.Clear();
-			pingGraphControl.ClearData();
-			statusGraphControl.ClearData();
+			_timeouts = 0;
+			_packetLoss = 0.0;
+			_totalPings = 0;
+			_warnings = 0;
+			_pingTimes.Clear();
+			PingGraphControl.ClearData();
+			StatusGraphControl.ClearData();
 			PingStatusBox.Text = string.Empty;
 		}
 
 		private void PingWindowToggle_Click(object sender, RoutedEventArgs e)
 		{
-			if (Config.WindowExpanded)
-			{
-				Config.WindowExpanded = false;
-			}
-			else
-			{
-				Config.WindowExpanded = true;
-			}
-			(Window.GetWindow(this) as MainWindow).ToggleWindowSize();
+			Config.WindowExpanded = !Config.WindowExpanded;
+			(Window.GetWindow(this) as MainWindow)?.ToggleWindowSize();
 		}
 
 		public void ToggleSideVisibility()
@@ -525,8 +510,8 @@ namespace PingLogger.Controls
 			// It just gets hit from the MainWindow calling it.
 			if (Config.WindowExpanded)
 			{
-				rightTabs.Visibility = Visibility.Visible;
-				pingWindowToggle.Content = new ImageAwesome
+				RightTabs.Visibility = Visibility.Visible;
+				PingWindowToggle.Content = new ImageAwesome
 				{
 					Icon = FontAwesomeIcon.AngleDoubleLeft,
 					Foreground = Util.IsLightTheme ? Brushes.Black : Brushes.White,
@@ -537,8 +522,8 @@ namespace PingLogger.Controls
 			}
 			else
 			{
-				rightTabs.Visibility = Visibility.Collapsed;
-				pingWindowToggle.Content = new ImageAwesome
+				RightTabs.Visibility = Visibility.Collapsed;
+				PingWindowToggle.Content = new ImageAwesome
 				{
 					Icon = FontAwesomeIcon.AngleDoubleRight,
 					Foreground = Util.IsLightTheme ? Brushes.Black : Brushes.White,

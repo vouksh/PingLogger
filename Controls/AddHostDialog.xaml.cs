@@ -2,7 +2,6 @@
 using System;
 using System.Net;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -19,14 +18,14 @@ namespace PingLogger.Controls
 	public partial class AddHostDialog : Window
 	{
 		public ICommand CloseWindowCommand { get; set; }
-		private readonly SynchronizationContext syncCtx;
-		readonly DispatcherTimer Timer;
-		private readonly ImageAwesome spinnerImage;
-		private readonly DockPanel buttonDock;
+		private readonly SynchronizationContext _syncCtx;
+		readonly DispatcherTimer _timer;
+		private readonly ImageAwesome _spinnerImage;
+		private readonly DockPanel _buttonDock;
 		public AddHostDialog()
 		{
 			InitializeComponent();
-			spinnerImage = new ImageAwesome()
+			_spinnerImage = new ImageAwesome()
 			{
 				Icon = FontAwesomeIcon.Spinner,
 				Spin = true,
@@ -36,48 +35,48 @@ namespace PingLogger.Controls
 				Height = 14,
 				ToolTip = "Please wait..."
 			};
-			buttonDock = new DockPanel()
+			_buttonDock = new DockPanel()
 			{
 				Name = "buttonDock",
 				FlowDirection = FlowDirection.LeftToRight,
 
 			};
-			buttonDock.Children.Add(new TextBlock { Text = "Loading" });
-			AddBtn.Content = buttonDock;
+			_buttonDock.Children.Add(new TextBlock { Text = "Loading" });
+			AddBtn.Content = _buttonDock;
 			CloseWindowCommand = new Command(Close);
-			syncCtx = SynchronizationContext.Current;
-			Timer = new DispatcherTimer
+			_syncCtx = SynchronizationContext.Current;
+			_timer = new DispatcherTimer
 			{
 				Interval = TimeSpan.FromMilliseconds(500),
 				IsEnabled = true
 			};
-			Timer.Tick += Timer_Tick;
-			Timer.Start();
+			_timer.Tick += Timer_Tick;
+			_timer.Start();
 		}
 
 		private async void Timer_Tick(object sender, EventArgs e)
 		{
-			var foundHost = Config.Hosts.Any(h => h.HostName == hostNameBox.Text);
+			var foundHost = Config.Hosts.Any(h => h.HostName == HostNameBox.Text);
 			if (!foundHost && !IsValidHost)
 			{
-				if (!buttonDock.Children.Contains(spinnerImage))
+				if (!_buttonDock.Children.Contains(_spinnerImage))
 				{
-					buttonDock.Children.Clear();
-					buttonDock.Children.Add(spinnerImage);
-					buttonDock.Children.Add(new TextBlock { Text = "Looking up host IP...", Padding = new Thickness(5, 0, 0, 0) });
+					_buttonDock.Children.Clear();
+					_buttonDock.Children.Add(_spinnerImage);
+					_buttonDock.Children.Add(new TextBlock { Text = "Looking up host IP...", Padding = new Thickness(5, 0, 0, 0) });
 					AddBtn.ToolTip = "Please wait..";
 				}
-				string ipAddr = "0.0.0.0";
+				string ipAddress = "0.0.0.0";
 				try
 				{
-					if (hostNameBox.Text != string.Empty)
+					if (HostNameBox.Text != string.Empty)
 					{
-						foreach (var ip in await Dns.GetHostAddressesAsync(hostNameBox.Text))
+						foreach (var ip in await Dns.GetHostAddressesAsync(HostNameBox.Text))
 						{
 							if (ip.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
 							{
 								IsValidHost = true;
-								ipAddr = ip.ToString();
+								ipAddress = ip.ToString();
 								break;
 							}
 						}
@@ -87,17 +86,17 @@ namespace PingLogger.Controls
 				{
 					IsValidHost = false;
 				}
-				syncCtx.Post(new SendOrPostCallback(o =>
+				_syncCtx.Post(o =>
 				{
-					ipBox.Text = ipAddr;
-					AddBtn.IsEnabled = (bool)o;
-				}), IsValidHost);
+					IpBox.Text = ipAddress;
+					if (o != null) AddBtn.IsEnabled = (bool) o;
+				}, IsValidHost);
 			}
 			if (foundHost)
 			{
-				buttonDock.Children.Remove(spinnerImage);
-				buttonDock.Children.Clear();
-				buttonDock.Children.Add(new ImageAwesome
+				_buttonDock.Children.Remove(_spinnerImage);
+				_buttonDock.Children.Clear();
+				_buttonDock.Children.Add(new ImageAwesome
 				{
 					Icon = FontAwesomeIcon.Times,
 					Foreground = Brushes.Red,
@@ -105,15 +104,15 @@ namespace PingLogger.Controls
 					Height = 14,
 					ToolTip = "You already have a host with this address."
 				});
-				buttonDock.Children.Add(new TextBlock { Text = "Duplicate Host", Padding = new Thickness(5, 0, 0, 0) });
+				_buttonDock.Children.Add(new TextBlock { Text = "Duplicate Host", Padding = new Thickness(5, 0, 0, 0) });
 				AddBtn.IsEnabled = false;
 				AddBtn.ToolTip = "You already have a host with this address.";
 			}
 			if (!foundHost && IsValidHost)
 			{
-				buttonDock.Children.Remove(spinnerImage);
-				buttonDock.Children.Clear();
-				buttonDock.Children.Add(new ImageAwesome
+				_buttonDock.Children.Remove(_spinnerImage);
+				_buttonDock.Children.Clear();
+				_buttonDock.Children.Add(new ImageAwesome
 				{
 					Icon = FontAwesomeIcon.Check,
 					Foreground = Brushes.Green,
@@ -121,24 +120,24 @@ namespace PingLogger.Controls
 					Height = 14,
 					ToolTip = "Add Host."
 				});
-				buttonDock.Children.Add(new TextBlock { Text = "Add New Host", Padding = new Thickness(5, 0, 0, 0) });
+				_buttonDock.Children.Add(new TextBlock { Text = "Add New Host", Padding = new Thickness(5, 0, 0, 0) });
 				AddBtn.ToolTip = "Add Host";
 			}
 		}
 
-		public bool IsValidHost { get; set; } = false;
+		public bool IsValidHost { get; set; }
 
 		private void AddBtn_Click(object sender, RoutedEventArgs e)
 		{
-			(this.Owner as MainWindow).AddTab(hostNameBox.Text);
-			Timer.Stop();
+			(this.Owner as MainWindow)?.AddTab(HostNameBox.Text);
+			_timer.Stop();
 			this.DialogResult = true;
 			this.Close();
 		}
 
 		private void CancelBtn_Click(object sender, RoutedEventArgs e)
 		{
-			Timer.Stop();
+			_timer.Stop();
 			this.DialogResult = false;
 			this.Close();
 		}
@@ -147,15 +146,15 @@ namespace PingLogger.Controls
 		{
 			if (e.Key == Key.Enter)
 			{
-				(this.Owner as MainWindow).AddTab(hostNameBox.Text);
+				(this.Owner as MainWindow)?.AddTab(HostNameBox.Text);
 				this.DialogResult = true;
-				Timer.Stop();
+				_timer.Stop();
 				this.Close();
 			}
 			else if (e.Key == Key.Escape)
 			{
 				this.DialogResult = false;
-				Timer.Stop();
+				_timer.Stop();
 				this.Close();
 			}
 		}
@@ -163,8 +162,8 @@ namespace PingLogger.Controls
 		private void HostNameBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
 		{
 			IsValidHost = false;
-			Timer.Stop();
-			Timer.Start();
+			_timer.Stop();
+			_timer.Start();
 			e.Handled = false;
 			AddBtn.IsEnabled = false;
 		}
@@ -172,8 +171,8 @@ namespace PingLogger.Controls
 		private void HostNameBox_TextChanged(object sender, TextChangedEventArgs e)
 		{
 			IsValidHost = false;
-			Timer?.Stop();
-			Timer?.Start();
+			_timer?.Stop();
+			_timer?.Start();
 			e.Handled = false;
 		}
 	}

@@ -1,7 +1,6 @@
 ﻿using PingLogger.Models;
 using Serilog;
 using System;
-using System.IO;
 
 namespace PingLogger.Workers
 {
@@ -16,7 +15,7 @@ namespace PingLogger.Workers
 #endif
 				.Enrich.With(new ThreadIdEnricher())
 				.WriteTo.File(
-				$"./PingLogger-.log",
+				"./PingLogger-.log",
 				restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Verbose,
 				shared: true,
 				outputTemplate: "[{Timestamp:HH:mm:ss.fff} {Level}] ({ThreadId}) {Message:lj}{NewLine}{Exception}",
@@ -36,6 +35,5 @@ namespace PingLogger.Workers
 
 		public static void Info(string text) => Log.Information(text);
 		public static void Error(string text) => Log.Error(text);
-		public static void Fatal(string text) => Log.Fatal(text);
 	}
 }

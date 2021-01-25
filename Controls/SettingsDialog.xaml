@@ -3,7 +3,6 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:PingLogger.Controls"
         mc:Ignorable="d" WindowStartupLocation="CenterScreen" Style="{DynamicResource CustomDialogStyle}"
 		DataContext="{Binding RelativeSource={RelativeSource Self}}"
 		ResizeMode="NoResize"
@@ -37,9 +36,9 @@
 		<CheckBox Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="8" x:Name="StartAllLoggers" Content="Start All Ping Loggers On Application Startup?" HorizontalAlignment="Center" Margin="0,0,0,0" VerticalAlignment="Stretch" Checked="StartAllLoggers_Checked" Unchecked="StartAllLoggers_Unchecked"/>
 		<CheckBox Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="8" x:Name="LoadOnBoot" Content="Load Application On Windows Startup?" HorizontalAlignment="Center" Margin="0,0,0,0" VerticalAlignment="Stretch" Unchecked="LoadOnBoot_Unchecked" Checked="LoadOnBoot_Checked"/>
 		<CheckBox Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="8" x:Name="StartMinimized" Content="Start application minimized?" HorizontalAlignment="Center" VerticalAlignment="Stretch" Checked="StartMinimized_Checked" Unchecked="StartMinimized_Unchecked" />
-		<Label Grid.Row="4" Grid.Column="3" Grid.ColumnSpan="4" x:Name="label" Content="Number of days to keep log files:" HorizontalAlignment="Stretch" Margin="0,0,0,0" VerticalAlignment="Stretch" VerticalContentAlignment="Center"/>
-		<TextBox x:Name="daysToKeep" FontSize="18" VerticalContentAlignment="Center" Grid.Row="4" Grid.Column="7" Grid.ColumnSpan="1" HorizontalAlignment="Stretch" Margin="5,5,5,5" TextWrapping="Wrap" VerticalAlignment="Stretch" HorizontalContentAlignment="Center" PreviewTextInput="DaysToKeep_PreviewTextInput" TextChanged="DaysToKeep_TextChanged"/>
-		<Label Grid.Row="5" Grid.Column="3"  x:Name="label1" Content="Theme:" HorizontalAlignment="Stretch" Margin="0,0,0,0" VerticalAlignment="Stretch" VerticalContentAlignment="Center" HorizontalContentAlignment="Right" />
+		<Label Grid.Row="4" Grid.Column="3" Grid.ColumnSpan="4" x:Name="Label" Content="Number of days to keep log files:" HorizontalAlignment="Stretch" Margin="0,0,0,0" VerticalAlignment="Stretch" VerticalContentAlignment="Center"/>
+		<TextBox x:Name="DaysToKeep" FontSize="18" VerticalContentAlignment="Center" Grid.Row="4" Grid.Column="7" HorizontalAlignment="Stretch" Margin="5,5,5,5" TextWrapping="Wrap" VerticalAlignment="Stretch" HorizontalContentAlignment="Center" PreviewTextInput="DaysToKeep_PreviewTextInput" TextChanged="DaysToKeep_TextChanged"/>
+		<Label Grid.Row="5" Grid.Column="3"  x:Name="Label1" Content="Theme:" HorizontalAlignment="Stretch" Margin="0,0,0,0" VerticalAlignment="Stretch" VerticalContentAlignment="Center" HorizontalContentAlignment="Right" />
 		<ComboBox Grid.Row="5" Grid.Column="4" Grid.ColumnSpan="3" FontSize="16" x:Name="ThemeBox" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" VerticalContentAlignment="Center" Visibility="Visible" Margin="5,5,5,5" SelectionChanged="ThemeBox_SelectionChanged">
 			<ComboBoxItem Content="Auto" x:Name="AutoItem" />
 			<ComboBoxItem Content="Light" x:Name="LightItem" />
@@ -48,7 +47,7 @@
 		<Button Grid.Row="6" Grid.Column="2" Grid.ColumnSpan="2" x:Name="StartAllLoggersBtn" Content="Start All Loggers" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Height="Auto" Width="Auto" Click="StartAllLoggersBtn_Click"/>
 		<Button Grid.Row="6" Grid.Column="6" Grid.ColumnSpan="2" x:Name="StopAllLoggersBtn" Content="Stop All Loggers" HorizontalAlignment="Stretch" Margin="0,0,0,0" VerticalAlignment="Stretch" Click="StopAllLoggersBtn_Click"/>
 		<Label Grid.Row="7" Grid.Column="1" Grid.ColumnSpan="2" Content="Log File Path:" x:Name="CustomPathLabel" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"/>
-		<TextBox x:Name="customPathBox" Grid.Row="7" Grid.Column="3" Grid.ColumnSpan="5" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" HorizontalContentAlignment="Left" VerticalContentAlignment="Center" />
-		<Button x:Name="customPathBtn" Grid.Row="7" Grid.Column="8" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Content="Browse" Click="customPathBtn_Click" />
+		<TextBox x:Name="CustomPathBox" Grid.Row="7" Grid.Column="3" Grid.ColumnSpan="5" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" HorizontalContentAlignment="Left" VerticalContentAlignment="Center" />
+		<Button x:Name="CustomPathBtn" Grid.Row="7" Grid.Column="8" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Content="Browse" Click="customPathBtn_Click" />
 	</Grid>
 </Window>

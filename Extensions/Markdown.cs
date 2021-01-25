@@ -13,6 +13,7 @@ using System.Windows.Input;
 using System.Windows.Markup;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+// ReSharper disable ConvertIfStatementToNullCoalescingExpression
 
 namespace PingLogger.Extensions
 {
@@ -50,15 +51,15 @@ namespace PingLogger.Extensions
 
         public Style DocumentStyle
         {
-            get { return (Style)GetValue(DocumentStyleProperty); }
-            set { SetValue(DocumentStyleProperty, value); }
-        }
+            get => (Style)GetValue(DocumentStyleProperty);
+			set => SetValue(DocumentStyleProperty, value);
+		}
 
         public Style NormalParagraphStyle
         {
-            get { return (Style)GetValue(NormalParagraphStyleProperty); }
-            set { SetValue(NormalParagraphStyleProperty, value); }
-        }
+            get => (Style)GetValue(NormalParagraphStyleProperty);
+			set => SetValue(NormalParagraphStyleProperty, value);
+		}
 
         // Using a DependencyProperty as the backing store for NormalParagraphStyle.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty NormalParagraphStyleProperty =
@@ -70,9 +71,9 @@ namespace PingLogger.Extensions
 
         public Style Heading1Style
         {
-            get { return (Style)GetValue(Heading1StyleProperty); }
-            set { SetValue(Heading1StyleProperty, value); }
-        }
+            get => (Style)GetValue(Heading1StyleProperty);
+			set => SetValue(Heading1StyleProperty, value);
+		}
 
         // Using a DependencyProperty as the backing store for Heading1Style.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty Heading1StyleProperty =
@@ -80,9 +81,9 @@ namespace PingLogger.Extensions
 
         public Style Heading2Style
         {
-            get { return (Style)GetValue(Heading2StyleProperty); }
-            set { SetValue(Heading2StyleProperty, value); }
-        }
+            get => (Style)GetValue(Heading2StyleProperty);
+			set => SetValue(Heading2StyleProperty, value);
+		}
 
         // Using a DependencyProperty as the backing store for Heading2Style.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty Heading2StyleProperty =
@@ -90,9 +91,9 @@ namespace PingLogger.Extensions
 
         public Style Heading3Style
         {
-            get { return (Style)GetValue(Heading3StyleProperty); }
-            set { SetValue(Heading3StyleProperty, value); }
-        }
+            get => (Style)GetValue(Heading3StyleProperty);
+			set => SetValue(Heading3StyleProperty, value);
+		}
 
         // Using a DependencyProperty as the backing store for Heading3Style.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty Heading3StyleProperty =
@@ -100,9 +101,9 @@ namespace PingLogger.Extensions
 
         public Style Heading4Style
         {
-            get { return (Style)GetValue(Heading4StyleProperty); }
-            set { SetValue(Heading4StyleProperty, value); }
-        }
+            get => (Style)GetValue(Heading4StyleProperty);
+			set => SetValue(Heading4StyleProperty, value);
+		}
 
         // Using a DependencyProperty as the backing store for Heading4Style.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty Heading4StyleProperty =
@@ -110,9 +111,9 @@ namespace PingLogger.Extensions
 
         public Style CodeStyle
         {
-            get { return (Style)GetValue(CodeStyleProperty); }
-            set { SetValue(CodeStyleProperty, value); }
-        }
+            get => (Style)GetValue(CodeStyleProperty);
+			set => SetValue(CodeStyleProperty, value);
+		}
 
         // Using a DependencyProperty as the backing store for CodeStyle.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty CodeStyleProperty =
@@ -120,9 +121,9 @@ namespace PingLogger.Extensions
 
         public Style LinkStyle
         {
-            get { return (Style)GetValue(LinkStyleProperty); }
-            set { SetValue(LinkStyleProperty, value); }
-        }
+            get => (Style)GetValue(LinkStyleProperty);
+			set => SetValue(LinkStyleProperty, value);
+		}
 
         // Using a DependencyProperty as the backing store for LinkStyle.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty LinkStyleProperty =
@@ -130,9 +131,9 @@ namespace PingLogger.Extensions
 
         public Style ImageStyle
         {
-            get { return (Style)GetValue(ImageStyleProperty); }
-            set { SetValue(ImageStyleProperty, value); }
-        }
+            get => (Style)GetValue(ImageStyleProperty);
+			set => SetValue(ImageStyleProperty, value);
+		}
 
         // Using a DependencyProperty as the backing store for ImageStyle.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty ImageStyleProperty =
@@ -140,9 +141,9 @@ namespace PingLogger.Extensions
 
         public Style SeparatorStyle
         {
-            get { return (Style)GetValue(SeparatorStyleProperty); }
-            set { SetValue(SeparatorStyleProperty, value); }
-        }
+            get => (Style)GetValue(SeparatorStyleProperty);
+			set => SetValue(SeparatorStyleProperty, value);
+		}
 
         // Using a DependencyProperty as the backing store for SeparatorStyle.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty SeparatorStyleProperty =
@@ -150,36 +151,36 @@ namespace PingLogger.Extensions
 
         public string AssetPathRoot
         {
-            get { return (string)GetValue(AssetPathRootProperty); }
-            set { SetValue(AssetPathRootProperty, value); }
-        }
+            get => (string)GetValue(AssetPathRootProperty);
+			set => SetValue(AssetPathRootProperty, value);
+		}
 
         public static readonly DependencyProperty AssetPathRootProperty =
             DependencyProperty.Register("AssetPathRootRoot", typeof(string), typeof(Markdown), new PropertyMetadata(null));
 
         public Style TableStyle
         {
-            get { return (Style)GetValue(TableStyleProperty); }
-            set { SetValue(TableStyleProperty, value); }
-        }
+            get => (Style)GetValue(TableStyleProperty);
+			set => SetValue(TableStyleProperty, value);
+		}
 
         public static readonly DependencyProperty TableStyleProperty =
             DependencyProperty.Register("TableStyle", typeof(Style), typeof(Markdown), new PropertyMetadata(null));
 
         public Style TableHeaderStyle
         {
-            get { return (Style)GetValue(TableHeaderStyleProperty); }
-            set { SetValue(TableHeaderStyleProperty, value); }
-        }
+            get => (Style)GetValue(TableHeaderStyleProperty);
+			set => SetValue(TableHeaderStyleProperty, value);
+		}
 
         public static readonly DependencyProperty TableHeaderStyleProperty =
             DependencyProperty.Register("TableHeaderStyle", typeof(Style), typeof(Markdown), new PropertyMetadata(null));
 
         public Style TableBodyStyle
         {
-            get { return (Style)GetValue(TableBodyStyleProperty); }
-            set { SetValue(TableBodyStyleProperty, value); }
-        }
+            get => (Style)GetValue(TableBodyStyleProperty);
+			set => SetValue(TableBodyStyleProperty, value);
+		}
 
         public static readonly DependencyProperty TableBodyStyleProperty =
             DependencyProperty.Register("TableBodyStyle", typeof(Style), typeof(Markdown), new PropertyMetadata(null));
@@ -225,7 +226,7 @@ namespace PingLogger.Extensions
                 s1 => DoHorizontalRules(s1,
                     s2 => DoLists(s2,
                     s3 => DoTable(s3,
-                    sn => FormParagraphs(sn)))));
+                    FormParagraphs))));
 
             //text = DoCodeBlocks(text);
             //text = DoBlockQuotes(text);
@@ -255,7 +256,7 @@ namespace PingLogger.Extensions
                 s0 => DoImages(s0,
                 s1 => DoAnchors(s1,
                 s2 => DoItalicsAndBold(s2,
-                s3 => DoText(s3)))));
+                DoText))));
 
             //text = EscapeSpecialCharsWithinTagAttributes(text);
             //text = EscapeBackslashes(text);
@@ -275,8 +276,8 @@ namespace PingLogger.Extensions
             //return text;
         }
 
-        private static readonly Regex _newlinesLeadingTrailing = new Regex(@"^\n+|\n+\z", RegexOptions.Compiled);
-        private static readonly Regex _newlinesMultiple = new Regex(@"\n{2,}", RegexOptions.Compiled);
+        private static readonly Regex _newlinesLeadingTrailing = new(@"^\n+|\n+\z", RegexOptions.Compiled);
+        private static readonly Regex _newlinesMultiple = new(@"\n{2,}", RegexOptions.Compiled);
         //private static readonly Regex _leadingWhitespace = new Regex(@"^[ ]*", RegexOptions.Compiled);
 
         /// <summary>
@@ -290,9 +291,9 @@ namespace PingLogger.Extensions
             }
 
             // split on two or more newlines
-            string[] grafs = _newlinesMultiple.Split(_newlinesLeadingTrailing.Replace(text, ""));
+            string[] graphs = _newlinesMultiple.Split(_newlinesLeadingTrailing.Replace(text, ""));
 
-            foreach (var g in grafs)
+            foreach (var g in graphs)
             {
                 var block = Create<Paragraph, Inline>(RunSpanGamut(g));
                 block.Style = this.NormalParagraphStyle;
@@ -372,8 +373,8 @@ namespace PingLogger.Extensions
             return _nestedParensPatternWithWhiteSpace;
         }
 
-        private static readonly Regex _imageInline = new Regex(
-            string.Format(CultureInfo.InvariantCulture, @"
+        private static readonly Regex _imageInline = new(
+														string.Format(CultureInfo.InvariantCulture, @"
                 (                           # wrap whole match in $1
                     !\[
                         ({0})               # link text = $2
@@ -390,12 +391,12 @@ namespace PingLogger.Extensions
                         )?                  # title is optional
                     \)
                 )",
-            GetNestedBracketsPattern(),
-            GetNestedParensPatternWithWhiteSpace()),
-                  RegexOptions.Singleline | RegexOptions.IgnorePatternWhitespace | RegexOptions.Compiled);
+																	GetNestedBracketsPattern(),
+																	GetNestedParensPatternWithWhiteSpace()),
+														RegexOptions.Singleline | RegexOptions.IgnorePatternWhitespace | RegexOptions.Compiled);
 
-        private static readonly Regex _anchorInline = new Regex(
-            string.Format(CultureInfo.InvariantCulture, @"
+        private static readonly Regex _anchorInline = new(
+														string.Format(CultureInfo.InvariantCulture, @"
                 (                           # wrap whole match in $1
                     \[
                         ({0})               # link text = $2
@@ -412,7 +413,7 @@ namespace PingLogger.Extensions
                         )?                  # title is optional
                     \)
                 )", GetNestedBracketsPattern(), GetNestedParensPattern()),
-                  RegexOptions.Singleline | RegexOptions.IgnorePatternWhitespace | RegexOptions.Compiled);
+														RegexOptions.Singleline | RegexOptions.IgnorePatternWhitespace | RegexOptions.Compiled);
 
         /// <summary>
         /// Turn Markdown images into images
@@ -432,20 +433,19 @@ namespace PingLogger.Extensions
 
         private static BitmapImage GetSourceForOnRender(string uri)
         {
-            var assmURI = "PingLogger." + uri.Replace('/', '.');
+            var assemblyURI = "PingLogger." + uri.Replace('/', '.');
             var assembly = System.Reflection.Assembly.GetExecutingAssembly();
             var bitmap = new BitmapImage();
 
-            using (var stream =
-                assembly.GetManifestResourceStream(assmURI))
-            {
-                bitmap.BeginInit();
-                bitmap.StreamSource = stream;
-                bitmap.CacheOption = BitmapCacheOption.OnLoad;
-                bitmap.EndInit();
-            }
+			using var stream =
+				assembly.GetManifestResourceStream(assemblyURI);
 
-            return bitmap;
+			bitmap.BeginInit();
+			bitmap.StreamSource = stream;
+			bitmap.CacheOption = BitmapCacheOption.OnLoad;
+			bitmap.EndInit();
+
+			return bitmap;
         }
 
         private Inline ImageInlineEvaluator(Match match)
@@ -457,7 +457,7 @@ namespace PingLogger.Extensions
 
             string linkText = match.Groups[2].Value;
             string url = match.Groups[3].Value;
-            BitmapImage imgSource = null;
+            BitmapImage imgSource;
             try
             {
                 if (!Uri.IsWellFormedUriString(url, UriKind.Absolute) && !System.IO.Path.IsPathRooted(url))
@@ -503,15 +503,15 @@ namespace PingLogger.Extensions
 					Mode = BindingMode.OneWay
 				};
 
-				BindingExpressionBase bindingExpression = BindingOperations.SetBinding(image, Image.WidthProperty, binding);
+				BindingExpressionBase bindingExpression = BindingOperations.SetBinding(image, FrameworkElement.WidthProperty, binding);
 
-                void downloadCompletedHandler(object sender, EventArgs e)
+                void DownloadCompletedHandler(object sender, EventArgs e)
                 {
-                    imgSource.DownloadCompleted -= downloadCompletedHandler;
+                    imgSource.DownloadCompleted -= DownloadCompletedHandler;
                     bindingExpression.UpdateTarget();
                 }
 
-                imgSource.DownloadCompleted += downloadCompletedHandler;
+                imgSource.DownloadCompleted += DownloadCompletedHandler;
             }
             else
             {
@@ -564,23 +564,23 @@ namespace PingLogger.Extensions
             return result;
         }
 
-        private static readonly Regex _headerSetext = new Regex(@"
+        private static readonly Regex _headerSetext = new(@"
                 ^(.+?)
                 [ ]*
                 \n
                 (=+|-+)     # $1 = string of ='s or -'s
                 [ ]*
                 \n+",
-    RegexOptions.Multiline | RegexOptions.IgnorePatternWhitespace | RegexOptions.Compiled);
+														RegexOptions.Multiline | RegexOptions.IgnorePatternWhitespace | RegexOptions.Compiled);
 
-        private static readonly Regex _headerAtx = new Regex(@"
+        private static readonly Regex _headerAtx = new(@"
                 ^(\#{1,6})  # $1 = string of #'s
                 [ ]*
                 (.+?)       # $2 = Header text
                 [ ]*
                 \#*         # optional closing #'s (not counted)
                 \n+",
-            RegexOptions.Multiline | RegexOptions.IgnorePatternWhitespace | RegexOptions.Compiled);
+														RegexOptions.Multiline | RegexOptions.IgnorePatternWhitespace | RegexOptions.Compiled);
 
         /// <summary>
         /// Turn Markdown headers into HTML header tags
@@ -605,8 +605,8 @@ namespace PingLogger.Extensions
                 throw new ArgumentNullException(nameof(text));
             }
 
-            return Evaluate<Block>(text, _headerSetext, m => SetextHeaderEvaluator(m),
-                s => Evaluate<Block>(s, _headerAtx, m => AtxHeaderEvaluator(m), defaultHandler));
+            return Evaluate(text, _headerSetext, SetextHeaderEvaluator,
+                s => Evaluate(s, _headerAtx, AtxHeaderEvaluator, defaultHandler));
         }
 
         private Block SetextHeaderEvaluator(Match match)
@@ -678,7 +678,7 @@ namespace PingLogger.Extensions
             return block;
         }
 
-        private static readonly Regex _horizontalRules = new Regex(@"
+        private static readonly Regex _horizontalRules = new(@"
             ^[ ]{0,3}         # Leading space
                 ([-*_])       # $1: First marker
                 (?>           # Repeated marker group
@@ -746,11 +746,11 @@ namespace PingLogger.Extensions
               )
             )", string.Format(CultureInfo.InvariantCulture, "(?:{0}|{1})", _markerUL, _markerOL), _tabWidth - 1);
 
-        private static readonly Regex _listNested = new Regex(@"^" + _wholeList,
-            RegexOptions.Multiline | RegexOptions.IgnorePatternWhitespace | RegexOptions.Compiled);
+        private static readonly Regex _listNested = new(@"^" + _wholeList,
+														RegexOptions.Multiline | RegexOptions.IgnorePatternWhitespace | RegexOptions.Compiled);
 
-        private static readonly Regex _listTopLevel = new Regex(@"(?:(?<=\n\n)|\A\n?)" + _wholeList,
-            RegexOptions.Multiline | RegexOptions.IgnorePatternWhitespace | RegexOptions.Compiled);
+        private static readonly Regex _listTopLevel = new(@"(?:(?<=\n\n)|\A\n?)" + _wholeList,
+														RegexOptions.Multiline | RegexOptions.IgnorePatternWhitespace | RegexOptions.Compiled);
 
         /// <summary>
         /// Turn Markdown lists into HTML ul and ol and li tags
@@ -865,7 +865,7 @@ namespace PingLogger.Extensions
             }
         }
 
-        private static readonly Regex _table = new Regex(@"
+        private static readonly Regex _table = new(@"
             (                               # $1 = whole table
                 [ \r\n]*
                 (                           # $2 = table header
@@ -882,7 +882,7 @@ namespace PingLogger.Extensions
                     )+
                 )
             )",
-            RegexOptions.Multiline | RegexOptions.IgnorePatternWhitespace | RegexOptions.Compiled);
+													RegexOptions.Multiline | RegexOptions.IgnorePatternWhitespace | RegexOptions.Compiled);
 
         public IEnumerable<Block> DoTable(string text, Func<string, IEnumerable<Block>> defaultHandler)
         {
@@ -900,8 +900,7 @@ namespace PingLogger.Extensions
             {
                 throw new ArgumentNullException(nameof(match));
             }
-
-            var wholeTable = match.Groups[1].Value;
+            
             var header = match.Groups[2].Value.Trim();
             var style = match.Groups[4].Value.Trim();
             var row = match.Groups[6].Value.Trim();
@@ -1021,7 +1020,7 @@ namespace PingLogger.Extensions
             return tableRow;
         }
 
-        private static readonly Regex _codeSpan = new Regex(@"
+        private static readonly Regex _codeSpan = new(@"
                     (?<!\\)   # Character before opening ` can't be a backslash
                     (`+)      # $1 = Opening run of `
                     (.+?)     # $2 = The code block
@@ -1084,15 +1083,15 @@ namespace PingLogger.Extensions
             return result;
         }
 
-        private static readonly Regex _bold = new Regex(@"(\*\*|__) (?=\S) (.+?[*_]*) (?<=\S) \1",
-            RegexOptions.IgnorePatternWhitespace | RegexOptions.Singleline | RegexOptions.Compiled);
-        private static readonly Regex _strictBold = new Regex(@"([\W_]|^) (\*\*|__) (?=\S) ([^\r]*?\S[\*_]*) \2 ([\W_]|$)",
-            RegexOptions.IgnorePatternWhitespace | RegexOptions.Singleline | RegexOptions.Compiled);
+        private static readonly Regex _bold = new(@"(\*\*|__) (?=\S) (.+?[*_]*) (?<=\S) \1",
+												RegexOptions.IgnorePatternWhitespace | RegexOptions.Singleline | RegexOptions.Compiled);
+        private static readonly Regex _strictBold = new(@"([\W_]|^) (\*\*|__) (?=\S) ([^\r]*?\S[\*_]*) \2 ([\W_]|$)",
+														RegexOptions.IgnorePatternWhitespace | RegexOptions.Singleline | RegexOptions.Compiled);
 
-        private static readonly Regex _italic = new Regex(@"(\*|_) (?=\S) (.+?) (?<=\S) \1",
-            RegexOptions.IgnorePatternWhitespace | RegexOptions.Singleline | RegexOptions.Compiled);
-        private static readonly Regex _strictItalic = new Regex(@"([\W_]|^) (\*|_) (?=\S) ([^\r\*_]*?\S) \2 ([\W_]|$)",
-            RegexOptions.IgnorePatternWhitespace | RegexOptions.Singleline | RegexOptions.Compiled);
+        private static readonly Regex _italic = new(@"(\*|_) (?=\S) (.+?) (?<=\S) \1",
+													RegexOptions.IgnorePatternWhitespace | RegexOptions.Singleline | RegexOptions.Compiled);
+        private static readonly Regex _strictItalic = new(@"([\W_]|^) (\*|_) (?=\S) ([^\r\*_]*?\S) \2 ([\W_]|$)",
+														RegexOptions.IgnorePatternWhitespace | RegexOptions.Singleline | RegexOptions.Compiled);
 
         /// <summary>
         /// Turn Markdown *italics* and **bold** into HTML strong and em tags
@@ -1107,15 +1106,15 @@ namespace PingLogger.Extensions
             // <strong> must go first, then <em>
             if (StrictBoldItalic)
             {
-                return Evaluate<Inline>(text, _strictBold, m => BoldEvaluator(m, 3),
-                    s1 => Evaluate<Inline>(s1, _strictItalic, m => ItalicEvaluator(m, 3),
-                    s2 => defaultHandler(s2)));
+                return Evaluate(text, _strictBold, m => BoldEvaluator(m, 3),
+                    s1 => Evaluate(s1, _strictItalic, m => ItalicEvaluator(m, 3),
+                    defaultHandler));
             }
             else
             {
-                return Evaluate<Inline>(text, _bold, m => BoldEvaluator(m, 2),
-                   s1 => Evaluate<Inline>(s1, _italic, m => ItalicEvaluator(m, 2),
-                   s2 => defaultHandler(s2)));
+                return Evaluate(text, _bold, m => BoldEvaluator(m, 2),
+                   s1 => Evaluate(s1, _italic, m => ItalicEvaluator(m, 2),
+                   defaultHandler));
             }
         }
 
@@ -1141,17 +1140,7 @@ namespace PingLogger.Extensions
             return Create<Bold, Inline>(RunSpanGamut(content));
         }
 
-        private static readonly Regex _outDent = new Regex(@"^[ ]{1," + _tabWidth + @"}", RegexOptions.Multiline | RegexOptions.Compiled);
-
-        /// <summary>
-        /// Remove one level of line-leading spaces
-        /// </summary>
-        private static string Outdent(string block)
-        {
-            return _outDent.Replace(block, "");
-        }
-
-        /// <summary>
+		/// <summary>
         /// convert all tabs to _tabWidth spaces; 
         /// standardizes line endings from DOS (CR LF) or Mac (CR) to UNIX (LF); 
         /// makes sure text ends with a couple of newlines; 
@@ -1275,8 +1264,8 @@ namespace PingLogger.Extensions
             }
         }
 
-        private static readonly Regex _eoln = new Regex("\\s+");
-        private static readonly Regex _lbrk = new Regex(@"\ {2,}\n");
+        private static readonly Regex _eoln = new("\\s+");
+        private static readonly Regex _lbrk = new(@"\ {2,}\n");
 
         public static IEnumerable<Inline> DoText(string text)
         {

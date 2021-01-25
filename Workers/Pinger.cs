@@ -14,14 +14,14 @@ namespace PingLogger.Workers
 {
 	public class Pinger : IDisposable
 	{
-		private readonly Host Host;
-		public bool Running = false;
-		private bool stopping = false;
-		private readonly ILogger Logger;
-		private Thread RunThread;
-		private readonly Ping pingSender = new Ping();
-		public BlockingCollection<Reply> Replies = new BlockingCollection<Reply>();
-		private bool DontFragment = true;
+		private readonly Host _host;
+		public bool Running;
+		private bool _stopping;
+		private readonly ILogger _logger;
+		private Thread _runThread;
+		private readonly Ping _pingSender = new();
+		public BlockingCollection<Reply> Replies = new();
+		private bool _dontFragment = true;
 		/// <summary>
 		/// This class is where all of the actual pinging work is done.
 		/// I creates a thread that loops until canceled.
@@ -30,15 +30,15 @@ namespace PingLogger.Workers
 		/// <param name="host">The host that will be pinged.</param>
 		public Pinger(Host host)
 		{
-			Host = host;
-			var hostLogPath = $"{Config.LogSavePath}{Host.HostName}";
+			_host = host;
+			var hostLogPath = $"{Config.LogSavePath}{_host.HostName}";
 			if (!Directory.Exists(Config.LogSavePath))
 				Directory.CreateDirectory(Config.LogSavePath);
 			if (!Directory.Exists(hostLogPath))
 				Directory.CreateDirectory(hostLogPath);
-			var outputTemp = "[{Timestamp:HH:mm:ss} {Level:u4}] {Message:lj}{NewLine}{Exception}";
-			var errorOutputTemp = "[{Timestamp:HH:mm:ss} {Level:u5}] {Message:lj}{NewLine}{Exception}";
-			var initialPath = $"{hostLogPath}{Path.DirectorySeparatorChar}{Host.HostName}";
+			const string outputTemp = "[{Timestamp:HH:mm:ss} {Level:u4}] {Message:lj}{NewLine}{Exception}";
+			const string errorOutputTemp = "[{Timestamp:HH:mm:ss} {Level:u5}] {Message:lj}{NewLine}{Exception}";
+			var initialPath = $"{hostLogPath}{Path.DirectorySeparatorChar}{_host.HostName}";
 			var filePath = $"{initialPath}-.log";
 			var errorPathName = $"{initialPath}-Errors-.log";
 			var warnPathName = $"{initialPath}-Warnings-.log";
@@ -47,7 +47,7 @@ namespace PingLogger.Workers
 			var debugOutputTemp = "[{Timestamp:HH:mm:ss.fff} {Level}] ({ThreadId}) {Message:lj}{NewLine}{Exception}";
 			var debugPathName = $"{initialPath}-Debug-.log";
 #endif
-			Logger = new LoggerConfiguration()
+			_logger = new LoggerConfiguration()
 #if DEBUG
 				.Enrich.With(new ThreadIdEnricher())
 				.MinimumLevel.Verbose()
@@ -101,33 +101,33 @@ namespace PingLogger.Workers
 				.CreateLogger();
 
 			//Check to make sure the packet size isn't too large. Don't want to abuse this.
-			if (Host.PacketSize > 65500)
+			if (_host.PacketSize > 65500)
 			{
-				Logger.Error("Packet size too large. Resetting to 65500 bytes");
-				Host.PacketSize = 65500;
+				_logger.Error("Packet size too large. Resetting to 65500 bytes");
+				_host.PacketSize = 65500;
 			}
 			//Make sure that the interval isn't too short. If you set it to be too frequent, it might get flagged as DDoS attack.
-			if (Host.Interval < 500)
+			if (_host.Interval < 500)
 			{
-				Logger.Error("Interval too short. Setting to 500ms");
-				Host.Interval = 500;
+				_logger.Error("Interval too short. Setting to 500ms");
+				_host.Interval = 500;
 			}
 			//Verify that the IP stored in the settings file matches what it currently resolves to.
 			//Mostly in cases of local network and DHCP
-			Logger.Information("Verifying IP address of hostname is current.");
-			foreach (var ip in Dns.GetHostAddresses(Host.HostName))
+			_logger.Information("Verifying IP address of hostname is current.");
+			foreach (var ip in Dns.GetHostAddresses(_host.HostName))
 			{
-				Logger.Debug($"IP: {ip}");
+				_logger.Debug($"IP: {ip}");
 				if (ip.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
 				{
-					if (ip.ToString() == Host.IP)
+					if (ip.ToString() == _host.IP)
 					{
-						Logger.Information("IP matches. Continuing");
+						_logger.Information("IP matches. Continuing");
 					}
 					else
 					{
-						Logger.Warning("IP address does not match last stored. Saving new IP address");
-						Host.IP = ip.ToString();
+						_logger.Warning("IP address does not match last stored. Saving new IP address");
+						_host.IP = ip.ToString();
 					}
 					break;
 				}
@@ -139,8 +139,8 @@ namespace PingLogger.Workers
 		/// <returns>Most recent Host class</returns>
 		public Host UpdateHost()
 		{
-			Logger.Debug("UpdateHost() Requested");
-			return Host;
+			_logger.Debug("UpdateHost() Requested");
+			return _host;
 		}
 		/// <summary>
 		/// Starts the primary thread where all the work is done. 
@@ -148,29 +148,29 @@ namespace PingLogger.Workers
 		/// </summary>
 		public void Start()
 		{
-			Logger.Debug("Start()");
-			RunThread = new Thread(new ThreadStart(StartLogging))
+			_logger.Debug("Start()");
+			_runThread = new Thread(StartLogging)
 			{
-				Name = $"{Host.HostName}-MainThread"
+				Name = $"{_host.HostName}-MainThread"
 			};
-			Logger.Information($"Starting ping logging for host with settings:\n{Host}");
-			Logger.Debug("RunThread.Start()");
-			RunThread.Start();
+			_logger.Information($"Starting ping logging for host with settings:\n{_host}");
+			_logger.Debug("RunThread.Start()");
+			_runThread.Start();
 		}
 		/// <summary>
 		/// Primary thread that is spun up. Doesn't do the actual pinging, that's handled by an event.
 		/// </summary>
 		private void StartLogging()
 		{
-			Logger.Debug("StartLogging() Called.");
-			pingSender.PingCompleted += new PingCompletedEventHandler(SendPing);
+			_logger.Debug("StartLogging() Called.");
+			_pingSender.PingCompleted += SendPing;
 			AutoResetEvent waiter = new AutoResetEvent(false);
 
 			//Generate a string that's as long as the packet size. 
 			//This is outside of the loop, so it's going to be the same while the thread is running.
 			//If it's restarted, we generate a new string. 
-			string data = Util.RandomString(Host.PacketSize);
-			Logger.Debug($"Data string: {data}");
+			string data = Util.RandomString(_host.PacketSize);
+			_logger.Debug($"Data string: {data}");
 
 			byte[] buffer = Encoding.ASCII.GetBytes(data);
 
@@ -179,39 +179,39 @@ namespace PingLogger.Workers
 			{
 				PingOptions options = new PingOptions
 				{
-					DontFragment = DontFragment,
+					DontFragment = _dontFragment,
 					Ttl = 128
 				};
-				Logger.Debug($"Running: {Running}");
-				Logger.Debug($"stopping: {stopping}");
-				if (stopping)
+				_logger.Debug($"Running: {Running}");
+				_logger.Debug($"stopping: {_stopping}");
+				if (_stopping)
 				{
 					Running = false;
 				}
 				else
 				{
-					Logger.Debug("Sending Async Ping");
+					_logger.Debug("Sending Async Ping");
 					try
 					{
 						var sw = new Stopwatch();
 						sw.Start();
-						Logger.Debug("Stopwatch Started");
-						pingSender.SendAsync(Host.IP, Host.Timeout, buffer, options, waiter);
+						_logger.Debug("Stopwatch Started");
+						_pingSender.SendAsync(_host.IP, _host.Timeout, buffer, options, waiter);
 						waiter.WaitOne();
 						sw.Stop();
-						Logger.Debug($"Stopwatch.ElapsesedMilliseconds: {sw.ElapsedMilliseconds}ms");
-						Thread.Sleep(Host.Interval);
-						Logger.Debug($"Waited {Host.Interval}ms");
+						_logger.Debug($"Stopwatch.ElapsedMilliseconds: {sw.ElapsedMilliseconds}ms");
+						Thread.Sleep(_host.Interval);
+						_logger.Debug($"Waited {_host.Interval}ms");
 					}
 					catch
 					{
-						Logger.Debug("Thread Interrupted");
+						_logger.Debug("Thread Interrupted");
 					}
 				}
 			}
-			Logger.Debug("PingSender.Dispose()");
-			pingSender.Dispose();
-			Logger.Debug("SendPing() Ended");
+			_logger.Debug("PingSender.Dispose()");
+			_pingSender.Dispose();
+			_logger.Debug("SendPing() Ended");
 		}
 		/// <summary>
 		/// Change the 'stopping' variable to true so that the thread can dispose of the pingSender properly, then allows the thread to exit safely.
@@ -220,17 +220,17 @@ namespace PingLogger.Workers
 		{
 			if (Running)
 			{
-				stopping = true;
-				Logger.Information("Stopping ping logger for host {0} ({1})", Host.HostName, Host.IP);
-				Logger.Debug("SendAsyncCancel()");
-				pingSender.SendAsyncCancel();
+				_stopping = true;
+				_logger.Information("Stopping ping logger for host {0} ({1})", _host.HostName, _host.IP);
+				_logger.Debug("SendAsyncCancel()");
+				_pingSender.SendAsyncCancel();
 				try
 				{
-					RunThread.Interrupt();
+					_runThread.Interrupt();
 				}
 				catch
 				{
-					Logger.Debug("Thread Interrupted");
+					_logger.Debug("Thread Interrupted");
 				}
 			}
 		}
@@ -241,132 +241,140 @@ namespace PingLogger.Workers
 		/// </summary>
 		private void SendPing(object sender, PingCompletedEventArgs e)
 		{
-			Thread.CurrentThread.Name = $"{Host.HostName}-PingThread-{Thread.CurrentThread.ManagedThreadId}";
-			Logger.Debug("SendPing() called");
+			Thread.CurrentThread.Name = $"{_host.HostName}-PingThread-{Thread.CurrentThread.ManagedThreadId}";
+			_logger.Debug("SendPing() called");
 			if (e.Cancelled)
 			{
-				Logger.Information("Ping canceled.");
-				((AutoResetEvent)e.UserState).Set();
+				_logger.Information("Ping canceled.");
+				((AutoResetEvent)e.UserState)?.Set();
 				return;
 			}
 			if (e.Error != null)
 			{
-				Logger.Information("Ping canceled.");
+				_logger.Information("Ping canceled.");
 				//Logger.Debug(e.Error.ToString());
-				((AutoResetEvent)e.UserState).Set();
+				((AutoResetEvent)e.UserState)?.Set();
 				return;
 			}
 			var reply = e.Reply;
 			bool timedOut = false;
 			bool success = false;
-			switch (reply.Status)
+
+			if (reply != null)
 			{
-				case IPStatus.Success:
-					Logger.Debug("Ping Success");
-					//This check is because of a bug/problem with Ping where, if using a small timeout threshold, the ping reply can still be received.
-					//See https://docs.microsoft.com/en-us/dotnet/api/system.net.networkinformation.ping.send?redirectedfrom=MSDN&view=netcore-3.1#System_Net_NetworkInformation_Ping_Send_System_String_System_Int32_System_Byte___
-					if (reply.RoundtripTime < Host.Timeout)
-					{
-						//Ping was successful. Check to see if the round trip time was greater than the threshold.
-						//If it is, then we change the output to be a warning, making it easy to track down in the log files.
-						if (reply.RoundtripTime >= Host.Threshold)
+				switch (reply.Status)
+				{
+					case IPStatus.Success:
+						_logger.Debug("Ping Success");
+
+						//This check is because of a bug/problem with Ping where, if using a small timeout threshold, the ping reply can still be received.
+						//See https://docs.microsoft.com/en-us/dotnet/api/system.net.networkinformation.ping.send?redirectedfrom=MSDN&view=netcore-3.1#System_Net_NetworkInformation_Ping_Send_System_String_System_Int32_System_Byte___
+						if (reply.RoundtripTime < _host.Timeout)
 						{
-							Logger.Warning("Pinged {0} ({1}) RoundTrip: {2}ms (Over Threshold) TTL: {3}", Host.HostName, Host.IP.ToString(), reply.RoundtripTime, reply.Options.Ttl);
-							success = true;
+							//Ping was successful. Check to see if the round trip time was greater than the threshold.
+							//If it is, then we change the output to be a warning, making it easy to track down in the log files.
+							if (reply.RoundtripTime >= _host.Threshold)
+							{
+								_logger.Warning("Pinged {0} ({1}) RoundTrip: {2}ms (Over Threshold) TTL: {3}",
+												_host.HostName, _host.IP, reply.RoundtripTime,
+												reply.Options.Ttl);
+								success = true;
+							}
+							else
+							{
+								_logger.Information("Pinged {0} ({1}) RoundTrip: {2}ms TTL: {3}", _host.HostName,
+													_host.IP, reply.RoundtripTime, reply.Options.Ttl);
+								success = true;
+							}
 						}
 						else
 						{
-							Logger.Information("Pinged {0} ({1}) RoundTrip: {2}ms TTL: {3}", Host.HostName, Host.IP.ToString(), reply.RoundtripTime, reply.Options.Ttl);
-							success = true;
+							_logger.Debug("Ping Reply Success, but roundtrip time exceeds timeout. Marking it as a timeout.");
+
+							_logger.Error("Ping timed out to host {0} ({1}). Timeout is {2}ms", _host.HostName,
+										_host.IP, _host.Timeout);
+							timedOut = true;
 						}
-					}
-					else
-					{
-						Logger.Debug("Ping Reply Success, but roundtrip time exceeds timeout. Marking it as a timeout.");
-						Logger.Error("Ping timed out to host {0} ({1}). Timeout is {2}ms", Host.HostName, Host.IP.ToString(), Host.Timeout);
+
+						break;
+					//These indicate that there was a problem somewhere along the way. 
+					case IPStatus.DestinationHostUnreachable:
+						_logger.Error("Destination host unreachable.");
+
+						break;
+					case IPStatus.DestinationNetworkUnreachable:
+						_logger.Error("Destination network unreachable.");
+
+						break;
+					case IPStatus.DestinationUnreachable:
+						_logger.Error("Destination unreachable, cause unknown.");
+
+						break;
+					case IPStatus.HardwareError:
+						_logger.Error("Ping failed due to hardware.");
+
+						break;
+					case IPStatus.TimedOut:
+						_logger.Debug("Ping Timed Out");
+
+						_logger.Error("Ping timed out to host {0} ({1}). Timeout is {2}ms", _host.HostName,
+									_host.IP, _host.Timeout);
 						timedOut = true;
-					}
-					break;
-				//These indicate that there was a problem somewhere along the way. 
-				case IPStatus.DestinationHostUnreachable:
-					Logger.Error("Destination host unreachable.");
-					break;
-				case IPStatus.DestinationNetworkUnreachable:
-					Logger.Error("Destination network unreachable.");
-					break;
-				case IPStatus.DestinationUnreachable:
-					Logger.Error("Destination unreachable, cause unknown.");
-					break;
-				case IPStatus.HardwareError:
-					Logger.Error("Ping failed due to hardware.");
-					break;
-				case IPStatus.TimedOut:
-					Logger.Debug("Ping Timed Out");
-					Logger.Error("Ping timed out to host {0} ({1}). Timeout is {2}ms", Host.HostName, Host.IP.ToString(), Host.Timeout);
-					timedOut = true;
-					break;
-				case IPStatus.PacketTooBig:
-					Logger.Debug("Packet too large. Turning on fragmentation");
-					Logger.Error("Packet size too large, turning on fragmentation.");
-					timedOut = true;
-					DontFragment = false;
-					break;
+
+						break;
+					case IPStatus.PacketTooBig:
+						_logger.Debug("Packet too large. Turning on fragmentation");
+						_logger.Error("Packet size too large, turning on fragmentation.");
+						timedOut = true;
+						_dontFragment = false;
+
+						break;
+				}
+
+				var logReply = new Reply
+				{
+					Host = _host,
+					DateTime = DateTime.Now,
+					Ttl = reply.Options?.Ttl,
+					RoundTrip = reply.RoundtripTime,
+					TimedOut = timedOut,
+					Succeeded = success
+				};
+				Replies.Add(logReply);
 			}
-			var LogReply = new Reply
-			{
-				Host = Host,
-				DateTime = DateTime.Now,
-				Ttl = reply.Options?.Ttl,
-				RoundTrip = reply.RoundtripTime,
-				TimedOut = timedOut,
-				Succeeded = success
-			};
-			Replies.Add(LogReply);
-			Logger.Debug("Ping Ended");
-			((AutoResetEvent)e.UserState).Set();
+
+			_logger.Debug("Ping Ended");
+			((AutoResetEvent)e.UserState)?.Set();
 		}
 
 		public async Task<(long RoundTrip, IPStatus Status)> GetSingleRoundTrip(IPAddress address, int ttl)
 		{
-			string data = Util.RandomString(Host.PacketSize);
+			string data = Util.RandomString(_host.PacketSize);
 			byte[] buffer = Encoding.ASCII.GetBytes(data);
 			using var pinger = new Ping();
 			var pingOpts = new PingOptions(ttl, true);
-			Logger.Information($"Single Ping sent to {address}");
-			var reply = await pinger.SendPingAsync(address, Host.Timeout, buffer, pingOpts);
-			Logger.Information($"Single Ping Reply Status: {reply.Status}");
-			Logger.Information($"Single Ping Reply RoundTrip: {reply.RoundtripTime}ms");
-			return (reply.RoundtripTime, reply.Status);
-		}
-
-		public async Task<(long RoundTrip, IPStatus Status)> GetSingleRoundTrip(string address, int ttl)
-		{
-			string data = Util.RandomString(Host.PacketSize);
-			byte[] buffer = Encoding.ASCII.GetBytes(data);
-			using var pinger = new Ping();
-			var pingOpts = new PingOptions(ttl, true);
-			Logger.Information($"Single Ping sent to {address}");
-			var reply = await pinger.SendPingAsync(address, Host.Timeout, buffer, pingOpts);
-			Logger.Information($"Single Ping Reply Status: {reply.Status}");
-			Logger.Information($"Single Ping Reply RoundTrip: {reply.RoundtripTime}ms");
+			_logger.Information($"Single Ping sent to {address}");
+			var reply = await pinger.SendPingAsync(address, _host.Timeout, buffer, pingOpts);
+			_logger.Information($"Single Ping Reply Status: {reply.Status}");
+			_logger.Information($"Single Ping Reply RoundTrip: {reply.RoundtripTime}ms");
 			return (reply.RoundtripTime, reply.Status);
 		}
 
 		#region IDisposable Support
-		private bool disposedValue = false; // To detect redundant calls
+		private bool _disposedValue; // To detect redundant calls
 
 		protected virtual void Dispose(bool disposing)
 		{
-			Logger.Debug("Dispose() called");
-			if (!disposedValue)
+			_logger.Debug("Dispose() called");
+			if (!_disposedValue)
 			{
 				if (disposing)
 				{
 					Stop();
 					Log.CloseAndFlush();
-					RunThread.Join();
+					_runThread.Join();
 				}
-				disposedValue = true;
+				_disposedValue = true;
 			}
 		}
 

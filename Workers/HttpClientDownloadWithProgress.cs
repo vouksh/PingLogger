@@ -40,7 +40,7 @@ namespace PingLogger.Workers
 
 			var totalBytes = response.Content.Headers.ContentLength;
 
-			using var contentStream = await response.Content.ReadAsStreamAsync();
+			await using var contentStream = await response.Content.ReadAsStreamAsync();
 			await ProcessContentStream(totalBytes, contentStream);
 		}
 
@@ -51,7 +51,7 @@ namespace PingLogger.Workers
 			//var buffer = new byte[8192];
 			var isMoreToRead = true;
 			Memory<byte> bufferMem = new Memory<byte>();
-			using var fileStream = new FileStream(_destinationFilePath, FileMode.Create, FileAccess.Write, FileShare.None, 8192, true);
+			await using var fileStream = new FileStream(_destinationFilePath, FileMode.Create, FileAccess.Write, FileShare.None, 8192, true);
 			do
 			{
 				var bytesRead = await contentStream.ReadAsync(bufferMem);

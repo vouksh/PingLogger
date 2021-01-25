@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:PingLogger.Controls" xmlns:local1="clr-namespace:PingLogger.Extensions"
+        xmlns:local1="clr-namespace:PingLogger.Extensions"
 		mc:Ignorable="d"
         Title="Help" Height="635" Width="950" Loaded="Window_Loaded" 
 		ResizeMode="NoResize"
@@ -28,7 +28,7 @@
 
 	</Window.Resources>
 	<Grid>
-		<TextBox x:Name="editSource"
+		<TextBox x:Name="EditSource"
                  VerticalAlignment="Stretch"
                  HorizontalAlignment="Stretch"
                  TextWrapping="Wrap"
@@ -40,7 +40,7 @@
                                   VerticalAlignment="Stretch"
                                   HorizontalAlignment="Stretch"
                                   Margin="5"
-                                  Document="{Binding ElementName=editSource, Path=Text, Converter={StaticResource TextToFlowDocumentConverter}}" />
+                                  Document="{Binding ElementName=EditSource, Path=Text, Converter={StaticResource TextToFlowDocumentConverter}}" />
 
 	</Grid>
 </Window>
