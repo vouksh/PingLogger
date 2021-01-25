@@ -10,7 +10,7 @@ namespace PingLogger.Models
 		public int Ttl { get; set; }
 		public string[] PingTimes { get; set; }
 		public string HostName { get; set; }
-		public Visibility HostAddButtonVisible { get; set; }
-		public Visibility IPAddButtonVisible { get; set; }
+		//public Visibility HostAddButtonVisible { get; set; }
+		//public Visibility IPAddButtonVisible { get; set; }
 	}
 }

@@ -1,5 +1,4 @@
-﻿using Microsoft.Win32;
-using PingLogger.Models;
+﻿using PingLogger.Models;
 using PingLogger.Workers;
 using System;
 using System.Diagnostics;
@@ -10,13 +9,13 @@ using System.Net.Http;
 using System.Reflection;
 using System.Text.Json;
 using System.Threading.Tasks;
-using System.Windows;
+using Avalonia.Controls;
 
 namespace PingLogger
 {
 	public static class Util
 	{
-		static Controls.SplashScreen _splashScreen;
+		//static Controls.SplashScreen _splashScreen;
 
 		public static string FileBasePath
 		{
@@ -45,6 +44,7 @@ namespace PingLogger
 
 		public static bool AppIsClickOnce => File.Exists(AppContext.BaseDirectory + "Launcher.exe") && File.Exists(AppContext.BaseDirectory + "Launcher.manifest");
 
+		/*
 		public static async Task CheckForUpdates()
 		{
 
@@ -190,7 +190,7 @@ msiexec.exe /l* '{ AppContext.BaseDirectory}Logs\Installer - v{remoteVersion}.lo
 				Logger.Debug("splashScreen was null.");
 			}
 		}
-
+		*/
 		/// <summary>
 		/// Generates a random string with the specified length.
 		/// </summary>
@@ -203,7 +203,7 @@ msiexec.exe /l* '{ AppContext.BaseDirectory}Logs\Installer - v{remoteVersion}.lo
 			return new string(Enumerable.Repeat(chars, length)
 			  .Select(s => s[random.Next(s.Length)]).ToArray());
 		}
-
+		/*
 		public static bool IsLightTheme
 		{
 			get
@@ -227,5 +227,6 @@ msiexec.exe /l* '{ AppContext.BaseDirectory}Logs\Installer - v{remoteVersion}.lo
 		{
 			Application.Current.Resources.MergedDictionaries[0].Source = IsLightTheme ? new Uri("/Themes/LightTheme.xaml", UriKind.Relative) : new Uri("/Themes/DarkTheme.xaml", UriKind.Relative);
 		}
+		*/
 	}
 }
