@@ -3,11 +3,12 @@ using System.Text.Json;
 
 namespace PingLogger.Models
 {
+	[Serializable]
 	public class Host
 	{
 		public Guid Id { get; set; }
-		public string HostName { get; set; }
-		public string IP { get; set; }
+		public string HostName { get; set; } = string.Empty;
+		public string IP { get; set; } = string.Empty;
 		public int Threshold { get; set; } = 100;
 		public int PacketSize { get; set; } = 32;
 		public int Interval { get; set; } = 1000;

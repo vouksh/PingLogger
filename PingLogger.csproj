@@ -2,7 +2,6 @@
   <PropertyGroup>
 	<OutputType>WinExe</OutputType>
 	<TargetFramework>net5.0</TargetFramework>
-	<Nullable>enable</Nullable>
 	<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
 	<ApplicationIcon>AppIcon.ico</ApplicationIcon>
   </PropertyGroup>
