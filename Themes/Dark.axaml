@@ -1,65 +1,84 @@
 ﻿<Styles xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-	<Style Selector="Window">
-		<Setter Property="Foreground" Value="#F0F0F0" />
-		<Setter Property="Background" Value="#2A2A2A"/>
-	</Style>
-	<Style Selector="Label">
-		<Setter Property="Foreground" Value="#F0F0F0" />
-		<Setter Property="FontSize" Value="12" />
-	</Style>
-	<Style Selector="Button">
-		<Setter Property="Foreground" Value="#F0F0F0" />
-		<Setter Property="FontSize" Value="10" />
-	</Style>
-	<Style Selector="Button:pointerover">
-		<Setter Property="Button.Foreground" Value="#F0F0F0" />
-		<Setter Property="Button.Background" Value="#2B579A"/>
-	</Style>
-
-	<Style Selector="TextBox">
-		<Setter Property="Foreground" Value="#F0F0F0"/>
-		<Setter Property="Background" Value="#4A4A4A"/>
-	</Style>
-
-	<Style Selector="TabControl.Main">
+	<Style Selector="TabControl.MainTab">
 		<Setter Property="Background" Value="#2A2A2A" />
 		<Setter Property="Height" Value="480"/>
 	</Style>
-	<Style Selector="TabControl.Main WrapPanel">
+	<Style Selector="TabControl.MainTab WrapPanel">
 		<Setter Property="Background" Value="#2B579A"/>
 	</Style>
 
-	<Style Selector="TabItem.Main">
+	<Style Selector="TabItem.MainTabItem">
 		<Setter Property="FontSize" Value="12"/>
 		<Setter Property="Height" Value="34"/>
 		<Setter Property="VerticalAlignment" Value="Stretch"/>
 		<Setter Property="VerticalContentAlignment" Value="Center"/>
 		<Setter Property="Background" Value="#2B579A"/>
 		<Setter Property="Foreground" Value="#F0F0F0"/>
+		<Setter Property="TextBlock.Background" Value="#2B579A"/>
+		<Setter Property="TextBlock.Foreground" Value="#F0F0F0"/>
 		<Setter Property="Margin" Value="0 0 0 0"/>
 		<Setter Property="Padding" Value="10 0"/>
 	</Style>
-	<Style Selector="TabItem.Main:pointerover /template/ ContentPresenter#PART_ContentPresenter">
-		<Setter Property="Background" Value="#124078"/>
+	<Style Selector="TextBlock.Tab">
+		<Setter Property="VerticalAlignment" Value="Center"/>
+	</Style>
+	<Style Selector="TabItem.MainTabItem:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+		<Setter Property="Background" Value="#3671c9"/>
+		<Setter Property="TextBlock.Background" Value="#3671c9"/>
 	</Style>
 
-	<Style Selector="TabItem.Main:focus">
-		<Setter Property="Foreground" Value="#2B579A"/>
+	<Style Selector="TabItem.MainTabItem:focus">
+		<Setter Property="Foreground" Value="#F0F0F0"/>
+		<Setter Property="TextBlock.Foreground" Value="#F0F0F0"/>
 		<Setter Property="Margin" Value="0 0 0 0"/>
 		<Setter Property="Padding" Value="10 0"/>
 	</Style>
-	<Style Selector="TabItem.Main:focus /template/ ContentPresenter#PART_ContentPresenter">
-		<Setter Property="Background" Value="#f0f0f0"/>
+	<Style Selector="TabItem.MainTabItem:focus /template/ ContentPresenter#PART_ContentPresenter">
+		<Setter Property="Background" Value="#3671c9"/>
+		<Setter Property="TextBlock.Background" Value="#3671c9" />
 	</Style>
 
-	<Style Selector="TabItem.Main:selected">
-		<Setter Property="Foreground" Value="#2B579A"/>
+	<Style Selector="TabItem.MainTabItem:selected">
+		<Setter Property="Foreground" Value="#F0F0F0"/>
+		<Setter Property="TextBlock.Foreground" Value="#F0F0F0"/>
 		<Setter Property="Margin" Value="0 0 0 0"/>
 		<Setter Property="Padding" Value="10 0"/>
 	</Style>
-	<Style Selector="TabItem.Main:selected /template/ ContentPresenter#PART_ContentPresenter">
-		<Setter Property="Background" Value="#f0f0f0"/>
+	<Style Selector="TabItem.MainTabItem:selected /template/ ContentPresenter#PART_ContentPresenter">
+		<Setter Property="Background" Value="#2B579A"/>
+		<Setter Property="TextBlock.Background" Value="#2B579A" />
 	</Style>
-
+	<Design.PreviewWith>
+		<Window>
+			<TabControl Classes="MainTab">
+				<TabItem Classes="MainTabItem">
+					<TabItem.Header>
+						<Grid>
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="*" />
+								<ColumnDefinition Width="15" />
+							</Grid.ColumnDefinitions>
+							<TextBlock Text="Test me!" Classes="Tab"/>
+							<Button Grid.Column="1" Content="X" />
+						</Grid>
+					</TabItem.Header>
+					<TextBlock Text="Content!" />
+				</TabItem>
+				<TabItem Classes="MainTabItem">
+					<TabItem.Header>
+						<Grid>
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="*" />
+								<ColumnDefinition Width="15" />
+							</Grid.ColumnDefinitions>
+							<TextBlock Text="Test me!"  Classes="Tab"/>
+							<Button Grid.Column="1" Content="X" />
+						</Grid>
+					</TabItem.Header>
+					<TextBlock Text="Content 2!" />
+				</TabItem>
+			</TabControl>
+		</Window>
+	</Design.PreviewWith>
 </Styles>

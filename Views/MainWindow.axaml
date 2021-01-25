@@ -8,7 +8,7 @@
         Icon="/Assets/avalonia-logo.ico"
         Title="{Binding Title}"
 		Width="805" Height="480"
-        CanResize="false">
+        CanResize="false" TransparencyBackgroundFallback="DarkGray" TransparencyLevelHint="AcrylicBlur">
 	<Window.Styles>
 		<StyleInclude Source="/Themes/Dark.axaml" />
 	</Window.Styles>
@@ -16,7 +16,7 @@
         <vm:MainWindowViewModel/>
     </Design.DataContext>
 
-	<TabControl Padding="0" Items="{Binding TabItems}" FontSize="12" Classes="Main">
+	<TabControl Padding="0" Items="{Binding TabItems}" FontSize="12" Classes="MainTab">
 	</TabControl>
 
 </Window>

@@ -104,7 +104,8 @@ namespace PingLogger.ViewModels
 				HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Center,
 				VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center,
 				Background = Avalonia.Media.Brushes.Transparent,
-				Padding = new Avalonia.Thickness(5, 0, 0, 0)
+				Padding = new Avalonia.Thickness(5, 0, 0, 0),
+				Classes = new Classes("Tab")
 			};
 			headerGrid.Children.Add(headerText);
 
@@ -124,7 +125,7 @@ namespace PingLogger.ViewModels
 				Header = headerGrid,
 				Name = $"tab{count}",
 				Tag = host.Id.ToString(),
-				Classes = new Classes("Main")
+				Classes = new Classes("MainTabItem")
 			};
 			var pingControl = new Views.PingControl()
 			{
