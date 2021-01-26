@@ -1,0 +1,74 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="using:PingLogger.ViewModels"
+		xmlns:m="using:PingLogger.Models"
+        mc:Ignorable="d" d:DesignWidth="650" d:DesignHeight="450"
+		Width="650" Height="450"
+        x:Class="PingLogger.Views.TraceRouteWindow"
+        Title="Trace Route" CanResize="False">
+	<Design.DataContext>
+		<vm:TraceRouteViewModel/>
+	</Design.DataContext>
+	<Window.DataTemplates>
+		<DataTemplate DataType="{x:Type m:TraceReply}">
+			<Grid>
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="36" />
+					<ColumnDefinition Width="120" />
+					<ColumnDefinition Width="*" />
+					<ColumnDefinition Width="20" />
+					<ColumnDefinition Width="65" />
+					<ColumnDefinition Width="65" />
+					<ColumnDefinition Width="65" />
+				</Grid.ColumnDefinitions>
+				<TextBlock Grid.Column="0" Text="{Binding Ttl}" />
+				<TextBlock Grid.Column="1" Text="{Binding IPAddress}" />
+				<TextBlock Grid.Column="2" Text="{Binding HostName}" />
+				<Button Grid.Column="3" Content="+" IsVisible="{Binding HostAddButtonVisible}" />
+				<Button Grid.Column="3" Content="+" IsVisible="{Binding IPAddButtonVisible}" />
+				<TextBlock Grid.Column="4" Text="{Binding Ping1}" />
+				<TextBlock Grid.Column="5" Text="{Binding Ping2}" />
+				<TextBlock Grid.Column="6" Text="{Binding Ping3}" />
+			</Grid>
+		</DataTemplate>
+	</Window.DataTemplates>
+	<Grid>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="*" />
+			<ColumnDefinition Width="*" />
+			<ColumnDefinition Width="*" />
+		</Grid.ColumnDefinitions>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="60" />
+			<RowDefinition Height="16" />
+			<RowDefinition Height="*" />
+		</Grid.RowDefinitions>
+		<Button Grid.Column="0" Grid.Row="0" Content="Start" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
+				VerticalContentAlignment="Center" Margin="10"/>
+		<StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Stretch">
+			<Label Content="Host Name:" VerticalAlignment="Stretch" Padding="5 5 5 0" HorizontalContentAlignment="Right" />
+			<TextBlock Text="google.com" VerticalAlignment="Stretch" Padding="0 5 5 5" HorizontalAlignment="Left" />
+		</StackPanel>
+		<ProgressBar Grid.Row="0" Grid.Column="2" Value="0" IsIndeterminate="True" VerticalAlignment="Stretch" IsVisible="True" Margin="10 20 10 20" />
+		<Grid Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="36" />
+				<ColumnDefinition Width="120" />
+				<ColumnDefinition Width="*" />
+				<ColumnDefinition Width="20" />
+				<ColumnDefinition Width="65" />
+				<ColumnDefinition Width="65" />
+				<ColumnDefinition Width="65" />
+			</Grid.ColumnDefinitions>
+			<TextBlock Grid.Column="0" Text="TTL" />
+			<TextBlock Grid.Column="1" Text="IP Address" />
+			<TextBlock Grid.Column="2" Text="Host Name" />
+			<TextBlock Grid.Column="4" Text="Ping 1" />
+			<TextBlock Grid.Column="5" Text="Ping 2" />
+			<TextBlock Grid.Column="6" Text="Ping 3" />
+		</Grid>
+		<ItemsRepeater Grid.Row="2" Grid.ColumnSpan="3" Items="{Binding TraceReplies}"></ItemsRepeater>
+	</Grid>
+</Window>
