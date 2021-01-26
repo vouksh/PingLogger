@@ -9,6 +9,7 @@ using Avalonia.Interactivity;
 using ReactiveUI;
 using System.Reactive;
 using System.Collections.ObjectModel;
+using Avalonia.Threading;
 
 namespace PingLogger.ViewModels
 {
@@ -16,12 +17,29 @@ namespace PingLogger.ViewModels
 	{
 		public ReactiveCommand<string, Unit> CloseTabCommand { get; }
 		public ReactiveCommand<Unit, Unit> AddTabCommand { get; }
+		public ReactiveCommand<Unit, Unit> OpenOptionsCommand { get; }
 		private ObservableCollection<TabItem> _tabItems = new ObservableCollection<TabItem>();
+		public delegate void ThemeChangedEventHandler(object sender);
+		public event ThemeChangedEventHandler ThemeChanged;
+
 		public MainWindowViewModel()
 		{
 			CloseTabCommand = ReactiveCommand.Create<string>(CloseTab);
 			AddTabCommand = ReactiveCommand.Create(AddBlankTab);
+			OpenOptionsCommand = ReactiveCommand.Create(OpenOptions);
 			_tabItems.CollectionChanged += _tabItems_CollectionChanged;
+		}
+
+		private void OpenOptions()
+		{
+			var optionsViewModel = new OptionsWindowViewModel();
+			optionsViewModel.ThemeChanged += (object s) => ThemeChanged?.Invoke(s);
+			var optionsDialog = new Views.OptionsWindow()
+			{
+				DataContext = optionsViewModel
+			};
+			
+			optionsDialog.Show();
 		}
 
 		private void _tabItems_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
@@ -62,10 +80,6 @@ namespace PingLogger.ViewModels
 				var newHost = new Host()
 				{
 					HostName = "google.com",
-					PacketSize = 32,
-					Threshold = 500,
-					Timeout = 1000,
-					Interval = 1000,
 					Id = Guid.NewGuid()
 				};
 				AddTabItem(newHost, true);
@@ -84,7 +98,12 @@ namespace PingLogger.ViewModels
 
 		private void AddBlankTab()
 		{
-			AddTabItem(new Host { HostName = "google.com" });
+			var newHost = new Host { 
+				HostName = "google.com",
+				Id = Guid.NewGuid()
+			};
+			Config.Hosts.Add(newHost);
+			AddTabItem(newHost);
 		}
 
 		private void AddTabItem(Host host, bool AddOnRuntime = false)
@@ -99,7 +118,7 @@ namespace PingLogger.ViewModels
 			
 			var headerText = new TextBlock()
 			{
-				Text = $"Host: {host.HostName}",
+				Text = host.HostName,
 				FontSize = 12,
 				HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Center,
 				VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center,
@@ -127,12 +146,14 @@ namespace PingLogger.ViewModels
 				Tag = host.Id.ToString(),
 				Classes = new Classes("MainTabItem")
 			};
+			var pingControlVM = new PingControlViewModel()
+			{
+				Host = host
+			};
+			pingControlVM.HostNameUpdated += PingControlVM_HostNameUpdated;
 			var pingControl = new Views.PingControl()
 			{
-				DataContext = new PingControlViewModel()
-				{
-					Host = host
-				}
+				DataContext = pingControlVM
 			};
 			tabItem.Content = pingControl;
 			if(!AddOnRuntime)
@@ -144,10 +165,52 @@ namespace PingLogger.ViewModels
 			}
 		}
 
+		private void PingControlVM_HostNameUpdated(object sender, HostNameUpdatedEventArgs e)
+		{
+			var index = _tabItems.IndexOf(_tabItems.First(t => t.Tag.ToString() == e.HostId));
+			var headerGrid = new Grid
+			{
+				ColumnDefinitions = new ColumnDefinitions("*,20"),
+				VerticalAlignment = Avalonia.Layout.VerticalAlignment.Stretch,
+				Height = 36
+			};
+
+			var headerText = new TextBlock()
+			{
+				Text = e.HostName,
+				FontSize = 12,
+				HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Center,
+				VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center,
+				Background = Avalonia.Media.Brushes.Transparent,
+				Padding = new Avalonia.Thickness(5, 0, 0, 0),
+				Classes = new Classes("Tab")
+			};
+			headerGrid.Children.Add(headerText);
+
+			var closeTabBtn = new Button()
+			{
+				Content = "X",
+				FontSize = 12,
+				Command = CloseTabCommand,
+				CommandParameter = e.HostId,
+				Margin = new Avalonia.Thickness(2, 0, 0, 0),
+				Padding = new Avalonia.Thickness(1, 1, 1, 1)
+			};
+			Grid.SetColumn(closeTabBtn, 1);
+			headerGrid.Children.Add(closeTabBtn);
+			_tabItems[index].Header = headerGrid;
+		}
 
 		private void CloseTab(string tabId)
 		{
+			var tabItem = _tabItems.IndexOf(_tabItems.First(t => t.Tag.ToString() == tabId));
+			_tabItems.RemoveAt(tabItem);
+			Config.Hosts.RemoveAt(Config.Hosts.IndexOf(Config.Hosts.First(h => h.Id.ToString() == tabId)));
+		}
 
+		public void SelectedTabChanged(object sender, RoutedEventArgs e)
+		{
+			
 		}
 	}
 }

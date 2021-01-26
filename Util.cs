@@ -203,18 +203,20 @@ msiexec.exe /l* '{ AppContext.BaseDirectory}Logs\Installer - v{remoteVersion}.lo
 			return new string(Enumerable.Repeat(chars, length)
 			  .Select(s => s[random.Next(s.Length)]).ToArray());
 		}
-		/*
+		
 		public static bool IsLightTheme
 		{
 			get
 			{
 				if (Config.Theme == Theme.Auto)
 				{
-					int lightTheme = Convert.ToInt32(Registry.GetValue("HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize", "AppsUseLightTheme", 1));
-					if (lightTheme == 1)
+					if(OperatingSystem.IsWindows())
+					{
+						return WinUtils.GetLightMode();
+					} else
+					{
 						return true;
-					else
-						return false;
+					}
 				}
 				else
 				{
@@ -225,8 +227,8 @@ msiexec.exe /l* '{ AppContext.BaseDirectory}Logs\Installer - v{remoteVersion}.lo
 
 		public static void SetTheme()
 		{
-			Application.Current.Resources.MergedDictionaries[0].Source = IsLightTheme ? new Uri("/Themes/LightTheme.xaml", UriKind.Relative) : new Uri("/Themes/DarkTheme.xaml", UriKind.Relative);
+			//Application.Current.Resources.MergedDictionaries[0].Source = IsLightTheme ? new Uri("/Themes/LightTheme.xaml", UriKind.Relative) : new Uri("/Themes/DarkTheme.xaml", UriKind.Relative);
 		}
-		*/
+		
 	}
 }

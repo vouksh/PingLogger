@@ -9,14 +9,11 @@
         Title="{Binding Title}"
 		Width="805" Height="480"
         CanResize="false" TransparencyBackgroundFallback="DarkGray" TransparencyLevelHint="AcrylicBlur">
-	<Window.Styles>
-		<StyleInclude Source="/Themes/Dark.axaml" />
-	</Window.Styles>
     <Design.DataContext>
         <vm:MainWindowViewModel/>
     </Design.DataContext>
-
-	<TabControl Padding="0" Items="{Binding TabItems}" FontSize="12" Classes="MainTab">
-	</TabControl>
-
+	<Grid>
+	    <TabControl Padding="0" Items="{Binding TabItems}" FontSize="12" Classes="MainTab" />
+        <Button HorizontalAlignment="Right" VerticalAlignment="Top" Margin="12" Content="Options" FontSize="10" Command="{Binding OpenOptionsCommand}" />
+	</Grid>
 </Window>
