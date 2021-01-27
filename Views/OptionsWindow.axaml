@@ -29,7 +29,8 @@
 			<RowDefinition Height="50" />
 		</Grid.RowDefinitions>
 		<CheckBox Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="3" Content="Automatically update on startup" HorizontalAlignment="Center"
-				  VerticalAlignment="Center" IsChecked="{Binding EnableAutoUpdate}" />
+				  VerticalAlignment="Center" IsChecked="{Binding EnableAutoUpdate}" IsEnabled="{Binding AutoUpdateEnabled}"
+				  ToolTip.Tip="{Binding AutoUpdateTooltip}" />
 		<CheckBox Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3" Content="Start logging on program start" HorizontalAlignment="Center"
 				  VerticalContentAlignment="Center" IsChecked="{Binding StartLoggersAutomatically}"/>
 		<CheckBox Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="3" Content="Load application on startup" HorizontalAlignment="Center" 

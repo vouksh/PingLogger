@@ -72,35 +72,26 @@ namespace PingLogger.ViewModels
 			}
 		}
 
+		private int selectedTabIndex = 0;
+		public int SelectedTabIndex
+		{
+			get => selectedTabIndex;
+			set => this.RaiseAndSetIfChanged(ref selectedTabIndex, value);
+		}
+
 		private void GenerateTabItems()
 		{
 			if (Config.Hosts.Any())
 			{
 				foreach (Host host in Config.Hosts)
 				{
-					AddTabItem(host, true);
+					AddTabItem(host);
 				}
 			}
 			else
 			{
-				var newHost = new Host()
-				{
-					HostName = "google.com",
-					Id = Guid.NewGuid()
-				};
-				AddTabItem(newHost, true);
+				AddBlankTab();
 			}
-			var newTabTI = new TabItem()
-			{
-				Header = new Button()
-				{
-					Content = new Icon() { Value = "fas fa-plus-square" },
-					FontSize = 14,
-					Command = AddTabCommand,
-					Padding = new Thickness(0)
-				}
-			};
-			_tabItems.Add(newTabTI);
 		}
 
 		private void AddBlankTab()
@@ -114,7 +105,7 @@ namespace PingLogger.ViewModels
 			AddTabItem(newHost);
 		}
 
-		private void AddTabItem(Host host, bool AddOnRuntime = false)
+		private void AddTabItem(Host host)
 		{
 			int count = _tabItems.Count;
 			var headerGrid = new Grid
@@ -167,14 +158,8 @@ namespace PingLogger.ViewModels
 				DataContext = pingControlVM
 			};
 			tabItem.Content = pingControl;
-			if (!AddOnRuntime)
-			{
-				_tabItems.Insert(count - 1, tabItem);
-			}
-			else
-			{
-				_tabItems.Add(tabItem);
-			}
+			_tabItems.Add(tabItem);
+			SelectedTabIndex = _tabItems.IndexOf(tabItem);
 		}
 
 		private void PingControlVM_TraceRouteCallback(object sender, TraceRouteCallbackEventArgs e)
@@ -239,11 +224,10 @@ namespace PingLogger.ViewModels
 			var tabItem = _tabItems.IndexOf(_tabItems.First(t => t.Tag.ToString() == tabId));
 			_tabItems.RemoveAt(tabItem);
 			Config.Hosts.RemoveAt(Config.Hosts.IndexOf(Config.Hosts.First(h => h.Id.ToString() == tabId)));
-		}
-
-		public void SelectedTabChanged(object sender, RoutedEventArgs e)
-		{
-
+			if(_tabItems.Count == 0)
+			{
+				AddBlankTab();
+			}
 		}
 	}
 }

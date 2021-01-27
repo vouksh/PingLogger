@@ -5,6 +5,7 @@ using Avalonia.Markup.Xaml.Styling;
 using PingLogger.ViewModels;
 using PingLogger.Views;
 using ReactiveUI;
+using System.Threading.Tasks;
 
 namespace PingLogger
 {
@@ -15,7 +16,7 @@ namespace PingLogger
 			AvaloniaXamlLoader.Load(this);
 		}
 
-		public override void OnFrameworkInitializationCompleted()
+		public override async void OnFrameworkInitializationCompleted()
 		{
 			if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
 			{
@@ -26,7 +27,16 @@ namespace PingLogger
 				{
 					DataContext = mwVM
 				};
-				if(Workers.Config.StartApplicationMinimized)
+				if (System.OperatingSystem.IsWindows() && Workers.Config.EnableAutoUpdate)
+				{
+					while (!await Util.CheckForUpdates())
+					{
+						desktop.MainWindow.Hide();
+						await Task.Delay(250);
+					}
+					desktop.MainWindow.Show();
+				}
+				if (Workers.Config.StartApplicationMinimized)
 				{
 					desktop.MainWindow.WindowState = Avalonia.Controls.WindowState.Minimized;
 				}

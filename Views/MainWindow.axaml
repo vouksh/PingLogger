@@ -15,7 +15,12 @@
         <vm:MainWindowViewModel/>
     </Design.DataContext>
 	<Grid>
-	    <TabControl Padding="0" Items="{Binding TabItems}" FontSize="12" Classes="MainTab" />
-        <Button HorizontalAlignment="Right" VerticalAlignment="Top" Margin="12" i:Attached.Icon="fas fa-cogs" FontSize="16" Command="{Binding OpenOptionsCommand}" />
+	    <TabControl Padding="0" Items="{Binding TabItems}" FontSize="12" Classes="MainTab" SelectedIndex="{Binding SelectedTabIndex}" />
+		<StackPanel Orientation="Horizontal" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="4">
+		<Button HorizontalAlignment="Right" VerticalAlignment="Top" Margin="6" 
+				i:Attached.Icon="fas fa-plus-square" FontSize="16" Command="{Binding AddTabCommand}" />
+        <Button HorizontalAlignment="Right" VerticalAlignment="Top" Margin="6" 
+				i:Attached.Icon="fas fa-cogs" FontSize="16" Command="{Binding OpenOptionsCommand}" />
+	</StackPanel>
 	</Grid>
 </Window>

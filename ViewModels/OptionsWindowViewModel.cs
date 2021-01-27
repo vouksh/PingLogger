@@ -17,6 +17,13 @@ namespace PingLogger.ViewModels
 		{
 			daysToKeepLogs = Config.DaysToKeepLogs;
 			loadWithSystemBoot = Config.LoadWithSystemBoot;
+			if (OperatingSystem.IsWindows())
+				AutoUpdateAllowed = true;
+			else
+			{
+				AutoUpdateAllowed = false;
+				AutoUpdateTooltip = "Function only used in Windows.";
+			}
 		}
 		private int daysToKeepLogs = 7;
 		public int DaysToKeepLogs
@@ -28,6 +35,19 @@ namespace PingLogger.ViewModels
 			}
 		}
 
+		private bool autoUpdateAllowed = true;
+		public bool AutoUpdateAllowed
+		{
+			get => autoUpdateAllowed;
+			set => this.RaiseAndSetIfChanged(ref autoUpdateAllowed, value);
+		}
+
+		private string autoUpdateTooltip = string.Empty;
+		public string AutoUpdateTooltip
+		{
+			get => autoUpdateTooltip;
+			set => this.RaiseAndSetIfChanged(ref autoUpdateTooltip, value);
+		}
 
 		private bool loadWithSystemBoot = false;
 		public bool LoadWithSystemBoot

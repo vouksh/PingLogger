@@ -1,0 +1,24 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		xmlns:vm="using:PingLogger.ViewModels"
+        mc:Ignorable="d" d:DesignWidth="450" d:DesignHeight="450"
+		Width="450" Height="450"
+        x:Class="PingLogger.Views.SplashScreen"
+        Title="SplashScreen" CanResize="False"
+		WindowStartupLocation="CenterScreen">
+	<Design.DataContext>
+		<vm:SplashScreenViewModel />
+	</Design.DataContext>
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="400" />
+			<RowDefinition Height="*" />
+		</Grid.RowDefinitions>
+		<TextBlock Grid.Row="0" TextAlignment="Center" HorizontalAlignment="Stretch" VerticalAlignment="Center" TextWrapping="Wrap"
+				   FontSize="24" FontWeight="Bold" Text="{Binding UpdateMessage}" />
+		<ProgressBar Grid.Row="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" IsIndeterminate="{Binding ProgressBarIndeterminate}"
+					 Maximum="{Binding ProgressBarMax}" Value="{Binding ProgressBarValue}" Margin="10"/>
+	</Grid>
+</Window>
