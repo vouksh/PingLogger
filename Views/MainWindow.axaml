@@ -3,17 +3,19 @@
         xmlns:vm="using:PingLogger.ViewModels"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		xmlns:i="clr-namespace:Projektanker.Icons.Avalonia;assembly=Projektanker.Icons.Avalonia"
         mc:Ignorable="d" d:DesignWidth="805" d:DesignHeight="480"
         x:Class="PingLogger.Views.MainWindow"
         Icon="/Assets/avalonia-logo.ico"
         Title="{Binding Title}"
 		Width="805" Height="480"
-        CanResize="false" TransparencyBackgroundFallback="DarkGray" TransparencyLevelHint="AcrylicBlur">
+        CanResize="false"
+		TransparencyLevelHint="Blur">
     <Design.DataContext>
         <vm:MainWindowViewModel/>
     </Design.DataContext>
 	<Grid>
 	    <TabControl Padding="0" Items="{Binding TabItems}" FontSize="12" Classes="MainTab" />
-        <Button HorizontalAlignment="Right" VerticalAlignment="Top" Margin="12" Content="Options" FontSize="10" Command="{Binding OpenOptionsCommand}" />
+        <Button HorizontalAlignment="Right" VerticalAlignment="Top" Margin="12" i:Attached.Icon="fas fa-cogs" FontSize="16" Command="{Binding OpenOptionsCommand}" />
 	</Grid>
 </Window>

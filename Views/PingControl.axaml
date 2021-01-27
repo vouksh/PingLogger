@@ -2,6 +2,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+			 xmlns:i="clr-namespace:Projektanker.Icons.Avalonia;assembly=Projektanker.Icons.Avalonia"
              mc:Ignorable="d" d:DesignWidth="785" d:DesignHeight="415"
              xmlns:vm="using:PingLogger.ViewModels"
              x:Class="PingLogger.Views.PingControl">
@@ -35,14 +36,14 @@
 				<ColumnDefinition Width="*"/>
 			</Grid.ColumnDefinitions>
 			<Button Grid.Column="0" Grid.Row="0" x:Name="HelpBtn" Content="Help" HorizontalContentAlignment="Center" HorizontalAlignment="Center"
-					VerticalContentAlignment="Center" VerticalAlignment="Center" FontSize="12" />
+					VerticalContentAlignment="Center" VerticalAlignment="Center" FontSize="12" Command="{Binding OpenHelpCommand}" />
 			<Button Grid.Column="1" Grid.Row="0" x:Name="OpenLogFolderBtn" Content="Logs" HorizontalContentAlignment="Center" HorizontalAlignment="Center"
-					VerticalContentAlignment="Center" VerticalAlignment="Center" FontSize="12" />
+					VerticalContentAlignment="Center" VerticalAlignment="Center" FontSize="12" Command="{Binding OpenLogFolderCommand}" />
 		</Grid>
 		<Button Grid.Row="0" Grid.Column="1" x:Name="ViewLogBtn" Content="Watch Log" IsVisible="True" HorizontalAlignment="Center"
 				VerticalAlignment="Center" HorizontalContentAlignment="Center" FontSize="12" VerticalContentAlignment="Center" />
 		<Button Grid.Row="0" Grid.Column="2" x:Name="DoTraceRteBtn" Content="Trace Route" HorizontalContentAlignment="Center" HorizontalAlignment="Center"
-				VerticalContentAlignment="Center" VerticalAlignment="Center" FontSize="12" />
+				VerticalContentAlignment="Center" VerticalAlignment="Center" FontSize="12" Command="{Binding OpenTraceRouteCommand}" />
 		<TabControl x:Name="RightTabs" Grid.Row="0" Grid.Column="4" Grid.RowSpan="10" Height="400">
 			<TabItem>
 				<TabItem.Header>
@@ -70,7 +71,7 @@
 			</TabItem>
 		</TabControl>
 		<Button Grid.Column="3" Grid.Row="4" Margin="4,7,4,7" x:Name="PingWindowToggle" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
-				VerticalContentAlignment="Center" VerticalAlignment="Stretch" Content="&lt;&lt;" FontSize="10" />
+				VerticalContentAlignment="Center" VerticalAlignment="Stretch" i:Attached.Icon="fas fa-angle-double-left" FontSize="10" />
 		<Label Grid.Row="1" Grid.Column="0" Content="Host Name:" HorizontalAlignment="Stretch" Margin="0" VerticalAlignment="Stretch"
 			   HorizontalContentAlignment="Right" VerticalContentAlignment="Center" FontSize="12" />
 		<Label Grid.Row="2" Grid.Column="0" Content="IP Address:" HorizontalAlignment="Stretch" Margin="0" VerticalAlignment="Stretch"

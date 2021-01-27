@@ -4,6 +4,8 @@ using Avalonia.ReactiveUI;
 using System;
 using Serilog;
 using PingLogger.Models;
+using Projektanker.Icons.Avalonia;
+using Projektanker.Icons.Avalonia.FontAwesome;
 
 namespace PingLogger
 {
@@ -45,9 +47,16 @@ namespace PingLogger
 			}
 		}
 
+		private static void AfterSetupCallback(AppBuilder appBuilder)
+		{
+			// Register icon provider(s)
+			IconProvider.Register<FontAwesomeIconProvider>();
+		}
+
 		// Avalonia configuration, don't remove; also used by visual designer.
 		public static AppBuilder BuildAvaloniaApp()
 			=> AppBuilder.Configure<App>()
+				.AfterSetup(AfterSetupCallback)
 				.UsePlatformDetect()
 				.LogToTrace()
 				.UseReactiveUI();

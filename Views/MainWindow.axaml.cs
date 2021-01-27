@@ -18,5 +18,6 @@ namespace PingLogger.Views
 		{
 			AvaloniaXamlLoader.Load(this);
 		}
+
 	}
 }

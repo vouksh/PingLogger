@@ -18,5 +18,13 @@ namespace PingLogger.Views
 		{
 			AvaloniaXamlLoader.Load(this);
 		}
+
+		public void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+		{
+			if(DataContext is ViewModels.TraceRouteViewModel viewModel)
+			{
+				viewModel.CloseWindow(sender, e);
+			}
+		}
 	}
 }

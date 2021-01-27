@@ -26,6 +26,10 @@ namespace PingLogger
 				{
 					DataContext = mwVM
 				};
+				if(Workers.Config.StartApplicationMinimized)
+				{
+					desktop.MainWindow.WindowState = Avalonia.Controls.WindowState.Minimized;
+				}
 			}
 
 			base.OnFrameworkInitializationCompleted();

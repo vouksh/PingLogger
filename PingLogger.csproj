@@ -12,8 +12,10 @@
 	<PackageReference Include="Avalonia" Version="0.10.0" />
 	<PackageReference Include="Avalonia.Desktop" Version="0.10.0" />
 	<PackageReference Include="Avalonia.Diagnostics" Version="0.10.0" />
+	<PackageReference Include="Avalonia.HtmlRenderer" Version="0.6.1" />
 	<PackageReference Include="Avalonia.ReactiveUI" Version="0.10.0" />
 	<PackageReference Include="Microsoft.Win32.Registry" Version="5.0.0" />
+	<PackageReference Include="Projektanker.Icons.Avalonia.FontAwesome" Version="3.0.0-pre" />
 	<PackageReference Include="Serilog" Version="2.10.0" />
 	<PackageReference Include="Serilog.Sinks.Console" Version="3.1.1" />
 	<PackageReference Include="Serilog.Sinks.File" Version="4.1.0" />

@@ -1,15 +1,17 @@
+using Avalonia;
 using Avalonia.Controls;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Linq;
+using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Interactivity;
 using PingLogger.Models;
 using PingLogger.Workers;
-using Avalonia.Interactivity;
 using ReactiveUI;
-using System.Reactive;
+using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using Avalonia.Threading;
+using System.Linq;
+using System.Reactive;
+using Projektanker.Icons.Avalonia;
+using Projektanker.Icons.Avalonia.FontAwesome;
 
 namespace PingLogger.ViewModels
 {
@@ -18,7 +20,7 @@ namespace PingLogger.ViewModels
 		public ReactiveCommand<string, Unit> CloseTabCommand { get; }
 		public ReactiveCommand<Unit, Unit> AddTabCommand { get; }
 		public ReactiveCommand<Unit, Unit> OpenOptionsCommand { get; }
-		private ObservableCollection<TabItem> _tabItems = new ObservableCollection<TabItem>();
+		private readonly ObservableCollection<TabItem> _tabItems = new ObservableCollection<TabItem>();
 		public delegate void ThemeChangedEventHandler(object sender);
 		public event ThemeChangedEventHandler ThemeChanged;
 
@@ -27,7 +29,7 @@ namespace PingLogger.ViewModels
 			CloseTabCommand = ReactiveCommand.Create<string>(CloseTab);
 			AddTabCommand = ReactiveCommand.Create(AddBlankTab);
 			OpenOptionsCommand = ReactiveCommand.Create(OpenOptions);
-			_tabItems.CollectionChanged += _tabItems_CollectionChanged;
+			_tabItems.CollectionChanged += TabItems_CollectionChanged;
 		}
 
 		private void OpenOptions()
@@ -38,13 +40,16 @@ namespace PingLogger.ViewModels
 			{
 				DataContext = optionsViewModel
 			};
-			
-			optionsDialog.Show();
+
+			if (Application.Current.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+			{
+				optionsDialog.ShowDialog(desktop.MainWindow);
+			}
 		}
 
-		private void _tabItems_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+		private void TabItems_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
 		{
-			this.RaisePropertyChanged("TabItems");
+			this.RaisePropertyChanged(nameof(TabItems));
 		}
 
 		public static string Title
@@ -59,7 +64,7 @@ namespace PingLogger.ViewModels
 		{
 			get
 			{
-				if(_tabItems.Count == 0)
+				if (_tabItems.Count == 0)
 				{
 					GenerateTabItems();
 				}
@@ -71,11 +76,12 @@ namespace PingLogger.ViewModels
 		{
 			if (Config.Hosts.Any())
 			{
-				foreach(Host host in Config.Hosts)
+				foreach (Host host in Config.Hosts)
 				{
 					AddTabItem(host, true);
 				}
-			} else
+			}
+			else
 			{
 				var newHost = new Host()
 				{
@@ -88,9 +94,10 @@ namespace PingLogger.ViewModels
 			{
 				Header = new Button()
 				{
-					Content = "+",
+					Content = new Icon() { Value = "fas fa-plus-square" },
 					FontSize = 14,
-					Command = AddTabCommand
+					Command = AddTabCommand,
+					Padding = new Thickness(0)
 				}
 			};
 			_tabItems.Add(newTabTI);
@@ -98,7 +105,8 @@ namespace PingLogger.ViewModels
 
 		private void AddBlankTab()
 		{
-			var newHost = new Host { 
+			var newHost = new Host
+			{
 				HostName = "google.com",
 				Id = Guid.NewGuid()
 			};
@@ -115,7 +123,7 @@ namespace PingLogger.ViewModels
 				VerticalAlignment = Avalonia.Layout.VerticalAlignment.Stretch,
 				Height = 36
 			};
-			
+
 			var headerText = new TextBlock()
 			{
 				Text = host.HostName,
@@ -123,18 +131,20 @@ namespace PingLogger.ViewModels
 				HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Center,
 				VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center,
 				Background = Avalonia.Media.Brushes.Transparent,
-				Padding = new Avalonia.Thickness(5, 0, 0, 0),
+				Padding = new Thickness(5, 0, 0, 0),
 				Classes = new Classes("Tab")
 			};
 			headerGrid.Children.Add(headerText);
 
-			var closeTabBtn = new Button() { 
-				Content = "X", 
-				FontSize = 12, 
-				Command = CloseTabCommand, 
+			var closeTabBtn = new Button()
+			{
+				Content = new Icon() { Value = "fas fa-times" },
+				FontSize = 12,
+				Command = CloseTabCommand,
 				CommandParameter = host.Id.ToString(),
-				Margin = new Avalonia.Thickness(2, 0, 0, 0),
-				Padding = new Avalonia.Thickness(1, 1, 1, 1)
+				Margin = new Thickness(2, 0, 0, 0),
+				Padding = new Thickness(1, 1, 1, 1),
+				Foreground = Avalonia.Media.Brushes.Red
 			};
 			Grid.SetColumn(closeTabBtn, 1);
 			headerGrid.Children.Add(closeTabBtn);
@@ -151,17 +161,40 @@ namespace PingLogger.ViewModels
 				Host = host
 			};
 			pingControlVM.HostNameUpdated += PingControlVM_HostNameUpdated;
+			pingControlVM.TraceRouteCallback += PingControlVM_TraceRouteCallback;
 			var pingControl = new Views.PingControl()
 			{
 				DataContext = pingControlVM
 			};
 			tabItem.Content = pingControl;
-			if(!AddOnRuntime)
+			if (!AddOnRuntime)
 			{
 				_tabItems.Insert(count - 1, tabItem);
-			} else
+			}
+			else
 			{
 				_tabItems.Add(tabItem);
+			}
+		}
+
+		private void PingControlVM_TraceRouteCallback(object sender, TraceRouteCallbackEventArgs e)
+		{
+			if (!Config.Hosts.Any(h => h.HostName.ToLower() == e.HostName.ToLower()))
+			{
+				var newHost = new Host
+				{
+					HostName = e.HostName,
+					Id = Guid.NewGuid()
+				};
+				Config.Hosts.Add(newHost);
+				AddTabItem(newHost);
+			}
+			else
+			{
+				if (Application.Current.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+				{
+					Views.MessageBox.ShowAsError("Error", "Host already exists");
+				}
 			}
 		}
 
@@ -182,7 +215,7 @@ namespace PingLogger.ViewModels
 				HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Center,
 				VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center,
 				Background = Avalonia.Media.Brushes.Transparent,
-				Padding = new Avalonia.Thickness(5, 0, 0, 0),
+				Padding = new Thickness(5, 0, 0, 0),
 				Classes = new Classes("Tab")
 			};
 			headerGrid.Children.Add(headerText);
@@ -193,8 +226,8 @@ namespace PingLogger.ViewModels
 				FontSize = 12,
 				Command = CloseTabCommand,
 				CommandParameter = e.HostId,
-				Margin = new Avalonia.Thickness(2, 0, 0, 0),
-				Padding = new Avalonia.Thickness(1, 1, 1, 1)
+				Margin = new Thickness(2, 0, 0, 0),
+				Padding = new Thickness(1, 1, 1, 1)
 			};
 			Grid.SetColumn(closeTabBtn, 1);
 			headerGrid.Children.Add(closeTabBtn);
@@ -210,7 +243,7 @@ namespace PingLogger.ViewModels
 
 		public void SelectedTabChanged(object sender, RoutedEventArgs e)
 		{
-			
+
 		}
 	}
 }

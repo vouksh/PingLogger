@@ -33,10 +33,11 @@ namespace PingLogger
 				else
 				{
 					var appExePath = Environment.CurrentDirectory;
+					/*
 					if (!appExePath.EndsWith(Path.DirectorySeparatorChar))
 					{
 						appExePath += Path.DirectorySeparatorChar;
-					}
+					}*/
 					return appExePath;
 				}
 			}

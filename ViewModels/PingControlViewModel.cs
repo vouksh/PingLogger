@@ -1,37 +1,43 @@
-﻿using System;
+﻿using Avalonia;
+using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Threading;
+using PingLogger.Extensions;
+using PingLogger.Models;
+using PingLogger.Workers;
+using ReactiveUI;
+using Serilog;
+using System;
 using System.IO;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Reactive;
 using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using Avalonia.Threading;
-using PingLogger.Models;
-using PingLogger.Workers;
-using ReactiveUI;
-using PingLogger.Extensions;
-using Serilog;
+using System.Diagnostics;
 
 namespace PingLogger.ViewModels
 {
 	public class PingControlViewModel : ViewModelBase
 	{
-		private readonly SynchronizationContext syncCtx;
 		public Host Host { get; set; }
 		private Pinger _pinger;
 		public ReactiveCommand<string, Unit> PingCommand { get; }
+		public ReactiveCommand<Unit, Unit> OpenTraceRouteCommand { get; }
+		public ReactiveCommand<Unit, Unit> OpenLogFolderCommand { get; }
+		public ReactiveCommand<Unit, Unit> OpenHelpCommand { get; }
 		readonly DispatcherTimer Timer;
 		private readonly FixedList<long> PingTimes = new FixedList<long>(23);
 		private long totalPings = 0;
 		public delegate void HostNameUpdatedHandler(object sender, HostNameUpdatedEventArgs e);
 		public event HostNameUpdatedHandler HostNameUpdated;
+		public delegate void TraceRouteCallbackHandler(object sender, TraceRouteCallbackEventArgs e);
+		public event TraceRouteCallbackHandler TraceRouteCallback;
 
 		public PingControlViewModel()
 		{
-			syncCtx = SynchronizationContext.Current;
 			PingCommand = ReactiveCommand.Create<string>(TriggerPinger);
+			OpenTraceRouteCommand = ReactiveCommand.Create(OpenTraceRoute);
+			OpenLogFolderCommand = ReactiveCommand.Create(OpenLogFolder);
+			OpenHelpCommand = ReactiveCommand.Create(OpenHelp);
 
 			Timer = new DispatcherTimer()
 			{
@@ -43,16 +49,76 @@ namespace PingLogger.ViewModels
 		}
 
 
+		private void OpenHelp()
+		{
+			if (OperatingSystem.IsWindows())
+			{
+				try
+				{
+					Process.Start("https://github.com/vouksh/PingLogger/blob/master/README.md");
+				}
+				catch
+				{
+					Process.Start(new ProcessStartInfo("cmd", $"/c start https://github.com/vouksh/PingLogger/blob/master/README.md")
+					{
+						CreateNoWindow = true
+					});
+				}
+			}
+			else if (OperatingSystem.IsLinux())
+			{
+				Process.Start("xdg-open", "https://github.com/vouksh/PingLogger/blob/master/README.md");
+			}
+			else if (OperatingSystem.IsMacOS())
+			{
+				Process.Start("open", "https://github.com/vouksh/PingLogger/blob/master/README.md");
+			}
+		}
+
+		private void OpenLogFolder()
+		{
+			if (OperatingSystem.IsWindows())
+			{
+				Process.Start("explorer.exe", $"{Config.LogSavePath}{Host.HostName}");
+			}
+			else if (OperatingSystem.IsLinux())
+			{
+				Process.Start("xdg-open", $"{Config.LogSavePath}{Path.DirectorySeparatorChar}{Host.HostName}");
+			}
+			else if (OperatingSystem.IsMacOS())
+			{
+				Process.Start("open", $"{Config.LogSavePath}{Path.DirectorySeparatorChar}{Host.HostName}");
+			}
+		}
+
+		private void OpenTraceRoute()
+		{
+			var traceRouteVM = new TraceRouteViewModel()
+			{
+				Host = Host,
+				_pinger = _pinger
+			};
+			traceRouteVM.TraceRouteCallback += (object s, TraceRouteCallbackEventArgs e) => TraceRouteCallback?.Invoke(s, e);
+			var traceRouteWindow = new Views.TraceRouteWindow()
+			{
+				DataContext = traceRouteVM
+			};
+			if (Application.Current.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+			{
+				traceRouteWindow.ShowDialog(desktop.MainWindow);
+			}
+		}
+
 		private void Timer_Tick(object sender, EventArgs e)
 		{
 			if (_pinger is not null && _pinger.Running)
 			{
 				StringBuilder sb = new StringBuilder();
-				for(int i = 0; i < _pinger.Replies.Count - 1; i++)
+				for (int i = 0; i < _pinger.Replies.Count - 1; i++)
 				{
 					totalPings++;
 					var success = _pinger.Replies.TryTake(out Reply reply);
-					if(success)
+					if (success)
 					{
 						Log.Debug("Ping Success");
 						sb.Append($"[{reply.DateTime:T}] ");
@@ -82,13 +148,13 @@ namespace PingLogger.ViewModels
 				}
 				PingStatusText += sb.ToString();
 				var lines = PingStatusText.Split(Environment.NewLine).ToList();
-				if(lines.Count > PingTimes.MaxSize)
+				if (lines.Count > PingTimes.MaxSize)
 				{
 					lines.RemoveAt(0);
 					PingStatusText = string.Join(Environment.NewLine, lines);
 				}
 
-				if(PingTimes.Count > 0)
+				if (PingTimes.Count > 0)
 				{
 					AveragePing = Math.Ceiling(PingTimes.Average()).ToString() + "ms";
 				}
@@ -97,15 +163,16 @@ namespace PingLogger.ViewModels
 			else
 			{
 				StopButtonEnabled = false;
-				if(Host.IP == "Invalid Host Name")
+				if (Host.IP == "Invalid Host Name")
 				{
 					StartButtonEnabled = false;
-				} else
+				}
+				else
 				{
 					StartButtonEnabled = true;
 				}
 			}
-			if(Host.IP == "CHANGEME")
+			if (Host.IP == "CHANGEME")
 			{
 				UpdateIP();
 			}
@@ -149,13 +216,14 @@ namespace PingLogger.ViewModels
 				var index = Config.Hosts.IndexOf(Host);
 				Config.Hosts[index] = Host;
 			}
-			catch { 
+			catch
+			{
 			}
 		}
 
 		private void TriggerPinger(string start)
 		{
-			if(start == "true")
+			if (start == "true")
 			{
 				Log.Debug("TriggerPinger(true)");
 				StartButtonEnabled = false;
@@ -167,7 +235,8 @@ namespace PingLogger.ViewModels
 				PacketSizeBoxEnabled = false;
 				_pinger = new Pinger(Host);
 				_pinger.Start();
-			} else
+			}
+			else
 			{
 				Log.Debug("TriggerPinger(false)");
 				StartButtonEnabled = true;
@@ -347,7 +416,7 @@ namespace PingLogger.ViewModels
 					if (ip.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
 					{
 						Host.IP = ip.ToString();
-						this.RaisePropertyChanged("IPAddress");
+						this.RaisePropertyChanged(nameof(IPAddress));
 						break;
 					}
 				}
