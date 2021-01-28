@@ -17,7 +17,7 @@ namespace PingLogger.ViewModels
 		{
 			daysToKeepLogs = Config.DaysToKeepLogs;
 			loadWithSystemBoot = Config.LoadWithSystemBoot;
-			if (!OperatingSystem.IsWindows())
+			if (OperatingSystem.IsWindows())
 				AutoUpdateAllowed = true;
 			else
 				AutoUpdateAllowed = false;

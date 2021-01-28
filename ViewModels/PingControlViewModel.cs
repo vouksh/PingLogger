@@ -248,6 +248,7 @@ namespace PingLogger.ViewModels
 				WarningBoxEnabled = false;
 				TimeoutBoxEnabled = false;
 				PacketSizeBoxEnabled = false;
+				IPEnabled = false;
 				_pinger = new Pinger(Host);
 				_pinger.Start();
 			}
@@ -261,6 +262,7 @@ namespace PingLogger.ViewModels
 				WarningBoxEnabled = true;
 				TimeoutBoxEnabled = true;
 				PacketSizeBoxEnabled = true;
+				IPEnabled = true;
 				_pinger?.Stop();
 			}
 		}
@@ -347,6 +349,13 @@ namespace PingLogger.ViewModels
 			{
 				Host.PacketSize = value;
 			}
+		}
+
+		private bool ipEnabled = true;
+		public bool IPEnabled
+		{
+			get => ipEnabled;
+			set => this.RaiseAndSetIfChanged(ref ipEnabled, value);
 		}
 
 		private bool startButtonEnabled = true;

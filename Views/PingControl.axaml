@@ -90,7 +90,7 @@
 				 Padding="0"  IsEnabled="{Binding HostNameBoxEnabled}"/>
 		<TextBox Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" x:Name="IPAddressBox" HorizontalAlignment="Stretch" Margin="3" Text="{Binding IPAddress}"
 				 TextWrapping="NoWrap" VerticalAlignment="Stretch" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" FontSize="16"
-				 Padding="0" IsReadOnly="True" />
+				 Padding="0" IsReadOnly="True" IsEnabled="{Binding IPEnabled}" />
 		<TextBox Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2" x:Name="IntervalBox" HorizontalAlignment="Stretch" Margin="3" Text="{Binding Interval}"
 				 TextWrapping="NoWrap" VerticalAlignment="Stretch" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" FontSize="16"
 				 Padding="0" IsEnabled="{Binding IntervalBoxEnabled}"/>

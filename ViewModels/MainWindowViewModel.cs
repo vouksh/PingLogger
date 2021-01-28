@@ -23,6 +23,7 @@ namespace PingLogger.ViewModels
 		private readonly ObservableCollection<TabItem> _tabItems = new ObservableCollection<TabItem>();
 		public delegate void ThemeChangedEventHandler(object sender);
 		public event ThemeChangedEventHandler ThemeChanged;
+		private Views.AddHostDialog AddHostDialog;
 
 		public MainWindowViewModel()
 		{
@@ -101,6 +102,7 @@ namespace PingLogger.ViewModels
 
 		private void AddBlankTab()
 		{
+			/*
 			var newHost = new Host
 			{
 				HostName = "google.com",
@@ -108,6 +110,28 @@ namespace PingLogger.ViewModels
 			};
 			Config.Hosts.Add(newHost);
 			AddTabItem(newHost);
+			*/
+			if (Application.Current.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+			{
+				var addHostVM = new AddHostDialogViewModel();
+				addHostVM.WindowClosed += AddHostVM_WindowClosed;
+				AddHostDialog = new Views.AddHostDialog()
+				{
+					DataContext = addHostVM
+				};
+				AddHostDialog.ShowDialog(desktop.MainWindow);
+			}
+		}
+
+		private void AddHostVM_WindowClosed(object sender, AddHostEventArgs e)
+		{
+			if(e.IsValid)
+			{
+				var newHost = new Host(e.HostName, e.IPAddress);
+				Config.Hosts.Add(newHost);
+				AddTabItem(newHost);
+			}
+			AddHostDialog.Close();
 		}
 
 		private void AddTabItem(Host host)

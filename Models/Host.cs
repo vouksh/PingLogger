@@ -13,6 +13,14 @@ namespace PingLogger.Models
 		public int PacketSize { get; set; } = 32;
 		public int Interval { get; set; } = 1000;
 		public int Timeout { get; set; } = 1000;
+		public Host() { }
+
+		public Host(string hostName, string ipAddress)
+		{
+			HostName = hostName;
+			IP = string.IsNullOrWhiteSpace(ipAddress) ? "0.0.0.0" : ipAddress;
+			Id = Guid.NewGuid();
+		}
 
 		public override bool Equals(object obj)
 		{
