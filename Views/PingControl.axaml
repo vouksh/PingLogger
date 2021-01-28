@@ -38,9 +38,10 @@
 			<Button Grid.Column="0" Grid.Row="0" x:Name="HelpBtn" Content="Help" HorizontalContentAlignment="Center" HorizontalAlignment="Center"
 					VerticalContentAlignment="Center" VerticalAlignment="Center" FontSize="12" Command="{Binding OpenHelpCommand}" />
 			<Button Grid.Column="1" Grid.Row="0" x:Name="OpenLogFolderBtn" Content="Logs" HorizontalContentAlignment="Center" HorizontalAlignment="Center"
-					VerticalContentAlignment="Center" VerticalAlignment="Center" FontSize="12" Command="{Binding OpenLogFolderCommand}" />
+					VerticalContentAlignment="Center" VerticalAlignment="Center" FontSize="12" Command="{Binding OpenLogFolderCommand}" 
+					IsVisible="{Binding OpenLogFolderVisible}"/>
 		</Grid>
-		<Button Grid.Row="0" Grid.Column="1" x:Name="ViewLogBtn" Content="Watch Log" IsVisible="True" HorizontalAlignment="Center"
+		<Button Grid.Row="0" Grid.Column="1" x:Name="ViewLogBtn" Content="Watch Log" IsVisible="{Binding WatchLogVisible}" HorizontalAlignment="Center"
 				VerticalAlignment="Center" HorizontalContentAlignment="Center" FontSize="12" VerticalContentAlignment="Center" />
 		<Button Grid.Row="0" Grid.Column="2" x:Name="DoTraceRteBtn" Content="Trace Route" HorizontalContentAlignment="Center" HorizontalAlignment="Center"
 				VerticalContentAlignment="Center" VerticalAlignment="Center" FontSize="12" Command="{Binding OpenTraceRouteCommand}" />

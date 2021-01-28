@@ -13,6 +13,7 @@ using System.Net;
 using System.Reactive;
 using System.Text;
 using System.Diagnostics;
+using System.Threading;
 
 namespace PingLogger.ViewModels
 {
@@ -31,6 +32,7 @@ namespace PingLogger.ViewModels
 		public event HostNameUpdatedHandler HostNameUpdated;
 		public delegate void TraceRouteCallbackHandler(object sender, TraceRouteCallbackEventArgs e);
 		public event TraceRouteCallbackHandler TraceRouteCallback;
+		readonly DispatcherTimer UpdateIPTimer;
 
 		public PingControlViewModel()
 		{
@@ -46,8 +48,20 @@ namespace PingLogger.ViewModels
 			};
 			Timer.Tick += Timer_Tick;
 			Timer.Start();
+			UpdateIPTimer = new DispatcherTimer()
+			{
+				Interval = TimeSpan.FromMilliseconds(250),
+				IsEnabled = false
+			};
+			UpdateIPTimer.Tick += UpdateIPTimer_Tick;
 		}
 
+		private void UpdateIPTimer_Tick(object sender, EventArgs e)
+		{
+			UpdateIP();
+			UpdateHost();
+			UpdateIPTimer.Stop();
+		}
 
 		private void OpenHelp()
 		{
@@ -172,10 +186,10 @@ namespace PingLogger.ViewModels
 					StartButtonEnabled = true;
 				}
 			}
-			if (Host.IP == "CHANGEME")
+			/*if (Host.IP == "CHANGEME")
 			{
 				UpdateIP();
-			}
+			}*/
 			CheckForFolder();
 		}
 
@@ -189,11 +203,11 @@ namespace PingLogger.ViewModels
 				if (Directory.Exists($"{Environment.CurrentDirectory}{Path.DirectorySeparatorChar}Logs{Path.DirectorySeparatorChar}{HostName}"))
 				{
 					DirExists = true;
-					//openLogFolderBtn.Visibility = Visibility.Visible;
+					OpenLogFolderVisible = true;
 				}
 				else
 				{
-					//openLogFolderBtn.Visibility = Visibility.Hidden;
+					OpenLogFolderVisible = false;
 				}
 			}
 			if (!LogExists)
@@ -201,11 +215,11 @@ namespace PingLogger.ViewModels
 				if (File.Exists($"{Environment.CurrentDirectory}{Path.DirectorySeparatorChar}Logs{Path.DirectorySeparatorChar}{HostName}{Path.DirectorySeparatorChar}{HostName}-{DateTime.Now:yyyyMMdd}.log"))
 				{
 					LogExists = true;
-					//viewLogBtn.Visibility = Visibility.Visible;
+					WatchLogVisible = true;
 				}
 				else
 				{
-					//viewLogBtn.Visibility = Visibility.Hidden;
+					WatchLogVisible = false;
 				}
 			}
 		}
@@ -213,6 +227,7 @@ namespace PingLogger.ViewModels
 		{
 			try
 			{
+				Host.HostName = hostName;
 				var index = Config.Hosts.IndexOf(Host);
 				Config.Hosts[index] = Host;
 			}
@@ -250,28 +265,39 @@ namespace PingLogger.ViewModels
 			}
 		}
 
+		private string hostName = string.Empty;
 		public string HostName
 		{
 			get
 			{
-				return Host.HostName;
+				if (string.IsNullOrWhiteSpace(hostName))
+					hostName = Host.HostName;
+
+				return hostName;
 			}
 			set
 			{
-				Host.HostName = value;
-				Host.IP = "CHANGEME";
-				HostNameUpdated?.Invoke(this, new HostNameUpdatedEventArgs(HostName, Host.Id.ToString()));
-				UpdateHost();
+				StartButtonEnabled = false;
+				UpdateIPTimer.Stop();
+				UpdateIPTimer.Start();
+				HostNameUpdated?.Invoke(this, new HostNameUpdatedEventArgs(value, Host.Id.ToString()));
+				this.RaiseAndSetIfChanged(ref hostName, value);
 			}
 		}
 
+		private string ipAddress = string.Empty;
 		public string IPAddress
 		{
 			get
 			{
-				if (string.IsNullOrEmpty(Host.IP))
+				if (string.IsNullOrEmpty(ipAddress))
 					UpdateIP();
-				return Host.IP;
+				return ipAddress;
+			}
+			set
+			{
+				this.RaiseAndSetIfChanged(ref ipAddress, value);
+				Host.IP = value;
 			}
 		}
 
@@ -407,6 +433,20 @@ namespace PingLogger.ViewModels
 			private set => this.RaiseAndSetIfChanged(ref pingStatusText, value);
 		}
 
+		private bool openLogFolderVisible = false;
+		public bool OpenLogFolderVisible
+		{
+			get => openLogFolderVisible;
+			set => this.RaiseAndSetIfChanged(ref openLogFolderVisible, value);
+		}
+
+		private bool watchLogVisible = false;
+		public bool WatchLogVisible
+		{
+			get => watchLogVisible;
+			set => this.RaiseAndSetIfChanged(ref watchLogVisible, value);
+		}
+
 		private async void UpdateIP()
 		{
 			try
@@ -415,15 +455,20 @@ namespace PingLogger.ViewModels
 				{
 					if (ip.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
 					{
-						Host.IP = ip.ToString();
+						IPAddress = ip.ToString();
 						this.RaisePropertyChanged(nameof(IPAddress));
-						break;
+						return;
 					}
 				}
+				if(System.Net.IPAddress.TryParse(HostName, out _))
+				{
+					IPAddress = HostName;
+					this.RaisePropertyChanged(nameof(IPAddress));
+				}
 			}
-			catch (Exception)
+			catch (System.Net.Sockets.SocketException)
 			{
-				Host.IP = "Invalid Host Name";
+				IPAddress = "Invalid Host Name";
 			}
 		}
 	}

@@ -76,7 +76,11 @@ namespace PingLogger.ViewModels
 		public int SelectedTabIndex
 		{
 			get => selectedTabIndex;
-			set => this.RaiseAndSetIfChanged(ref selectedTabIndex, value);
+			set
+			{
+				Config.LastSelectedTab = value;
+				this.RaiseAndSetIfChanged(ref selectedTabIndex, value);
+			}
 		}
 
 		private void GenerateTabItems()
@@ -87,6 +91,7 @@ namespace PingLogger.ViewModels
 				{
 					AddTabItem(host);
 				}
+				SelectedTabIndex = Config.LastSelectedTab;
 			}
 			else
 			{
@@ -190,7 +195,8 @@ namespace PingLogger.ViewModels
 			{
 				ColumnDefinitions = new ColumnDefinitions("*,20"),
 				VerticalAlignment = Avalonia.Layout.VerticalAlignment.Stretch,
-				Height = 36
+				Height = 36,
+				Tag = e.HostId
 			};
 
 			var headerText = new TextBlock()
@@ -207,13 +213,15 @@ namespace PingLogger.ViewModels
 
 			var closeTabBtn = new Button()
 			{
-				Content = "X",
+				Content = new Icon() { Value = "fas fa-times" },
 				FontSize = 12,
 				Command = CloseTabCommand,
 				CommandParameter = e.HostId,
 				Margin = new Thickness(2, 0, 0, 0),
-				Padding = new Thickness(1, 1, 1, 1)
+				Padding = new Thickness(1, 1, 1, 1),
+				Foreground = Avalonia.Media.Brushes.Red
 			};
+
 			Grid.SetColumn(closeTabBtn, 1);
 			headerGrid.Children.Add(closeTabBtn);
 			_tabItems[index].Header = headerGrid;
