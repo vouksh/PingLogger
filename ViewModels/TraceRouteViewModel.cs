@@ -145,7 +145,7 @@ namespace PingLogger.ViewModels
 		private async Task RunTraceRoute()
 		{
 			var result = new List<TraceReply>();
-			string data = Util.RandomString(Host.PacketSize);
+			string data = Utils.RandomString(Host.PacketSize);
 			byte[] buffer = Encoding.ASCII.GetBytes(data);
 
 			using var ping = new Ping();

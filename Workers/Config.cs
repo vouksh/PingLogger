@@ -204,7 +204,7 @@ namespace PingLogger.Workers
 			Log.Debug("Waiting for config file lock..");
 			lock (_fileLock)
 			{
-				string dataPath = $"{Util.FileBasePath}/config.dat";
+				string dataPath = $"{Utils.FileBasePath}/config.dat";
 				Log.Information("SaveConfig() Called");
 				var hostData = JsonSerializer.Serialize(Hosts, new JsonSerializerOptions { WriteIndented = true });
 				var configData = JsonSerializer.Serialize(Options, new JsonSerializerOptions { WriteIndented = true });
@@ -287,7 +287,7 @@ namespace PingLogger.Workers
 		{
 			if (Options == null)
 			{
-				string dataPath = $"{Util.FileBasePath}/config.dat";
+				string dataPath = $"{Utils.FileBasePath}/config.dat";
 				if (File.Exists(dataPath))
 				{
 					Log.Debug("Waiting for config file lock..");
@@ -320,8 +320,8 @@ namespace PingLogger.Workers
 						Hosts = new ObservableCollection<Host>();
 						Options = new AppOptions()
 						{
-							EnableAutoUpdate = !Util.AppIsClickOnce,
-							LogSavePath = Util.FileBasePath + Path.DirectorySeparatorChar + "Logs"
+							EnableAutoUpdate = !Utils.AppIsClickOnce,
+							LogSavePath = Utils.FileBasePath + Path.DirectorySeparatorChar + "Logs"
 						};
 					}
 					SaveConfig();

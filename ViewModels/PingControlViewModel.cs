@@ -14,6 +14,8 @@ using System.Reactive;
 using System.Text;
 using System.Diagnostics;
 using System.Threading;
+using OxyPlot;
+using OxyPlot.Series;
 
 namespace PingLogger.ViewModels
 {
@@ -54,6 +56,19 @@ namespace PingLogger.ViewModels
 				IsEnabled = false
 			};
 			UpdateIPTimer.Tick += UpdateIPTimer_Tick;
+
+			GraphModel = new PlotModel();
+			GraphModel.Axes.Add(new OxyPlot.Axes.LinearAxis
+			{
+				Position = OxyPlot.Axes.AxisPosition.Left,
+				Minimum = 0,
+				Maximum = 500
+			});
+			GraphModel.Axes.Add(new OxyPlot.Axes.DateTimeAxis()
+			{
+				Position = OxyPlot.Axes.AxisPosition.Bottom
+			});
+			GraphModel.Series.Add(new OxyPlot.Series.LineSeries { LineStyle = LineStyle.Solid });
 		}
 
 		private void UpdateIPTimer_Tick(object sender, EventArgs e)
@@ -134,6 +149,7 @@ namespace PingLogger.ViewModels
 					var success = _pinger.Replies.TryTake(out Reply reply);
 					if (success)
 					{
+						//TODO: Add graphing data.
 						Log.Debug("Ping Success");
 						sb.Append($"[{reply.DateTime:T}] ");
 						if (reply.RoundTrip > 0)
@@ -454,6 +470,20 @@ namespace PingLogger.ViewModels
 		{
 			get => watchLogVisible;
 			set => this.RaiseAndSetIfChanged(ref watchLogVisible, value);
+		}
+
+		private PlotModel graphModel;
+		public PlotModel GraphModel
+		{
+			get => graphModel;
+			set => this.RaiseAndSetIfChanged(ref graphModel, value);
+		}
+
+		private PlotModel statusModel;
+		public PlotModel StatusModel
+		{
+			get => statusModel;
+			set => this.RaiseAndSetIfChanged(ref statusModel, value);
 		}
 
 		private async void UpdateIP()

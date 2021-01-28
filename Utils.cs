@@ -13,7 +13,8 @@ using System.Threading.Tasks;
 
 namespace PingLogger
 {
-	public static class Util
+	using PingLogger.Extensions;
+	public static partial class Utils
 	{
 		static Views.SplashScreen SplashScreen;
 		static ViewModels.SplashScreenViewModel SplashScreenViewModel;
@@ -213,7 +214,7 @@ msiexec.exe /l* '{ AppContext.BaseDirectory}Logs\Installer - v{remoteVersion}.lo
 				{
 					if (OperatingSystem.IsWindows())
 					{
-						return WinUtils.GetLightMode();
+						return Utils.Win.GetLightMode();
 					}
 					else
 					{

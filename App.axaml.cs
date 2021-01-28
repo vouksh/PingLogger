@@ -6,6 +6,7 @@ using PingLogger.ViewModels;
 using PingLogger.Views;
 using ReactiveUI;
 using System.Threading.Tasks;
+using PingLogger.Extensions;
 
 namespace PingLogger
 {
@@ -29,7 +30,7 @@ namespace PingLogger
 				};
 				if (System.OperatingSystem.IsWindows() && Workers.Config.EnableAutoUpdate)
 				{
-					while (!await Util.CheckForUpdates())
+					while (!await Utils.CheckForUpdates())
 					{
 						desktop.MainWindow.Hide();
 						await Task.Delay(250);
@@ -47,28 +48,35 @@ namespace PingLogger
 
 		private void SetTheme()
 		{
+			var oxyPlotUri = new System.Uri("resm:OxyPlot.Avalonia.Themes.Default.xaml?assembly=OxyPlot.Avalonia");
 			var theme = new Avalonia.Themes.Fluent.FluentTheme(new System.Uri("avares://Avalonia.Themes.Fluent/FluentTheme.xaml"));
 			var uri = new System.Uri("avares://PingLogger/Themes/Dark.axaml");
 			var darkXAML = new StyleInclude(uri)
 			{
 				Source = uri
 			};
+			var oxyPlotTheme = new StyleInclude(oxyPlotUri)
+			{
+				Source = oxyPlotUri
+			};
 			switch (Workers.Config.Theme)
 			{
 				case Models.Theme.Auto:
 					if (System.OperatingSystem.IsWindows())
 					{
-						if (WinUtils.GetLightMode())
+						if (Utils.Win.GetLightMode())
 						{
 							Styles.Clear();
 							theme.Mode = Avalonia.Themes.Fluent.FluentThemeMode.Light;
 							Styles.Add(theme);
+							Styles.Add(oxyPlotTheme);
 						} else
 						{
 							Styles.Clear();
 							theme.Mode = Avalonia.Themes.Fluent.FluentThemeMode.Dark;
 							Styles.Add(theme);
 							Styles.Add(darkXAML);
+							Styles.Add(oxyPlotTheme);
 						}
 					}
 					else
@@ -77,6 +85,7 @@ namespace PingLogger
 						theme.Mode = Avalonia.Themes.Fluent.FluentThemeMode.Dark;
 						Styles.Add(theme);
 						Styles.Add(darkXAML);
+						Styles.Add(oxyPlotTheme);
 
 					}
 					break;
@@ -85,11 +94,13 @@ namespace PingLogger
 					theme.Mode = Avalonia.Themes.Fluent.FluentThemeMode.Dark;
 					Styles.Add(theme);
 					Styles.Add(darkXAML);
+					Styles.Add(oxyPlotTheme);
 					break;
 				case Models.Theme.Light:
 					Styles.Clear();
 					theme.Mode = Avalonia.Themes.Fluent.FluentThemeMode.Light;
 					Styles.Add(theme);
+					Styles.Add(oxyPlotTheme);
 					break;
 			}
 		}

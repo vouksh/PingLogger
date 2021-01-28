@@ -1,15 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reactive;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using Avalonia.Threading;
-using ReactiveUI;
-using PingLogger.Workers;
-using System.Net;
+﻿using Avalonia.Threading;
 using PingLogger.Models;
+using PingLogger.Workers;
+using ReactiveUI;
+using System;
+using System.Linq;
+using System.Net;
+using System.Reactive;
 
 namespace PingLogger.ViewModels
 {
@@ -36,18 +32,18 @@ namespace PingLogger.ViewModels
 
 		private async void Timer_Tick(object sender, EventArgs e)
 		{
-			if(!Config.Hosts.Any(h => h.HostName == HostName || h.IP == HostName))
+			if (!Config.Hosts.Any(h => h.HostName == HostName || h.IP == HostName))
 			{
 				SpinnerVisible = true;
 				TextVisible = false;
 				InvalidIconVisible = false;
 				try
 				{
-					if(!string.IsNullOrWhiteSpace(HostName))
+					if (!string.IsNullOrWhiteSpace(HostName))
 					{
-						foreach(var ip in await Dns.GetHostAddressesAsync(HostName))
+						foreach (var ip in await Dns.GetHostAddressesAsync(HostName))
 						{
-							if(ip.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
+							if (ip.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
 							{
 								IPAddress = ip.ToString();
 								AddEnabled = true;
@@ -65,7 +61,8 @@ namespace PingLogger.ViewModels
 					TextVisible = true;
 					InvalidIconVisible = false;
 				}
-			} else
+			}
+			else
 			{
 				AddEnabled = false;
 				SpinnerVisible = false;

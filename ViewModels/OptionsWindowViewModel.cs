@@ -26,7 +26,8 @@ namespace PingLogger.ViewModels
 		public int DaysToKeepLogs
 		{
 			get => daysToKeepLogs;
-			set {
+			set
+			{
 				this.RaiseAndSetIfChanged(ref daysToKeepLogs, value);
 				Config.DaysToKeepLogs = value;
 			}
@@ -47,6 +48,7 @@ namespace PingLogger.ViewModels
 			{
 				this.RaiseAndSetIfChanged(ref loadWithSystemBoot, value);
 				Config.LoadWithSystemBoot = value;
+				ToggleStartupShortcut();
 			}
 		}
 
@@ -54,7 +56,8 @@ namespace PingLogger.ViewModels
 		public bool StartLoggersAutomatically
 		{
 			get => startLoggersAutomatically;
-			set {
+			set
+			{
 				this.RaiseAndSetIfChanged(ref startLoggersAutomatically, value);
 				Config.StartLoggersAutomatically = value;
 			}
@@ -91,6 +94,28 @@ namespace PingLogger.ViewModels
 				this.RaiseAndSetIfChanged(ref selectedTheme, value);
 				Config.Theme = (Models.Theme)value;
 				ThemeChanged?.Invoke(this);
+			}
+		}
+
+		private void ToggleStartupShortcut()
+		{
+			if (LoadWithSystemBoot)
+			{
+				if (OperatingSystem.IsWindows())
+					Utils.Win.CreateShortcut();
+				else if (OperatingSystem.IsLinux())
+					Utils.Linux.CreateShortcut();
+				else
+					Views.MessageBox.ShowAsError("Error", "This option is not avaiable on MacOS");
+			}
+			else
+			{
+				if (OperatingSystem.IsWindows())
+					Utils.Win.DeleteShortcut();
+				else if (OperatingSystem.IsLinux())
+					Utils.Linux.DeleteShortcut();
+				else
+					Views.MessageBox.ShowAsError("Error", "This option is not avaiable on MacOS");
 			}
 		}
 	}

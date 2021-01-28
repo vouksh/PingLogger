@@ -7,6 +7,7 @@
     </Application.DataTemplates>
 
     <Application.Styles>
+		<StyleInclude Source="resm:OxyPlot.Avalonia.Themes.Default.xaml?assembly=OxyPlot.Avalonia"/>
 		<StyleInclude Source="/Themes/Dark.axaml" />
         <FluentTheme Mode="Dark"/>
     </Application.Styles>

@@ -3,6 +3,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 			 xmlns:i="clr-namespace:Projektanker.Icons.Avalonia;assembly=Projektanker.Icons.Avalonia"
+			 xmlns:oxy="clr-namespace:OxyPlot.Avalonia;assembly=OxyPlot.Avalonia"
              mc:Ignorable="d" d:DesignWidth="785" d:DesignHeight="415"
              xmlns:vm="using:PingLogger.ViewModels"
              x:Class="PingLogger.Views.PingControl">
@@ -58,18 +59,18 @@
 				<TabItem.Header>
 					<TextBlock FontSize="12" Height="20" Text="Ping Graph" Foreground="White" />
 				</TabItem.Header>
-				<TextBlock Padding="6,2,5,0" HorizontalAlignment="Stretch" Margin="0" TextWrapping="NoWrap" VerticalAlignment="Stretch" IsEnabled="false">
-					Not Yet Implemented
-				</TextBlock>
+				<oxy:PlotView Model="{Binding GraphModel}" />
 			</TabItem>
+			<!--
 			<TabItem>
 				<TabItem.Header>
 					<TextBlock FontSize="12" Height="20" Text="Status Graph" Foreground="White" />
 				</TabItem.Header>
 				<TextBlock Padding="6,2,5,0" HorizontalAlignment="Stretch" Margin="0" TextWrapping="NoWrap" VerticalAlignment="Stretch" IsEnabled="false">
-					Not Yet Implemented
+					<oxy:PlotView Model="{Binding StatusModel}" />
 				</TextBlock>
 			</TabItem>
+			-->
 		</TabControl>
 		<Button Grid.Column="3" Grid.Row="4" Margin="4,7,4,7" x:Name="PingWindowToggle" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
 				VerticalContentAlignment="Center" VerticalAlignment="Stretch" i:Attached.Icon="fas fa-angle-double-left" FontSize="10" />
