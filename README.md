@@ -1,18 +1,18 @@
 # PingLogger #
-### Version 2 is GUI only. ###
+### Version 3 ###
 Download the latest release from [Here](https://github.com/vouksh/PingLogger/releases/latest)
 
 ## Features ##
-* Offers 2 distribution methods
-  * Single-file that can be placed anywhere and ran. Trade offs are file size and more manual clean up if you want to remove it.
-  * Installer that defaults to C:\PingLogger. Smaller download, and allows for easy removal.
+* Offers several distribution methods
+  * ClickOnce application for Windows easy install/deployment. [Get it here](https://pinglogger.lexdysia.com/clickonce)
+  * Windows Installer that defaults to C:\PingLogger. Smaller download, and allows for easy removal.
 * Allows for many simultaneous hosts to be logged at one time.
   * Only limit is your network capabilities.
   * Verifies that the host exists before starting. 
 * Extremely flexible
   * Change your timeout, packet size, ping interval, or warning threshold. 
   * Great for power users. 
-* Can start on demand, or with windows logon. 
+* Can start on demand, or with OS logon. 
 * Interface adapts to users dark/light mode presences in Windows.
 
 ## Help!! ##
