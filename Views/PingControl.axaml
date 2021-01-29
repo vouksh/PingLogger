@@ -59,18 +59,14 @@
 				<TabItem.Header>
 					<TextBlock FontSize="12" Height="20" Text="Ping Graph" Foreground="White" />
 				</TabItem.Header>
-				<oxy:PlotView Model="{Binding GraphModel}" />
+				<oxy:PlotView Model="{Binding GraphModel}" VerticalAlignment="Stretch" />
 			</TabItem>
-			<!--
 			<TabItem>
 				<TabItem.Header>
 					<TextBlock FontSize="12" Height="20" Text="Status Graph" Foreground="White" />
 				</TabItem.Header>
-				<TextBlock Padding="6,2,5,0" HorizontalAlignment="Stretch" Margin="0" TextWrapping="NoWrap" VerticalAlignment="Stretch" IsEnabled="false">
-					<oxy:PlotView Model="{Binding StatusModel}" />
-				</TextBlock>
+				<oxy:PlotView Model="{Binding StatusModel}" VerticalAlignment="Stretch" />
 			</TabItem>
-			-->
 		</TabControl>
 		<Button Grid.Column="3" Grid.Row="4" Margin="4,7,4,7" x:Name="PingWindowToggle" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
 				VerticalContentAlignment="Center" VerticalAlignment="Stretch" i:Attached.Icon="fas fa-angle-double-left" FontSize="10" />

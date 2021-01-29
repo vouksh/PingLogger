@@ -16,6 +16,8 @@ using System.Diagnostics;
 using System.Threading;
 using OxyPlot;
 using OxyPlot.Series;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 namespace PingLogger.ViewModels
 {
@@ -60,16 +62,21 @@ namespace PingLogger.ViewModels
 			GraphModel = new PlotModel();
 			GraphModel.Axes.Add(new OxyPlot.Axes.LinearAxis
 			{
-				Position = OxyPlot.Axes.AxisPosition.Left,
-				Minimum = 0,
-				Maximum = 500
+				Position = OxyPlot.Axes.AxisPosition.Left
 			});
 			GraphModel.Axes.Add(new OxyPlot.Axes.DateTimeAxis()
 			{
-				Position = OxyPlot.Axes.AxisPosition.Bottom
+				Position = OxyPlot.Axes.AxisPosition.Bottom,
+				StringFormat = "hh:mm:ss"
 			});
-			GraphModel.Series.Add(new OxyPlot.Series.LineSeries { LineStyle = LineStyle.Solid });
+			GraphModel.Series.Add(new LineSeries { LineStyle = LineStyle.Solid });
+
+			StatusModel = new PlotModel();
+			StatusModel.Series.Add(new PieSeries());
+			(StatusModel.Series[0] as PieSeries).Slices.Add(new PieSlice("Success", 0));
+			(StatusModel.Series[0] as PieSeries).Slices.Add(new PieSlice("Failure", 0));
 		}
+
 
 		private void UpdateIPTimer_Tick(object sender, EventArgs e)
 		{
@@ -149,7 +156,25 @@ namespace PingLogger.ViewModels
 					var success = _pinger.Replies.TryTake(out Reply reply);
 					if (success)
 					{
-						//TODO: Add graphing data.
+						var s = (LineSeries)GraphModel.Series[0];
+						var maxPoints = Host.Interval * 30;
+						if (s.Points.Count > maxPoints)
+							s.Points.RemoveAt(0);
+						s.Points.Add(new DataPoint(reply.DateTime.ToOADate(), reply.RoundTrip));
+						Dispatcher.UIThread.InvokeAsync(() => GraphModel.InvalidatePlot(true), DispatcherPriority.Background);
+
+						var p = (PieSeries)StatusModel.Series[0];
+						if(reply.Succeeded.Value)
+						{
+							var oldValue = p.Slices[0].Value;
+							p.Slices[0] = new PieSlice("Success", oldValue + 1);
+						} else
+						{
+							var oldValue = p.Slices[1].Value;
+							p.Slices[1] = new PieSlice("Failure", oldValue + 1);
+						}
+						Dispatcher.UIThread.InvokeAsync(() => StatusModel.InvalidatePlot(true), DispatcherPriority.Background);
+
 						Log.Debug("Ping Success");
 						sb.Append($"[{reply.DateTime:T}] ");
 						if (reply.RoundTrip > 0)
@@ -485,6 +510,7 @@ namespace PingLogger.ViewModels
 			get => statusModel;
 			set => this.RaiseAndSetIfChanged(ref statusModel, value);
 		}
+
 
 		private async void UpdateIP()
 		{
