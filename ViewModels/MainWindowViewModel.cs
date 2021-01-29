@@ -96,21 +96,18 @@ namespace PingLogger.ViewModels
 			}
 			else
 			{
-				AddBlankTab();
+				var newHost = new Host
+				{
+					HostName = "google.com",
+					Id = Guid.NewGuid()
+				};
+				Config.Hosts.Add(newHost);
+				AddTabItem(newHost);
 			}
 		}
 
 		private void AddBlankTab()
 		{
-			/*
-			var newHost = new Host
-			{
-				HostName = "google.com",
-				Id = Guid.NewGuid()
-			};
-			Config.Hosts.Add(newHost);
-			AddTabItem(newHost);
-			*/
 			if (Application.Current.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
 			{
 				var addHostVM = new AddHostDialogViewModel();
