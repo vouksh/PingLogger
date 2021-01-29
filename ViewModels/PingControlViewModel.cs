@@ -1,23 +1,21 @@
 ﻿using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Threading;
+using OxyPlot;
+using OxyPlot.Series;
 using PingLogger.Extensions;
 using PingLogger.Models;
 using PingLogger.Workers;
 using ReactiveUI;
 using Serilog;
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Reactive;
 using System.Text;
-using System.Diagnostics;
-using System.Threading;
-using OxyPlot;
-using OxyPlot.Series;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
+using System.Threading.Tasks;
 
 namespace PingLogger.ViewModels
 {
@@ -29,6 +27,7 @@ namespace PingLogger.ViewModels
 		public ReactiveCommand<Unit, Unit> OpenTraceRouteCommand { get; }
 		public ReactiveCommand<Unit, Unit> OpenLogFolderCommand { get; }
 		public ReactiveCommand<Unit, Unit> WatchLogCommand { get; }
+		public ReactiveCommand<Unit, Unit> WindowExpanderCommand { get; }
 		readonly DispatcherTimer Timer;
 		private readonly FixedList<long> PingTimes = new FixedList<long>(23);
 		private long totalPings = 0;
@@ -36,6 +35,8 @@ namespace PingLogger.ViewModels
 		public event HostNameUpdatedHandler HostNameUpdated;
 		public delegate void TraceRouteCallbackHandler(object sender, TraceRouteCallbackEventArgs e);
 		public event TraceRouteCallbackHandler TraceRouteCallback;
+		public delegate void WindowExpansionHandler(object sender, bool expand);
+		public event WindowExpansionHandler WindowExpandedEvent;
 		readonly DispatcherTimer UpdateIPTimer;
 
 		public PingControlViewModel()
@@ -44,6 +45,7 @@ namespace PingLogger.ViewModels
 			OpenTraceRouteCommand = ReactiveCommand.Create(OpenTraceRoute);
 			OpenLogFolderCommand = ReactiveCommand.Create(OpenLogFolder);
 			WatchLogCommand = ReactiveCommand.Create(WatchLog);
+			WindowExpanderCommand = ReactiveCommand.Create(ToggleWindow);
 
 			Timer = new DispatcherTimer()
 			{
@@ -59,6 +61,17 @@ namespace PingLogger.ViewModels
 			};
 			UpdateIPTimer.Tick += UpdateIPTimer_Tick;
 			SetupGraphs();
+			showRightTabs = Config.WindowExpanded;
+			expanderIcon = Config.WindowExpanded ? "fas fa-angle-double-left" : "fas fa-angle-double-right";
+		}
+
+		private async void ToggleWindow()
+		{
+			Config.WindowExpanded = !Config.WindowExpanded;
+			ExpanderIcon = Config.WindowExpanded ? "fas fa-angle-double-left" : "fas fa-angle-double-right";
+			WindowExpandedEvent?.Invoke(this, Config.WindowExpanded);
+			await Task.Delay(10);
+			ShowRightTabs = Config.WindowExpanded;
 		}
 
 		private void WatchLog()
@@ -90,12 +103,15 @@ namespace PingLogger.ViewModels
 				IntervalType = OxyPlot.Axes.DateTimeIntervalType.Seconds
 			});
 			GraphModel.Series.Add(new LineSeries { LineStyle = LineStyle.Solid });
+			GraphModel.Padding = new OxyThickness(5);
 
 			StatusModel = new PlotModel();
-			StatusModel.Series.Add(new PieSeries());
-			(StatusModel.Series[0] as PieSeries).Slices.Add(new PieSlice("Success", 0));
-			(StatusModel.Series[0] as PieSeries).Slices.Add(new PieSlice("Failure", 0));
-			switch(Config.Theme)
+			StatusModel.Series.Add(new PieSeries() { Diameter = 0.8 });
+			(StatusModel.Series[0] as PieSeries).Slices.Add(new PieSlice("Success", 0) { Fill = OxyColor.FromRgb(51, 204, 0) });
+			(StatusModel.Series[0] as PieSeries).Slices.Add(new PieSlice("Warning", 0) { Fill = OxyColor.FromRgb(235, 224, 19) });
+			(StatusModel.Series[0] as PieSeries).Slices.Add(new PieSlice("Failure", 0) { Fill = OxyColor.FromRgb(194, 16, 16) });
+			StatusModel.Padding = new OxyThickness(5);
+			switch (Config.Theme)
 			{
 				case Theme.Dark:
 					GraphModel.Background = OxyColor.Parse("#2A2A2A");
@@ -106,7 +122,7 @@ namespace PingLogger.ViewModels
 					StatusModel.TextColor = OxyColor.Parse("#F0F0F0");
 					break;
 				case Theme.Auto:
-					if(App.DarkMode)
+					if (App.DarkMode)
 					{
 						GraphModel.Background = OxyColor.Parse("#2A2A2A");
 						GraphModel.LegendTextColor = OxyColor.Parse("#F0F0F0");
@@ -128,18 +144,13 @@ namespace PingLogger.ViewModels
 
 		private void OpenLogFolder()
 		{
-			if (OperatingSystem.IsWindows())
-			{
-				Process.Start("explorer.exe", $"{Config.LogSavePath}{Host.HostName}");
-			}
-			else if (OperatingSystem.IsLinux())
-			{
-				Process.Start("xdg-open", $"{Config.LogSavePath}{Path.DirectorySeparatorChar}{Host.HostName}");
-			}
-			else if (OperatingSystem.IsMacOS())
-			{
-				Process.Start("open", $"{Config.LogSavePath}{Path.DirectorySeparatorChar}{Host.HostName}");
-			}
+#if Windows
+			Process.Start("explorer.exe", $"{Config.LogSavePath}{Host.HostName}");
+#elif Linux
+			Process.Start("xdg-open", $"{Config.LogSavePath}{Path.DirectorySeparatorChar}{Host.HostName}");
+#elif OSX
+			Process.Start("open", $"{Config.LogSavePath}{Path.DirectorySeparatorChar}{Host.HostName}");
+#endif
 		}
 
 		private void OpenTraceRoute()
@@ -164,6 +175,8 @@ namespace PingLogger.ViewModels
 		{
 			if (_pinger is not null && _pinger.Running)
 			{
+				StopButtonEnabled = true;
+				StartButtonEnabled = false;
 				StringBuilder sb = new StringBuilder();
 				for (int i = 0; i < _pinger.Replies.Count - 1; i++)
 				{
@@ -179,14 +192,23 @@ namespace PingLogger.ViewModels
 						Dispatcher.UIThread.InvokeAsync(() => GraphModel.InvalidatePlot(true), DispatcherPriority.Background);
 
 						var p = (PieSeries)StatusModel.Series[0];
-						if(reply.Succeeded.Value)
+						if (reply.Succeeded.Value)
 						{
-							var oldValue = p.Slices[0].Value;
-							p.Slices[0] = new PieSlice("Success", oldValue + 1);
-						} else
+							if (reply.RoundTrip > Host.Threshold)
+							{
+								var oldValue = p.Slices[1].Value;
+								p.Slices[1] = new PieSlice("Warning", oldValue + 1) { Fill = OxyColor.FromRgb(235, 224, 19) };
+							}
+							else
+							{
+								var oldValue = p.Slices[0].Value;
+								p.Slices[0] = new PieSlice("Success", oldValue + 1) { Fill = OxyColor.FromRgb(51, 204, 0) };
+							}
+						}
+						else
 						{
-							var oldValue = p.Slices[1].Value;
-							p.Slices[1] = new PieSlice("Failure", oldValue + 1);
+							var oldValue = p.Slices[2].Value;
+							p.Slices[2] = new PieSlice("Failure", oldValue + 1) { Fill = OxyColor.FromRgb(194, 16, 16) };
 						}
 						Dispatcher.UIThread.InvokeAsync(() => StatusModel.InvalidatePlot(true), DispatcherPriority.Background);
 
@@ -359,51 +381,71 @@ namespace PingLogger.ViewModels
 			}
 		}
 
+		private int interval = 0;
 		public int Interval
 		{
 			get
 			{
-				return Host.Interval;
+				if (interval == 0)
+					interval = Host.Interval;
+				return interval;
 			}
 			set
 			{
+				this.RaiseAndSetIfChanged(ref interval, value);
 				Host.Interval = value;
+				UpdateHost();
 			}
 		}
 
+		private int warningThreshold = 0;
 		public int WarningThreshold
 		{
 			get
 			{
-				return Host.Threshold;
+				if (warningThreshold == 0)
+					warningThreshold = Host.Threshold;
+				return warningThreshold;
 			}
 			set
 			{
+				this.RaiseAndSetIfChanged(ref warningThreshold, value);
 				Host.Threshold = value;
+				UpdateHost();
 			}
 		}
 
+		private int timeout = 0;
 		public int Timeout
 		{
 			get
 			{
-				return Host.Timeout;
+				if (timeout == 0)
+					timeout = Host.Timeout;
+				return timeout;
 			}
 			set
 			{
+				this.RaiseAndSetIfChanged(ref timeout, value);
 				Host.Timeout = value;
+				UpdateHost();
 			}
 		}
 
+		private int packetSize = 0;
 		public int PacketSize
 		{
 			get
 			{
-				return Host.PacketSize;
+				if (packetSize == 0)
+					packetSize = Host.PacketSize;
+				return packetSize;
 			}
 			set
 			{
+				this.RaiseAndSetIfChanged(ref packetSize, value);
 				Host.PacketSize = value;
+				UpdateHost();
 			}
 		}
 
@@ -526,6 +568,20 @@ namespace PingLogger.ViewModels
 			set => this.RaiseAndSetIfChanged(ref statusModel, value);
 		}
 
+		private bool showRightTabs = true;
+		public bool ShowRightTabs
+		{
+			get => showRightTabs;
+			set => this.RaiseAndSetIfChanged(ref showRightTabs, value);
+		}
+
+		private string expanderIcon = "fas fa-angle-double-left";
+		public string ExpanderIcon
+		{
+			get => expanderIcon;
+			set => this.RaiseAndSetIfChanged(ref expanderIcon, value);
+		}
+
 
 		private async void UpdateIP()
 		{
@@ -540,7 +596,7 @@ namespace PingLogger.ViewModels
 						return;
 					}
 				}
-				if(System.Net.IPAddress.TryParse(HostName, out _))
+				if (System.Net.IPAddress.TryParse(HostName, out _))
 				{
 					IPAddress = HostName;
 					this.RaisePropertyChanged(nameof(IPAddress));

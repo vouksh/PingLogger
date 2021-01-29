@@ -13,6 +13,7 @@ namespace PingLogger
 		{
 			public static void CreateShortcut()
 			{
+#if Linux
 				string fileContents = @$"[Desktop Entry]
 Type=Application
 Exec={AppDomain.CurrentDomain.FriendlyName}
@@ -24,11 +25,14 @@ Name=PingLogger
 Comment[en_US]=
 Comment=";
 				File.WriteAllText("~/.config/autostart/PingLogger.desktop", fileContents);
+#endif
 			}
 
 			public static void DeleteShortcut()
 			{
+#if Linux
 				File.Delete("~/.config/autostart/PingLogger.desktop");
+#endif
 			}
 		}
 	}

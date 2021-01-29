@@ -1,18 +1,17 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
-using Avalonia.Interactivity;
 using PingLogger.Models;
 using PingLogger.Workers;
+using PingLogger.Extensions;
+using Projektanker.Icons.Avalonia;
 using ReactiveUI;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Reactive;
-using Projektanker.Icons.Avalonia;
-using Projektanker.Icons.Avalonia.FontAwesome;
-using System.Diagnostics;
 
 namespace PingLogger.ViewModels
 {
@@ -34,32 +33,28 @@ namespace PingLogger.ViewModels
 			OpenOptionsCommand = ReactiveCommand.Create(OpenOptions);
 			OpenHelpCommand = ReactiveCommand.Create(OpenHelp);
 			_tabItems.CollectionChanged += TabItems_CollectionChanged;
+			WindowWidth = Config.WindowExpanded ? 805 : 410;
 		}
 
 		private void OpenHelp()
 		{
-			if (OperatingSystem.IsWindows())
+#if Windows
+			try
 			{
-				try
+				Process.Start("https://github.com/vouksh/PingLogger/blob/master/README.md");
+			}
+			catch
+			{
+				Process.Start(new ProcessStartInfo("cmd", $"/c start https://github.com/vouksh/PingLogger/blob/master/README.md")
 				{
-					Process.Start("https://github.com/vouksh/PingLogger/blob/master/README.md");
-				}
-				catch
-				{
-					Process.Start(new ProcessStartInfo("cmd", $"/c start https://github.com/vouksh/PingLogger/blob/master/README.md")
-					{
-						CreateNoWindow = true
-					});
-				}
+					CreateNoWindow = true
+				});
 			}
-			else if (OperatingSystem.IsLinux())
-			{
-				Process.Start("xdg-open", "https://github.com/vouksh/PingLogger/blob/master/README.md");
-			}
-			else if (OperatingSystem.IsMacOS())
-			{
-				Process.Start("open", "https://github.com/vouksh/PingLogger/blob/master/README.md");
-			}
+#elif Linux
+			Process.Start("xdg-open", "https://github.com/vouksh/PingLogger/blob/master/README.md");
+#elif OSX
+			Process.Start("open", "https://github.com/vouksh/PingLogger/blob/master/README.md");
+#endif
 		}
 
 		private void OpenOptions()
@@ -79,11 +74,11 @@ namespace PingLogger.ViewModels
 
 		private void OptionsViewModel_ThemeChanged(object sender)
 		{
-			foreach(var tabItem in _tabItems)
+			ThemeChanged?.Invoke(sender);
+			foreach (var tabItem in _tabItems)
 			{
 				((tabItem.Content as Views.PingControl).DataContext as PingControlViewModel).SetupGraphs();
 			}
-			ThemeChanged?.Invoke(sender);
 		}
 
 		private void TabItems_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
@@ -96,7 +91,7 @@ namespace PingLogger.ViewModels
 			get
 			{
 				Version version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
-				return $"PingLogger v{version}";
+				return $"PingLogger v{version.ToShortString()}";
 			}
 		}
 		public List<TabItem> TabItems
@@ -122,6 +117,13 @@ namespace PingLogger.ViewModels
 			}
 		}
 
+		private int windowWidth = 805;
+		public int WindowWidth
+		{
+			get => windowWidth;
+			set => this.RaiseAndSetIfChanged(ref windowWidth, value);
+		}
+
 		private void GenerateTabItems()
 		{
 			if (Config.Hosts.Any())
@@ -142,6 +144,18 @@ namespace PingLogger.ViewModels
 				Config.Hosts.Add(newHost);
 				AddTabItem(newHost);
 			}
+			StartAllLoggers();
+		}
+
+		private void StartAllLoggers()
+		{
+			if(Config.StartLoggersAutomatically)
+			{
+				foreach(TabItem tabItem in _tabItems)
+				{
+					((tabItem.Content as Views.PingControl).DataContext as PingControlViewModel).TriggerPinger("true");
+				}
+			}
 		}
 
 		private void AddBlankTab()
@@ -160,7 +174,7 @@ namespace PingLogger.ViewModels
 
 		private void AddHostVM_WindowClosed(object sender, AddHostEventArgs e)
 		{
-			if(e.IsValid)
+			if (e.IsValid)
 			{
 				var newHost = new Host(e.HostName, e.IPAddress);
 				Config.Hosts.Add(newHost);
@@ -215,6 +229,7 @@ namespace PingLogger.ViewModels
 			{
 				Host = host
 			};
+			pingControlVM.WindowExpandedEvent += PingControlVM_WindowExpandedEvent;
 			pingControlVM.HostNameUpdated += PingControlVM_HostNameUpdated;
 			pingControlVM.TraceRouteCallback += PingControlVM_TraceRouteCallback;
 			var pingControl = new Views.PingControl()
@@ -224,6 +239,18 @@ namespace PingLogger.ViewModels
 			tabItem.Content = pingControl;
 			_tabItems.Add(tabItem);
 			SelectedTabIndex = _tabItems.IndexOf(tabItem);
+		}
+
+		private void PingControlVM_WindowExpandedEvent(object sender, bool expand)
+		{
+			if (expand)
+			{
+				WindowWidth = 805;
+			}
+			else
+			{
+				WindowWidth = 410;
+			}
 		}
 
 		private void PingControlVM_TraceRouteCallback(object sender, TraceRouteCallbackEventArgs e)
@@ -291,7 +318,7 @@ namespace PingLogger.ViewModels
 			var tabItem = _tabItems.IndexOf(_tabItems.First(t => t.Tag.ToString() == tabId));
 			_tabItems.RemoveAt(tabItem);
 			Config.Hosts.RemoveAt(Config.Hosts.IndexOf(Config.Hosts.First(h => h.Id.ToString() == tabId)));
-			if(_tabItems.Count == 0)
+			if (_tabItems.Count == 0)
 			{
 				AddBlankTab();
 			}

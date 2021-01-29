@@ -4,7 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 			 xmlns:i="clr-namespace:Projektanker.Icons.Avalonia;assembly=Projektanker.Icons.Avalonia"
 			 xmlns:oxy="clr-namespace:OxyPlot.Avalonia;assembly=OxyPlot.Avalonia"
-             mc:Ignorable="d" d:DesignWidth="785" d:DesignHeight="415"
+             mc:Ignorable="d" d:DesignWidth="785" d:DesignHeight="400"
              xmlns:vm="using:PingLogger.ViewModels"
              x:Class="PingLogger.Views.PingControl">
 	<Grid x:Name="MainControl">
@@ -29,7 +29,6 @@
 			<RowDefinition Height="40" />
 			<RowDefinition Height="40" />
 			<RowDefinition Height="40" />
-			<RowDefinition Height="9" />
 		</Grid.RowDefinitions>
 		<Button Grid.Column="0" Grid.Row="0" x:Name="OpenLogFolderBtn" Content="Logs" HorizontalContentAlignment="Center" HorizontalAlignment="Center"
 				VerticalContentAlignment="Center" VerticalAlignment="Center" FontSize="12" Command="{Binding OpenLogFolderCommand}" 
@@ -39,7 +38,8 @@
 				VerticalContentAlignment="Center" Command="{Binding WatchLogCommand}" />
 		<Button Grid.Row="0" Grid.Column="2" x:Name="DoTraceRteBtn" Content="Trace Route" HorizontalContentAlignment="Center" HorizontalAlignment="Center"
 				VerticalContentAlignment="Center" VerticalAlignment="Center" FontSize="12" Command="{Binding OpenTraceRouteCommand}" />
-		<TabControl x:Name="RightTabs" Grid.Row="0" Grid.Column="4" Grid.RowSpan="10" Height="400">
+		<TabControl x:Name="RightTabs" Grid.Row="0" Grid.Column="4" Grid.RowSpan="10" IsVisible="{Binding ShowRightTabs}"
+					VerticalContentAlignment="Stretch" VerticalAlignment="Stretch" Margin="0 0 0 10">
 			<TabItem>
 				<TabItem.Header>
 					<TextBlock FontSize="12" Height="20" Text="Ping Responses" Foreground="White" />
@@ -52,7 +52,9 @@
 				<TabItem.Header>
 					<TextBlock FontSize="12" Height="20" Text="Ping Graph" Foreground="White" />
 				</TabItem.Header>
-				<oxy:PlotView Model="{Binding GraphModel}" VerticalAlignment="Stretch" />
+				<TabItem.Content>
+					<oxy:PlotView Model="{Binding GraphModel}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="10" Padding="10" />
+				</TabItem.Content>
 			</TabItem>
 			<TabItem>
 				<TabItem.Header>
@@ -61,8 +63,9 @@
 				<oxy:PlotView Model="{Binding StatusModel}" VerticalAlignment="Stretch" />
 			</TabItem>
 		</TabControl>
-		<Button Grid.Column="3" Grid.Row="4" Margin="4,7,4,7" x:Name="PingWindowToggle" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
-				VerticalContentAlignment="Center" VerticalAlignment="Stretch" i:Attached.Icon="fas fa-angle-double-left" FontSize="10" />
+		<Button Grid.Column="3" Grid.Row="4" x:Name="PingWindowToggle" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
+				VerticalContentAlignment="Center" VerticalAlignment="Stretch" i:Attached.Icon="{Binding ExpanderIcon}" FontSize="14" 
+				Command="{Binding WindowExpanderCommand}"/>
 		<Label Grid.Row="1" Grid.Column="0" Content="Host Name:" HorizontalAlignment="Stretch" Margin="0" VerticalAlignment="Stretch"
 			   HorizontalContentAlignment="Right" VerticalContentAlignment="Center" FontSize="12" />
 		<Label Grid.Row="2" Grid.Column="0" Content="IP Address:" HorizontalAlignment="Stretch" Margin="0" VerticalAlignment="Stretch"

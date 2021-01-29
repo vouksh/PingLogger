@@ -4,17 +4,17 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 		xmlns:i="clr-namespace:Projektanker.Icons.Avalonia;assembly=Projektanker.Icons.Avalonia"
-        mc:Ignorable="d" d:DesignWidth="805" d:DesignHeight="480"
+        mc:Ignorable="d" d:DesignWidth="805" d:DesignHeight="420"
         x:Class="PingLogger.Views.MainWindow"
         Icon="/AppIcon.ico"
         Title="{Binding Title}"
-		Width="805" Height="480"
+		Width="{Binding WindowWidth}" Height="420"
         CanResize="false" Closing="Window_Closing"
 		TransparencyLevelHint="Transparent">
     <Design.DataContext>
         <vm:MainWindowViewModel/>
     </Design.DataContext>
-	<Grid>
+	<Grid VerticalAlignment="Top">
 	    <TabControl Padding="0" Items="{Binding TabItems}" FontSize="12" Classes="MainTab" SelectedIndex="{Binding SelectedTabIndex}" />
 		<StackPanel Orientation="Horizontal" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="4">
 		    <Button HorizontalAlignment="Right" VerticalAlignment="Top" Margin="6"

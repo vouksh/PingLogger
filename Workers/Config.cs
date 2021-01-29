@@ -320,7 +320,9 @@ namespace PingLogger.Workers
 						Hosts = new ObservableCollection<Host>();
 						Options = new AppOptions()
 						{
-							EnableAutoUpdate = !Utils.AppIsClickOnce,
+#if Windows
+							EnableAutoUpdate = !Utils.Win.AppIsClickOnce,
+#endif
 							LogSavePath = Utils.FileBasePath + Path.DirectorySeparatorChar + "Logs"
 						};
 					}
