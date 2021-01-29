@@ -18,7 +18,10 @@
 		<DefineConstants>Linux</DefineConstants>
 	</PropertyGroup>
 	<ItemGroup>
-		<AvaloniaResource Include="Assets\**" />
+	  <None Remove="AppIcon.ico" />
+	</ItemGroup>
+	<ItemGroup>
+	  <AvaloniaResource Include="AppIcon.ico" />
 	</ItemGroup>
 	<ItemGroup>
 		<PackageReference Include="Avalonia" Version="0.10.0" />

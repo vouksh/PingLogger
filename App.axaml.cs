@@ -17,6 +17,8 @@ namespace PingLogger
 			AvaloniaXamlLoader.Load(this);
 		}
 
+		public static bool DarkMode { get; set; } = false;
+
 		public override async void OnFrameworkInitializationCompleted()
 		{
 			if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
@@ -50,10 +52,15 @@ namespace PingLogger
 		{
 			var oxyPlotUri = new System.Uri("resm:OxyPlot.Avalonia.Themes.Default.xaml?assembly=OxyPlot.Avalonia");
 			var theme = new Avalonia.Themes.Fluent.FluentTheme(new System.Uri("avares://Avalonia.Themes.Fluent/FluentTheme.xaml"));
-			var uri = new System.Uri("avares://PingLogger/Themes/Dark.axaml");
-			var darkXAML = new StyleInclude(uri)
+			var darkUri = new System.Uri("avares://PingLogger/Themes/Dark.axaml");
+			var darkXAML = new StyleInclude(darkUri)
 			{
-				Source = uri
+				Source = darkUri
+			};
+			var lightUri = new System.Uri("avares://PingLogger/Themes/Light.axaml");
+			var lightXAML = new StyleInclude(lightUri)
+			{
+				Source = lightUri
 			};
 			var oxyPlotTheme = new StyleInclude(oxyPlotUri)
 			{
@@ -68,39 +75,45 @@ namespace PingLogger
 						{
 							Styles.Clear();
 							theme.Mode = Avalonia.Themes.Fluent.FluentThemeMode.Light;
-							Styles.Add(theme);
 							Styles.Add(oxyPlotTheme);
+							Styles.Add(theme);
+							Styles.Add(lightXAML);
+							DarkMode = false;
 						} else
 						{
 							Styles.Clear();
 							theme.Mode = Avalonia.Themes.Fluent.FluentThemeMode.Dark;
+							Styles.Add(oxyPlotTheme);
 							Styles.Add(theme);
 							Styles.Add(darkXAML);
-							Styles.Add(oxyPlotTheme);
+							DarkMode = true;
 						}
 					}
 					else
 					{
 						Styles.Clear();
 						theme.Mode = Avalonia.Themes.Fluent.FluentThemeMode.Dark;
+						Styles.Add(oxyPlotTheme);
 						Styles.Add(theme);
 						Styles.Add(darkXAML);
-						Styles.Add(oxyPlotTheme);
-
+						DarkMode = true;
 					}
 					break;
 				case Models.Theme.Dark:
 					Styles.Clear();
 					theme.Mode = Avalonia.Themes.Fluent.FluentThemeMode.Dark;
+					Styles.Add(oxyPlotTheme);
 					Styles.Add(theme);
 					Styles.Add(darkXAML);
-					Styles.Add(oxyPlotTheme);
+					DarkMode = true;
 					break;
 				case Models.Theme.Light:
 					Styles.Clear();
 					theme.Mode = Avalonia.Themes.Fluent.FluentThemeMode.Light;
-					Styles.Add(theme);
 					Styles.Add(oxyPlotTheme);
+					Styles.Add(theme);
+					Styles.Add(lightXAML);
+					DarkMode = false;
 					break;
 			}
 		}

@@ -4,7 +4,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 		xmlns:vm="using:PingLogger.ViewModels"
         mc:Ignorable="d" d:DesignWidth="450" d:DesignHeight="450"
-		Width="450" Height="450"
+		Width="450" Height="450" TransparencyLevelHint="Transparent"
         x:Class="PingLogger.Views.SplashScreen"
         Title="SplashScreen" CanResize="False"
 		WindowStartupLocation="CenterScreen">

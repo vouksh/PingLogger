@@ -12,6 +12,7 @@ using System.Linq;
 using System.Reactive;
 using Projektanker.Icons.Avalonia;
 using Projektanker.Icons.Avalonia.FontAwesome;
+using System.Diagnostics;
 
 namespace PingLogger.ViewModels
 {
@@ -20,6 +21,7 @@ namespace PingLogger.ViewModels
 		public ReactiveCommand<string, Unit> CloseTabCommand { get; }
 		public ReactiveCommand<Unit, Unit> AddTabCommand { get; }
 		public ReactiveCommand<Unit, Unit> OpenOptionsCommand { get; }
+		public ReactiveCommand<Unit, Unit> OpenHelpCommand { get; }
 		private readonly ObservableCollection<TabItem> _tabItems = new ObservableCollection<TabItem>();
 		public delegate void ThemeChangedEventHandler(object sender);
 		public event ThemeChangedEventHandler ThemeChanged;
@@ -30,13 +32,40 @@ namespace PingLogger.ViewModels
 			CloseTabCommand = ReactiveCommand.Create<string>(CloseTab);
 			AddTabCommand = ReactiveCommand.Create(AddBlankTab);
 			OpenOptionsCommand = ReactiveCommand.Create(OpenOptions);
+			OpenHelpCommand = ReactiveCommand.Create(OpenHelp);
 			_tabItems.CollectionChanged += TabItems_CollectionChanged;
+		}
+
+		private void OpenHelp()
+		{
+			if (OperatingSystem.IsWindows())
+			{
+				try
+				{
+					Process.Start("https://github.com/vouksh/PingLogger/blob/master/README.md");
+				}
+				catch
+				{
+					Process.Start(new ProcessStartInfo("cmd", $"/c start https://github.com/vouksh/PingLogger/blob/master/README.md")
+					{
+						CreateNoWindow = true
+					});
+				}
+			}
+			else if (OperatingSystem.IsLinux())
+			{
+				Process.Start("xdg-open", "https://github.com/vouksh/PingLogger/blob/master/README.md");
+			}
+			else if (OperatingSystem.IsMacOS())
+			{
+				Process.Start("open", "https://github.com/vouksh/PingLogger/blob/master/README.md");
+			}
 		}
 
 		private void OpenOptions()
 		{
 			var optionsViewModel = new OptionsWindowViewModel();
-			optionsViewModel.ThemeChanged += (object s) => ThemeChanged?.Invoke(s);
+			optionsViewModel.ThemeChanged += OptionsViewModel_ThemeChanged;
 			var optionsDialog = new Views.OptionsWindow()
 			{
 				DataContext = optionsViewModel
@@ -46,6 +75,15 @@ namespace PingLogger.ViewModels
 			{
 				optionsDialog.ShowDialog(desktop.MainWindow);
 			}
+		}
+
+		private void OptionsViewModel_ThemeChanged(object sender)
+		{
+			foreach(var tabItem in _tabItems)
+			{
+				((tabItem.Content as Views.PingControl).DataContext as PingControlViewModel).SetupGraphs();
+			}
+			ThemeChanged?.Invoke(sender);
 		}
 
 		private void TabItems_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)

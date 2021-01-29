@@ -31,19 +31,12 @@
 			<RowDefinition Height="40" />
 			<RowDefinition Height="9" />
 		</Grid.RowDefinitions>
-		<Grid Grid.Row="0" Grid.Column="0">
-			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="*"/>
-				<ColumnDefinition Width="*"/>
-			</Grid.ColumnDefinitions>
-			<Button Grid.Column="0" Grid.Row="0" x:Name="HelpBtn" Content="Help" HorizontalContentAlignment="Center" HorizontalAlignment="Center"
-					VerticalContentAlignment="Center" VerticalAlignment="Center" FontSize="12" Command="{Binding OpenHelpCommand}" />
-			<Button Grid.Column="1" Grid.Row="0" x:Name="OpenLogFolderBtn" Content="Logs" HorizontalContentAlignment="Center" HorizontalAlignment="Center"
-					VerticalContentAlignment="Center" VerticalAlignment="Center" FontSize="12" Command="{Binding OpenLogFolderCommand}" 
-					IsVisible="{Binding OpenLogFolderVisible}"/>
-		</Grid>
+		<Button Grid.Column="0" Grid.Row="0" x:Name="OpenLogFolderBtn" Content="Logs" HorizontalContentAlignment="Center" HorizontalAlignment="Center"
+				VerticalContentAlignment="Center" VerticalAlignment="Center" FontSize="12" Command="{Binding OpenLogFolderCommand}" 
+				IsVisible="{Binding OpenLogFolderVisible}"/>
 		<Button Grid.Row="0" Grid.Column="1" x:Name="ViewLogBtn" Content="Watch Log" IsVisible="{Binding WatchLogVisible}" HorizontalAlignment="Center"
-				VerticalAlignment="Center" HorizontalContentAlignment="Center" FontSize="12" VerticalContentAlignment="Center" />
+				VerticalAlignment="Center" HorizontalContentAlignment="Center" FontSize="12" 
+				VerticalContentAlignment="Center" Command="{Binding WatchLogCommand}" />
 		<Button Grid.Row="0" Grid.Column="2" x:Name="DoTraceRteBtn" Content="Trace Route" HorizontalContentAlignment="Center" HorizontalAlignment="Center"
 				VerticalContentAlignment="Center" VerticalAlignment="Center" FontSize="12" Command="{Binding OpenTraceRouteCommand}" />
 		<TabControl x:Name="RightTabs" Grid.Row="0" Grid.Column="4" Grid.RowSpan="10" Height="400">

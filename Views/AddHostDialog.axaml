@@ -5,7 +5,7 @@
 		xmlns:i="clr-namespace:Projektanker.Icons.Avalonia;assembly=Projektanker.Icons.Avalonia"
 		xmlns:vm="using:PingLogger.ViewModels"
         mc:Ignorable="d" d:DesignWidth="265" d:DesignHeight="170"
-		Width="250" Height="170" TransparencyLevelHint="Blur"
+		Width="250" Height="170" TransparencyLevelHint="Transparent"
         x:Class="PingLogger.Views.AddHostDialog"
         Title="Add New Host" CanResize="False" Padding="3">
 	<Window.Styles>

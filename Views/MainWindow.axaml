@@ -6,21 +6,24 @@
 		xmlns:i="clr-namespace:Projektanker.Icons.Avalonia;assembly=Projektanker.Icons.Avalonia"
         mc:Ignorable="d" d:DesignWidth="805" d:DesignHeight="480"
         x:Class="PingLogger.Views.MainWindow"
-        Icon="/Assets/avalonia-logo.ico"
+        Icon="/AppIcon.ico"
         Title="{Binding Title}"
 		Width="805" Height="480"
-        CanResize="false"
-		TransparencyLevelHint="Blur">
+        CanResize="false" Closing="Window_Closing"
+		TransparencyLevelHint="Transparent">
     <Design.DataContext>
         <vm:MainWindowViewModel/>
     </Design.DataContext>
 	<Grid>
 	    <TabControl Padding="0" Items="{Binding TabItems}" FontSize="12" Classes="MainTab" SelectedIndex="{Binding SelectedTabIndex}" />
 		<StackPanel Orientation="Horizontal" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="4">
-		<Button HorizontalAlignment="Right" VerticalAlignment="Top" Margin="6"
-				i:Attached.Icon="fas fa-plus-square" FontSize="16" Command="{Binding AddTabCommand}" />
-        <Button HorizontalAlignment="Right" VerticalAlignment="Top" Margin="6" 
-				i:Attached.Icon="fas fa-cogs" FontSize="16" Command="{Binding OpenOptionsCommand}" />
-	</StackPanel>
+		    <Button HorizontalAlignment="Right" VerticalAlignment="Top" Margin="6"
+				    i:Attached.Icon="fas fa-plus-square" FontSize="16" Command="{Binding AddTabCommand}" />
+            <Button HorizontalAlignment="Right" VerticalAlignment="Top" Margin="6" 
+				    i:Attached.Icon="fas fa-cogs" FontSize="16" Command="{Binding OpenOptionsCommand}" />
+			<Button HorizontalAlignment="Right" VerticalAlignment="Top" Margin="6"
+				    i:Attached.Icon="fas fa-question-circle" FontSize="16" Command="{Binding OpenHelpCommand}" />
+			
+	    </StackPanel>
 	</Grid>
 </Window>

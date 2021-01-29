@@ -1,12 +1,6 @@
 ﻿<Styles xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-
-	<Style Selector="Window">
-		<Setter Property="Background" Value="#2A2A2A" />
-	</Style>
-	
 	<Style Selector="TabControl.MainTab">
-		<Setter Property="Background" Value="#2A2A2A" />
 		<Setter Property="Height" Value="480"/>
 	</Style>
 	<Style Selector="TabControl.MainTab WrapPanel">

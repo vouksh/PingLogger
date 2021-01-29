@@ -28,7 +28,7 @@ namespace PingLogger.ViewModels
 		public ReactiveCommand<string, Unit> PingCommand { get; }
 		public ReactiveCommand<Unit, Unit> OpenTraceRouteCommand { get; }
 		public ReactiveCommand<Unit, Unit> OpenLogFolderCommand { get; }
-		public ReactiveCommand<Unit, Unit> OpenHelpCommand { get; }
+		public ReactiveCommand<Unit, Unit> WatchLogCommand { get; }
 		readonly DispatcherTimer Timer;
 		private readonly FixedList<long> PingTimes = new FixedList<long>(23);
 		private long totalPings = 0;
@@ -43,7 +43,7 @@ namespace PingLogger.ViewModels
 			PingCommand = ReactiveCommand.Create<string>(TriggerPinger);
 			OpenTraceRouteCommand = ReactiveCommand.Create(OpenTraceRoute);
 			OpenLogFolderCommand = ReactiveCommand.Create(OpenLogFolder);
-			OpenHelpCommand = ReactiveCommand.Create(OpenHelp);
+			WatchLogCommand = ReactiveCommand.Create(WatchLog);
 
 			Timer = new DispatcherTimer()
 			{
@@ -58,7 +58,26 @@ namespace PingLogger.ViewModels
 				IsEnabled = false
 			};
 			UpdateIPTimer.Tick += UpdateIPTimer_Tick;
+			SetupGraphs();
+		}
 
+		private void WatchLog()
+		{
+			var wlVM = new WatchLogViewModel()
+			{
+				Host = Host
+			};
+			var watchLogWindow = new Views.WatchLogWindow()
+			{
+				DataContext = wlVM
+			};
+			watchLogWindow.Closing += (_, _) => { wlVM.Closing(); };
+			wlVM.Start();
+			watchLogWindow.Show();
+		}
+
+		public void SetupGraphs()
+		{
 			GraphModel = new PlotModel();
 			GraphModel.Axes.Add(new OxyPlot.Axes.LinearAxis
 			{
@@ -67,7 +86,8 @@ namespace PingLogger.ViewModels
 			GraphModel.Axes.Add(new OxyPlot.Axes.DateTimeAxis()
 			{
 				Position = OxyPlot.Axes.AxisPosition.Bottom,
-				StringFormat = "hh:mm:ss"
+				StringFormat = "hh:mm:ss",
+				IntervalType = OxyPlot.Axes.DateTimeIntervalType.Seconds
 			});
 			GraphModel.Series.Add(new LineSeries { LineStyle = LineStyle.Solid });
 
@@ -75,40 +95,35 @@ namespace PingLogger.ViewModels
 			StatusModel.Series.Add(new PieSeries());
 			(StatusModel.Series[0] as PieSeries).Slices.Add(new PieSlice("Success", 0));
 			(StatusModel.Series[0] as PieSeries).Slices.Add(new PieSlice("Failure", 0));
+			switch(Config.Theme)
+			{
+				case Theme.Dark:
+					GraphModel.Background = OxyColor.Parse("#2A2A2A");
+					GraphModel.LegendTextColor = OxyColor.Parse("#F0F0F0");
+					graphModel.TextColor = OxyColor.Parse("#F0F0F0");
+					StatusModel.Background = OxyColor.Parse("#2A2A2A");
+					StatusModel.LegendTextColor = OxyColor.Parse("#F0F0F0");
+					StatusModel.TextColor = OxyColor.Parse("#F0F0F0");
+					break;
+				case Theme.Auto:
+					if(App.DarkMode)
+					{
+						GraphModel.Background = OxyColor.Parse("#2A2A2A");
+						GraphModel.LegendTextColor = OxyColor.Parse("#F0F0F0");
+						graphModel.TextColor = OxyColor.Parse("#F0F0F0");
+						StatusModel.Background = OxyColor.Parse("#2A2A2A");
+						StatusModel.LegendTextColor = OxyColor.Parse("#F0F0F0");
+						StatusModel.TextColor = OxyColor.Parse("#F0F0F0");
+					}
+					break;
+			}
 		}
-
 
 		private void UpdateIPTimer_Tick(object sender, EventArgs e)
 		{
 			UpdateIP();
 			UpdateHost();
 			UpdateIPTimer.Stop();
-		}
-
-		private void OpenHelp()
-		{
-			if (OperatingSystem.IsWindows())
-			{
-				try
-				{
-					Process.Start("https://github.com/vouksh/PingLogger/blob/master/README.md");
-				}
-				catch
-				{
-					Process.Start(new ProcessStartInfo("cmd", $"/c start https://github.com/vouksh/PingLogger/blob/master/README.md")
-					{
-						CreateNoWindow = true
-					});
-				}
-			}
-			else if (OperatingSystem.IsLinux())
-			{
-				Process.Start("xdg-open", "https://github.com/vouksh/PingLogger/blob/master/README.md");
-			}
-			else if (OperatingSystem.IsMacOS())
-			{
-				Process.Start("open", "https://github.com/vouksh/PingLogger/blob/master/README.md");
-			}
 		}
 
 		private void OpenLogFolder()
@@ -157,7 +172,7 @@ namespace PingLogger.ViewModels
 					if (success)
 					{
 						var s = (LineSeries)GraphModel.Series[0];
-						var maxPoints = Host.Interval * 30;
+						var maxPoints = (Host.Interval * 30) / 1000;
 						if (s.Points.Count > maxPoints)
 							s.Points.RemoveAt(0);
 						s.Points.Add(new DataPoint(reply.DateTime.ToOADate(), reply.RoundTrip));
@@ -277,7 +292,7 @@ namespace PingLogger.ViewModels
 			}
 		}
 
-		private void TriggerPinger(string start)
+		public void TriggerPinger(string start)
 		{
 			if (start == "true")
 			{

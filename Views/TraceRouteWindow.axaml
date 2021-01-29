@@ -5,8 +5,8 @@
         xmlns:vm="using:PingLogger.ViewModels"
 		xmlns:m="using:PingLogger.Models"
         mc:Ignorable="d" d:DesignWidth="650" d:DesignHeight="450"
-		Width="650" Height="450" TransparencyBackgroundFallback="DarkGray"
-		TransparencyLevelHint="Blur"
+		Width="650" Height="450" 
+		TransparencyLevelHint="Transparent"
         x:Class="PingLogger.Views.TraceRouteWindow"
         Title="Trace Route" CanResize="False" Closing="Window_Closing">
 	<Design.DataContext>
