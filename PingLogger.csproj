@@ -1,165 +1,42 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-
-  <PropertyGroup>
-    <OutputType>WinExe</OutputType>
-    <TargetFramework>net5.0-windows</TargetFramework>
-    <UseWPF>true</UseWPF>
-	<RuntimeIdentifier>win-x64</RuntimeIdentifier>
-	<Deterministic>false</Deterministic>
-	<AssemblyName>PingLogger</AssemblyName>
-	<PublishReadyToRunShowWarnings>true</PublishReadyToRunShowWarnings>
-	<ApplicationIcon>AppIcon.ico</ApplicationIcon>
-	<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-	<StartupObject>PingLogger.App</StartupObject>
-	<PackageLicenseFile>LICENSE.md</PackageLicenseFile>
-	<PreserveCompilationContext>false</PreserveCompilationContext>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <GenerateSerializationAssemblies>Auto</GenerateSerializationAssemblies>
-  </PropertyGroup>
-
-  <PropertyGroup>
-	<SatelliteResourceLanguages>en-US</SatelliteResourceLanguages>
-	<RunAnalyzersDuringBuild>false</RunAnalyzersDuringBuild>
-	<NoWin32Manifest>true</NoWin32Manifest>
-	<PackageIcon>AppIcon.ico</PackageIcon>
-	<Authors>Jack Butler</Authors>
-	<RepositoryUrl>https://github.com/vouksh/PingLogger</RepositoryUrl>
-	<RepositoryType>git</RepositoryType>
-	<PackageProjectUrl>https://github.com/vouksh/PingLogger</PackageProjectUrl>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DebugType>none</DebugType>
-    <DebugSymbols>false</DebugSymbols>
-  </PropertyGroup>
-
-  <ItemGroup>
-    <None Remove="Resources\Help\AutoUpdateOption.jpg" />
-    <None Remove="Resources\Help\ExpandBox.jpg" />
-    <None Remove="Resources\Help\HostNameBox.jpg" />
-    <None Remove="Resources\Help\IntervalBox.jpg" />
-    <None Remove="Resources\Help\IPAddressBox.jpg" />
-    <None Remove="Resources\Help\KeepLogsOption.jpg" />
-    <None Remove="Resources\Help\LoadWithWindowsOption.jpg" />
-    <None Remove="Resources\Help\LogsButton.jpg" />
-    <None Remove="Resources\Help\LogViewerControl.jpg" />
-    <None Remove="Resources\Help\OptionsGear.jpg" />
-    <None Remove="Resources\Help\PacketSizeBox.jpg" />
-    <None Remove="Resources\Help\PingResponseBox.jpg" />
-    <None Remove="Resources\Help\ResetCountersButton.jpg" />
-    <None Remove="Resources\Help\RunTraceButton.jpg" />
-    <None Remove="Resources\Help\StartMinimizedOption.jpg" />
-    <None Remove="Resources\Help\StartOnAppStartOption.jpg" />
-    <None Remove="Resources\Help\StartStopAllButtons.jpg" />
-    <None Remove="Resources\Help\TabBar.jpg" />
-    <None Remove="Resources\Help\ThemeOption.jpg" />
-    <None Remove="Resources\Help\TimeoutBox.jpg" />
-    <None Remove="Resources\Help\TracePlus.jpg" />
-    <None Remove="Resources\Help\TraceRouteControl.jpg" />
-    <None Remove="Resources\Help\WarningBox.jpg" />
-    <None Remove="Resources\Help\WatchLogButton.jpg" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <COMReference Include="IWshRuntimeLibrary.dll">
-      <Guid>f935dc20-1cf0-11d0-adb9-00c04fd58a0b</Guid>
-      <VersionMajor>1</VersionMajor>
-      <VersionMinor>0</VersionMinor>
-      <WrapperTool>tlbimp</WrapperTool>
-      <Lcid>0</Lcid>
-      <Isolated>false</Isolated>
-    </COMReference>
-    <None Include="AppIcon.ico">
-      <Pack>True</Pack>
-      <PackagePath></PackagePath>
-    </None>
-    <None Include="LICENSE.md">
-      <Pack>True</Pack>
-      <PackagePath></PackagePath>
-    </None>
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Include="README.md" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="FontAwesome.WPF" Version="4.7.0.9">
-      <NoWarn>NU1701</NoWarn>
-    </PackageReference>
-    <PackageReference Include="Ookii.Dialogs.Wpf" Version="3.1.0" />
-    <PackageReference Include="ScottPlot.WPF" Version="4.0.42" />
-    <PackageReference Include="Serilog" Version="2.10.0" />
-    <PackageReference Include="Serilog.Sinks.File" Version="4.1.0" />
-    <PackageReference Include="System.Net.NetworkInformation" Version="4.3.0" />
-    <PackageReference Include="System.Net.Ping" Version="4.3.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Resource Include="AppIcon.ico" />
-    <EmbeddedResource Include="Resources\Help\AutoUpdateOption.jpg" />
-    <EmbeddedResource Include="Resources\Help\ExpandBox.jpg" />
-    <EmbeddedResource Include="Resources\Help\HostNameBox.jpg" />
-    <EmbeddedResource Include="Resources\Help\IntervalBox.jpg" />
-    <EmbeddedResource Include="Resources\Help\IPAddressBox.jpg" />
-    <EmbeddedResource Include="Resources\Help\KeepLogsOption.jpg" />
-    <EmbeddedResource Include="Resources\Help\LoadWithWindowsOption.jpg" />
-    <EmbeddedResource Include="Resources\Help\LogsButton.jpg" />
-    <EmbeddedResource Include="Resources\Help\LogViewerControl.jpg" />
-    <EmbeddedResource Include="Resources\Help\OptionsGear.jpg" />
-    <EmbeddedResource Include="Resources\Help\PacketSizeBox.jpg" />
-    <EmbeddedResource Include="Resources\Help\PingResponseBox.jpg" />
-    <EmbeddedResource Include="Resources\Help\ResetCountersButton.jpg" />
-    <EmbeddedResource Include="Resources\Help\RunTraceButton.jpg" />
-    <EmbeddedResource Include="Resources\Help\StartMinimizedOption.jpg" />
-    <EmbeddedResource Include="Resources\Help\StartOnAppStartOption.jpg" />
-    <EmbeddedResource Include="Resources\Help\StartStopAllButtons.jpg" />
-    <EmbeddedResource Include="Resources\Help\TabBar.jpg" />
-    <EmbeddedResource Include="Resources\Help\ThemeOption.jpg" />
-    <EmbeddedResource Include="Resources\Help\TimeoutBox.jpg" />
-    <EmbeddedResource Include="Resources\Help\TracePlus.jpg" />
-    <EmbeddedResource Include="Resources\Help\TraceRouteControl.jpg" />
-    <EmbeddedResource Include="Resources\Help\WarningBox.jpg" />
-    <EmbeddedResource Include="Resources\Help\WatchLogButton.jpg" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
-  </ItemGroup>
-
-  <ItemGroup>
-	<TrimmerRootAssembly Include="System.Net.Ping" />
-	<TrimmerRootAssembly Include="System.Net.NetworkInformation" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Update="AssemblyInfo.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>AssemblyInfo.tt</DependentUpon>
-    </Compile>
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Update="AssemblyInfo.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>AssemblyInfo.cs</LastGenOutput>
-    </None>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Page Update="Themes\LightTheme.xaml">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Page>
-    <Page Update="Themes\DarkTheme.xaml">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Page>
-  </ItemGroup>
-
-  <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
-    <Exec Command="&quot;$(DevEnvDir)TextTransform.exe&quot; -a !!BuildConfiguration!$(Configuration) &quot;$(ProjectDir)AssemblyInfo.tt&quot;&#xD;&#xA;" />
-  </Target>
-  
+<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<OutputType>WinExe</OutputType>
+		<TargetFramework>net5.0</TargetFramework>
+		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+		<ApplicationIcon>AppIcon.ico</ApplicationIcon>
+		<IsWindows Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::Windows)))' == 'true'">true</IsWindows>
+		<IsOSX Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::OSX)))' == 'true'">true</IsOSX>
+		<IsLinux Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::Linux)))' == 'true'">true</IsLinux>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(IsWindows)'=='true'">
+		<DefineConstants>Windows</DefineConstants>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(IsOSX)'=='true'">
+		<DefineConstants>OSX</DefineConstants>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(IsLinux)'=='true'">
+		<DefineConstants>Linux</DefineConstants>
+	</PropertyGroup>
+	<ItemGroup>
+	  <None Remove="AppIcon.ico" />
+	</ItemGroup>
+	<ItemGroup>
+	  <AvaloniaResource Include="AppIcon.ico" />
+	</ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Avalonia" Version="0.10.0" />
+		<PackageReference Include="Avalonia.Desktop" Version="0.10.0" />
+		<PackageReference Include="Avalonia.Diagnostics" Version="0.10.0" />
+		<PackageReference Include="Avalonia.HtmlRenderer" Version="0.6.1" />
+		<PackageReference Include="Avalonia.ReactiveUI" Version="0.10.0" />
+		<PackageReference Include="Microsoft.Win32.Registry" Version="5.0.0" />
+		<PackageReference Include="OxyPlot.Avalonia" Version="2.1.0-20201211.2" />
+		<PackageReference Include="Projektanker.Icons.Avalonia.FontAwesome" Version="3.0.0-pre" />
+		<PackageReference Include="Serilog" Version="2.10.0" />
+		<PackageReference Include="Serilog.Sinks.Console" Version="3.1.1" />
+		<PackageReference Include="Serilog.Sinks.File" Version="4.1.0" />
+	</ItemGroup>
+	<Target Name="PreBuild" BeforeTargets="PreBuildEvent">
+		<Exec Command="&quot;$(DevEnvDir)TextTransform.exe&quot; -a !!BuildConfiguration!$(Configuration) &quot;$(ProjectDir)AssemblyInfo.tt&quot;" />
+	</Target>
 </Project>

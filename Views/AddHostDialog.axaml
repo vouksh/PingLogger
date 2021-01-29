@@ -1,0 +1,80 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		xmlns:i="clr-namespace:Projektanker.Icons.Avalonia;assembly=Projektanker.Icons.Avalonia"
+		xmlns:vm="using:PingLogger.ViewModels"
+        mc:Ignorable="d" d:DesignWidth="265" d:DesignHeight="170"
+		Width="250" Height="170" TransparencyLevelHint="Transparent"
+        x:Class="PingLogger.Views.AddHostDialog"
+        Title="Add New Host" CanResize="False" Padding="3">
+	<Window.Styles>
+		<Style Selector="Panel.spin">
+			<Style.Animations>
+				<Animation Duration="0:0:2" IterationCount="INFINITE">
+					<KeyFrame Cue="0%">
+						<Setter Property="RotateTransform.Angle" Value="0.0" />
+					</KeyFrame>
+					<KeyFrame Cue="25%">
+						<Setter Property="RotateTransform.Angle" Value="90.0" />
+					</KeyFrame>
+					<KeyFrame Cue="50%">
+						<Setter Property="RotateTransform.Angle" Value="180.0" />
+					</KeyFrame>
+					<KeyFrame Cue="75%">
+						<Setter Property="RotateTransform.Angle" Value="270.0" />
+					</KeyFrame>
+					<KeyFrame Cue="100%">
+						<Setter Property="RotateTransform.Angle" Value="359.0" />
+					</KeyFrame>
+				</Animation>
+			</Style.Animations>
+		</Style>
+	</Window.Styles>
+	<Design.DataContext>
+		<vm:AddHostDialogViewModel/>
+	</Design.DataContext>
+	<Grid>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="*" />
+			<ColumnDefinition Width="55" />
+			<ColumnDefinition Width="50" />
+			<ColumnDefinition Width="*" />
+		</Grid.ColumnDefinitions>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="35"/>
+			<RowDefinition Height="35"/>
+			<RowDefinition Height="25"/>
+			<RowDefinition Height="35"/>
+		</Grid.RowDefinitions>
+		<Label Content="Host Name or IP Address" FontSize="13" Grid.Row="0" Grid.ColumnSpan="4" HorizontalAlignment="Stretch" 
+			   HorizontalContentAlignment="Center" VerticalAlignment="Stretch" VerticalContentAlignment="Center" />
+		
+		<TextBox Margin="4" FontSize="13" Grid.Row="1" Grid.ColumnSpan="4"  HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" 
+				 VerticalAlignment="Stretch" VerticalContentAlignment="Center" Text="{Binding HostName}" />
+		
+		<Label Content="Resolved IP:" FontSize="12" HorizontalAlignment="Stretch" HorizontalContentAlignment="Right" Grid.Row="2" Grid.Column="0" 
+			   VerticalAlignment="Stretch" VerticalContentAlignment="Center" />
+		
+		<TextBox Margin="2" FontSize="14" IsEnabled="False" Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="3" HorizontalAlignment="Stretch" 
+				 VerticalAlignment="Center" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Text="{Binding IPAddress}" />
+
+		<Button Grid.Column="0" Grid.Row="3" Grid.ColumnSpan="3" VerticalAlignment="Stretch" VerticalContentAlignment="Center" 
+				IsEnabled="{Binding AddEnabled}" HorizontalContentAlignment="Center" HorizontalAlignment="Stretch" 
+				Margin="3" Command="{Binding SubmitCommand}">
+			<Panel>
+				<TextBlock Text="Add Host" IsVisible="{Binding TextVisible}" />
+				<Panel Classes="spin" IsVisible="{Binding SpinnerVisible}">
+					<i:Icon Value="fas fa-spinner" Classes="spin" />
+				</Panel>
+				<StackPanel Orientation="Horizontal" IsVisible="{Binding InvalidIconVisible}">
+					<i:Icon Value="fas fa-times" Foreground="Red" />
+					<TextBlock Text="Duplicate Host" Foreground="Red" />
+				</StackPanel>
+			</Panel>
+		</Button>
+		
+		<Button Grid.Column="3" Grid.Row="3" Content="Cancel" VerticalAlignment="Stretch" VerticalContentAlignment="Center" 
+				HorizontalContentAlignment="Center" HorizontalAlignment="Stretch" Margin="3" Command="{Binding CancelCommand}"/>
+	</Grid>
+</Window>

@@ -82,12 +82,12 @@ It's similar to the TRACERT command in Windows [Click here to find out more info
 * Clicking the small plus sign ![PlusSign](Resources/Help/TracePlus.jpg) will add that host/IP to the main window so that you can start logging pings against that as well. 
 
 ## Running Requirements ##
-Only requires a 64-bit Windows 7 or 10 Operating System.
+Now cross-platform. Binaries only issued for Windows
 Application is fully self-contained and does not require .NET Core 3.1 to be installed prior. 
 
 ## Developer Requirements ##
 * Visual Studio 2019 or newer (VS Code may work - not tested!)
-* .NET Core 3.1 SDK
+* .NET 5.0 SDK
 
 ## Credits ##
 * FontAwesome https://fontawesome.com/

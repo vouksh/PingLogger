@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
 
 namespace PingLogger.Extensions
 {
@@ -10,15 +12,15 @@ namespace PingLogger.Extensions
 		}
 
 		public int MaxSize { get; set; }
-		private readonly Queue<TKey> _orderedKeys = new ();
+		private readonly Queue<TKey> orderedKeys = new Queue<TKey>();
 
 		public new void Add(TKey key, TValue value)
 		{
-			_orderedKeys.Enqueue(key);
+			orderedKeys.Enqueue(key);
 
-			if (MaxSize != 0 && Count >= MaxSize)
+			if(MaxSize != 0 && Count >= MaxSize)
 			{
-				Remove(_orderedKeys.Dequeue());
+				Remove(orderedKeys.Dequeue());
 			}
 
 			base.Add(key, value);
@@ -26,7 +28,7 @@ namespace PingLogger.Extensions
 
 		public new void Clear()
 		{
-			_orderedKeys.Clear();
+			orderedKeys.Clear();
 			base.Clear();
 		}
 	}

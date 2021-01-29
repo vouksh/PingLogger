@@ -1,0 +1,29 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:PingLogger.ViewModels"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		xmlns:i="clr-namespace:Projektanker.Icons.Avalonia;assembly=Projektanker.Icons.Avalonia"
+        mc:Ignorable="d" d:DesignWidth="805" d:DesignHeight="420"
+        x:Class="PingLogger.Views.MainWindow"
+        Icon="/AppIcon.ico"
+        Title="{Binding Title}"
+		Width="{Binding WindowWidth}" Height="420"
+        CanResize="false" Closing="Window_Closing"
+		TransparencyLevelHint="Transparent">
+    <Design.DataContext>
+        <vm:MainWindowViewModel/>
+    </Design.DataContext>
+	<Grid VerticalAlignment="Top">
+	    <TabControl Padding="0" Items="{Binding TabItems}" FontSize="12" Classes="MainTab" SelectedIndex="{Binding SelectedTabIndex}" />
+		<StackPanel Orientation="Horizontal" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="4">
+		    <Button HorizontalAlignment="Right" VerticalAlignment="Top" Margin="6"
+				    i:Attached.Icon="fas fa-plus-square" FontSize="16" Command="{Binding AddTabCommand}" />
+            <Button HorizontalAlignment="Right" VerticalAlignment="Top" Margin="6" 
+				    i:Attached.Icon="fas fa-cogs" FontSize="16" Command="{Binding OpenOptionsCommand}" />
+			<Button HorizontalAlignment="Right" VerticalAlignment="Top" Margin="6"
+				    i:Attached.Icon="fas fa-question-circle" FontSize="16" Command="{Binding OpenHelpCommand}" />
+			
+	    </StackPanel>
+	</Grid>
+</Window>

@@ -1,0 +1,16 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		xmlns:vm="using:PingLogger.ViewModels"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="600"
+		Width="800" Height="600"
+        x:Class="PingLogger.Views.WatchLogWindow"
+        Title="WatchLogWindow" TransparencyLevelHint="Transparent">
+	<Design.DataContext>
+		<vm:WatchLogViewModel />
+	</Design.DataContext>
+	<ScrollViewer Offset="{Binding ScrollOffset}">
+		<TextBlock Text="{Binding LogText}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" TextAlignment="Left" TextWrapping="Wrap" />
+	</ScrollViewer>
+</Window>

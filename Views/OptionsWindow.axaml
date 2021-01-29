@@ -1,0 +1,55 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="using:PingLogger.ViewModels"
+        mc:Ignorable="d" d:DesignWidth="500" d:DesignHeight="400"
+		Width="500" Height="400" TransparencyLevelHint="Transparent"
+        x:Class="PingLogger.Views.OptionsWindow"
+        Title="Options" CanResize="False" WindowStartupLocation="CenterOwner">
+	<Design.DataContext>
+		<vm:OptionsWindowViewModel/>
+	</Design.DataContext>
+	<Grid>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="100" />
+			<ColumnDefinition Width="100" />
+			<ColumnDefinition Width="100" />
+			<ColumnDefinition Width="100" />
+			<ColumnDefinition Width="100" />
+		</Grid.ColumnDefinitions>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="50" />
+			<RowDefinition Height="50" />
+			<RowDefinition Height="50" />
+			<RowDefinition Height="50" />
+			<RowDefinition Height="50" />
+			<RowDefinition Height="50" />
+			<RowDefinition Height="50" />
+			<RowDefinition Height="50" />
+		</Grid.RowDefinitions>
+		<CheckBox Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="3" Content="Automatically update on startup" HorizontalAlignment="Center"
+				  VerticalAlignment="Center" IsChecked="{Binding EnableAutoUpdate}" IsVisible="{Binding AutoUpdateAllowed}" />
+		<CheckBox Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3" Content="Start logging on program start" HorizontalAlignment="Center"
+				  VerticalContentAlignment="Center" IsChecked="{Binding StartLoggersAutomatically}"/>
+		<CheckBox Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="3" Content="Load application on startup" HorizontalAlignment="Center" 
+				  VerticalAlignment="Center" IsChecked="{Binding LoadWithSystemBoot}"/>
+		<CheckBox Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="3" Content="Start application minimized" HorizontalAlignment="Center"
+				  VerticalAlignment="Center" IsChecked="{Binding StartApplicationMinimized}"/>
+		<StackPanel Orientation="Horizontal" Grid.Row="4" Grid.ColumnSpan="5" HorizontalAlignment="Center">
+			<Label Content="Keep log files for "  HorizontalContentAlignment="Right" HorizontalAlignment="Stretch" VerticalContentAlignment="Center"/>
+			<TextBox HorizontalContentAlignment="Center" TextWrapping="NoWrap" VerticalAlignment="Center" HorizontalAlignment="Center" Width="10" 
+					 Text="{Binding DaysToKeepLogs}" />
+			<Label HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" VerticalContentAlignment="Center"
+				   VerticalAlignment="Center" Content=" days" />
+		</StackPanel>
+		<Label Grid.Row="5" Grid.Column="1" Content="Theme:" VerticalContentAlignment="Center" VerticalAlignment="Stretch" HorizontalContentAlignment="Right"
+			   HorizontalAlignment="Stretch"/>
+		<ComboBox Grid.Row="5" Grid.Column="2" HorizontalContentAlignment="Center" HorizontalAlignment="Stretch" VerticalContentAlignment="Center"
+				  VerticalAlignment="Center" SelectedIndex="{Binding SelectedTheme}">
+			<ComboBoxItem Content="Auto" />
+			<ComboBoxItem Content="Light" />
+			<ComboBoxItem Content="Dark" />
+		</ComboBox>
+	</Grid>
+</Window>
