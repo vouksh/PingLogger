@@ -24,6 +24,8 @@ namespace PingLogger.Workers
 		{
 			_downloadUrl = downloadUrl;
 			_destinationFilePath = destinationFilePath;
+			if (File.Exists(destinationFilePath))
+				File.Delete(destinationFilePath);
 		}
 
 		public async Task StartDownload()

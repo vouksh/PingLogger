@@ -14,6 +14,18 @@ namespace PingLogger.Models
 			return $"{Major}.{Minor}.{Build}.{Revision}";
 		}
 
+		public static SerializableVersion GetAppVersion()
+		{
+			var localVer = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
+			return new SerializableVersion()
+			{
+				Major = localVer.Major,
+				Minor = localVer.Minor,
+				Revision = localVer.Revision,
+				Build = localVer.Build
+			};
+		}
+
 		public override bool Equals(object obj)
 		{
 			if (obj == null || GetType() != obj.GetType() || obj.GetType() != typeof(Version))

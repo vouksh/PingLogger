@@ -27,6 +27,11 @@ namespace PingLogger
 
 			public static async Task<bool> CheckForUpdates()
 			{
+#if DEBUG
+				File.WriteAllText("../../../Installer/latest.json",
+					JsonSerializer.Serialize(SerializableVersion.GetAppVersion())
+					);
+#endif
 				if (Config.AppWasUpdated)
 				{
 					Log.Information("Application was updated last time it ran, cleaning up.");
@@ -36,7 +41,7 @@ namespace PingLogger
 					}
 					if (Config.LastTempDir != string.Empty && Directory.Exists(Config.LastTempDir))
 					{
-						File.Delete(Config.LastTempDir + "/PingLogger-Setup.msi");
+						File.Delete(Config.LastTempDir + "/PingLogger.Setup.exe");
 						Directory.Delete(Config.LastTempDir);
 						Config.LastTempDir = string.Empty;
 					}
@@ -64,9 +69,9 @@ namespace PingLogger
 						bool downloadComplete = false;
 						httpClient.DownloadFileCompleted += (_, _) => { downloadComplete = true; };
 
-						string azureURL = "https://pingloggerfiles.blob.core.windows.net/";
+						string serverUrl = "https://pinglogger.lexdysia.com/";
 
-						await httpClient.DownloadFileTaskAsync($"{azureURL}version/latest.json", "./latest.json");
+						await httpClient.DownloadFileTaskAsync($"{serverUrl}/latest.json", "./latest.json");
 
 						while (!downloadComplete) { await Task.Delay(100); }
 						var latestJson = await File.ReadAllTextAsync("./latest.json");
@@ -88,9 +93,9 @@ namespace PingLogger
 
 									if (remoteVersion is not null)
 									{
-										var downloadURL = $"{azureURL}v{remoteVersion.Major}{remoteVersion.Minor}{remoteVersion.Build}/PingLogger-Setup.msi";
+										var downloadURL = $"{serverUrl}/{remoteVersion.Major}{remoteVersion.Minor}{remoteVersion.Build}/win/install/PingLogger.Setup.exe";
 										Log.Information($"Downloading from {downloadURL}");
-										using var downloader = new HttpClientDownloadWithProgress(downloadURL, Config.LastTempDir + "\\PingLogger-Setup.msi");
+										using var downloader = new HttpClientDownloadWithProgress(downloadURL, Config.LastTempDir + "\\PingLogger.Setup.exe");
 										SplashScreenViewModel.UpdateMessage = $"Downloading PingLogger setup v{remoteVersion}";
 										downloader.ProgressChanged += Downloader_ProgressChanged;
 										await downloader.StartDownload();
@@ -98,15 +103,11 @@ namespace PingLogger
 
 									Config.AppWasUpdated = true;
 									Log.Information("Uninstalling current version.");
-									string batchFile = $@"@echo off
-msiexec.exe /q /l* '{ AppContext.BaseDirectory}Logs\Installer - v{localVersion}.log' /x {Config.InstallerGUID}
-msiexec.exe /l* '{ AppContext.BaseDirectory}Logs\Installer - v{remoteVersion}.log' /i {Config.LastTempDir}/PingLogger-Setup.msi";
-									await File.WriteAllTextAsync(Config.LastTempDir + "/install.bat", batchFile);
 									Process.Start(new ProcessStartInfo
 									{
-										FileName = "cmd.exe",
+										FileName = $"{Config.LastTempDir}/PingLogger.Setup.exe",
 										UseShellExecute = true,
-										Arguments = $"{Config.LastTempDir}/install.bat"
+										Arguments = "/SILENT /CLOSEAPPLICATIONS"
 									});
 
 									Log.Information("Installer started, closing.");
@@ -120,12 +121,16 @@ msiexec.exe /l* '{ AppContext.BaseDirectory}Logs\Installer - v{remoteVersion}.lo
 
 									if (remoteVersion is not null)
 									{
-										var downloadUrl = $"{azureURL}v{remoteVersion.Major}{remoteVersion.Minor}{remoteVersion.Build}/PingLogger.exe";
-										Log.Information($"Downloading from {downloadUrl}");
-										using var downloader = new HttpClientDownloadWithProgress(downloadUrl, "./PingLogger.exe");
+										string[] fileList =  { "libHarfBuzzSharp.dll", "libSkiaSharp.dll", "PingLogger.exe" };
 										SplashScreenViewModel.UpdateMessage = $"Downloading PingLogger v{remoteVersion}";
-										downloader.ProgressChanged += Downloader_ProgressChanged;
-										await downloader.StartDownload();
+										foreach (var file in fileList)
+										{
+											var downloadUrl = $"{serverUrl}{remoteVersion.Major}{remoteVersion.Minor}{remoteVersion.Build}/win/sf/{file}";
+											Log.Information($"Downloading from {downloadUrl}");
+											using var downloader = new HttpClientDownloadWithProgress(downloadUrl, $"./{file}");
+											downloader.ProgressChanged += Downloader_ProgressChanged;
+											await downloader.StartDownload();
+										}
 									}
 
 									Config.AppWasUpdated = true;

@@ -6,6 +6,7 @@ using Serilog;
 using PingLogger.Models;
 using Projektanker.Icons.Avalonia;
 using Projektanker.Icons.Avalonia.FontAwesome;
+using System.Linq;
 
 namespace PingLogger
 {
@@ -16,6 +17,9 @@ namespace PingLogger
 		// yet and stuff might break.
 		public static void Main(string[] args)
 		{
+			if (args.Any() && args[0] == "--installed")
+				Workers.Config.IsInstalled = true;
+
 			Log.Logger = new LoggerConfiguration()
 #if DEBUG
 				.MinimumLevel.Verbose()
