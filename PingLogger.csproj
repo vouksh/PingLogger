@@ -1,42 +1,43 @@
 <Project Sdk="Microsoft.NET.Sdk">
-	<PropertyGroup>
-		<OutputType>WinExe</OutputType>
-		<TargetFramework>net5.0</TargetFramework>
-		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-		<ApplicationIcon>AppIcon.ico</ApplicationIcon>
-		<IsWindows Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::Windows)))' == 'true'">true</IsWindows>
-		<IsOSX Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::OSX)))' == 'true'">true</IsOSX>
-		<IsLinux Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::Linux)))' == 'true'">true</IsLinux>
-	</PropertyGroup>
-	<PropertyGroup Condition="'$(IsWindows)'=='true'">
-		<DefineConstants>Windows</DefineConstants>
-	</PropertyGroup>
-	<PropertyGroup Condition="'$(IsOSX)'=='true'">
-		<DefineConstants>OSX</DefineConstants>
-	</PropertyGroup>
-	<PropertyGroup Condition="'$(IsLinux)'=='true'">
-		<DefineConstants>Linux</DefineConstants>
-	</PropertyGroup>
-	<ItemGroup>
-	  <None Remove="AppIcon.ico" />
-	</ItemGroup>
-	<ItemGroup>
-	  <AvaloniaResource Include="AppIcon.ico" />
-	</ItemGroup>
-	<ItemGroup>
-		<PackageReference Include="Avalonia" Version="0.10.0" />
-		<PackageReference Include="Avalonia.Desktop" Version="0.10.0" />
-		<PackageReference Include="Avalonia.Diagnostics" Version="0.10.0" />
-		<PackageReference Include="Avalonia.HtmlRenderer" Version="0.6.1" />
-		<PackageReference Include="Avalonia.ReactiveUI" Version="0.10.0" />
-		<PackageReference Include="Microsoft.Win32.Registry" Version="5.0.0" />
-		<PackageReference Include="OxyPlot.Avalonia" Version="2.1.0-20201211.2" />
-		<PackageReference Include="Projektanker.Icons.Avalonia.FontAwesome" Version="3.0.0-pre" />
-		<PackageReference Include="Serilog" Version="2.10.0" />
-		<PackageReference Include="Serilog.Sinks.Console" Version="3.1.1" />
-		<PackageReference Include="Serilog.Sinks.File" Version="4.1.0" />
-	</ItemGroup>
-	<Target Name="PreBuild" BeforeTargets="PreBuildEvent">
-		<Exec Command="&quot;$(DevEnvDir)TextTransform.exe&quot; -a !!BuildConfiguration!$(Configuration) &quot;$(ProjectDir)AssemblyInfo.tt&quot;" />
-	</Target>
+  <PropertyGroup>
+	<OutputType>WinExe</OutputType>
+	<TargetFramework>net5.0</TargetFramework>
+	<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+	<ApplicationIcon>AppIcon.ico</ApplicationIcon>
+	<IsWindows Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::Windows)))' == 'true'">true</IsWindows>
+	<IsOSX Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::OSX)))' == 'true'">true</IsOSX>
+	<IsLinux Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::Linux)))' == 'true'">true</IsLinux>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(IsWindows)'=='true'">
+	<DefineConstants>Windows</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(IsOSX)'=='true'">
+	<DefineConstants>OSX</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(IsLinux)'=='true'">
+	<DefineConstants>Linux</DefineConstants>
+  </PropertyGroup>
+  <ItemGroup>
+	<None Remove="AppIcon.ico" />
+  </ItemGroup>
+  <ItemGroup>
+	<AvaloniaResource Include="AppIcon.ico" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(IsWindows)'=='true'">
+	<PackageReference Include="Microsoft.Win32.Registry" Version="5.0.0" />
+  </ItemGroup>
+  <ItemGroup>
+	<PackageReference Include="Avalonia" Version="0.10.0" />
+	<PackageReference Include="Avalonia.Desktop" Version="0.10.0" />
+	<PackageReference Include="Avalonia.Diagnostics" Version="0.10.0" />
+	<PackageReference Include="Avalonia.ReactiveUI" Version="0.10.0" />
+	<PackageReference Include="OxyPlot.Avalonia" Version="2.1.0-20201211.2" />
+	<PackageReference Include="Projektanker.Icons.Avalonia.FontAwesome" Version="3.0.0-pre" />
+	<PackageReference Include="Serilog" Version="2.10.0" />
+	<PackageReference Include="Serilog.Sinks.Console" Version="3.1.1" />
+	<PackageReference Include="Serilog.Sinks.File" Version="4.1.0" />
+  </ItemGroup>
+  <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
+	<Exec Command="&quot;$(DevEnvDir)TextTransform.exe&quot; -a !!BuildConfiguration!$(Configuration) &quot;$(ProjectDir)AssemblyInfo.tt&quot;" />
+  </Target>
 </Project>

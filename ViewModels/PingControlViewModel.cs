@@ -9,6 +9,7 @@ using PingLogger.Workers;
 using ReactiveUI;
 using Serilog;
 using System;
+using System.Configuration;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -16,6 +17,8 @@ using System.Net;
 using System.Reactive;
 using System.Text;
 using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel;
 
 namespace PingLogger.ViewModels
 {
@@ -28,16 +31,17 @@ namespace PingLogger.ViewModels
 		public ReactiveCommand<Unit, Unit> OpenLogFolderCommand { get; }
 		public ReactiveCommand<Unit, Unit> WatchLogCommand { get; }
 		public ReactiveCommand<Unit, Unit> WindowExpanderCommand { get; }
-		readonly DispatcherTimer Timer;
-		private readonly FixedList<long> PingTimes = new FixedList<long>(23);
-		private long totalPings = 0;
+		readonly DispatcherTimer _timer;
+		private readonly FixedList<long> _pingTimes = new FixedList<long>(23);
+		private long _totalPings = 0;
 		public delegate void HostNameUpdatedHandler(object sender, HostNameUpdatedEventArgs e);
 		public event HostNameUpdatedHandler HostNameUpdated;
 		public delegate void TraceRouteCallbackHandler(object sender, TraceRouteCallbackEventArgs e);
 		public event TraceRouteCallbackHandler TraceRouteCallback;
 		public delegate void WindowExpansionHandler(object sender, bool expand);
 		public event WindowExpansionHandler WindowExpandedEvent;
-		readonly DispatcherTimer UpdateIPTimer;
+		readonly DispatcherTimer _updateIPTimer;
+		readonly DispatcherTimer _checkValueTimer;
 
 		public PingControlViewModel()
 		{
@@ -47,22 +51,29 @@ namespace PingLogger.ViewModels
 			WatchLogCommand = ReactiveCommand.Create(WatchLog);
 			WindowExpanderCommand = ReactiveCommand.Create(ToggleWindow);
 
-			Timer = new DispatcherTimer()
+			_timer = new DispatcherTimer()
 			{
 				Interval = TimeSpan.FromMilliseconds(100),
 				IsEnabled = true
 			};
-			Timer.Tick += Timer_Tick;
-			Timer.Start();
-			UpdateIPTimer = new DispatcherTimer()
+			_timer.Tick += Timer_Tick;
+			_timer.Start();
+			_updateIPTimer = new DispatcherTimer()
 			{
 				Interval = TimeSpan.FromMilliseconds(250),
 				IsEnabled = false
 			};
-			UpdateIPTimer.Tick += UpdateIPTimer_Tick;
+			_updateIPTimer.Tick += UpdateIPTimer_Tick;
 			SetupGraphs();
 			showRightTabs = Config.WindowExpanded;
 			expanderIcon = Config.WindowExpanded ? "fas fa-angle-double-left" : "fas fa-angle-double-right";
+
+			_checkValueTimer = new DispatcherTimer()
+			{
+				Interval = TimeSpan.FromMilliseconds(500),
+				IsEnabled = false
+			};
+			_checkValueTimer.Tick += (_, _) => CheckValues();
 		}
 
 		private async void ToggleWindow()
@@ -139,7 +150,7 @@ namespace PingLogger.ViewModels
 		{
 			UpdateIP();
 			UpdateHost();
-			UpdateIPTimer.Stop();
+			_updateIPTimer.Stop();
 		}
 
 		private void OpenLogFolder()
@@ -180,43 +191,46 @@ namespace PingLogger.ViewModels
 				StringBuilder sb = new StringBuilder();
 				for (int i = 0; i < _pinger.Replies.Count - 1; i++)
 				{
-					totalPings++;
+					_totalPings++;
 					var success = _pinger.Replies.TryTake(out Reply reply);
 					if (success)
 					{
-						var s = (LineSeries)GraphModel.Series[0];
-						var maxPoints = (Host.Interval * 30) / 1000;
-						if (s.Points.Count > maxPoints)
-							s.Points.RemoveAt(0);
-						s.Points.Add(new DataPoint(reply.DateTime.ToOADate(), reply.RoundTrip));
-						Dispatcher.UIThread.InvokeAsync(() => GraphModel.InvalidatePlot(true), DispatcherPriority.Background);
-
-						var p = (PieSeries)StatusModel.Series[0];
-						if (reply.Succeeded.Value)
+						if (Config.WindowExpanded)
 						{
-							if (reply.RoundTrip > Host.Threshold)
+							var s = (LineSeries)GraphModel.Series[0];
+							var maxPoints = (Host.Interval * 30) / 1000;
+							if (s.Points.Count > maxPoints)
+								s.Points.RemoveAt(0);
+							s.Points.Add(new DataPoint(reply.DateTime.ToOADate(), reply.RoundTrip));
+							Dispatcher.UIThread.InvokeAsync(() => GraphModel.InvalidatePlot(true), DispatcherPriority.Background);
+
+							var p = (PieSeries)StatusModel.Series[0];
+							if (reply.Succeeded.Value)
 							{
-								var oldValue = p.Slices[1].Value;
-								p.Slices[1] = new PieSlice("Warning", oldValue + 1) { Fill = OxyColor.FromRgb(235, 224, 19) };
+								if (reply.RoundTrip > Host.Threshold)
+								{
+									var oldValue = p.Slices[1].Value;
+									p.Slices[1] = new PieSlice("Warning", oldValue + 1) { Fill = OxyColor.FromRgb(235, 224, 19) };
+								}
+								else
+								{
+									var oldValue = p.Slices[0].Value;
+									p.Slices[0] = new PieSlice("Success", oldValue + 1) { Fill = OxyColor.FromRgb(51, 204, 0) };
+								}
 							}
 							else
 							{
-								var oldValue = p.Slices[0].Value;
-								p.Slices[0] = new PieSlice("Success", oldValue + 1) { Fill = OxyColor.FromRgb(51, 204, 0) };
+								var oldValue = p.Slices[2].Value;
+								p.Slices[2] = new PieSlice("Failure", oldValue + 1) { Fill = OxyColor.FromRgb(194, 16, 16) };
 							}
+							Dispatcher.UIThread.InvokeAsync(() => StatusModel.InvalidatePlot(true), DispatcherPriority.Background);
 						}
-						else
-						{
-							var oldValue = p.Slices[2].Value;
-							p.Slices[2] = new PieSlice("Failure", oldValue + 1) { Fill = OxyColor.FromRgb(194, 16, 16) };
-						}
-						Dispatcher.UIThread.InvokeAsync(() => StatusModel.InvalidatePlot(true), DispatcherPriority.Background);
 
 						Log.Debug("Ping Success");
 						sb.Append($"[{reply.DateTime:T}] ");
 						if (reply.RoundTrip > 0)
 						{
-							PingTimes.Add(reply.RoundTrip);
+							_pingTimes.Add(reply.RoundTrip);
 							Log.Debug($"{HostName} RoundTrip Time > 0: {reply.RoundTrip}");
 						}
 
@@ -240,17 +254,17 @@ namespace PingLogger.ViewModels
 				}
 				PingStatusText += sb.ToString();
 				var lines = PingStatusText.Split(Environment.NewLine).ToList();
-				if (lines.Count > PingTimes.MaxSize)
+				if (lines.Count > _pingTimes.MaxSize)
 				{
 					lines.RemoveAt(0);
 					PingStatusText = string.Join(Environment.NewLine, lines);
 				}
 
-				if (PingTimes.Count > 0)
+				if (_pingTimes.Count > 0)
 				{
-					AveragePing = Math.Ceiling(PingTimes.Average()).ToString() + "ms";
+					AveragePing = Math.Ceiling(_pingTimes.Average()).ToString() + "ms";
 				}
-				PacketLoss = $"{Math.Round(((double)TimeoutCount / (double)totalPings) * 100, 2)}%";
+				PacketLoss = $"{Math.Round(((double)TimeoutCount / (double)_totalPings) * 100, 2)}%";
 			}
 			else
 			{
@@ -264,21 +278,58 @@ namespace PingLogger.ViewModels
 					StartButtonEnabled = true;
 				}
 			}
-			/*if (Host.IP == "CHANGEME")
-			{
-				UpdateIP();
-			}*/
 			CheckForFolder();
+			//CheckValues();
 		}
 
 		private bool DirExists = false;
 		private bool LogExists = false;
 
+		private void CheckValues()
+		{
+			if (Interval < 250 || Interval == 0)
+			{
+				Interval = 250;
+			}
+			else if (Interval > 6000)
+			{
+				Interval = 6000;
+			}
+
+			if (WarningThreshold < 1 || WarningThreshold == 0)
+			{
+				WarningThreshold = 1;
+			}
+			else if (WarningThreshold > 6000)
+			{
+				WarningThreshold = 6000;
+			}
+
+			if (PacketSize < 2 || PacketSize == 0)
+			{
+				PacketSize = 2;
+			}
+			else if (PacketSize > 65527)
+			{
+				PacketSize = 65527;
+			}
+
+			if (Timeout < 50 || Timeout == 0)
+			{
+				Timeout = 50;
+			}
+			else if (Timeout > 6000)
+			{
+				Timeout = 6000;
+			}
+			_checkValueTimer.Stop();
+		}
+
 		private void CheckForFolder()
 		{
 			if (!DirExists)
 			{
-				if (Directory.Exists($"{Environment.CurrentDirectory}{Path.DirectorySeparatorChar}Logs{Path.DirectorySeparatorChar}{HostName}"))
+				if (Directory.Exists($"{Config.LogSavePath}{HostName}"))
 				{
 					DirExists = true;
 					OpenLogFolderVisible = true;
@@ -290,7 +341,7 @@ namespace PingLogger.ViewModels
 			}
 			if (!LogExists)
 			{
-				if (File.Exists($"{Environment.CurrentDirectory}{Path.DirectorySeparatorChar}Logs{Path.DirectorySeparatorChar}{HostName}{Path.DirectorySeparatorChar}{HostName}-{DateTime.Now:yyyyMMdd}.log"))
+				if (File.Exists($"{Config.LogSavePath}{HostName}{Path.DirectorySeparatorChar}{HostName}-{DateTime.Now:yyyyMMdd}.log"))
 				{
 					LogExists = true;
 					WatchLogVisible = true;
@@ -318,6 +369,7 @@ namespace PingLogger.ViewModels
 		{
 			if (start == "true")
 			{
+				CheckValues();
 				Log.Debug("TriggerPinger(true)");
 				StartButtonEnabled = false;
 				StopButtonEnabled = true;
@@ -358,8 +410,8 @@ namespace PingLogger.ViewModels
 			set
 			{
 				StartButtonEnabled = false;
-				UpdateIPTimer.Stop();
-				UpdateIPTimer.Start();
+				_updateIPTimer.Stop();
+				_updateIPTimer.Start();
 				HostNameUpdated?.Invoke(this, new HostNameUpdatedEventArgs(value, Host.Id.ToString()));
 				this.RaiseAndSetIfChanged(ref hostName, value);
 			}
@@ -381,6 +433,7 @@ namespace PingLogger.ViewModels
 			}
 		}
 
+		[Range(250, 6000, ErrorMessage = "Interval must be between 250 and 6,000 milliseconds")]
 		private int interval = 0;
 		public int Interval
 		{
@@ -392,12 +445,15 @@ namespace PingLogger.ViewModels
 			}
 			set
 			{
+				_checkValueTimer.Stop();
+				_checkValueTimer.Start();
 				this.RaiseAndSetIfChanged(ref interval, value);
 				Host.Interval = value;
 				UpdateHost();
 			}
 		}
 
+		[Range(1, 6000, ErrorMessage = "Warning threshold must be between 1 and 6,000 milliseconds")]
 		private int warningThreshold = 0;
 		public int WarningThreshold
 		{
@@ -409,12 +465,15 @@ namespace PingLogger.ViewModels
 			}
 			set
 			{
+				_checkValueTimer.Stop();
+				_checkValueTimer.Start();
 				this.RaiseAndSetIfChanged(ref warningThreshold, value);
 				Host.Threshold = value;
 				UpdateHost();
 			}
 		}
 
+		[Range(1, 6000, ErrorMessage = "Timeout must be between 1 and 6,000 milliseconds")]
 		private int timeout = 0;
 		public int Timeout
 		{
@@ -426,12 +485,15 @@ namespace PingLogger.ViewModels
 			}
 			set
 			{
+				_checkValueTimer.Stop();
+				_checkValueTimer.Start();
 				this.RaiseAndSetIfChanged(ref timeout, value);
 				Host.Timeout = value;
 				UpdateHost();
 			}
 		}
 
+		[Range(2, 65526, ErrorMessage = "Packet size must be between 2 and 65,527 bytes")]
 		private int packetSize = 0;
 		public int PacketSize
 		{
@@ -443,6 +505,8 @@ namespace PingLogger.ViewModels
 			}
 			set
 			{
+				_checkValueTimer.Stop();
+				_checkValueTimer.Start();
 				this.RaiseAndSetIfChanged(ref packetSize, value);
 				Host.PacketSize = value;
 				UpdateHost();

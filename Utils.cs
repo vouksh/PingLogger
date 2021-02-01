@@ -9,6 +9,28 @@ namespace PingLogger
 	public static partial class Utils
 	{
 
+		public static void CreateShortcut()
+		{
+#if Windows
+			Win.CreateShortcut();
+#elif Linux
+			Linux.CreateShortcut();
+#elif OSX
+			PingLogger.Views.MessageBox.ShowAsError("Error", "This option is not avaiable on MacOS");
+#endif
+		}
+
+		public static void DeleteShortcut()
+		{
+#if Windows
+			Win.DeleteShortcut();
+#elif Linux
+			Linux.DeleteShortcut();
+#elif OSX
+			PingLogger.Views.MessageBox.ShowAsError("Error", "This option is not avaiable on MacOS");
+#endif
+		}
+
 		public static string FileBasePath
 		{
 			get

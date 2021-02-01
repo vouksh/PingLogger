@@ -1,4 +1,6 @@
-﻿using Microsoft.Win32;
+﻿#if Windows
+using Microsoft.Win32;
+#endif
 using PingLogger.Models;
 using PingLogger.Workers;
 using Serilog;

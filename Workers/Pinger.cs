@@ -262,6 +262,9 @@ namespace PingLogger.Workers
 
 			if (reply != null)
 			{
+				int ttl = 0;
+				if (reply.Options is not null)
+					ttl = reply.Options.Ttl;
 				switch (reply.Status)
 				{
 					case IPStatus.Success:
@@ -275,15 +278,12 @@ namespace PingLogger.Workers
 							//If it is, then we change the output to be a warning, making it easy to track down in the log files.
 							if (reply.RoundtripTime >= _host.Threshold)
 							{
-								_logger.Warning("Pinged {0} ({1}) RoundTrip: {2}ms (Over Threshold) TTL: {3}",
-												_host.HostName, _host.IP, reply.RoundtripTime,
-												reply.Options.Ttl);
+								_logger.Warning($"Pinged {_host.HostName} ({_host.IP}) RoundTrip: {reply.RoundtripTime}ms (Over Threshold) TTL: {ttl}");
 								success = true;
 							}
 							else
 							{
-								_logger.Information("Pinged {0} ({1}) RoundTrip: {2}ms TTL: {3}", _host.HostName,
-													_host.IP, reply.RoundtripTime, reply.Options.Ttl);
+								_logger.Information($"Pinged {_host.HostName} ({_host.IP}) RoundTrip: {reply.RoundtripTime}ms TTL: {ttl}");
 								success = true;
 							}
 						}
@@ -291,8 +291,7 @@ namespace PingLogger.Workers
 						{
 							_logger.Debug("Ping Reply Success, but roundtrip time exceeds timeout. Marking it as a timeout.");
 
-							_logger.Error("Ping timed out to host {0} ({1}). Timeout is {2}ms", _host.HostName,
-										_host.IP, _host.Timeout);
+							_logger.Error($"Ping timed out to host {_host.HostName} ({_host.IP}). Timeout is {_host.Timeout}ms");
 							timedOut = true;
 						}
 
@@ -317,8 +316,7 @@ namespace PingLogger.Workers
 					case IPStatus.TimedOut:
 						_logger.Debug("Ping Timed Out");
 
-						_logger.Error("Ping timed out to host {0} ({1}). Timeout is {2}ms", _host.HostName,
-									_host.IP, _host.Timeout);
+						_logger.Error($"Ping timed out to host {_host.HostName} ({_host.IP}). Timeout is {_host.Timeout}ms");
 						timedOut = true;
 
 						break;
@@ -335,7 +333,7 @@ namespace PingLogger.Workers
 				{
 					Host = _host,
 					DateTime = DateTime.Now,
-					Ttl = reply.Options?.Ttl,
+					Ttl = ttl,
 					RoundTrip = reply.RoundtripTime,
 					TimedOut = timedOut,
 					Succeeded = success

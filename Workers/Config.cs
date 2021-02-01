@@ -17,6 +17,7 @@ namespace PingLogger.Workers
 		private static bool _initialLoad;
 		private static AppOptions Options { get; set; }
 		private static readonly Timer _saveTimer;
+		private static readonly string _configFileName = "PingLogger.config.bin";
 
 		public static Theme Theme
 		{
@@ -171,6 +172,7 @@ namespace PingLogger.Workers
 			}
 			set
 			{
+				Log.Information($"Options.LogSavePath was changed from {Options.LogSavePath} to {value}");
 				if (!value.EndsWith(Path.DirectorySeparatorChar))
 				{
 					Options.LogSavePath = value + Path.DirectorySeparatorChar;
@@ -179,7 +181,6 @@ namespace PingLogger.Workers
 				{
 					Options.LogSavePath = value;
 				}
-				Log.Information($"Options.LogSavePath was changed from {Options.LogSavePath} to {value}");
 				SaveConfig();
 			}
 		}
@@ -204,12 +205,12 @@ namespace PingLogger.Workers
 			Log.Debug("Waiting for config file lock..");
 			lock (_fileLock)
 			{
-				string dataPath = $"{Utils.FileBasePath}/config.dat";
+				string dataPath = $"{Utils.FileBasePath}{Path.DirectorySeparatorChar}{_configFileName}";
 				Log.Information("SaveConfig() Called");
 				var hostData = JsonSerializer.Serialize(Hosts, new JsonSerializerOptions { WriteIndented = true });
 				var configData = JsonSerializer.Serialize(Options, new JsonSerializerOptions { WriteIndented = true });
 				var fileStream = File.Open(dataPath, FileMode.OpenOrCreate);
-				Log.Information("config.dat opened");
+				Log.Information($"{_configFileName} opened");
 				using var archive = new ZipArchive(fileStream, ZipArchiveMode.Update);
 				if (archive.Entries.Count > 0)
 				{
@@ -248,7 +249,7 @@ namespace PingLogger.Workers
 					using StreamWriter configWriter = new StreamWriter(configEntry.Open());
 					configWriter.Write(configData);
 				}
-				Log.Information("Done saving config.dat");
+				Log.Information($"Done saving {_configFileName}");
 			}
 			_saveTimer.Stop();
 		}
@@ -287,13 +288,13 @@ namespace PingLogger.Workers
 		{
 			if (Options == null)
 			{
-				string dataPath = $"{Utils.FileBasePath}/config.dat";
+				string dataPath = $"{Utils.FileBasePath}{Path.DirectorySeparatorChar}{_configFileName}";
 				if (File.Exists(dataPath))
 				{
 					Log.Debug("Waiting for config file lock..");
 					lock (_fileLock)
 					{
-						Log.Information("Found existing config.dat, reading file");
+						Log.Information($"Found existing {_configFileName}, reading file");
 						_initialLoad = true;
 
 						using var archive = ZipFile.OpenRead(dataPath);
@@ -313,7 +314,7 @@ namespace PingLogger.Workers
 				}
 				else
 				{
-					Log.Information("Did not find existing config.dat");
+					Log.Information($"Did not find existing {_configFileName}");
 					if (!CheckForOldConfig())
 					{
 						Log.Information("Old configuration not found, starting out fresh");

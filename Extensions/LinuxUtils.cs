@@ -24,7 +24,9 @@ Name[en_US]=PingLogger
 Name=PingLogger
 Comment[en_US]=
 Comment=";
-				File.WriteAllText("~/.config/autostart/PingLogger.desktop", fileContents);
+				if (!Directory.Exists(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + "/.config/autostart"))
+					Directory.CreateDirectory(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + "/.config/autostart");
+				File.WriteAllText(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + "/.config/autostart/PingLogger.desktop", fileContents);
 #endif
 			}
 

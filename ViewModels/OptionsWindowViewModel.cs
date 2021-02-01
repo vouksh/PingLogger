@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reactive;
 using System.Text;
 using System.Threading.Tasks;
+using Avalonia;
+using Avalonia.Controls.ApplicationLifetimes;
 using PingLogger.Workers;
 using ReactiveUI;
 
@@ -12,6 +15,7 @@ namespace PingLogger.ViewModels
 	{
 		public delegate void ThemeChangedHandler(object sender);
 		public event ThemeChangedHandler ThemeChanged;
+		public ReactiveCommand<Unit, Unit> FindLogFolderCommand { get; }
 
 		public OptionsWindowViewModel()
 		{
@@ -21,7 +25,25 @@ namespace PingLogger.ViewModels
 				AutoUpdateAllowed = true;
 			else
 				AutoUpdateAllowed = false;
+
+			FindLogFolderCommand = ReactiveCommand.Create(FindLogFolder);
 		}
+
+		private async void FindLogFolder()
+		{
+
+			if (Application.Current.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+			{
+				var dialog = new Avalonia.Controls.OpenFolderDialog()
+				{
+					Directory = LogFolderPath,
+					Title = "Find new log folder path"
+				};
+				var newPath = await dialog.ShowAsync(desktop.MainWindow);
+				LogFolderPath = newPath;
+			}
+		}
+
 		private int daysToKeepLogs = 7;
 		public int DaysToKeepLogs
 		{
@@ -97,26 +119,23 @@ namespace PingLogger.ViewModels
 			}
 		}
 
+		private string logFolderPath = Config.LogSavePath;
+		public string LogFolderPath
+		{
+			get => logFolderPath;
+			set 
+			{
+				this.RaiseAndSetIfChanged(ref logFolderPath, value);
+				Config.LogSavePath = value;
+			}
+		}
+
 		private void ToggleStartupShortcut()
 		{
 			if (LoadWithSystemBoot)
-			{
-				if (OperatingSystem.IsWindows())
-					Utils.Win.CreateShortcut();
-				else if (OperatingSystem.IsLinux())
-					Utils.Linux.CreateShortcut();
-				else
-					Views.MessageBox.ShowAsError("Error", "This option is not avaiable on MacOS");
-			}
+				Utils.CreateShortcut();
 			else
-			{
-				if (OperatingSystem.IsWindows())
-					Utils.Win.DeleteShortcut();
-				else if (OperatingSystem.IsLinux())
-					Utils.Linux.DeleteShortcut();
-				else
-					Views.MessageBox.ShowAsError("Error", "This option is not avaiable on MacOS");
-			}
+				Utils.DeleteShortcut();
 		}
 	}
 }
