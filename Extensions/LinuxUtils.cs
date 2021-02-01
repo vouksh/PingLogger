@@ -16,7 +16,7 @@ namespace PingLogger
 #if Linux
 				string fileContents = @$"[Desktop Entry]
 Type=Application
-Exec={AppDomain.CurrentDomain.FriendlyName}
+Exec={AppDomain.CurrentDomain.BaseDirectory}{AppDomain.CurrentDomain.FriendlyName}
 Hidden=false
 NoDisplay=false
 X-GNOME-Autostart-enabled=true
