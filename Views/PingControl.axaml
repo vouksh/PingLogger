@@ -105,9 +105,9 @@
 			<Label Grid.Row="0" Grid.Column="1" x:Name="avgPingLbl" Content="{Binding AveragePing}" FontSize="11" HorizontalAlignment="Stretch" Margin="0,0,0,0" VerticalAlignment="Stretch" VerticalContentAlignment="Center"/>
 		</Grid>
 		<Button Grid.Row="8" Grid.Column="0" x:Name="StartBtn" Content="Start Pinging" HorizontalAlignment="Stretch" Margin="3" FontSize="15"
-				VerticalAlignment="Stretch" HorizontalContentAlignment="Center" IsEnabled="{Binding StartButtonEnabled}" Command="{Binding PingCommand}" CommandParameter="true"/>
+				VerticalAlignment="Stretch" HorizontalContentAlignment="Center" IsEnabled="{Binding StartButtonEnabled}" Command="{Binding PingCommand}" CommandParameter="{StaticResource True}"/>
 		<Button Grid.Row="8" Grid.Column="2" x:Name="StopBtn" Content="Stop Pinging" HorizontalAlignment="Stretch" Margin="3" FontSize="15"
-				VerticalAlignment="Stretch" HorizontalContentAlignment="Center" IsEnabled="{Binding StopButtonEnabled}" Command="{Binding PingCommand}" CommandParameter="false"/>
+				VerticalAlignment="Stretch" HorizontalContentAlignment="Center" IsEnabled="{Binding StopButtonEnabled}" Command="{Binding PingCommand}" CommandParameter="{StaticResource False}"/>
 		<Grid Grid.Row="7" Grid.Column="0">
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition Width="76"/>

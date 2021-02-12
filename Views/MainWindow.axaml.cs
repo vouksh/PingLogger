@@ -26,7 +26,7 @@ namespace PingLogger.Views
 			foreach(var tabItem in vm.TabItems)
 			{
 				var pcDC = (tabItem.Content as PingControl).DataContext as ViewModels.PingControlViewModel;
-				pcDC.TriggerPinger("false");
+				pcDC.TriggerPinger(false);
 			}
 		}
 	}

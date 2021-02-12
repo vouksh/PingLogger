@@ -1,10 +1,15 @@
 <Application xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="using:PingLogger"
+			 xmlns:s="clr-namespace:System;assembly=mscorlib"
              x:Class="PingLogger.App">
     <Application.DataTemplates>
         <local:ViewLocator/>
     </Application.DataTemplates>
+	<Application.Resources>
+		<s:Boolean x:Key="True">True</s:Boolean>
+		<s:Boolean x:Key="False">False</s:Boolean>
+	</Application.Resources>
 
     <Application.Styles>
 		<StyleInclude Source="resm:OxyPlot.Avalonia.Themes.Default.xaml?assembly=OxyPlot.Avalonia"/>

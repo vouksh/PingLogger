@@ -153,7 +153,7 @@ namespace PingLogger.ViewModels
 			{
 				foreach(TabItem tabItem in _tabItems)
 				{
-					((tabItem.Content as Views.PingControl).DataContext as PingControlViewModel).TriggerPinger("true");
+					((tabItem.Content as Views.PingControl).DataContext as PingControlViewModel).TriggerPinger(true);
 				}
 			}
 		}

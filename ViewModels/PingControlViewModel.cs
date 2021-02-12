@@ -26,7 +26,7 @@ namespace PingLogger.ViewModels
 	{
 		public Host Host { get; set; }
 		private Pinger _pinger;
-		public ReactiveCommand<string, Unit> PingCommand { get; }
+		public ReactiveCommand<bool, Unit> PingCommand { get; }
 		public ReactiveCommand<Unit, Unit> OpenTraceRouteCommand { get; }
 		public ReactiveCommand<Unit, Unit> OpenLogFolderCommand { get; }
 		public ReactiveCommand<Unit, Unit> WatchLogCommand { get; }
@@ -45,7 +45,7 @@ namespace PingLogger.ViewModels
 
 		public PingControlViewModel()
 		{
-			PingCommand = ReactiveCommand.Create<string>(TriggerPinger);
+			PingCommand = ReactiveCommand.Create<bool>(TriggerPinger);
 			OpenTraceRouteCommand = ReactiveCommand.Create(OpenTraceRoute);
 			OpenLogFolderCommand = ReactiveCommand.Create(OpenLogFolder);
 			WatchLogCommand = ReactiveCommand.Create(WatchLog);
@@ -264,7 +264,7 @@ namespace PingLogger.ViewModels
 				{
 					AveragePing = Math.Ceiling(_pingTimes.Average()).ToString() + "ms";
 				}
-				PacketLoss = $"{Math.Round(((double)TimeoutCount / (double)_totalPings) * 100, 2)}%";
+				PacketLoss = $"{Math.Round(TimeoutCount / (double)_totalPings * 100, 2)}%";
 			}
 			else
 			{
@@ -365,9 +365,9 @@ namespace PingLogger.ViewModels
 			}
 		}
 
-		public void TriggerPinger(string start)
+		public void TriggerPinger(bool start)
 		{
-			if (start == "true")
+			if (start)
 			{
 				CheckValues();
 				Log.Debug("TriggerPinger(true)");
