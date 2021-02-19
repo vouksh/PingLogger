@@ -91,7 +91,11 @@ namespace PingLogger.ViewModels
 			get
 			{
 				Version version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
+#if DEBUG 
+				return $"PingLogger v{version.ToShortString()}b-{version.Revision}";
+#else
 				return $"PingLogger v{version.ToShortString()}";
+#endif
 			}
 		}
 		public List<TabItem> TabItems
