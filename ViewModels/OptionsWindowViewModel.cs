@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reactive;
-using System.Text;
-using System.Threading.Tasks;
-using Avalonia;
+﻿using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using PingLogger.Workers;
 using ReactiveUI;
+using System;
+using System.Reactive;
 
 namespace PingLogger.ViewModels
 {
@@ -123,7 +119,7 @@ namespace PingLogger.ViewModels
 		public string LogFolderPath
 		{
 			get => logFolderPath;
-			set 
+			set
 			{
 				this.RaiseAndSetIfChanged(ref logFolderPath, value);
 				Config.LogSavePath = value;

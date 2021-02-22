@@ -1,9 +1,9 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
+using PingLogger.Extensions;
 using PingLogger.Models;
 using PingLogger.Workers;
-using PingLogger.Extensions;
 using Projektanker.Icons.Avalonia;
 using ReactiveUI;
 using System;
@@ -91,7 +91,7 @@ namespace PingLogger.ViewModels
 			get
 			{
 				Version version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
-#if DEBUG 
+#if DEBUG
 				return $"PingLogger v{version.ToShortString()}b-{version.Revision}";
 #else
 				return $"PingLogger v{version.ToShortString()}";
@@ -153,9 +153,9 @@ namespace PingLogger.ViewModels
 
 		private void StartAllLoggers()
 		{
-			if(Config.StartLoggersAutomatically)
+			if (Config.StartLoggersAutomatically)
 			{
-				foreach(TabItem tabItem in _tabItems)
+				foreach (TabItem tabItem in _tabItems)
 				{
 					((tabItem.Content as Views.PingControl).DataContext as PingControlViewModel).TriggerPinger(true);
 				}

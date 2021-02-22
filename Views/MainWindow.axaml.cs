@@ -11,7 +11,7 @@ namespace PingLogger.Views
 		{
 			InitializeComponent();
 #if DEBUG
-            this.AttachDevTools();
+			this.AttachDevTools();
 #endif
 		}
 
@@ -23,7 +23,7 @@ namespace PingLogger.Views
 		public void Window_Closing(object sender, CancelEventArgs e)
 		{
 			var vm = DataContext as ViewModels.MainWindowViewModel;
-			foreach(var tabItem in vm.TabItems)
+			foreach (var tabItem in vm.TabItems)
 			{
 				var pcDC = (tabItem.Content as PingControl).DataContext as ViewModels.PingControlViewModel;
 				pcDC.TriggerPinger(false);

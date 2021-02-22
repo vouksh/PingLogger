@@ -9,7 +9,7 @@ using PingLogger.Workers;
 using ReactiveUI;
 using Serilog;
 using System;
-using System.Configuration;
+using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -17,8 +17,6 @@ using System.Net;
 using System.Reactive;
 using System.Text;
 using System.Threading.Tasks;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel;
 
 namespace PingLogger.ViewModels
 {

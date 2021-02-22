@@ -1,22 +1,18 @@
 ﻿using PingLogger.Models;
+using PingLogger.Workers;
+using ReactiveUI;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using PingLogger.Workers;
-using ReactiveUI;
-using System.Reactive;
 using System.Diagnostics;
-using System.Net.NetworkInformation;
 using System.Net;
-using Serilog;
+using System.Net.NetworkInformation;
+using System.Reactive;
+using System.Text;
 using System.Threading;
-using PingLogger.Extensions;
-using Avalonia.Interactivity;
-using System.ComponentModel;
+using System.Threading.Tasks;
 
 namespace PingLogger.ViewModels
 {

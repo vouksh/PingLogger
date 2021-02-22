@@ -25,5 +25,6 @@
 				    i:Attached.Icon="fas fa-question-circle" FontSize="16" Command="{Binding OpenHelpCommand}" />
 			
 	    </StackPanel>
+		
 	</Grid>
 </Window>
