@@ -31,7 +31,7 @@ steps:
 - task: CmdLine@2
   inputs:
     script: |
-      cd bin
+      cd bin\Release\net5.0\
       dir
 - task: FtpUpload@2
   inputs:
