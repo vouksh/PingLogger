@@ -31,18 +31,18 @@ steps:
 - task: CmdLine@2
   inputs:
     script: |
-      cd bin\Release\net5.0\app.publish
+      cd bin\Release\net5.0\
       dir
-#- task: FtpUpload@2
-#  inputs:
-#    credentialsOption: 'inputs'
-#    serverUrl: 'ftp://lexdysia.me'
-#    username: 'pinglogger'
-#    password: 'pf6cubanwjgikxhlsqre'
-#    rootDirectory: 'bin\Release\net5.0\ClickOnce\'
-#    filePatterns: '**'
-#    remoteDirectory: '/clickonce'
-#    clean: false
-#    cleanContents: true
-#    preservePaths: false
-#    trustSSL: true
+- task: FtpUpload@2
+  inputs:
+    credentialsOption: 'inputs'
+    serverUrl: 'ftp://lexdysia.me'
+    username: 'pinglogger'
+    password: 'pf6cubanwjgikxhlsqre'
+    rootDirectory: 'bin\Release\net5.0\'
+    filePatterns: '**'
+    remoteDirectory: '/clickonce'
+    clean: false
+    cleanContents: true
+    preservePaths: false
+    trustSSL: true
