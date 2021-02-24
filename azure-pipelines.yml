@@ -26,6 +26,7 @@ steps:
     solution: '$(solution)'
     platform: '$(buildPlatform)'
     configuration: '$(buildConfiguration)'
+    msbuildArgs: '/p:DeployOnBuild=true /p:PublishProfile="Properties/ClickOnceProfile.pubxml"'
 
 - task: VSTest@2
   inputs:
