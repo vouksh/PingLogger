@@ -32,7 +32,7 @@ steps:
   inputs:
     credentialsOption: 'serviceEndpoint'
     serverEndpoint: 'PingLogger FTP'
-    rootDirectory: 'bin\Release\net5.0\app.publish'
+    rootDirectory: 'bin\Release\net5.0\'
     filePatterns: '**'
     remoteDirectory: '/clickonce'
     clean: false
