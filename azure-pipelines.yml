@@ -28,7 +28,11 @@ steps:
     configuration: '$(buildConfiguration)'
     msbuildArgs: '/p:DeployOnBuild=true /p:PublishProfile="**/Properties/ClickOnceProfile.pubxml"'
 
-
+- task: CmdLine@2
+  inputs:
+    script: |
+      cd bin
+      dir
 - task: FtpUpload@2
   inputs:
     credentialsOption: 'inputs'
