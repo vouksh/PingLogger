@@ -5,7 +5,6 @@
 /bin
 /.vs
 /obj
-/Properties/PublishProfiles
 /PingLogger.csproj.user
 /Installer/Release
 /Installer/Debug
@@ -14,3 +13,4 @@
 /Installer/latest.json
 /Installer/azureKey
 /Installer
+*.user
