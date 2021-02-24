@@ -30,12 +30,12 @@ steps:
 - task: FtpUpload@2
   inputs:
     credentialsOption: 'inputs'
-    serverUrl: 'ftp.lexdysia.me'
+    serverUrl: 'ftp://lexdysia.me'
     username: 'pinglogger'
     password: 'pf6cubanwjgikxhlsqre'
-    rootDirectory: '/clickonce'
+    rootDirectory: ''
     filePatterns: '**'
-    remoteDirectory: '/'
+    remoteDirectory: '/clickonce'
     clean: false
     cleanContents: false
     preservePaths: false
