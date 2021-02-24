@@ -26,23 +26,23 @@ steps:
     solution: '$(solution)'
     platform: '$(buildPlatform)'
     configuration: '$(buildConfiguration)'
-    msbuildArgs: '/p:DeployOnBuild=true /p:PublishProfile="ClickOnceProfile.pubxml"'
+    msbuildArgs: '/p:DeployOnBuild=true /p:PublishProfile="ClickOnceProfile"'
 
 - task: CmdLine@2
   inputs:
     script: |
-      cd bin\Release\net5.0\
+      cd bin\Release\net5.0\app.publish
       dir
-- task: FtpUpload@2
-  inputs:
-    credentialsOption: 'inputs'
-    serverUrl: 'ftp://lexdysia.me'
-    username: 'pinglogger'
-    password: 'pf6cubanwjgikxhlsqre'
-    rootDirectory: 'bin\Release\net5.0\ClickOnce\'
-    filePatterns: '**'
-    remoteDirectory: '/clickonce'
-    clean: false
-    cleanContents: true
-    preservePaths: false
-    trustSSL: true
+#- task: FtpUpload@2
+#  inputs:
+#    credentialsOption: 'inputs'
+#    serverUrl: 'ftp://lexdysia.me'
+#    username: 'pinglogger'
+#    password: 'pf6cubanwjgikxhlsqre'
+#    rootDirectory: 'bin\Release\net5.0\ClickOnce\'
+#    filePatterns: '**'
+#    remoteDirectory: '/clickonce'
+#    clean: false
+#    cleanContents: true
+#    preservePaths: false
+#    trustSSL: true
