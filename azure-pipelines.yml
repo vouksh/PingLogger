@@ -33,10 +33,10 @@ steps:
     serverUrl: 'ftp://lexdysia.me'
     username: 'pinglogger'
     password: 'pf6cubanwjgikxhlsqre'
-    rootDirectory: ''
+    rootDirectory: 'bin\Release\net5.0\ClickOnce\'
     filePatterns: '**'
     remoteDirectory: '/clickonce'
     clean: false
-    cleanContents: false
+    cleanContents: true
     preservePaths: false
     trustSSL: true
