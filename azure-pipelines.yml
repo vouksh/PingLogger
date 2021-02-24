@@ -15,32 +15,17 @@ variables:
   buildConfiguration: 'Release'
 
 steps:
-
-- task: UseDotNet@2
+- task: MSBuild@1
   inputs:
-    packageType: 'sdk'
-    version: '5.0.x'
-    
-- task: DotNetCoreCLI@2
-  inputs:
-    command: 'restore'
-    projects: '**/*.csproj'
-    feedsToUse: 'select'
-    vstsFeed: '5e4cad8b-b715-4569-9fc6-19be20de8be8'
-
-- task: DotNetCoreCLI@2
-  inputs:
-    command: 'publish'
-    publishWebProjects: false
-    projects: '**/*.csproj'
-    arguments: '/p:PublishProfile=ClickOnceProfile'
-    zipAfterPublish: false
-    modifyOutputPath: false
+    solution: '**/*.sln'
+    msbuildArchitecture: 'x64'
+    msbuildArguments: '/t:publish /p:PublishProfile=ClickOnceProfile'
+    restoreNugetPackages: true
 
 - task: CmdLine@2
   inputs:
     script: |
-      cd bin\Release\net5.0\ClickOnce
+      cd bin\Release\net5.0\
       dir
 - task: FtpUpload@2
   inputs:
