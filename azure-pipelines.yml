@@ -20,18 +20,19 @@ steps:
 - task: NuGetCommand@2
   inputs:
     restoreSolution: '$(solution)'
-
-- task: VSBuild@1
+- task: DotNetCoreCLI@2
   inputs:
-    solution: '$(solution)'
-    platform: '$(buildPlatform)'
-    configuration: '$(buildConfiguration)'
-    msbuildArgs: '/p:DeployOnBuild=true /p:PublishProfile="ClickOnceProfile"'
+    command: 'publish'
+    publishWebProjects: false
+    projects: '**/*.csproj'
+    arguments: '/p:PublishProfile=ClickOnceProfile'
+    zipAfterPublish: false
+    modifyOutputPath: false
 
 - task: CmdLine@2
   inputs:
     script: |
-      cd bin\Release\net5.0\
+      cd bin\Release\net5.0\ClickOnce
       dir
 - task: FtpUpload@2
   inputs:
@@ -39,8 +40,8 @@ steps:
     serverUrl: 'ftp://lexdysia.me'
     username: 'pinglogger'
     password: 'pf6cubanwjgikxhlsqre'
-    rootDirectory: 'bin\Release\net5.0\'
-    filePatterns: '**'
+    rootDirectory: 'bin\Release\net5.0\ClickOnce'
+    filePatterns: '**/*'
     remoteDirectory: '/clickonce'
     clean: false
     cleanContents: true
