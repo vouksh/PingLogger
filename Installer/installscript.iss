@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "PingLogger"
-#define MyAppVersion "3.0.0"
+#define MyAppVersion "3.0.1"
 #define MyAppPublisher "lexDysia"
 #define MyAppURL "https://github.com/vouksh/PingLogger"
 #define MyAppExeName "PingLogger.exe"
@@ -20,12 +20,12 @@ AppSupportURL={#MyAppURL}
 AppUpdatesURL={#MyAppURL}
 DefaultDirName=C:\{#MyAppName}
 DisableProgramGroupPage=yes
-LicenseFile=C:\Users\vouks\source\repos\vouksh\PingLogger\Installer\LICENSE.txt
+LicenseFile=Installer\LICENSE.txt
 ; Uncomment the following line to run in non administrative install mode (install for current user only.)
 ;PrivilegesRequired=lowest
-OutputDir=C:\Users\vouks\source\repos\vouksh\PingLogger\Installer
+;OutputDir=Installer
 OutputBaseFilename=PingLogger.Setup
-SetupIconFile=C:\Users\vouks\source\repos\vouksh\PingLogger\AppIcon.ico
+SetupIconFile=AppIcon.ico
 Compression=lzma
 SolidCompression=yes
 WizardStyle=modern
@@ -37,8 +37,8 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Files]
-Source: "C:\Users\vouks\source\repos\vouksh\PingLogger\bin\Release\net5.0\publish\InstallerFiles\PingLogger.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\vouks\source\repos\vouksh\PingLogger\bin\Release\net5.0\publish\InstallerFiles\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "bin\Release\net5.0\publish\PingLogger.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "bin\Release\net5.0\publish\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]

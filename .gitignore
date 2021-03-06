@@ -6,7 +6,8 @@
 /.vs
 /obj
 /PingLogger.csproj.user
-/Installer/Release
+/Installer/*.exe
+/Installer/*.txt
 /Installer/Debug
 /.vscode
 /packages
