@@ -19,20 +19,22 @@ variables:
   buildConfiguration: 'Release'
 
 steps:
-- task: NuGetToolInstaller@1
+- task: UseDotNet@2
   inputs:
-    versionSpec: "5.8.0"
+    packageType: 'sdk'
+    version: '5.0.x'
 
-- task: NuGetCommand@2
+- task: DotNetCoreCLI@2
+  displayName: 'dotnet restore'
   inputs:
-    restoreSolution: '$(solution)'
+    command: restore
+    projects: '**/*.csproj'
 
-- task: VSBuild@1
+- task: DotNetCoreCLI@2
+  displayName: 'dotnet publish'
   inputs:
-    solution: '$(solution)'
-    platform: '$(buildPlatform)'
-    configuration: '$(buildConfiguration)'
-    msbuildArgs: '/t:Publish /p:PublishProfile=Win64-SF'
+    command: publish
+    arguments: -p:PublishProfile=Win64-SF
 
 - task: FtpUpload@2
   inputs:
