@@ -31,6 +31,11 @@ steps:
     projects: '**/*.csproj'
 
 - task: DotNetCoreCLI@2
+  displayName: 'dotnet build'
+  inputs:
+    command: 'build'
+    
+- task: DotNetCoreCLI@2
   displayName: 'dotnet publish'
   inputs:
     publishWebProjects: false
