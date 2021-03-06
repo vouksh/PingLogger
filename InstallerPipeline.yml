@@ -20,6 +20,8 @@ variables:
 
 steps:
 - task: NuGetToolInstaller@1
+  inputs:
+    versionSpec: "5.8.0"
 
 - task: PowerShell@2
   displayName: 'Inno setup download'
