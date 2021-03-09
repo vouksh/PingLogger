@@ -26,7 +26,7 @@ steps:
     solution: '$(solution)'
     platform: '$(buildPlatform)'
     configuration: '$(buildConfiguration)'
-    msbuildArgs: '/t:Publish /p:PublishProfile=ClickOnceProfile /p:OutputPath="$(build.ArtifactStagingDirectory)\Publish\\"'
+    msbuildArgs: '/t:Publish /p:PublishProfile=ClickOnceProfile'
 
 - task: FtpUpload@2
   inputs:
