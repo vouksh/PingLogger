@@ -17,26 +17,36 @@ variables:
   solution: '**/*.sln'
   buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
-
+  
 steps:
-- task: NuGetToolInstaller@1
-
 - task: PowerShell@2
   displayName: 'Inno setup download'
   inputs:
     targetType: 'inline'
     script: 'choco install innosetup'
 
-- task: NuGetCommand@2
+- task: UseDotNet@2
   inputs:
-    restoreSolution: '$(solution)'
+    packageType: 'sdk'
+    version: '5.0.x'
 
-- task: VSBuild@1
+- task: DotNetCoreCLI@2
+  displayName: 'dotnet build'
   inputs:
-    solution: '$(solution)'
-    platform: '$(buildPlatform)'
-    configuration: '$(buildConfiguration)'
-    msbuildArgs: '/t:Publish /p:PublishProfile=Win64'
+    command: 'build'
+
+- task: DotNetCoreCLI@2
+  displayName: 'dotnet restore'
+  inputs:
+    command: restore
+    projects: '**/*.csproj'
+
+- task: DotNetCoreCLI@2
+  displayName: 'dotnet publish'
+  inputs:
+    publishWebProjects: false
+    command: publish
+    arguments: -p:PublishProfile=Win64
 
 # Execute install script
 - task: PowerShell@2

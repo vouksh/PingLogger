@@ -37,7 +37,4 @@
 	<PackageReference Include="Serilog.Sinks.Console" Version="4.0.0" />
 	<PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
   </ItemGroup>
-  <Target Name="PreBuild" BeforeTargets="PreBuildEvent" Condition="'$(IsWindows)'=='true'">
-	<Exec Command="if $(ConfigurationName) == Debug (&#xD;&#xA;&quot;$(DevEnvDir)TextTransform.exe&quot; -a !!BuildConfiguration!$(Configuration) &quot;$(ProjectDir)AssemblyInfo.tt&quot;&#xD;&#xA;)" />
-  </Target>
 </Project>
