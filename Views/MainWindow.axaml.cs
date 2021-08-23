@@ -23,11 +23,10 @@ namespace PingLogger.Views
 		public void Window_Closing(object sender, CancelEventArgs e)
 		{
 			var vm = DataContext as ViewModels.MainWindowViewModel;
-			foreach (var tabItem in vm.TabItems)
+			vm.TabItems.ForEach(pc =>
 			{
-				var pcDC = (tabItem.Content as PingControl).DataContext as ViewModels.PingControlViewModel;
-				pcDC.TriggerPinger(false);
-			}
+				((pc.Content as PingControl).DataContext as ViewModels.PingControlViewModel).TriggerPinger(false);
+			});
 		}
 	}
 }

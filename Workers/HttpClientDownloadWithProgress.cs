@@ -52,7 +52,7 @@ namespace PingLogger.Workers
 			var readCount = 0L;
 			//var buffer = new byte[8192];
 			var isMoreToRead = true;
-			Memory<byte> bufferMem = new Memory<byte>();
+			Memory<byte> bufferMem = new();
 			await using var fileStream = new FileStream(_destinationFilePath, FileMode.Create, FileAccess.Write, FileShare.None, 8192, true);
 			do
 			{
@@ -63,7 +63,7 @@ namespace PingLogger.Workers
 					TriggerProgressChanged(totalDownloadSize, totalBytesRead);
 					continue;
 				}
-				ReadOnlyMemory<byte> roBuffer = new ReadOnlyMemory<byte>(bufferMem.ToArray());
+				ReadOnlyMemory<byte> roBuffer = new(bufferMem.ToArray());
 				await fileStream.WriteAsync(roBuffer);
 
 				totalBytesRead += bytesRead;

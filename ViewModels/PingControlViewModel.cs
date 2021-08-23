@@ -30,7 +30,7 @@ namespace PingLogger.ViewModels
 		public ReactiveCommand<Unit, Unit> WatchLogCommand { get; }
 		public ReactiveCommand<Unit, Unit> WindowExpanderCommand { get; }
 		readonly DispatcherTimer _timer;
-		private readonly FixedList<long> _pingTimes = new FixedList<long>(23);
+		private readonly FixedList<long> _pingTimes = new(23);
 		private long _totalPings = 0;
 		public delegate void HostNameUpdatedHandler(object sender, HostNameUpdatedEventArgs e);
 		public event HostNameUpdatedHandler HostNameUpdated;
@@ -186,7 +186,7 @@ namespace PingLogger.ViewModels
 			{
 				StopButtonEnabled = true;
 				StartButtonEnabled = false;
-				StringBuilder sb = new StringBuilder();
+				StringBuilder sb = new();
 				for (int i = 0; i < _pinger.Replies.Count - 1; i++)
 				{
 					_totalPings++;
@@ -642,6 +642,11 @@ namespace PingLogger.ViewModels
 		{
 			get => expanderIcon;
 			set => this.RaiseAndSetIfChanged(ref expanderIcon, value);
+		}
+
+		public static bool TraceRouteEnabled
+		{
+			get => OperatingSystem.IsWindows();
 		}
 
 

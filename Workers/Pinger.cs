@@ -164,7 +164,7 @@ namespace PingLogger.Workers
 		{
 			_logger.Debug("StartLogging() Called.");
 			_pingSender.PingCompleted += SendPing;
-			AutoResetEvent waiter = new AutoResetEvent(false);
+			AutoResetEvent waiter = new(false);
 
 			//Generate a string that's as long as the packet size. 
 			//This is outside of the loop, so it's going to be the same while the thread is running.
@@ -177,7 +177,7 @@ namespace PingLogger.Workers
 			Running = true;
 			while (Running)
 			{
-				PingOptions options = new PingOptions
+				PingOptions options = new()
 				{
 					DontFragment = _dontFragment,
 					Ttl = 128

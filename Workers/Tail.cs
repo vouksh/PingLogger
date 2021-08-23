@@ -61,7 +61,7 @@ namespace PingLogger.Workers
 			{
 				throw new FileNotFoundException("File does not exist:" + _path);
 			}
-			FileInfo fi = new FileInfo(_path);
+			FileInfo fi = new(_path);
 			_prevLen = fi.Length;
 			MakeTail(_nLines, _path);
 			ThreadPool.QueueUserWorkItem(_ => ChangeLoop());
@@ -83,7 +83,7 @@ namespace PingLogger.Workers
 
 		private async Task Fw_Changed()
 		{
-			FileInfo fi = new FileInfo(_path);
+			FileInfo fi = new(_path);
 			if (fi.Exists)
 			{
 				if (fi.Length != _prevLen)
@@ -98,7 +98,7 @@ namespace PingLogger.Workers
 					stream.Seek(_prevLen, SeekOrigin.Begin);
 					if (string.IsNullOrEmpty(LineFilter))
 					{
-						using StreamReader sr = new StreamReader(stream);
+						using StreamReader sr = new(stream);
 						var all = await sr.ReadToEndAsync();
 						var lines = all.Split('\n');
 
@@ -117,8 +117,8 @@ namespace PingLogger.Workers
 					else
 					{
 						char[] buffer = new char[_bufSize];
-						StringBuilder current = new StringBuilder();
-						using StreamReader sr = new StreamReader(stream);
+						StringBuilder current = new();
+						using StreamReader sr = new(stream);
 						int nRead;
 						do
 						{
@@ -157,10 +157,10 @@ namespace PingLogger.Workers
 		public event EventHandler<TailEventArgs> Changed;
 		private async void MakeTail(int nLines, string path)
 		{
-			List<string> lines = new List<string>();
+			List<string> lines = new();
 
 			await using (var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Delete | FileShare.ReadWrite))
-			using (StreamReader sr = new StreamReader(stream))
+			using (StreamReader sr = new(stream))
 			{
 				string line;
 				while (null != (line = await sr.ReadLineAsync()))

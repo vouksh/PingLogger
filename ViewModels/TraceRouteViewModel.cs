@@ -24,9 +24,9 @@ namespace PingLogger.ViewModels
 		public ReactiveCommand<Unit, Unit> StartCommand { get; }
 		public ReactiveCommand<Unit, Unit> CloseWindowCommand { get; }
 		public ReactiveCommand<string, Unit> AddHostCommand { get; }
-		readonly List<Task> HostNameLookupTasks = new List<Task>();
+		readonly List<Task> HostNameLookupTasks = new();
 		int hostsLookedUp = 0;
-		private readonly CancellationTokenSource cancelToken = new CancellationTokenSource();
+		private readonly CancellationTokenSource cancelToken = new();
 		private readonly SynchronizationContext syncCtx;
 		public delegate void TraceRouteCallbackHandler(object sender, TraceRouteCallbackEventArgs e);
 		public event TraceRouteCallbackHandler TraceRouteCallback;

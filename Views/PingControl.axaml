@@ -37,7 +37,8 @@
 				VerticalAlignment="Center" HorizontalContentAlignment="Center" FontSize="12" 
 				VerticalContentAlignment="Center" Command="{Binding WatchLogCommand}" />
 		<Button Grid.Row="0" Grid.Column="2" x:Name="DoTraceRteBtn" Content="Trace Route" HorizontalContentAlignment="Center" HorizontalAlignment="Center"
-				VerticalContentAlignment="Center" VerticalAlignment="Center" FontSize="12" Command="{Binding OpenTraceRouteCommand}" />
+				VerticalContentAlignment="Center" VerticalAlignment="Center" FontSize="12" Command="{Binding OpenTraceRouteCommand}" 
+				IsEnabled="{Binding TraceRouteEnabled}" IsVisible="{Binding TraceRouteEnabled}" />
 		<TabControl x:Name="RightTabs" Grid.Row="0" Grid.Column="4" Grid.RowSpan="10" IsVisible="{Binding ShowRightTabs}"
 					VerticalContentAlignment="Stretch" VerticalAlignment="Stretch" Margin="0 0 0 10">
 			<TabItem>

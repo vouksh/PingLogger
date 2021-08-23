@@ -21,7 +21,7 @@ namespace PingLogger.ViewModels
 		public ReactiveCommand<Unit, Unit> AddTabCommand { get; }
 		public ReactiveCommand<Unit, Unit> OpenOptionsCommand { get; }
 		public ReactiveCommand<Unit, Unit> OpenHelpCommand { get; }
-		private readonly ObservableCollection<TabItem> _tabItems = new ObservableCollection<TabItem>();
+		private readonly ObservableCollection<TabItem> _tabItems = new();
 		public delegate void ThemeChangedEventHandler(object sender);
 		public event ThemeChangedEventHandler ThemeChanged;
 		private Views.AddHostDialog AddHostDialog;

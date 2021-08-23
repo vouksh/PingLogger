@@ -12,7 +12,7 @@ namespace PingLogger.Extensions
 		}
 
 		public int MaxSize { get; set; }
-		private readonly Queue<TKey> orderedKeys = new Queue<TKey>();
+		private readonly Queue<TKey> orderedKeys = new();
 
 		public new void Add(TKey key, TValue value)
 		{

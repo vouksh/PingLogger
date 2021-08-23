@@ -11,7 +11,7 @@ namespace PingLogger.Extensions
 		{
 			MaxSize = maxSize;
 		}
-		private readonly Queue<T> orderedQueue = new Queue<T>();
+		private readonly Queue<T> orderedQueue = new();
 
 		public new void Add(T obj)
 		{

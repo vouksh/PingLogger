@@ -63,7 +63,7 @@ namespace PingLogger
 		/// <returns>Random string of letters and numbers</returns>
 		public static string RandomString(int length)
 		{
-			Random random = new Random();
+			Random random = new();
 			const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 			return new string(Enumerable.Repeat(chars, length)
 			  .Select(s => s[random.Next(s.Length)]).ToArray());

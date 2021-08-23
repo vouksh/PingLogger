@@ -222,7 +222,7 @@ namespace PingLogger.Workers
 					{
 						using var hostEntryStream = hostEntry.Open();
 						hostEntryStream.SetLength(hostData.Length);
-						using StreamWriter hostWriter = new StreamWriter(hostEntryStream);
+						using StreamWriter hostWriter = new(hostEntryStream);
 						hostWriter.Write(hostData);
 					}
 
@@ -233,7 +233,7 @@ namespace PingLogger.Workers
 					{
 						using var configStream = configEntry.Open();
 						configStream.SetLength(configData.Length);
-						using StreamWriter configWriter = new StreamWriter(configStream);
+						using StreamWriter configWriter = new(configStream);
 						configWriter.Write(configData);
 					}
 				}
@@ -241,12 +241,12 @@ namespace PingLogger.Workers
 				{
 					Log.Information("Saving host configuration");
 					var hostEntry = archive.CreateEntry("hosts.json");
-					using StreamWriter hostWriter = new StreamWriter(hostEntry.Open());
+					using StreamWriter hostWriter = new(hostEntry.Open());
 					hostWriter.Write(hostData);
 
 					Log.Information("Saving application configuration");
 					var configEntry = archive.CreateEntry("config.json");
-					using StreamWriter configWriter = new StreamWriter(configEntry.Open());
+					using StreamWriter configWriter = new(configEntry.Open());
 					configWriter.Write(configData);
 				}
 				Log.Information($"Done saving {_configFileName}");
@@ -300,7 +300,7 @@ namespace PingLogger.Workers
 						using var archive = ZipFile.OpenRead(dataPath);
 
 						Log.Information("Reading hosts configuration");
-						using StreamReader hostReader = new StreamReader(archive.GetEntry("hosts.json")?.Open()!);
+						using StreamReader hostReader = new(archive.GetEntry("hosts.json")?.Open()!);
 						Hosts = JsonSerializer.Deserialize<ObservableCollection<Host>>(hostReader.ReadToEnd());
 						hostReader.Close();
 

@@ -42,7 +42,7 @@ namespace PingLogger.ViewModels
 			set => this.RaiseAndSetIfChanged(ref logText, value);
 		}
 
-		private Vector scrollOffset = new Vector();
+		private Vector scrollOffset = new();
 		public Vector ScrollOffset
 		{
 			get => scrollOffset;
