@@ -48,7 +48,7 @@ steps:
     serverEndpoint: 'PingLogger FTP'
     rootDirectory: '$(Build.ArtifactStagingDirectory)'
     filePatterns: '**'
-    remoteDirectory: '/3.0.0/win/sf/'
+    remoteDirectory: '/3.0.2/win/sf/'
     clean: false
     cleanContents: true
     preservePaths: true
