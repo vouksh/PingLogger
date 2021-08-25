@@ -50,9 +50,15 @@ steps:
 - task: CopyFiles@2
   displayName: 'Copy setup to artifact'
   inputs:
-    SourceFolder: 'PingLogger\\Output'
+    SourceFolder: 'Installer/Output'
     Contents: '**'
     TargetFolder: '$(Build.ArtifactStagingDirectory)'
+
+- task: PublishPipelineArtifact@1
+  displayName: 'publish artifact'
+  inputs:
+    targetPath: '$(Build.ArtifactStagingDirectory)'
+    publishLocation: 'pipeline'
 
 - task: FtpUpload@2
   inputs:

@@ -24,6 +24,12 @@ steps:
 - script: dotnet publish $(project) /p:PublishProfile=ClickOnceProfile
   displayName: 'dotnet publish'
 
+- task: PublishPipelineArtifact@1
+  displayName: 'publish artifact'
+  inputs:
+    targetPath: '$(Pipeline.Workspace)/s/bin/Release/net5.0/publish/ClickOnce/'
+    publishLocation: 'pipeline'
+
 - task: FtpUpload@2
   inputs:
     credentialsOption: 'serviceEndpoint'
