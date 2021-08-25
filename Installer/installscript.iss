@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "PingLogger"
-#define MyAppVersion "3.0.1"
+#define MyAppVersion "3.0.2"
 #define MyAppPublisher "lexDysia"
 #define MyAppURL "https://github.com/vouksh/PingLogger"
 #define MyAppExeName "PingLogger.exe"
