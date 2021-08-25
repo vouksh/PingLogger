@@ -23,7 +23,7 @@ DisableProgramGroupPage=yes
 LicenseFile=LICENSE.txt
 ; Uncomment the following line to run in non administrative install mode (install for current user only.)
 ;PrivilegesRequired=lowest
-OutputDir=Installer/Output/
+OutputDir=Output
 OutputBaseFilename=PingLogger.Setup
 SetupIconFile=AppIcon.ico
 Compression=lzma

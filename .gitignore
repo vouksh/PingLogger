@@ -7,11 +7,9 @@
 /obj
 /PingLogger.csproj.user
 /Installer/*.exe
-/Installer/*.txt
 /Installer/Debug
 /.vscode
 /packages
 /Installer/latest.json
 /Installer/azureKey
-/Installer
 *.user

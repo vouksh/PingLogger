@@ -22,7 +22,7 @@ steps:
 - script: dotnet build --configuration $(buildConfiguration)
   displayName: 'dotnet build'
 
-- script: dotnet publish  $(project) --configuration $(buildConfiguration) /p:PublishProfile=ClickOnceProfile -o $(outputDirectory)
+- script: dotnet publish  $(project) --configuration $(buildConfiguration) /p:PublishProfile=ClickOnceProfile
   displayName: 'dotnet publish'
 
 - task: CopyFiles@2
