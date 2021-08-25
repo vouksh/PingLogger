@@ -19,9 +19,11 @@
   </PropertyGroup>
   <ItemGroup>
 	<None Remove="AppIcon.ico" />
+	<None Remove="Installer\AppIcon.ico" />
   </ItemGroup>
   <ItemGroup>
 	<AvaloniaResource Include="AppIcon.ico" />
+	<AvaloniaResource Include="Installer\AppIcon.ico" />
   </ItemGroup>
   <ItemGroup Condition="'$(IsWindows)'=='true'">
 	<PackageReference Include="Microsoft.Win32.Registry" Version="5.0.0" />
