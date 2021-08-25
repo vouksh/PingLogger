@@ -14,7 +14,7 @@ variables:
   project: 'PingLogger.csproj'
   buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
-  outputDirectory: '$(Pipeline.Workspace)/s/bin/Release/net5.0/ClickOnce'
+  outputDirectory: '$(Pipeline.Workspace)/s/bin/Release/net5.0/app.publish/'
 
 steps:
 - task: NuGetToolInstaller@1
