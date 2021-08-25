@@ -18,6 +18,7 @@ variables:
   project: 'PingLogger.csproj'
   buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
+  outputDirectory: '$(Pipeline.Workspace)/s/bin/Release/net5.0/Win64-SF'
 
 steps:
 - task: NuGetToolInstaller@1
@@ -30,8 +31,15 @@ steps:
 - script: dotnet build --configuration $(buildConfiguration)
   displayName: 'dotnet build'
 
-- script: dotnet publish $(project) --configuration $(buildConfiguration) /p:PublishProfile=Win64-SF -o $(Pipeline.Workspace)/s/bin/Release/net5.0/publish/
+- script: dotnet publish $(project) --configuration $(buildConfiguration) /p:PublishProfile=Win64-SF -o $(outputDirectory)
   displayName: 'dotnet publish'
+
+- task: CopyFiles@2
+  displayName: 'Copy setup to artifact'
+  inputs:
+    SourceFolder: '$(outputDirectory)'
+    Contents: '**'
+    TargetFolder: '$(Build.ArtifactStagingDirectory)'
 
 - task: PublishPipelineArtifact@1
   displayName: 'publish artifact'
