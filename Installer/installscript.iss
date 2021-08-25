@@ -20,7 +20,7 @@ AppSupportURL={#MyAppURL}
 AppUpdatesURL={#MyAppURL}
 DefaultDirName=C:\{#MyAppName}
 DisableProgramGroupPage=yes
-LicenseFile=..\LICENSE.txt
+LicenseFile=LICENSE.txt
 ; Uncomment the following line to run in non administrative install mode (install for current user only.)
 ;PrivilegesRequired=lowest
 OutputDir=Installer/Output/
@@ -37,8 +37,8 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Files]
-Source: "bin\Release\net5.0\publish\installer\PingLogger.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "bin\Release\net5.0\publish\installer\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "bin\Release\net5.0\publish\Win64\PingLogger.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "bin\Release\net5.0\publish\Win64\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
