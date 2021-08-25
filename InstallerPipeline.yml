@@ -19,6 +19,8 @@ variables:
   buildConfiguration: 'Release'
   
 steps:
+- task: NuGetToolInstaller@1
+
 - task: PowerShell@2
   displayName: 'Inno setup download'
   inputs:
@@ -30,30 +32,18 @@ steps:
     packageType: 'sdk'
     version: '5.0.x'
 
-- task: DotNetCoreCLI@2
+- script: dotnet build --configuration $(buildConfiguration)
   displayName: 'dotnet build'
-  inputs:
-    command: 'build'
 
-- task: DotNetCoreCLI@2
-  displayName: 'dotnet restore'
-  inputs:
-    command: restore
-    projects: '**/*.csproj'
-
-- task: DotNetCoreCLI@2
+- script: dotnet publish $(solution) /p:PublishProfile=Win64
   displayName: 'dotnet publish'
-  inputs:
-    publishWebProjects: false
-    command: publish
-    arguments: -p:PublishProfile=Win64
 
 # Execute install script
 - task: PowerShell@2
   displayName: 'Execute Inno Setup script'
   inputs:
     targetType: 'inline'
-    script: 'iscc.exe PingLogger\\setup.iss'
+    script: 'iscc.exe PingLogger\\Installer\\installscript.iss'
 
 # Copy setup into ArtifactStaging folder
 - task: CopyFiles@2
