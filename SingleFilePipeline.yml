@@ -30,7 +30,7 @@ steps:
 - script: dotnet build --configuration $(buildConfiguration)
   displayName: 'dotnet build'
 
-- script: dotnet publish $(project) /p:PublishProfile=Win64-SF
+- script: dotnet publish $(project) --configuration $(buildConfiguration) /p:PublishProfile=Win64-SF -o $(Pipeline.Workspace)/s/bin/Release/net5.0/publish/
   displayName: 'dotnet publish'
 
 - task: PublishPipelineArtifact@1

@@ -36,7 +36,7 @@ steps:
 - script: dotnet build --configuration $(buildConfiguration)
   displayName: 'dotnet build'
 
-- script: dotnet publish $(project) /p:PublishProfile=Win64
+- script: dotnet publish $(project) --configuration $(buildConfiguration) /p:PublishProfile=Win64
   displayName: 'dotnet publish'
 
 # Execute install script

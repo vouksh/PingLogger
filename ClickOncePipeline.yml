@@ -21,7 +21,7 @@ steps:
 - script: dotnet build --configuration $(buildConfiguration)
   displayName: 'dotnet build'
 
-- script: dotnet publish $(project) /p:PublishProfile=ClickOnceProfile
+- script: dotnet publish  $(project) --configuration $(buildConfiguration) /p:PublishProfile=ClickOnceProfile
   displayName: 'dotnet publish'
 
 - task: PublishPipelineArtifact@1
