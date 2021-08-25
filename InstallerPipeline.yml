@@ -15,7 +15,7 @@ pool:
 
 variables:
   solution: '**/*.sln'
-  project: 'PingLogger/PingLogger.csproj'
+  project: 'PingLogger.csproj'
   buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
   
@@ -44,7 +44,7 @@ steps:
   displayName: 'Execute Inno Setup script'
   inputs:
     targetType: 'inline'
-    script: 'iscc.exe PingLogger\\Installer\\installscript.iss'
+    script: 'iscc.exe Installer\\installscript.iss'
 
 # Copy setup into ArtifactStaging folder
 - task: CopyFiles@2
