@@ -40,12 +40,19 @@ steps:
 - script: dotnet publish $(project) --configuration $(buildConfiguration) /p:PublishProfile=Win64 -o $(outputDirectory)
   displayName: 'dotnet publish'
 
+- task: CopyFiles@2
+  displayName: 'Copy installer script to base dir'
+  inputs:
+    SourceFolder: 'Installer/'
+    Contents: 'installscript.iss'
+    TargetFolder: '$(Pipeline.Workspace)/s/'
+
 # Execute install script
 - task: PowerShell@2
   displayName: 'Execute Inno Setup script'
   inputs:
     targetType: 'inline'
-    script: 'iscc.exe Installer\\installscript.iss'
+    script: 'iscc.exe installscript.iss'
 
 # Copy setup into ArtifactStaging folder
 - task: CopyFiles@2
