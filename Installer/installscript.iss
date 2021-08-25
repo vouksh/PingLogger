@@ -37,8 +37,8 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Files]
-Source: "bin\Release\net5.0\publish\Win64\PingLogger.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "bin\Release\net5.0\publish\Win64\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "bin\Release\net5.0\Win64\PingLogger.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "bin\Release\net5.0\Win64\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
