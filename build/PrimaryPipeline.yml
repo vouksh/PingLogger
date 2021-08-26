@@ -24,10 +24,6 @@ steps:
   inputs:
     searchPattern: '**\AssemblyInfo.cs'
 
-- task: git-tag-on-release-task@9
-  displayName: 'Tag build for GitHub'
-  inputs: 
-    staticTagName: 'v$(AssemblyInfo.AssemblyVersion.Major).$(AssemblyInfo.AssemblyVersion.Minor).$(AssemblyInfo.AssemblyVersion.Build)'
 
 - task: NuGetToolInstaller@1
 
@@ -93,6 +89,12 @@ steps:
     Contents: '**'
     TargetFolder: '$(Build.ArtifactStagingDirectory)/clickonce'
 
+- task: PublishPipelineArtifact@1
+  displayName: 'publish artifact'
+  inputs:
+    targetPath: '$(Build.ArtifactStagingDirectory)'
+    publishLocation: 'pipeline'
+
 - task: GitHubRelease@1
   displayName: 'Publish release to GitHub'
   inputs:
@@ -100,18 +102,15 @@ steps:
     repositoryName: 'vouksh/PingLogger'
     action: 'create'
     target: '$(Build.SourceVersion)'
-    tagSource: 'gitTag'
-    tagPattern: 'v([0-9]).([0-9]*).([0-9]*)'
+    tagSource: 'manual'
+    tag: 'v$(AssemblyInfo.AssemblyVersion.Major).$(AssemblyInfo.AssemblyVersion.Minor).$(AssemblyInfo.AssemblyVersion.Build)'
     title: 'PingLogger v$(AssemblyInfo.AssemblyVersion.Major).$(AssemblyInfo.AssemblyVersion.Minor).$(AssemblyInfo.AssemblyVersion.Build)'
     releaseNotesFilePath: '/RELEASE.md'
     changeLogCompareToRelease: 'lastFullRelease'
     changeLogType: 'commitBased'
-
-- task: PublishPipelineArtifact@1
-  displayName: 'publish artifact'
-  inputs:
-    targetPath: '$(Build.ArtifactStagingDirectory)'
-    publishLocation: 'pipeline'
+    assets: |
+      '$(Build.ArtifactStagingDirectory)/$(AssemblyInfo.AssemblyVersion.Major).$(AssemblyInfo.AssemblyVersion.Minor).$(AssemblyInfo.AssemblyVersion.Build)/win/sf/*'
+      '$(Build.ArtifactStagingDirectory)/$(AssemblyInfo.AssemblyVersion.Major).$(AssemblyInfo.AssemblyVersion.Minor).$(AssemblyInfo.AssemblyVersion.Build)/win/setup/*'
 
 - task: FtpUpload@2
   inputs:
