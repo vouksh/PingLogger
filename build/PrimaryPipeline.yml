@@ -40,7 +40,7 @@ steps:
   displayName: 'Build Application'
 
 - script: dotnet publish $(project) --configuration $(buildConfiguration) /p:PublishProfile=Win64-SF -o $(sfOutputDirectory)
-  displayName: 'Publish Single File'
+  displayName: 'Generate Single File'
 
 - task: ArchiveFiles@2
   displayName: 'Compress Single File output'
@@ -52,7 +52,7 @@ steps:
     replaceExistingArchive: true
   
 - script: dotnet publish $(project) --configuration $(buildConfiguration) /p:PublishProfile=Win64 -o $(installerOutputDirectory)
-  displayName: 'Publsh Installer Files'
+  displayName: 'Generate Installer Files'
   
 - task: CopyFiles@2
   displayName: 'Copy installer script to base dir'
@@ -89,12 +89,12 @@ steps:
     TargetFolder: '$(Build.ArtifactStagingDirectory)/clickonce'
 
 - task: GitHubRelease@1
-  displayName: 'Publish release to HitHub'
+  displayName: 'Publish release to GitHub'
   inputs:
     gitHubConnection: 'GitHub PAT'
     repositoryName: 'vouksh/PingLogger'
     action: 'create'
-    target: '$(Build.SourceVersion)'
+    target: 'v$(AssemblyInfo.AssemblyVersion.Major).$(AssemblyInfo.AssemblyVersion.Minor).$(AssemblyInfo.AssemblyVersion.Build)'
     tagSource: 'gitTag'
     tagPattern: 'v$(AssemblyInfo.AssemblyVersion.Major).$(AssemblyInfo.AssemblyVersion.Minor).$(AssemblyInfo.AssemblyVersion.Build)'
     title: 'PingLogger v$(AssemblyInfo.AssemblyVersion.Major).$(AssemblyInfo.AssemblyVersion.Minor).$(AssemblyInfo.AssemblyVersion.Build)'
