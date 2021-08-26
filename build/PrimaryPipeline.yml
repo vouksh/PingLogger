@@ -79,7 +79,7 @@ steps:
     solution: '$(solution)'
     platform: '$(buildPlatform)'
     configuration: '$(buildConfiguration)'
-    msbuildArgs: '/t:Publish /p:PublishProfile=ClickOnceProfile'
+    msbuildArgs: '/p:ApplicationVersion=$(AssemblyInfo.AssemblyVersion.Major).$(AssemblyInfo.AssemblyVersion.Minor).$(AssemblyInfo.AssemblyVersion.Build).*;ApplicationRevision=$(AssemblyInfo.AssemblyVersion.Revision) /t:Publish /p:PublishProfile=ClickOnceProfile'
 
 - task: CopyFiles@2
   displayName: 'Copy ClickOnce files to artifact'
