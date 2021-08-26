@@ -65,7 +65,7 @@ steps:
   displayName: 'Execute Inno Setup script'
   inputs:
     targetType: 'inline'
-    script: 'iscc.exe /DMyAppVersion=$(AssemblyInfo.AssemblyVersion.Major).$(AssemblyInfo.AssemblyVersion.Minor).$(AssemblyInfo.AssemblyVersion.Build) installscript.iss'
+    script: 'iscc.exe /DMyAppVersion="$(AssemblyInfo.AssemblyVersion.Major).$(AssemblyInfo.AssemblyVersion.Minor).$(AssemblyInfo.AssemblyVersion.Build)" installscript.iss'
 
 - task: CopyFiles@2
   displayName: 'Copy Setup to artifact'
