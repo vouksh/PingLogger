@@ -88,6 +88,11 @@ steps:
     Contents: '**'
     TargetFolder: '$(Build.ArtifactStagingDirectory)/clickonce'
 
+- task: git-tag-on-release-task@9
+  displayName: 'Create tag on GitHub'
+  inputs: 
+    staticTagName: 'v$(AssemblyInfo.AssemblyVersion.Major).$(AssemblyInfo.AssemblyVersion.Minor).$(AssemblyInfo.AssemblyVersion.Build)'
+
 - task: GitHubRelease@1
   displayName: 'Publish release to GitHub'
   inputs:
