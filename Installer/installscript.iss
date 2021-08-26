@@ -2,10 +2,10 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "PingLogger"
-#define MyAppVersion "3.0.2"
+#define MyAppExeName "PingLogger.exe"
+#define MyAppVersion GetFileVersion(MyAppExeName)
 #define MyAppPublisher "lexDysia"
 #define MyAppURL "https://github.com/vouksh/PingLogger"
-#define MyAppExeName "PingLogger.exe"
 
 [Setup]
 ; NOTE: The value of AppId uniquely identifies this application. Do not use the same AppId value in installers for other applications.

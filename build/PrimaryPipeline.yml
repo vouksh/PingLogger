@@ -24,7 +24,6 @@ steps:
   inputs:
     searchPattern: '**\AssemblyInfo.cs'
 
-
 - task: NuGetToolInstaller@1
 
 - task: NuGetCommand@2
@@ -66,7 +65,7 @@ steps:
   displayName: 'Execute Inno Setup script'
   inputs:
     targetType: 'inline'
-    script: 'iscc.exe installscript.iss'
+    script: 'iscc.exe /DMyAppVersion=$(AssemblyInfo.AssemblyVersion.Major).$(AssemblyInfo.AssemblyVersion.Minor).$(AssemblyInfo.AssemblyVersion.Build) installscript.iss'
 
 - task: CopyFiles@2
   displayName: 'Copy Setup to artifact'
@@ -88,6 +87,13 @@ steps:
     SourceFolder: '$(clickOnceOutputDirectory)'
     Contents: '**'
     TargetFolder: '$(Build.ArtifactStagingDirectory)/clickonce'
+
+- task: CopyFiles@2
+  displayName: 'Copy latest.json to staging'
+  inputs:
+    SourceFolder: 'Installer/'
+    Contents: 'latest.json'
+    TargetFolder: '$(Build.ArtifactStagingDirectory)/'
 
 - task: GitHubRelease@1
   displayName: 'Publish release to GitHub'

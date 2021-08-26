@@ -1,13 +1,19 @@
 # PingLogger #
 ### Version 3 ###
-Download the latest release from [Here](https://github.com/vouksh/PingLogger/releases/latest)
-
+Download the latest release from [Here](https://github.com/vouksh/PingLogger/releases/latest)  
+ClickOnce version availble from [Here](https://pinglogger.lexdysia.com/clickonce)  
+  
 [![Build Status](https://dev.azure.com/lexDysia/PingLogger/_apis/build/status/Unified%20Windows%20Pipeline?branchName=master)](https://dev.azure.com/lexDysia/PingLogger/_build/latest?definitionId=12&branchName=master)
-
+  
+## Running Requirements ##
+Now cross-platform. Binaries only issued for Windows  
+Windows binaries are fully self-contained and do not require .NET Core 5.0 to be installed prior.  
+  
 ## Features ##
 * Offers several distribution methods
   * ClickOnce application for Windows easy install/deployment. [Get it here](https://pinglogger.lexdysia.com/clickonce)
   * Windows Installer that defaults to C:\PingLogger. Smaller download, and allows for easy removal.
+  * Single File (unfortunately is 4 files distributed from a single zip) that can run anywhere. 
 * Allows for many simultaneous hosts to be logged at one time.
   * Only limit is your network capabilities.
   * Verifies that the host exists before starting. 
@@ -74,18 +80,15 @@ Download the latest release from [Here](https://github.com/vouksh/PingLogger/rel
   * Use these buttons to start or stop all of the loggers at the same time. 
 
 ## Trace Route ##
-There is a built-in trace route utility that will help you diagnose issues with timeouts and high latency.
+There is a built-in trace route utility that will help you diagnose issues with timeouts and high latency.  
 It's similar to the TRACERT command in Windows [Click here to find out more info about TRACERT](https://support.microsoft.com/en-us/help/314868/how-to-use-tracert-to-troubleshoot-tcp-ip-problems-in-windows)
+This function is only available to Windows users due to the lack of TTL returned back from the Ping library in other OS's  
 
 * Access it by clicking the Run Trace Route button ![RunTraceRoute](Resources/Help/RunTraceButton.jpg)
 * In the new window, click Run Trace to see the hops that are being taken to reach the destination.
   * ![TraceRouteControl](Resources/Help/TraceRouteControl.jpg)
 * It will do a quick normal ping, then start tracing through the hops. 
 * Clicking the small plus sign ![PlusSign](Resources/Help/TracePlus.jpg) will add that host/IP to the main window so that you can start logging pings against that as well. 
-
-## Running Requirements ##
-Now cross-platform. Binaries only issued for Windows
-Application is fully self-contained and does not require .NET Core 3.1 to be installed prior. 
 
 ## Developer Requirements ##
 * Visual Studio 2019 or newer (VS Code may work - not tested!)
