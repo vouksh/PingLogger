@@ -1,6 +1,7 @@
 # PingLogger #
 ### Version 3 ###
 Download the latest release from [Here](https://github.com/vouksh/PingLogger/releases/latest)
+[![Build Status](https://dev.azure.com/lexDysia/PingLogger/_apis/build/status/Unified%20Windows%20Pipeline?branchName=master)](https://dev.azure.com/lexDysia/PingLogger/_build/latest?definitionId=12&branchName=master)
 
 ## Features ##
 * Offers several distribution methods
