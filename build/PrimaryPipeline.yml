@@ -24,6 +24,11 @@ steps:
   inputs:
     searchPattern: '**\AssemblyInfo.cs'
 
+- task: git-tag-on-release-task@9
+  displayName: 'Tag build for GitHub'
+  inputs: 
+    staticTagName: 'v$(AssemblyInfo.AssemblyVersion.Major).$(AssemblyInfo.AssemblyVersion.Minor).$(AssemblyInfo.AssemblyVersion.Build)'
+
 - task: NuGetToolInstaller@1
 
 - task: NuGetCommand@2
@@ -88,20 +93,15 @@ steps:
     Contents: '**'
     TargetFolder: '$(Build.ArtifactStagingDirectory)/clickonce'
 
-- task: git-tag-on-release-task@9
-  displayName: 'Create tag on GitHub'
-  inputs: 
-    staticTagName: 'v$(AssemblyInfo.AssemblyVersion.Major).$(AssemblyInfo.AssemblyVersion.Minor).$(AssemblyInfo.AssemblyVersion.Build)'
-
 - task: GitHubRelease@1
   displayName: 'Publish release to GitHub'
   inputs:
     gitHubConnection: 'GitHub PAT'
     repositoryName: 'vouksh/PingLogger'
     action: 'create'
-    target: 'v$(AssemblyInfo.AssemblyVersion.Major).$(AssemblyInfo.AssemblyVersion.Minor).$(AssemblyInfo.AssemblyVersion.Build)'
+    target: '$(Build.SourceVersion)'
     tagSource: 'gitTag'
-    tagPattern: 'v$(AssemblyInfo.AssemblyVersion.Major).$(AssemblyInfo.AssemblyVersion.Minor).$(AssemblyInfo.AssemblyVersion.Build)'
+    tagPattern: 'v([0-9]).([0-9]*).([0-9]*)'
     title: 'PingLogger v$(AssemblyInfo.AssemblyVersion.Major).$(AssemblyInfo.AssemblyVersion.Minor).$(AssemblyInfo.AssemblyVersion.Build)'
     releaseNotesFilePath: '/RELEASE.md'
     changeLogCompareToRelease: 'lastFullRelease'
