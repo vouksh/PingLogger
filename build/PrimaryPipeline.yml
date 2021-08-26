@@ -1,0 +1,121 @@
+# .NET Desktop
+# Build and run tests for .NET Desktop or Windows classic desktop solutions.
+# Add steps that publish symbols, save build artifacts, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/apps/windows/dot-net
+
+trigger:
+- master
+
+pool:
+  vmImage: 'windows-latest'
+
+variables:
+  solution: '**/*.sln'
+  project: 'PingLogger.csproj'
+  buildPlatform: 'Any CPU'
+  buildConfiguration: 'Release'
+  sfOutputDirectory: '$(Pipeline.Workspace)/s/bin/Release/net5.0/Win64-SF/'
+  installerOutputDirectory: '$(Pipeline.Workspace)/s/bin/Release/net5.0/Win64'
+  clickOnceOutputDirectory: '$(Pipeline.Workspace)/s/bin/Release/net5.0/app.publish/'
+
+steps:
+- task: AssembyInfoReader@3
+  displayName: 'Read Assembly version'
+  inputs:
+    searchPattern: '**\AssemblyInfo.cs'
+
+- task: NuGetToolInstaller@1
+
+- task: NuGetCommand@2
+  inputs:
+    restoreSolution: '$(solution)'
+
+- task: PowerShell@2
+  displayName: 'Inno setup download'
+  inputs:
+    targetType: 'inline'
+    script: 'choco install innosetup'
+
+- script: dotnet build --configuration $(buildConfiguration)
+  displayName: 'Build Application'
+
+- script: dotnet publish $(project) --configuration $(buildConfiguration) /p:PublishProfile=Win64-SF -o $(sfOutputDirectory)
+  displayName: 'Publish Single File'
+
+- task: ArchiveFiles@2
+  displayName: 'Compress Single File output'
+  inputs:
+    rootFolderOrFile: '$(sfOutputDirectory)'
+    includeRootFolder: false
+    archiveType: 'zip'
+    archiveFile: '$(Build.ArtifactStagingDirectory)/$(AssemblyInfo.AssemblyVersion.Major).$(AssemblyInfo.AssemblyVersion.Minor).$(AssemblyInfo.AssemblyVersion.Build)/win/sf/PingLogger.zip'
+    replaceExistingArchive: true
+  
+- script: dotnet publish $(project) --configuration $(buildConfiguration) /p:PublishProfile=Win64 -o $(installerOutputDirectory)
+  displayName: 'Publsh Installer Files'
+  
+- task: CopyFiles@2
+  displayName: 'Copy installer script to base dir'
+  inputs:
+    SourceFolder: 'Installer/'
+    Contents: 'installscript.iss'
+    TargetFolder: '$(Pipeline.Workspace)/s/'
+
+- task: PowerShell@2
+  displayName: 'Execute Inno Setup script'
+  inputs:
+    targetType: 'inline'
+    script: 'iscc.exe installscript.iss'
+
+- task: CopyFiles@2
+  displayName: 'Copy Setup to artifact'
+  inputs:
+    SourceFolder: 'Installer/Output'
+    Contents: '**'
+    TargetFolder: '$(Build.ArtifactStagingDirectory)/$(AssemblyInfo.AssemblyVersion.Major).$(AssemblyInfo.AssemblyVersion.Minor).$(AssemblyInfo.AssemblyVersion.Build)/win/setup/'
+
+- task: VSBuild@1
+  inputs:
+    solution: '$(solution)'
+    platform: '$(buildPlatform)'
+    configuration: '$(buildConfiguration)'
+    msbuildArgs: '/t:Publish /p:PublishProfile=ClickOnceProfile'
+
+- task: CopyFiles@2
+  displayName: 'Copy ClickOnce files to artifact'
+  inputs:
+    SourceFolder: '$(clickOnceOutputDirectory)'
+    Contents: '**'
+    TargetFolder: '$(Build.ArtifactStagingDirectory)/clickonce'
+
+- task: GitHubRelease@1
+  displayName: 'Publish release to HitHub'
+  inputs:
+    gitHubConnection: 'GitHub PAT'
+    repositoryName: 'vouksh/PingLogger'
+    action: 'create'
+    target: '$(Build.SourceVersion)'
+    tagSource: 'gitTag'
+    tagPattern: 'v$(AssemblyInfo.AssemblyVersion.Major).$(AssemblyInfo.AssemblyVersion.Minor).$(AssemblyInfo.AssemblyVersion.Build)'
+    title: 'PingLogger v$(AssemblyInfo.AssemblyVersion.Major).$(AssemblyInfo.AssemblyVersion.Minor).$(AssemblyInfo.AssemblyVersion.Build)'
+    releaseNotesFilePath: '/RELEASE.md'
+    changeLogCompareToRelease: 'lastFullRelease'
+    changeLogType: 'commitBased'
+
+- task: PublishPipelineArtifact@1
+  displayName: 'publish artifact'
+  inputs:
+    targetPath: '$(Build.ArtifactStagingDirectory)'
+    publishLocation: 'pipeline'
+
+- task: FtpUpload@2
+  inputs:
+    credentialsOption: 'serviceEndpoint'
+    serverEndpoint: 'PingLogger FTP'
+    rootDirectory: '$(Build.ArtifactStagingDirectory)'
+    filePatterns: '**'
+    remoteDirectory: '/'
+    clean: false
+    cleanContents: false
+    preservePaths: true
+    trustSSL: true

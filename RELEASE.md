@@ -1,0 +1,1 @@
+﻿* Unify full CI/CD pipeline into one YML file. 
