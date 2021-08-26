@@ -3,7 +3,7 @@
 <#@ import namespace="System.IO" #>
 <#@ import namespace="System.Text.RegularExpressions" #>
 <#
-    string output = File.ReadAllText(this.Host.ResolvePath("AssemblyInfo.cs"));
+    string output = File.ReadAllText(this.Host.ResolvePath(Environment.CurrentDirectory + Path.DirectorySeparatorChar + "AssemblyInfo.cs"));
     Regex pattern = new Regex("AssemblyVersion\\(\"(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<revision>\\d+)\\.(?<build>\\d+)\"\\)");
     MatchCollection matches = pattern.Matches(output);
     if( matches.Count == 1 )
@@ -12,10 +12,7 @@
         minor = Convert.ToInt32(matches[0].Groups["minor"].Value);
         revision = Convert.ToInt32(matches[0].Groups["revision"].Value);
         build = Convert.ToInt32(matches[0].Groups["build"].Value);
-        if(this.Host.ResolveParameterValue("-","-","BuildConfiguration") == "Debug" ) 
-        {
-            build++;
-        }
+        build++;
     }
 #>
 using System.Reflection;

@@ -1,4 +1,4 @@
-﻿using System.Reflection;
+using System.Reflection;
 using System.Resources;
 using System.Runtime.InteropServices;
 
@@ -7,5 +7,5 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("PingLogger")]
 [assembly: AssemblyDescription("Advanced multi-threaded ping logging application")]
 [assembly: NeutralResourcesLanguage("en-US")]
-[assembly: AssemblyVersion("3.0.3.3")]
-[assembly: AssemblyFileVersion("3.0.3.3")]
+[assembly: AssemblyVersion("3.0.3.5")]
+[assembly: AssemblyFileVersion("3.0.3.5")]

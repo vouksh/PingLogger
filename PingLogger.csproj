@@ -31,10 +31,14 @@
 	<PackageReference Include="Avalonia.Desktop" Version="0.10.7" />
 	<PackageReference Include="Avalonia.Diagnostics" Version="0.10.7" />
 	<PackageReference Include="Avalonia.ReactiveUI" Version="0.10.7" />
+	<PackageReference Include="Mono.TextTemplating" Version="2.2.1" />
 	<PackageReference Include="OxyPlot.Avalonia" Version="2.1.0-20201211.2" />
 	<PackageReference Include="Projektanker.Icons.Avalonia.FontAwesome" Version="3.1.2" />
 	<PackageReference Include="Serilog" Version="2.10.0" />
 	<PackageReference Include="Serilog.Sinks.Console" Version="4.0.0" />
 	<PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
   </ItemGroup>
+  <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
+    <Exec Command="IF $(ConfigurationName) == Debug (&#xD;&#xA;t4 -u System.IO -u System.Text.RegularExpressions -o $(ProjectDir)\AssemblyInfo.cs -I $(ProjectDir) -P $(ProjectDir) $(ProjectDir)\AssemblyInfo.tt &#xD;&#xA;)" />
+  </Target>
 </Project>
