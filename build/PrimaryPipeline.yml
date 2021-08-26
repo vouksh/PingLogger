@@ -104,8 +104,8 @@ steps:
     changeLogCompareToRelease: 'lastFullRelease'
     changeLogType: 'commitBased'
     assets: |
-      '$(Build.ArtifactStagingDirectory)/$(AssemblyInfo.AssemblyVersion.Major).$(AssemblyInfo.AssemblyVersion.Minor).$(AssemblyInfo.AssemblyVersion.Build)/win/sf/PingLogger.zip'
-      '$(Build.ArtifactStagingDirectory)/$(AssemblyInfo.AssemblyVersion.Major).$(AssemblyInfo.AssemblyVersion.Minor).$(AssemblyInfo.AssemblyVersion.Build)/win/setup/PingLogger.Setup.exe'
+      '$(Build.ArtifactStagingDirectory)/$(AssemblyInfo.AssemblyVersion.Major).$(AssemblyInfo.AssemblyVersion.Minor).$(AssemblyInfo.AssemblyVersion.Build)/win/sf/*.zip'
+      '$(Build.ArtifactStagingDirectory)/$(AssemblyInfo.AssemblyVersion.Major).$(AssemblyInfo.AssemblyVersion.Minor).$(AssemblyInfo.AssemblyVersion.Build)/win/setup/*.exe'
 
 - task: PublishPipelineArtifact@1
   displayName: 'publish artifact'
