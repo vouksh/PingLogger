@@ -36,7 +36,8 @@ namespace PingLogger.ViewModels
 					Title = "Find new log folder path"
 				};
 				var newPath = await dialog.ShowAsync(desktop.MainWindow);
-				LogFolderPath = newPath;
+				if (!string.IsNullOrEmpty(newPath))
+					LogFolderPath = newPath;
 			}
 		}
 
