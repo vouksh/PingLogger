@@ -37,6 +37,12 @@ steps:
     targetType: 'inline'
     script: 'choco install innosetup'
 
+- script: dotnet build --configuration $(buildConfiguration) /p:LINUX_BUILD=true
+  displayName: 'Build Application for linux'
+
+- script: dotnet publish $(project) --configuration $(buildConfiguration) /p:LINUX_BUILD=true /p:PublishProfile=Linux-x64 -o $(linuxOutputDirectory)
+  displayName: 'Generate Linux binaries'
+
 - script: dotnet build --configuration $(buildConfiguration)
   displayName: 'Build Application'
 
@@ -51,11 +57,7 @@ steps:
     archiveType: 'zip'
     archiveFile: '$(Build.ArtifactStagingDirectory)/$(AssemblyInfo.AssemblyVersion.Major).$(AssemblyInfo.AssemblyVersion.Minor).$(AssemblyInfo.AssemblyVersion.Build)/win/sf/PingLogger.zip'
     replaceExistingArchive: true
-
-- script: dotnet publish $(project) --configuration $(buildConfiguration) /p:PublishProfile=Linux-x64 -o $(linuxOutputDirectory)
-  displayName: 'Generate Linux binaries'
-  env:
-    LINUX_BUILD: true
+    
 
 - task: ArchiveFiles@2
   displayName: 'Compress Linux binaries'
