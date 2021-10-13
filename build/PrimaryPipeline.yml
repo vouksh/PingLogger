@@ -52,7 +52,7 @@ steps:
     archiveFile: '$(Build.ArtifactStagingDirectory)/$(AssemblyInfo.AssemblyVersion.Major).$(AssemblyInfo.AssemblyVersion.Minor).$(AssemblyInfo.AssemblyVersion.Build)/win/sf/PingLogger.zip'
     replaceExistingArchive: true
 
-- script: dotnet publish $(project) --configuration $(buildConfiguration) /p:PublishProfile=Linux-64 -o $(linuxOutputDirectory)
+- script: dotnet publish $(project) --configuration $(buildConfiguration) /p:PublishProfile=Linux-x64 -o $(linuxOutputDirectory)
   displayName: 'Generate Linux binaries'
 
 - task: ArchiveFiles@2
