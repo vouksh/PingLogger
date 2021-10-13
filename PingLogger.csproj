@@ -8,13 +8,13 @@
 	<IsOSX Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::OSX)))' == 'true'">true</IsOSX>
 	<IsLinux Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::Linux)))' == 'true'">true</IsLinux>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(IsWindows)'=='true'">
+  <PropertyGroup Condition="'$(IsWindows)'=='true' AND '$(LINUX_BUILD)'==''">
 	<DefineConstants>Windows</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition="'$(IsOSX)'=='true'">
 	<DefineConstants>OSX</DefineConstants>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(IsLinux)'=='true'">
+  <PropertyGroup Condition="'$(IsLinux)'=='true' OR '$(LINUX_BUILD)'=='true'">
 	<DefineConstants>Linux</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
@@ -23,7 +23,7 @@
   <ItemGroup>
 	<AvaloniaResource Include="AppIcon.ico" />
   </ItemGroup>
-  <ItemGroup Condition="'$(IsWindows)'=='true'">
+  <ItemGroup Condition="'$(IsWindows)'=='true' AND '$(LINUX_BUILD)'==''">
 	<PackageReference Include="Microsoft.Win32.Registry" Version="5.0.0" />
   </ItemGroup>
   <ItemGroup>

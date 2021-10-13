@@ -54,6 +54,8 @@ steps:
 
 - script: dotnet publish $(project) --configuration $(buildConfiguration) /p:PublishProfile=Linux-x64 -o $(linuxOutputDirectory)
   displayName: 'Generate Linux binaries'
+  env:
+    LINUX_BUILD: true
 
 - task: ArchiveFiles@2
   displayName: 'Compress Linux binaries'
