@@ -4,22 +4,17 @@
 	<TargetFramework>net5.0</TargetFramework>
 	<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
 	<ApplicationIcon>AppIcon.ico</ApplicationIcon>
-	<IsWindows Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::Windows)))' == 'true'">true</IsWindows>
+	<IsWindows Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::Windows)))' == 'true' AND '$(LINUX_BUILD)' !='true'">true</IsWindows>
 	<IsOSX Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::OSX)))' == 'true'">true</IsOSX>
-	<IsLinux Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::Linux)))' == 'true'">true</IsLinux>
+	<IsLinux Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::Linux)))' == 'true' OR '$(LINUX_BUILD)'=='true'">true</IsLinux>
   </PropertyGroup>
-	<PropertyGroup Condition=" '$(LINUX_BUILD)'=='' ">
-		<LINUX_BUILD>
-			false
-		</LINUX_BUILD>
-	</PropertyGroup>
-  <PropertyGroup Condition="'$(IsWindows)'=='true' AND '$(LINUX_BUILD)'=='false'">
-	<DefineConstants>Windows</DefineConstants>
+  <PropertyGroup Condition="'$(IsWindows)'=='true'">
+	<DefineConstants>Windows</DefineConstants> 
   </PropertyGroup>
   <PropertyGroup Condition="'$(IsOSX)'=='true'">
 	<DefineConstants>OSX</DefineConstants>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(IsLinux)'=='true' OR '$(LINUX_BUILD)'=='true'">
+  <PropertyGroup Condition="'$(IsLinux)'=='true'">
 	<DefineConstants>Linux</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
@@ -28,7 +23,7 @@
   <ItemGroup>
 	<AvaloniaResource Include="AppIcon.ico" />
   </ItemGroup>
-  <ItemGroup Condition="'$(IsWindows)'=='true' AND '$(LINUX_BUILD)'=='false'">
+  <ItemGroup Condition="'$(IsWindows)'=='true'">
 	<PackageReference Include="Microsoft.Win32.Registry" Version="5.0.0" />
   </ItemGroup>
   <ItemGroup>
