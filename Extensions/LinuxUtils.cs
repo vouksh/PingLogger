@@ -36,6 +36,19 @@ Comment=";
 				File.Delete("~/.config/autostart/PingLogger.desktop");
 #endif
 			}
+
+			public static string GetFileSavePath()
+			{
+				// Check to see if we're installed in /opt, so that we set the File Save Path to ~/.pinglogger
+				if (Environment.CurrentDirectory.Contains("/opt"))
+				{
+					return Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + Path.DirectorySeparatorChar + ".pinglogger" + Path.DirectorySeparatorChar;
+				}
+				else
+				{
+					return Environment.CurrentDirectory;
+				}
+			}
 		}
 	}
 }

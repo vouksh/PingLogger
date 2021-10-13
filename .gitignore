@@ -12,3 +12,4 @@
 /packages
 /Installer/azureKey
 *.user
+/build/DEBIAN

@@ -49,6 +49,8 @@ namespace PingLogger
 				{
 					return Environment.CurrentDirectory;
 				}
+#elif Linux
+				return Linux.GetFileSavePath();
 #else
 				return Environment.CurrentDirectory;
 #endif

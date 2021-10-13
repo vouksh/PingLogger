@@ -27,10 +27,10 @@
 	<PackageReference Include="Microsoft.Win32.Registry" Version="5.0.0" />
   </ItemGroup>
   <ItemGroup>
-	<PackageReference Include="Avalonia" Version="0.10.7" />
-	<PackageReference Include="Avalonia.Desktop" Version="0.10.7" />
-	<PackageReference Include="Avalonia.Diagnostics" Version="0.10.7" />
-	<PackageReference Include="Avalonia.ReactiveUI" Version="0.10.7" />
+	<PackageReference Include="Avalonia" Version="0.10.8" />
+	<PackageReference Include="Avalonia.Desktop" Version="0.10.8" />
+	<PackageReference Include="Avalonia.Diagnostics" Version="0.10.8" />
+	<PackageReference Include="Avalonia.ReactiveUI" Version="0.10.8" />
 	<PackageReference Include="Mono.TextTemplating" Version="2.2.1" />
 	<PackageReference Include="OxyPlot.Avalonia" Version="2.1.0-20201211.2" />
 	<PackageReference Include="Projektanker.Icons.Avalonia.FontAwesome" Version="3.1.2" />
@@ -38,7 +38,30 @@
 	<PackageReference Include="Serilog.Sinks.Console" Version="4.0.0" />
 	<PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
   </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="build\DEBIAN\control.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>control.</LastGenOutput>
+    </None>
+    <None Update="build\DEBIAN\control">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>control.tt</DependentUpon>
+    </None>
+    <None Update="snap\snapcraft.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>snapcraft.yaml</LastGenOutput>
+    </None>
+    <None Update="snap\snapcraft.yaml">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>snapcraft.tt</DependentUpon>
+    </None>
+  </ItemGroup>
   <Target Name="PreBuild" BeforeTargets="PreBuildEvent" Condition="'$(ConfigurationName)'=='Debug'">
-    <Exec Command="t4 -u System.IO -u System.Text.RegularExpressions -o &quot;$(ProjectDir)AssemblyInfo.cs&quot; -I &quot;$(ProjectDir)&quot; -P &quot;$(ProjectDir)&quot; &quot;$(ProjectDir)AssemblyInfo.tt&quot;" />
+    <Exec Command="t4 -u System.IO -u System.Text.RegularExpressions -o &quot;$(ProjectDir)AssemblyInfo.cs&quot; -I &quot;$(ProjectDir)&quot; -P &quot;$(ProjectDir)&quot; &quot;$(ProjectDir)AssemblyInfo.tt&quot;&#xD;&#xA;t4 -u System.IO -u System.Text.RegularExpressions -o &quot;$(ProjectDir)/build/DEBIAN/control&quot; -I &quot;$(ProjectDir)&quot; -P &quot;$(ProjectDir)&quot; &quot;$(ProjectDir)build/DEBIAN/control.tt&quot;" />
   </Target>
 </Project>
