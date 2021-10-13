@@ -40,7 +40,7 @@ steps:
 - script: dotnet build --configuration $(buildConfiguration) /p:LINUX_BUILD=true
   displayName: 'Build Application for linux'
 
-- script: dotnet publish $(project) --configuration $(buildConfiguration) /p:LINUX_BUILD=true /p:PublishProfile=Linux-x64 -o $(linuxOutputDirectory)
+- script: dotnet publish $(project) --configuration $(buildConfiguration) /p:LINUX_BUILD=true;PublishProfile=Linux-x64 -o $(linuxOutputDirectory)
   displayName: 'Generate Linux binaries'
 
 - script: dotnet build --configuration $(buildConfiguration)
