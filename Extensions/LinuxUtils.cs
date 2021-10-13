@@ -39,10 +39,16 @@ Comment=";
 
 			public static string GetFileSavePath()
 			{
-				// Check to see if we're installed in /opt, so that we set the File Save Path to ~/.pinglogger
-				if (Environment.CurrentDirectory.Contains("/opt"))
+				// Check to see if we're running outside of the user directory. 
+				// If we are, save the config and logs to the user directory, otherwise, keep it where it is. 
+				if (!Environment.CurrentDirectory.Contains(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile)))
 				{
-					return Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + Path.DirectorySeparatorChar + ".pinglogger" + Path.DirectorySeparatorChar;
+					var appDataDir = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + Path.DirectorySeparatorChar + ".pinglogger" + Path.DirectorySeparatorChar;
+					if (!Directory.Exists(appDataDir))
+					{
+						Directory.CreateDirectory(appDataDir);
+					}
+					return appDataDir;
 				}
 				else
 				{

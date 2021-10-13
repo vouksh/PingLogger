@@ -41,27 +41,7 @@
   <ItemGroup>
     <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
   </ItemGroup>
-  <ItemGroup>
-    <None Update="build\DEBIAN\control.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>control.</LastGenOutput>
-    </None>
-    <None Update="build\DEBIAN\control">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>control.tt</DependentUpon>
-    </None>
-    <None Update="snap\snapcraft.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>snapcraft.yaml</LastGenOutput>
-    </None>
-    <None Update="snap\snapcraft.yaml">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>snapcraft.tt</DependentUpon>
-    </None>
-  </ItemGroup>
   <Target Name="PreBuild" BeforeTargets="PreBuildEvent" Condition="'$(ConfigurationName)'=='Debug'">
-    <Exec Command="t4 -u System.IO -u System.Text.RegularExpressions -o &quot;$(ProjectDir)AssemblyInfo.cs&quot; -I &quot;$(ProjectDir)&quot; -P &quot;$(ProjectDir)&quot; &quot;$(ProjectDir)AssemblyInfo.tt&quot;&#xD;&#xA;t4 -u System.IO -u System.Text.RegularExpressions -o &quot;$(ProjectDir)/build/DEBIAN/control&quot; -I &quot;$(ProjectDir)&quot; -P &quot;$(ProjectDir)&quot; &quot;$(ProjectDir)build/DEBIAN/control.tt&quot;" />
+    <Exec Command="t4 -u System.IO -u System.Text.RegularExpressions -o &quot;$(ProjectDir)AssemblyInfo.cs&quot; -I &quot;$(ProjectDir)&quot; -P &quot;$(ProjectDir)&quot; &quot;$(ProjectDir)AssemblyInfo.tt&quot;" />
   </Target>
 </Project>

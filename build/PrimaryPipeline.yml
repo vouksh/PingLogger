@@ -17,6 +17,7 @@ variables:
   sfOutputDirectory: '$(Pipeline.Workspace)/s/bin/Release/net5.0/Win64-SF/'
   installerOutputDirectory: '$(Pipeline.Workspace)/s/bin/Release/net5.0/Win64'
   clickOnceOutputDirectory: '$(Pipeline.Workspace)/s/bin/Release/net5.0/app.publish/'
+  linuxOutputDirectory: '$(Pipeline.Workspace)/s/bin/Release/net5.0/Linux/'
 
 steps:
 - task: AssembyInfoReader@3
@@ -50,7 +51,20 @@ steps:
     archiveType: 'zip'
     archiveFile: '$(Build.ArtifactStagingDirectory)/$(AssemblyInfo.AssemblyVersion.Major).$(AssemblyInfo.AssemblyVersion.Minor).$(AssemblyInfo.AssemblyVersion.Build)/win/sf/PingLogger.zip'
     replaceExistingArchive: true
-  
+
+- script: dotnet publish $(project) --configuration $(buildConfiguration) /p:PublishProfile=Linux-64 -o $(linuxOutputDirectory)
+  displayName: 'Generate Linux binaries'
+
+- task: ArchiveFiles@2
+  displayName: 'Compress Linux binaries'
+  inputs:
+    rootFolderOrFile: '$(linuxOutputDirectory)'
+    includeRootFolder: false
+    archiveType: 'tar'
+    tarCompression: 'bz2'
+    archiveFile: '$(Build.ArtifactStagingDirectory)/$(AssemblyInfo.AssemblyVersion.Major).$(AssemblyInfo.AssemblyVersion.Minor).$(AssemblyInfo.AssemblyVersion.Build)/linux/pinglogger_v$(AssemblyInfo.AssemblyVersion.Major).$(AssemblyInfo.AssemblyVersion.Minor).$(AssemblyInfo.AssemblyVersion.Build)_amd64.tar.bz2'
+    replaceExistingArchive: true
+
 - script: dotnet publish $(project) --configuration $(buildConfiguration) /p:PublishProfile=Win64 -o $(installerOutputDirectory)
   displayName: 'Generate Installer Files'
   
@@ -111,6 +125,7 @@ steps:
     assets: |
       $(Build.ArtifactStagingDirectory)/$(AssemblyInfo.AssemblyVersion.Major).$(AssemblyInfo.AssemblyVersion.Minor).$(AssemblyInfo.AssemblyVersion.Build)/win/sf/*.zip
       $(Build.ArtifactStagingDirectory)/$(AssemblyInfo.AssemblyVersion.Major).$(AssemblyInfo.AssemblyVersion.Minor).$(AssemblyInfo.AssemblyVersion.Build)/win/setup/*.exe
+      $(Build.ArtifactStagingDirectory)/$(AssemblyInfo.AssemblyVersion.Major).$(AssemblyInfo.AssemblyVersion.Minor).$(AssemblyInfo.AssemblyVersion.Build)/linux/*.tar.bz2
 
 - task: PublishPipelineArtifact@1
   displayName: 'publish artifact'
