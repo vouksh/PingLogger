@@ -38,7 +38,7 @@ namespace PingLogger
 #if Windows
 				if (Win.AppIsClickOnce)
 				{
-					var appDataDir = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + Path.DirectorySeparatorChar + "PingLogger" + Path.DirectorySeparatorChar;
+					var appDataDir = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + Path.DirectorySeparatorChar + "PingLogger";
 					if (!Directory.Exists(appDataDir))
 					{
 						Directory.CreateDirectory(appDataDir);

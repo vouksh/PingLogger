@@ -16,6 +16,7 @@ namespace PingLogger
 #if Linux
 				string fileContents = @$"[Desktop Entry]
 Type=Application
+Path={AppDomain.CurrentDomain.BaseDirectory}
 Exec={AppDomain.CurrentDomain.BaseDirectory}{AppDomain.CurrentDomain.FriendlyName}
 Hidden=false
 NoDisplay=false
@@ -43,7 +44,7 @@ Comment=";
 				// If we are, save the config and logs to the user directory, otherwise, keep it where it is. 
 				if (!Environment.CurrentDirectory.Contains(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile)))
 				{
-					var appDataDir = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + Path.DirectorySeparatorChar + ".pinglogger" + Path.DirectorySeparatorChar;
+					var appDataDir = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + Path.DirectorySeparatorChar + ".pinglogger";
 					if (!Directory.Exists(appDataDir))
 					{
 						Directory.CreateDirectory(appDataDir);
