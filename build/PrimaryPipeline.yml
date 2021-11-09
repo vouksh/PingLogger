@@ -20,6 +20,12 @@ variables:
   linuxOutputDirectory: '$(Pipeline.Workspace)/s/bin/Release/net6.0/Linux/'
 
 steps:
+- task: UseDotNet@2
+  displayName: 'Install .NET Core SDK'
+  inputs:
+    version: 6.0.x
+    performMultiLevelLookup: true
+
 - task: AssembyInfoReader@3
   displayName: 'Read Assembly version'
   inputs:
