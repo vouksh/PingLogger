@@ -3,7 +3,7 @@
 
 #define MyAppName "PingLogger"
 #define MyAppExeName "PingLogger.exe"
-#define MyAppVersion GetVersionNumbersString("bin\Release\net5.0\Win64\PingLogger.exe")
+#define MyAppVersion GetVersionNumbersString("bin\Release\net6.0\Win64\PingLogger.exe")
 #define MyAppPublisher "lexDysia"
 #define MyAppURL "https://github.com/vouksh/PingLogger"
 
