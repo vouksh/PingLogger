@@ -4,6 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
+#if Linux
+using Mono.Posix;
+using Mono.Unix;
+#endif
 
 namespace PingLogger
 {
@@ -14,6 +18,7 @@ namespace PingLogger
 			public static void CreateShortcut()
 			{
 #if Linux
+				string shortcutPath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + "/.config/autostart/PingLogger.desktop";
 				string fileContents = @$"[Desktop Entry]
 Type=Application
 Path={AppDomain.CurrentDomain.BaseDirectory}
@@ -27,7 +32,14 @@ Comment[en_US]=
 Comment=";
 				if (!Directory.Exists(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + "/.config/autostart"))
 					Directory.CreateDirectory(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + "/.config/autostart");
-				File.WriteAllText(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + "/.config/autostart/PingLogger.desktop", fileContents);
+				File.WriteAllText(shortcutPath, fileContents);
+				var fileInfo = new UnixFileInfo(shortcutPath)
+				{
+					FileAccessPermissions = FileAccessPermissions.UserReadWriteExecute |
+											FileAccessPermissions.GroupRead |
+											FileAccessPermissions.OtherRead
+				};
+				fileInfo.Refresh();
 #endif
 			}
 
