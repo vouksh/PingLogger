@@ -13,3 +13,4 @@
 /Installer/azureKey
 *.user
 /build/DEBIAN
+/.run

@@ -2,12 +2,42 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:chrome="clr-namespace:Material.WindowStyle.Chrome;assembly=Material.WindowStyle"
 		xmlns:vm="using:PingLogger.ViewModels"
         mc:Ignorable="d" d:DesignWidth="450" d:DesignHeight="450"
+        SystemDecorations="BorderOnly" ExtendClientAreaToDecorationsHint="True"
 		Width="450" Height="450" TransparencyLevelHint="Transparent"
         x:Class="PingLogger.Views.SplashScreen"
         Title="SplashScreen" CanResize="False"
 		WindowStartupLocation="CenterScreen">
+	<Window.Styles>
+		
+		<Style Selector="chrome|MaterialTitleBar /template/ chrome|MaterialTitleBarButtons 
+                                                 /template/ TemplatedControl#PART_FullScreenButton">
+			<Setter Property="IsEnabled" Value="False"/>
+			<Setter Property="IsVisible" Value="False"/>
+		</Style>
+		<Style Selector="chrome|MaterialTitleBar /template/ chrome|MaterialTitleBarButtons 
+                                                 /template/ TemplatedControl#PART_RestoreButton">
+			<Setter Property="IsEnabled" Value="False"/>
+			<Setter Property="IsVisible" Value="False"/>
+		</Style>
+		<Style Selector="chrome|MaterialTitleBar /template/ chrome|MaterialTitleBarButtons 
+                                                 /template/ TemplatedControl#PART_MinimizeButton">
+			<Setter Property="IsEnabled" Value="False"/>
+			<Setter Property="IsVisible" Value="False"/>
+		</Style>
+		<Style Selector="chrome|MaterialTitleBar /template/ chrome|MaterialTitleBarButtons 
+                                                 /template/ TemplatedControl#PART_MinimizeButton">
+			<Setter Property="IsEnabled" Value="False"/>
+			<Setter Property="IsVisible" Value="False"/>
+		</Style>
+		<Style Selector="chrome|MaterialTitleBar /template/ chrome|MaterialTitleBarButtons 
+                                                 /template/ TemplatedControl#PART_CloseButton">
+			<Setter Property="IsEnabled" Value="False"/>
+			<Setter Property="IsVisible" Value="False"/>
+		</Style>
+	</Window.Styles>
 	<Design.DataContext>
 		<vm:SplashScreenViewModel />
 	</Design.DataContext>

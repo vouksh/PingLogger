@@ -25,7 +25,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyDescription("Advanced multi-threaded ping logging application")]
 [assembly: NeutralResourcesLanguage("en-US")]
 [assembly: AssemblyVersion("<#= this.major #>.<#= this.minor #>.<#= this.revision #>.<#= this.build #>")]
-[assembly: AssemblyFileVersion("<#= this.major #>.<#= this.minor #>.<#= this.revision #>.<#= this.build #>")]
+[assembly: AssemblyFileVersion("<#= this.major #>.<#= this.minor #>.<#= this.revision #>.0")]
 <#+
     int major = 1;
     int minor = 0;
