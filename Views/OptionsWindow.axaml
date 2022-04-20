@@ -2,12 +2,33 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-		xmlns:i="clr-namespace:Projektanker.Icons.Avalonia;assembly=Projektanker.Icons.Avalonia"
+        xmlns:chrome="clr-namespace:Material.WindowStyle.Chrome;assembly=Material.WindowStyle"
+        xmlns:material="using:Material.Icons.Avalonia"
         xmlns:vm="using:PingLogger.ViewModels"
-        mc:Ignorable="d" d:DesignWidth="500" d:DesignHeight="400"
-		Width="500" Height="400" TransparencyLevelHint="Transparent"
+        mc:Ignorable="d" d:DesignWidth="500" d:DesignHeight="495"
+		Width="500" Height="495" TransparencyLevelHint="Transparent"
+        SystemDecorations="BorderOnly" ExtendClientAreaToDecorationsHint="True"
         x:Class="PingLogger.Views.OptionsWindow"
-        Title="Options" CanResize="False" WindowStartupLocation="CenterOwner">
+        Title="Options" CanResize="False" WindowStartupLocation="CenterOwner"
+        BorderBrush="Black" BorderThickness="1">
+	<Window.Styles>
+		
+		<Style Selector="chrome|MaterialTitleBar /template/ chrome|MaterialTitleBarButtons 
+                                                 /template/ TemplatedControl#PART_FullScreenButton">
+			<Setter Property="IsEnabled" Value="False"/>
+			<Setter Property="IsVisible" Value="False"/>
+		</Style>
+		<Style Selector="chrome|MaterialTitleBar /template/ chrome|MaterialTitleBarButtons 
+                                                 /template/ TemplatedControl#PART_RestoreButton">
+			<Setter Property="IsEnabled" Value="False"/>
+			<Setter Property="IsVisible" Value="False"/>
+		</Style>
+		<Style Selector="chrome|MaterialTitleBar /template/ chrome|MaterialTitleBarButtons 
+                                                 /template/ TemplatedControl#PART_MinimizeButton">
+			<Setter Property="IsEnabled" Value="False"/>
+			<Setter Property="IsVisible" Value="False"/>
+		</Style>
+	</Window.Styles>
 	<Design.DataContext>
 		<vm:OptionsWindowViewModel/>
 	</Design.DataContext>
@@ -20,14 +41,15 @@
 			<ColumnDefinition Width="100" />
 		</Grid.ColumnDefinitions>
 		<Grid.RowDefinitions>
-			<RowDefinition Height="50" />
-			<RowDefinition Height="50" />
-			<RowDefinition Height="50" />
-			<RowDefinition Height="50" />
-			<RowDefinition Height="50" />
-			<RowDefinition Height="50" />
-			<RowDefinition Height="50" />
-			<RowDefinition Height="50" />
+			<RowDefinition Height="55" />
+			<RowDefinition Height="55" />
+			<RowDefinition Height="55" />
+			<RowDefinition Height="55" />
+			<RowDefinition Height="55" />
+			<RowDefinition Height="55" />
+			<RowDefinition Height="55" />
+			<RowDefinition Height="55" />
+			<RowDefinition Height="55" />
 		</Grid.RowDefinitions>
 		<CheckBox Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="3" Content="Automatically update on startup" HorizontalAlignment="Center"
 				  VerticalAlignment="Center" IsChecked="{Binding EnableAutoUpdate}" IsVisible="{Binding AutoUpdateAllowed}" />
@@ -37,25 +59,35 @@
 				  VerticalAlignment="Center" IsChecked="{Binding LoadWithSystemBoot}"/>
 		<CheckBox Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="3" Content="Start application minimized" HorizontalAlignment="Center"
 				  VerticalAlignment="Center" IsChecked="{Binding StartApplicationMinimized}"/>
-		<StackPanel Orientation="Horizontal" Grid.Row="4" Grid.ColumnSpan="5" HorizontalAlignment="Center">
+		<CheckBox Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="3" Content="Allow anonymous analytics" HorizontalAlignment="Center"
+		          VerticalAlignment="Center" IsChecked="{Binding AllowAnalytics}"/>
+		<StackPanel Orientation="Horizontal" Grid.Row="5" Grid.ColumnSpan="5" HorizontalAlignment="Center">
 			<Label Content="Keep log files for "  HorizontalContentAlignment="Right" HorizontalAlignment="Stretch" VerticalContentAlignment="Center"/>
-			<TextBox HorizontalContentAlignment="Center" TextWrapping="NoWrap" VerticalAlignment="Center" HorizontalAlignment="Center" Width="10" 
-					 Text="{Binding DaysToKeepLogs}" />
+			<TextBox HorizontalContentAlignment="Center" TextWrapping="NoWrap" VerticalAlignment="Center" HorizontalAlignment="Center" Width="20" 
+					 Text="{Binding DaysToKeepLogs}"  FontSize="10" />
 			<Label HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" VerticalContentAlignment="Center"
 				   VerticalAlignment="Center" Content=" days" />
 		</StackPanel>
-		<Label Grid.Row="5" Grid.Column="1" Content="Theme:" VerticalContentAlignment="Center" VerticalAlignment="Stretch" HorizontalContentAlignment="Right"
+		<Label Grid.Row="6" Grid.Column="0" Content="Theme:" VerticalContentAlignment="Center" VerticalAlignment="Stretch" HorizontalContentAlignment="Right"
 			   HorizontalAlignment="Stretch"/>
-		<ComboBox Grid.Row="5" Grid.Column="2" HorizontalContentAlignment="Center" HorizontalAlignment="Stretch" VerticalContentAlignment="Center"
+		<ComboBox Grid.Row="6" Grid.Column="1" HorizontalContentAlignment="Center" HorizontalAlignment="Stretch" VerticalContentAlignment="Center"
 				  VerticalAlignment="Center" SelectedIndex="{Binding SelectedTheme}">
 			<ComboBoxItem Content="Auto" />
 			<ComboBoxItem Content="Light" />
 			<ComboBoxItem Content="Dark" />
 		</ComboBox>
-	  <TextBox Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="4" Margin="5 10 2 10" Text="{Binding LogFolderPath}" />
-	  <Button Grid.Row="6" Grid.Column="5" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="2 10 5 10" Command="{Binding FindLogFolderCommand}">
+		<Label Grid.Row="6" Grid.Column="2" Content="Colors:" VerticalAlignment="Stretch" VerticalContentAlignment="Center" HorizontalContentAlignment="Right"
+		       HorizontalAlignment="Stretch" />
+		<ComboBox Grid.Row="6" Grid.Column="3" HorizontalContentAlignment="Center" HorizontalAlignment="Stretch" VerticalContentAlignment="Center"
+		          VerticalAlignment="Center" SelectedIndex="{Binding PrimaryColor}" Items="{Binding AvaloniaColors}">
+		</ComboBox>
+		<ComboBox Grid.Row="6" Grid.Column="4" HorizontalContentAlignment="Center" HorizontalAlignment="Stretch" VerticalContentAlignment="Center"
+		          VerticalAlignment="Center" SelectedIndex="{Binding  SecondaryColor}" Items="{Binding AvaloniaColors}">
+		</ComboBox>
+	  <TextBox Grid.Row="7" Grid.Column="0" Grid.ColumnSpan="4" Margin="5 10 2 10" Text="{Binding LogFolderPath}" />
+	  <Button Grid.Row="7" Grid.Column="5" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="2 10 5 10" Command="{Binding FindLogFolderCommand}">
 		<StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch"  VerticalAlignment="Center" Spacing="2">
-		  <i:Icon Value="fas fa-folder-open" />
+		  <material:MaterialIcon Kind="FolderEdit" />
 		  <TextBlock Text="Find Folder" FontSize="11" />
 		</StackPanel>
 	  </Button>

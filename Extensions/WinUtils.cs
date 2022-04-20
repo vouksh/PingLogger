@@ -13,6 +13,7 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text.Json;
 using System.Threading.Tasks;
+using PingLogger.Extensions;
 
 namespace PingLogger
 {
@@ -25,8 +26,7 @@ namespace PingLogger
 			static ViewModels.SplashScreenViewModel SplashScreenViewModel;
 
 			public static bool AppIsClickOnce => File.Exists(AppContext.BaseDirectory + "Launcher.exe") && File.Exists(AppContext.BaseDirectory + "Launcher.manifest");
-
-
+			
 			public static async Task<bool> CheckForUpdates()
 			{
 #if DEBUG
@@ -67,14 +67,13 @@ namespace PingLogger
 
 					try
 					{
-						var httpClient = new WebClient();
+						//var httpClient = new WebClient();
 						bool downloadComplete = false;
-						httpClient.DownloadFileCompleted += (_, _) => { downloadComplete = true; };
 
 						string serverUrl = "https://pinglogger.lexdysia.com/";
-
-						await httpClient.DownloadFileTaskAsync($"{serverUrl}/latest.json", "./latest.json");
-
+						var downloadClient = new DownloadClient($"{serverUrl}/latest.json", "./latest.json");
+						downloadClient.FileDownloaded += (o, c) => { downloadComplete = c; };
+						await downloadClient.DownloadFileTaskAsync();
 						while (!downloadComplete) { await Task.Delay(100); }
 						var latestJson = await File.ReadAllTextAsync("./latest.json");
 						var remoteVersion = JsonSerializer.Deserialize<SerializableVersion>(latestJson);

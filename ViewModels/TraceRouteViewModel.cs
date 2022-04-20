@@ -13,6 +13,7 @@ using System.Reactive;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AppCenter.Analytics;
 
 namespace PingLogger.ViewModels
 {
@@ -95,6 +96,7 @@ namespace PingLogger.ViewModels
 
 		private async void StartTraceRoute()
 		{
+			Analytics.TrackEvent("Trace route used");
 			var stopWatch = new Stopwatch();
 			stopWatch.Start();
 			hostsLookedUp = 0;

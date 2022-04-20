@@ -2,11 +2,16 @@ using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.ReactiveUI;
 using System;
+using System.Collections.Generic;
 using Serilog;
 using PingLogger.Models;
-using Projektanker.Icons.Avalonia;
-using Projektanker.Icons.Avalonia.FontAwesome;
+//using Projektanker.Icons.Avalonia;
+//using Projektanker.Icons.Avalonia.FontAwesome;
 using System.Linq;
+using Microsoft.AppCenter;
+using Microsoft.AppCenter.Analytics;
+using Microsoft.AppCenter.Crashes;
+using PingLogger.Workers;
 
 namespace PingLogger
 {
@@ -20,6 +25,8 @@ namespace PingLogger
 			if (args.Any() && args[0] == "--installed")
 				Workers.Config.IsInstalled = true;
 
+			
+			Analytics.TrackEvent("App started", Utils.GetOSInfo());
 			Log.Logger = new LoggerConfiguration()
 #if DEBUG
 				.MinimumLevel.Verbose()
@@ -44,6 +51,7 @@ namespace PingLogger
 			catch (Exception ex)
 			{
 				Log.Error(ex, "Application-level error occurred.");
+				Crashes.TrackError(ex);
 			}
 			finally
 			{
@@ -54,7 +62,7 @@ namespace PingLogger
 		private static void AfterSetupCallback(AppBuilder appBuilder)
 		{
 			// Register icon provider(s)
-			IconProvider.Register<FontAwesomeIconProvider>();
+			//IconProvider.Register<FontAwesomeIconProvider>();
 		}
 
 		// Avalonia configuration, don't remove; also used by visual designer.

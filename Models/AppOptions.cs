@@ -1,4 +1,5 @@
 ﻿using System;
+using Avalonia.Media;
 
 namespace PingLogger.Models
 {
@@ -18,6 +19,9 @@ namespace PingLogger.Models
 		public bool IsInstalled { get; set; } = false;
 		public string InstallerGUID { get; set; } = string.Empty;
 		public string LogSavePath { get; set; } = $"{Utils.FileBasePath}Logs";
+		public bool AllowAnalytics { get; set; } = true;
+		public int PrimaryColor { get; set; } = 123;
+		public int SecondaryColor { get; set; } = 112;
 	}
 	public enum Theme
 	{

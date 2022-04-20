@@ -95,7 +95,5 @@ This function is only available to Windows users due to the lack of TTL returned
 * .NET 5.0 SDK
 
 ## Credits ##
-* FontAwesome https://fontawesome.com/
-* FontAwesome.WPF https://github.com/charri/Font-Awesome-WPF
 * theunrepentantgeek https://github.com/theunrepentantgeek/Markdown.XAML
 * ScottPlot https://github.com/swharden/ScottPlot

@@ -1,7 +1,9 @@
+using System;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using System.ComponentModel;
+using Avalonia.Threading;
 
 namespace PingLogger.Views
 {
@@ -23,9 +25,9 @@ namespace PingLogger.Views
 		public void Window_Closing(object sender, CancelEventArgs e)
 		{
 			var vm = DataContext as ViewModels.MainWindowViewModel;
-			vm.TabItems.ForEach(pc =>
+			vm!.TabItems.ForEach(pc =>
 			{
-				((pc.Content as PingControl).DataContext as ViewModels.PingControlViewModel).TriggerPinger(false);
+				((((pc.Content as PingControl)!).DataContext as ViewModels.PingControlViewModel)!).TriggerPinger(false);
 			});
 		}
 	}

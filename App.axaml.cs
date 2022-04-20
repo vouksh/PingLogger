@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
@@ -5,6 +7,14 @@ using Avalonia.Markup.Xaml.Styling;
 using PingLogger.ViewModels;
 using PingLogger.Views;
 using System.Threading.Tasks;
+using Avalonia.Media;
+using Microsoft.AppCenter;
+using Microsoft.AppCenter.Analytics;
+using Microsoft.AppCenter.Crashes;
+using PingLogger.Workers;
+using Material.Colors;
+using Material.Styles.Themes;
+using Material.Styles.Themes.Base;
 
 namespace PingLogger
 {
@@ -19,6 +29,8 @@ namespace PingLogger
 
 		public override async void OnFrameworkInitializationCompleted()
 		{
+			AppCenter.Start("9301ab16-71c1-4d0a-ad12-894e5db36532", typeof(Analytics), typeof(Crashes));
+			await Analytics.SetEnabledAsync(Config.AllowAnalytics);
 			if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
 			{
 				SetTheme();
@@ -50,7 +62,8 @@ namespace PingLogger
 
 		private void SetTheme()
 		{
-			switch (Workers.Config.Theme)
+			
+			switch (Config.Theme)
 			{
 				case Models.Theme.Auto:
 					if (Utils.IsLightTheme)
@@ -69,43 +82,29 @@ namespace PingLogger
 
 		private void SetLightTheme()
 		{
-			var theme = new Avalonia.Themes.Fluent.FluentTheme(new System.Uri("avares://Avalonia.Themes.Fluent/FluentTheme.xaml"));
-			var oxyPlotUri = new System.Uri("resm:OxyPlot.Avalonia.Themes.Default.xaml?assembly=OxyPlot.Avalonia");
-			var lightUri = new System.Uri("avares://PingLogger/Themes/Light.axaml");
-			var lightXAML = new StyleInclude(lightUri)
-			{
-				Source = lightUri
-			};
-			var oxyPlotTheme = new StyleInclude(oxyPlotUri)
-			{
-				Source = oxyPlotUri
-			};
-			Styles.Clear();
-			theme.Mode = Avalonia.Themes.Fluent.FluentThemeMode.Light;
-			Styles.Add(oxyPlotTheme);
-			Styles.Add(theme);
-			Styles.Add(lightXAML);
+			var paletteHelper = new PaletteHelper();
+			var curTheme = paletteHelper.GetTheme();
+			curTheme.SetBaseTheme(BaseThemeMode.Light.GetBaseTheme());
+			var colorProps = typeof(Colors).GetProperties().OrderBy(p => p.Name);
+			Color primaryColor = (Color)colorProps.ElementAt(Config.PrimaryColor).GetValue(typeof(Colors));
+			Color secondaryColor = (Color)colorProps.ElementAt(Config.PrimaryColor).GetValue(typeof(Colors));
+			curTheme.SetPrimaryColor(primaryColor);
+			curTheme.SetSecondaryColor(secondaryColor);
+			paletteHelper.SetTheme(curTheme);
 			DarkMode = false;
 		}
 
 		private void SetDarkTheme()
 		{
-			var theme = new Avalonia.Themes.Fluent.FluentTheme(new System.Uri("avares://Avalonia.Themes.Fluent/FluentTheme.xaml"));
-			var oxyPlotUri = new System.Uri("resm:OxyPlot.Avalonia.Themes.Default.xaml?assembly=OxyPlot.Avalonia");
-			var darkUri = new System.Uri("avares://PingLogger/Themes/Dark.axaml");
-			var darkXAML = new StyleInclude(darkUri)
-			{
-				Source = darkUri
-			};
-			var oxyPlotTheme = new StyleInclude(oxyPlotUri)
-			{
-				Source = oxyPlotUri
-			};
-			Styles.Clear();
-			theme.Mode = Avalonia.Themes.Fluent.FluentThemeMode.Dark;
-			Styles.Add(oxyPlotTheme);
-			Styles.Add(theme);
-			Styles.Add(darkXAML);
+			var paletteHelper = new PaletteHelper();
+			var curTheme = paletteHelper.GetTheme();
+			curTheme.SetBaseTheme(BaseThemeMode.Dark.GetBaseTheme());
+			var colorProps = typeof(Colors).GetProperties().OrderBy(p => p.Name);
+			Color primaryColor = (Color)colorProps.ElementAt(Config.PrimaryColor).GetValue(typeof(Colors));
+			Color secondaryColor = (Color)colorProps.ElementAt(Config.PrimaryColor).GetValue(typeof(Colors));
+			curTheme.SetPrimaryColor(primaryColor);
+			curTheme.SetSecondaryColor(secondaryColor);
+			paletteHelper.SetTheme(curTheme);
 			DarkMode = true;
 		}
 	}

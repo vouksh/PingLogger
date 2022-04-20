@@ -4,7 +4,6 @@ using Avalonia.Controls.ApplicationLifetimes;
 using PingLogger.Extensions;
 using PingLogger.Models;
 using PingLogger.Workers;
-using Projektanker.Icons.Avalonia;
 using ReactiveUI;
 using System;
 using System.Collections.Generic;
@@ -12,6 +11,11 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Reactive;
+using Avalonia.Layout;
+using Avalonia.Media;
+using Material.Icons;
+using Material.Icons.Avalonia;
+using Microsoft.AppCenter.Analytics;
 
 namespace PingLogger.ViewModels
 {
@@ -180,6 +184,7 @@ namespace PingLogger.ViewModels
 		{
 			if (e.IsValid)
 			{
+				Analytics.TrackEvent("New Host Added", new Dictionary<string, string>() { {"HostName", e.HostName} });
 				var newHost = new Host(e.HostName, e.IPAddress);
 				Config.Hosts.Add(newHost);
 				AddTabItem(newHost);
@@ -192,7 +197,7 @@ namespace PingLogger.ViewModels
 			int count = _tabItems.Count;
 			var headerGrid = new Grid
 			{
-				ColumnDefinitions = new ColumnDefinitions("*,20"),
+				ColumnDefinitions = new ColumnDefinitions("*,25"),
 				VerticalAlignment = Avalonia.Layout.VerticalAlignment.Stretch,
 				Height = 36
 			};
@@ -200,24 +205,29 @@ namespace PingLogger.ViewModels
 			var headerText = new TextBlock()
 			{
 				Text = host.HostName,
-				FontSize = 12,
+				//FontSize = 12,
 				HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Center,
 				VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center,
-				Background = Avalonia.Media.Brushes.Transparent,
-				Padding = new Thickness(5, 0, 0, 0),
+				//Background = Avalonia.Media.Brushes.Transparent,
+				//Padding = new Thickness(5, 0, 0, 0),
 				Classes = new Classes("Tab")
 			};
 			headerGrid.Children.Add(headerText);
 
 			var closeTabBtn = new Button()
 			{
-				Content = new Icon() { Value = "fas fa-times" },
+				Content = new MaterialIcon() { Kind = MaterialIconKind.CloseCircle },
 				FontSize = 12,
 				Command = CloseTabCommand,
 				CommandParameter = host.Id.ToString(),
-				Margin = new Thickness(2, 0, 0, 0),
-				Padding = new Thickness(1, 1, 1, 1),
-				Foreground = Avalonia.Media.Brushes.Red
+				//Margin = new Thickness(2, 0, 0, 0),
+				//Padding = new Thickness(1, 1, 1, 1),
+				Foreground = Avalonia.Media.Brushes.Red,
+				Background = Brushes.Transparent,
+				BorderBrush = Brushes.Transparent,
+				HorizontalAlignment = HorizontalAlignment.Center,
+				HorizontalContentAlignment = HorizontalAlignment.Center,
+				Classes = new Classes("TabClose")
 			};
 			Grid.SetColumn(closeTabBtn, 1);
 			headerGrid.Children.Add(closeTabBtn);
@@ -247,14 +257,10 @@ namespace PingLogger.ViewModels
 
 		private void PingControlVM_WindowExpandedEvent(object sender, bool expand)
 		{
-			if (expand)
-			{
-				WindowWidth = 805;
-			}
-			else
-			{
-				WindowWidth = 410;
-			}
+			WindowWidth = expand ? 805 : 410;
+			//_tabItems.Clear();
+			//TabItems.Clear();
+			//GenerateTabItems();
 		}
 
 		private void PingControlVM_TraceRouteCallback(object sender, TraceRouteCallbackEventArgs e)
@@ -292,24 +298,25 @@ namespace PingLogger.ViewModels
 			var headerText = new TextBlock()
 			{
 				Text = e.HostName,
-				FontSize = 12,
+				//FontSize = 12,
 				HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Center,
 				VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center,
-				Background = Avalonia.Media.Brushes.Transparent,
-				Padding = new Thickness(5, 0, 0, 0),
+				//Background = Avalonia.Media.Brushes.Transparent,
+				//Padding = new Thickness(5, 0, 0, 0),
 				Classes = new Classes("Tab")
 			};
 			headerGrid.Children.Add(headerText);
 
 			var closeTabBtn = new Button()
 			{
-				Content = new Icon() { Value = "fas fa-times" },
+				Content = new MaterialIcon() { Kind = MaterialIconKind.CloseCircle },
 				FontSize = 12,
 				Command = CloseTabCommand,
 				CommandParameter = e.HostId,
 				Margin = new Thickness(2, 0, 0, 0),
 				Padding = new Thickness(1, 1, 1, 1),
-				Foreground = Avalonia.Media.Brushes.Red
+				Foreground = Avalonia.Media.Brushes.Red,
+				Classes = new Classes("MainTabItem")
 			};
 
 			Grid.SetColumn(closeTabBtn, 1);

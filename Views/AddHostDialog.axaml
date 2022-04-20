@@ -2,13 +2,30 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-		xmlns:i="clr-namespace:Projektanker.Icons.Avalonia;assembly=Projektanker.Icons.Avalonia"
+        xmlns:chrome="clr-namespace:Material.WindowStyle.Chrome;assembly=Material.WindowStyle"
+        xmlns:material="using:Material.Icons.Avalonia"
 		xmlns:vm="using:PingLogger.ViewModels"
-        mc:Ignorable="d" d:DesignWidth="265" d:DesignHeight="170"
-		Width="250" Height="170" TransparencyLevelHint="Transparent"
+        mc:Ignorable="d" d:DesignWidth="300" d:DesignHeight="190"
+		Width="275" Height="200" TransparencyLevelHint="Transparent"
+        SystemDecorations="BorderOnly" ExtendClientAreaToDecorationsHint="True"
         x:Class="PingLogger.Views.AddHostDialog"
         Title="Add New Host" CanResize="False" Padding="3">
 	<Window.Styles>
+		<Style Selector="chrome|MaterialTitleBar /template/ chrome|MaterialTitleBarButtons 
+                                                 /template/ TemplatedControl#PART_FullScreenButton">
+			<Setter Property="IsEnabled" Value="False"/>
+			<Setter Property="IsVisible" Value="False"/>
+		</Style>
+		<Style Selector="chrome|MaterialTitleBar /template/ chrome|MaterialTitleBarButtons 
+                                                 /template/ TemplatedControl#PART_RestoreButton">
+			<Setter Property="IsEnabled" Value="False"/>
+			<Setter Property="IsVisible" Value="False"/>
+		</Style>
+		<Style Selector="chrome|MaterialTitleBar /template/ chrome|MaterialTitleBarButtons 
+                                                 /template/ TemplatedControl#PART_MinimizeButton">
+			<Setter Property="IsEnabled" Value="False"/>
+			<Setter Property="IsVisible" Value="False"/>
+		</Style>
 		<Style Selector="Panel.spin">
 			<Style.Animations>
 				<Animation Duration="0:0:2" IterationCount="INFINITE">
@@ -16,16 +33,16 @@
 						<Setter Property="RotateTransform.Angle" Value="0.0" />
 					</KeyFrame>
 					<KeyFrame Cue="25%">
-						<Setter Property="RotateTransform.Angle" Value="90.0" />
+						<Setter Property="RotateTransform.Angle" Value="-90.0" />
 					</KeyFrame>
 					<KeyFrame Cue="50%">
-						<Setter Property="RotateTransform.Angle" Value="180.0" />
+						<Setter Property="RotateTransform.Angle" Value="-180.0" />
 					</KeyFrame>
 					<KeyFrame Cue="75%">
-						<Setter Property="RotateTransform.Angle" Value="270.0" />
+						<Setter Property="RotateTransform.Angle" Value="-270.0" />
 					</KeyFrame>
 					<KeyFrame Cue="100%">
-						<Setter Property="RotateTransform.Angle" Value="359.0" />
+						<Setter Property="RotateTransform.Angle" Value="-359.0" />
 					</KeyFrame>
 				</Animation>
 			</Style.Animations>
@@ -43,8 +60,8 @@
 		</Grid.ColumnDefinitions>
 		<Grid.RowDefinitions>
 			<RowDefinition Height="35"/>
-			<RowDefinition Height="35"/>
-			<RowDefinition Height="25"/>
+			<RowDefinition Height="45"/>
+			<RowDefinition Height="45"/>
 			<RowDefinition Height="35"/>
 		</Grid.RowDefinitions>
 		<Label Content="Host Name or IP Address" FontSize="13" Grid.Row="0" Grid.ColumnSpan="4" HorizontalAlignment="Stretch" 
@@ -65,10 +82,10 @@
 			<Panel>
 				<TextBlock Text="Add Host" IsVisible="{Binding TextVisible}" />
 				<Panel Classes="spin" IsVisible="{Binding SpinnerVisible}">
-					<i:Icon Value="fas fa-spinner" Classes="spin" />
+					<material:MaterialIcon Kind="Cached" Classes="spin" />
 				</Panel>
 				<StackPanel Orientation="Horizontal" IsVisible="{Binding InvalidIconVisible}">
-					<i:Icon Value="fas fa-times" Foreground="Red" />
+					<material:MaterialIcon Kind="Cancel" Foreground="Red" />
 					<TextBlock Text="Duplicate Host" Foreground="Red" />
 				</StackPanel>
 			</Panel>

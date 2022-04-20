@@ -6,6 +6,8 @@ using System.IO;
 using System.IO.Compression;
 using System.Text.Json;
 using System.Timers;
+using Avalonia.Media;
+using Material.Colors;
 using Serilog;
 
 namespace PingLogger.Workers
@@ -47,6 +49,16 @@ namespace PingLogger.Workers
 			{
 				Log.Information($"Options.LoadOnSystemBoot was changed from {Options.LoadOnSystemBoot} to {value}");
 				Options.LoadOnSystemBoot = value;
+				SaveConfig();
+			}
+		}
+		public static bool AllowAnalytics
+		{
+			get => Options.AllowAnalytics;
+			set
+			{
+				Log.Information($"Options.AllowAnalytics was changed from {Options.AllowAnalytics} to {value}");
+				Options.AllowAnalytics = value;
 				SaveConfig();
 			}
 		}
@@ -144,6 +156,28 @@ namespace PingLogger.Workers
 			{
 				Log.Information($"Options.IsInstalled was changed from {Options.IsInstalled} to {value}");
 				Options.IsInstalled = value;
+				SaveConfig();
+			}
+		}
+
+		public static int PrimaryColor
+		{
+			get => Options.PrimaryColor;
+			set
+			{
+				Log.Information($"Options.PrimaryColor was changed from {Options.PrimaryColor} to {value}");
+				Options.PrimaryColor = value;
+				SaveConfig();
+			}
+		}
+		
+		public static int SecondaryColor
+		{
+			get => Options.SecondaryColor;
+			set
+			{
+				Log.Information($"Options.SecondaryColor was changed from {Options.SecondaryColor} to {value}");
+				Options.SecondaryColor = value;
 				SaveConfig();
 			}
 		}

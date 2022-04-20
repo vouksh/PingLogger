@@ -2,136 +2,189 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-			 xmlns:i="clr-namespace:Projektanker.Icons.Avalonia;assembly=Projektanker.Icons.Avalonia"
-			 xmlns:oxy="clr-namespace:OxyPlot.Avalonia;assembly=OxyPlot.Avalonia"
+             xmlns:oxy="clr-namespace:OxyPlot.Avalonia;assembly=OxyPlot.Avalonia"
+             xmlns:material="using:Material.Icons.Avalonia"
+             xmlns:styles="clr-namespace:Material.Styles;assembly=Material.Styles"
+             xmlns:assist="clr-namespace:Material.Styles.Assists;assembly=Material.Styles"
              mc:Ignorable="d" d:DesignWidth="785" d:DesignHeight="400"
              xmlns:vm="using:PingLogger.ViewModels"
              x:Class="PingLogger.Views.PingControl">
-	<Grid x:Name="MainControl">
-		<Design.DataContext>
-			<vm:PingControlViewModel/>
-		</Design.DataContext>
-		<Grid.ColumnDefinitions>
-			<ColumnDefinition Width="125" />
-			<ColumnDefinition Width="125" />
-			<ColumnDefinition Width="125" />
-			<ColumnDefinition Width="30" />
-			<ColumnDefinition Width="*" />
-		</Grid.ColumnDefinitions>
-		<Grid.RowDefinitions>
-			<RowDefinition Height="40" />
-			<RowDefinition Height="40" />
-			<RowDefinition Height="40" />
-			<RowDefinition Height="40" />
-			<RowDefinition Height="40" />
-			<RowDefinition Height="40" />
-			<RowDefinition Height="40" />
-			<RowDefinition Height="40" />
-			<RowDefinition Height="40" />
-			<RowDefinition Height="40" />
-		</Grid.RowDefinitions>
-		<Button Grid.Column="0" Grid.Row="0" x:Name="OpenLogFolderBtn" Content="Logs" HorizontalContentAlignment="Center" HorizontalAlignment="Center"
-				VerticalContentAlignment="Center" VerticalAlignment="Center" FontSize="12" Command="{Binding OpenLogFolderCommand}" 
-				IsVisible="{Binding OpenLogFolderVisible}"/>
-		<Button Grid.Row="0" Grid.Column="1" x:Name="ViewLogBtn" Content="Watch Log" IsVisible="{Binding WatchLogVisible}" HorizontalAlignment="Center"
-				VerticalAlignment="Center" HorizontalContentAlignment="Center" FontSize="12" 
-				VerticalContentAlignment="Center" Command="{Binding WatchLogCommand}" />
-		<Button Grid.Row="0" Grid.Column="2" x:Name="DoTraceRteBtn" Content="Trace Route" HorizontalContentAlignment="Center" HorizontalAlignment="Center"
-				VerticalContentAlignment="Center" VerticalAlignment="Center" FontSize="12" Command="{Binding OpenTraceRouteCommand}" 
-				IsEnabled="{Binding TraceRouteEnabled}" IsVisible="{Binding TraceRouteEnabled}" />
-		<TabControl x:Name="RightTabs" Grid.Row="0" Grid.Column="4" Grid.RowSpan="10" IsVisible="{Binding ShowRightTabs}"
-					VerticalContentAlignment="Stretch" VerticalAlignment="Stretch" Margin="0 0 0 10">
-			<TabItem>
-				<TabItem.Header>
-					<TextBlock FontSize="12" Height="20" Text="Ping Responses" Foreground="White" />
-				</TabItem.Header>
-				<TextBlock Padding="6,2,5,0" x:Name="PingStatusBox" HorizontalAlignment="Stretch" Margin="0" TextWrapping="NoWrap" VerticalAlignment="Stretch"
-						   IsEnabled="true" Text="{Binding PingStatusText}">
-				</TextBlock>
-			</TabItem>
-			<TabItem>
-				<TabItem.Header>
-					<TextBlock FontSize="12" Height="20" Text="Ping Graph" Foreground="White" />
-				</TabItem.Header>
-				<TabItem.Content>
-					<oxy:PlotView Model="{Binding GraphModel}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="10" Padding="10" />
-				</TabItem.Content>
-			</TabItem>
-			<TabItem>
-				<TabItem.Header>
-					<TextBlock FontSize="12" Height="20" Text="Status Graph" Foreground="White" />
-				</TabItem.Header>
-				<oxy:PlotView Model="{Binding StatusModel}" VerticalAlignment="Stretch" />
-			</TabItem>
-		</TabControl>
-		<Button Grid.Column="3" Grid.Row="4" x:Name="PingWindowToggle" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
-				VerticalContentAlignment="Center" VerticalAlignment="Stretch" i:Attached.Icon="{Binding ExpanderIcon}" FontSize="14" 
-				Command="{Binding WindowExpanderCommand}"/>
-		<Label Grid.Row="1" Grid.Column="0" Content="Host Name:" HorizontalAlignment="Stretch" Margin="0" VerticalAlignment="Stretch"
-			   HorizontalContentAlignment="Right" VerticalContentAlignment="Center" FontSize="12" />
-		<Label Grid.Row="2" Grid.Column="0" Content="IP Address:" HorizontalAlignment="Stretch" Margin="0" VerticalAlignment="Stretch"
-			   HorizontalContentAlignment="Right" VerticalContentAlignment="Center" FontSize="12" />
-		<Label Grid.Row="3" Grid.Column="0" Content="Interval:" HorizontalAlignment="Stretch" Margin="0" VerticalAlignment="Stretch"
-			   HorizontalContentAlignment="Right" VerticalContentAlignment="Center" FontSize="12" />
-		<Label Grid.Row="4" Grid.Column="0" Content="Warning Threshold:" HorizontalAlignment="Stretch" Margin="0" VerticalAlignment="Stretch"
-			   HorizontalContentAlignment="Right" VerticalContentAlignment="Center" FontSize="12" />
-		<Label Grid.Row="5" Grid.Column="0" Content="Timeout Threshold:" HorizontalAlignment="Stretch" Margin="0" VerticalAlignment="Stretch"
-			   HorizontalContentAlignment="Right" VerticalContentAlignment="Center" FontSize="12" />
-		<Label Grid.Row="6" Grid.Column="0" Content="Packet Size:" HorizontalAlignment="Stretch" Margin="0" VerticalAlignment="Stretch"
-			   HorizontalContentAlignment="Right" VerticalContentAlignment="Center" FontSize="12" />
-		<TextBox Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" x:Name="HostNameBox" HorizontalAlignment="Stretch" Margin="3" Text="{Binding HostName}"
-				 TextWrapping="NoWrap" VerticalAlignment="Stretch" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" FontSize="16"
-				 Padding="0"  IsEnabled="{Binding HostNameBoxEnabled}"/>
-		<TextBox Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" x:Name="IPAddressBox" HorizontalAlignment="Stretch" Margin="3" Text="{Binding IPAddress}"
-				 TextWrapping="NoWrap" VerticalAlignment="Stretch" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" FontSize="16"
-				 Padding="0" IsReadOnly="True" IsEnabled="{Binding IPEnabled}" />
-		<TextBox Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2" x:Name="IntervalBox" HorizontalAlignment="Stretch" Margin="3" Text="{Binding Interval}"
-				 TextWrapping="NoWrap" VerticalAlignment="Stretch" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" FontSize="16"
-				 Padding="0" IsEnabled="{Binding IntervalBoxEnabled}"/>
-		<TextBox Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="2" x:Name="WarningBox" HorizontalAlignment="Stretch" Margin="3" Text="{Binding WarningThreshold}"
-				 TextWrapping="NoWrap" VerticalAlignment="Stretch" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" FontSize="16"
-				 Padding="0" IsEnabled="{Binding WarningBoxEnabled}"/>
-		<TextBox Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="2" x:Name="TimeoutBox" HorizontalAlignment="Stretch" Margin="3" Text="{Binding Timeout}"
-				 TextWrapping="NoWrap" VerticalAlignment="Stretch" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" FontSize="16"
-				 Padding="0" IsEnabled="{Binding TimeoutBoxEnabled}"/>
-		<TextBox Grid.Row="6" Grid.Column="1" Grid.ColumnSpan="2" x:Name="PacketSizeBox" HorizontalAlignment="Stretch" Margin="3" Text="{Binding PacketSize}"
-				 TextWrapping="NoWrap" VerticalAlignment="Stretch" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" FontSize="16"
-				 Padding="0" IsEnabled="{Binding PacketSizeBoxEnabled}"/>
-		<Grid Grid.Row="8" Grid.Column="1">
-			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="76"/>
-				<ColumnDefinition Width="*" />
-			</Grid.ColumnDefinitions>
-			<Label Grid.Row="0" Grid.Column="0" Content="Average Ping:" FontSize="11" HorizontalContentAlignment="Right" HorizontalAlignment="Stretch" Margin="0,0,0,0" VerticalAlignment="Stretch" VerticalContentAlignment="Center"/>
-			<Label Grid.Row="0" Grid.Column="1" x:Name="avgPingLbl" Content="{Binding AveragePing}" FontSize="11" HorizontalAlignment="Stretch" Margin="0,0,0,0" VerticalAlignment="Stretch" VerticalContentAlignment="Center"/>
-		</Grid>
-		<Button Grid.Row="8" Grid.Column="0" x:Name="StartBtn" Content="Start Pinging" HorizontalAlignment="Stretch" Margin="3" FontSize="15"
-				VerticalAlignment="Stretch" HorizontalContentAlignment="Center" IsEnabled="{Binding StartButtonEnabled}" Command="{Binding PingCommand}" CommandParameter="{StaticResource True}"/>
-		<Button Grid.Row="8" Grid.Column="2" x:Name="StopBtn" Content="Stop Pinging" HorizontalAlignment="Stretch" Margin="3" FontSize="15"
-				VerticalAlignment="Stretch" HorizontalContentAlignment="Center" IsEnabled="{Binding StopButtonEnabled}" Command="{Binding PingCommand}" CommandParameter="{StaticResource False}"/>
-		<Grid Grid.Row="7" Grid.Column="0">
-			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="76"/>
-				<ColumnDefinition Width="*" />
-			</Grid.ColumnDefinitions>
-			<Label Grid.Column="0" HorizontalContentAlignment="Right" FontSize="11" Content="Packet Loss:" HorizontalAlignment="Stretch" Margin="0" VerticalAlignment="Stretch" VerticalContentAlignment="Center"/>
-			<Label Grid.Column="1" x:Name="PacketLossLbl" Content="{Binding PacketLoss}" FontSize="11" HorizontalAlignment="Stretch" Margin="0" VerticalAlignment="Stretch" VerticalContentAlignment="Center"/>
-		</Grid>
-		<Grid Grid.Row="7" Grid.Column="1">
-			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="76"/>
-				<ColumnDefinition Width="*" />
-			</Grid.ColumnDefinitions>
-			<Label Grid.Column="0" HorizontalContentAlignment="Right" FontSize="11" Content="Timeouts:" HorizontalAlignment="Stretch" Margin="0" VerticalAlignment="Stretch" VerticalContentAlignment="Center"/>
-			<Label Grid.Column="1" x:Name="timeoutLbl" Content="{Binding TimeoutCount}" FontSize="11" HorizontalAlignment="Stretch" Margin="0" VerticalAlignment="Stretch" VerticalContentAlignment="Center"/>
-		</Grid>
-		<Grid Grid.Row="7" Grid.Column="2">
-			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="76"/>
-				<ColumnDefinition Width="*" />
-			</Grid.ColumnDefinitions>
-			<Label Grid.Column="0" HorizontalContentAlignment="Right" FontSize="11" Content="Warnings:" HorizontalAlignment="Stretch" Margin="0" VerticalAlignment="Stretch" VerticalContentAlignment="Center"/>
-			<Label Grid.Column="1" x:Name="warningLbl" Content="{Binding WarningCount}" FontSize="11" HorizontalAlignment="Stretch" Margin="0" VerticalAlignment="Stretch" VerticalContentAlignment="Center"/>
-		</Grid>
-	</Grid>
+    <Grid x:Name="MainControl">
+        <Design.DataContext>
+            <vm:PingControlViewModel />
+        </Design.DataContext>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="125" />
+            <ColumnDefinition Width="125" />
+            <ColumnDefinition Width="125" />
+            <ColumnDefinition Width="30" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="40" />
+            <RowDefinition Height="40" />
+            <RowDefinition Height="40" />
+            <RowDefinition Height="40" />
+            <RowDefinition Height="40" />
+            <RowDefinition Height="40" />
+            <RowDefinition Height="40" />
+            <RowDefinition Height="40" />
+            <RowDefinition Height="40" />
+            <RowDefinition Height="40" />
+        </Grid.RowDefinitions>
+        <Button Grid.Column="0" Grid.Row="0" x:Name="OpenLogFolderBtn" Content="Logs"
+                HorizontalContentAlignment="Center" HorizontalAlignment="Center"
+                VerticalContentAlignment="Center" VerticalAlignment="Center" FontSize="12"
+                Command="{Binding OpenLogFolderCommand}"
+                IsVisible="{Binding OpenLogFolderVisible}" />
+        <Button Grid.Row="0" Grid.Column="1" x:Name="ViewLogBtn" Content="Watch Log"
+                IsVisible="{Binding WatchLogVisible}" HorizontalAlignment="Center"
+                VerticalAlignment="Center" HorizontalContentAlignment="Center" FontSize="12"
+                VerticalContentAlignment="Center" Command="{Binding WatchLogCommand}" />
+        <Button Grid.Row="0" Grid.Column="2" x:Name="DoTraceRteBtn" Content="Trace Route"
+                HorizontalContentAlignment="Center" HorizontalAlignment="Center"
+                VerticalContentAlignment="Center" VerticalAlignment="Center" FontSize="12"
+                Command="{Binding OpenTraceRouteCommand}"
+                IsEnabled="{Binding TraceRouteEnabled}" IsVisible="{Binding TraceRouteEnabled}" />
+        <TabControl x:Name="RightTabs" Grid.Row="0" Grid.Column="4" Grid.RowSpan="10"
+                    IsVisible="{Binding ShowRightTabs}">
+            <TabItem HorizontalContentAlignment="Center">
+                <TabItem.Header>
+                    <TextBlock Text="Ping Responses" TextWrapping="Wrap" HorizontalAlignment="Center"
+                               VerticalAlignment="Center" />
+                </TabItem.Header>
+                <TextBlock Padding="6,2,5,0" x:Name="PingStatusBox" HorizontalAlignment="Stretch" Margin="0"
+                           TextWrapping="NoWrap" VerticalAlignment="Stretch"
+                           IsEnabled="true" Text="{Binding PingStatusText}">
+                </TextBlock>
+            </TabItem>
+            <TabItem>
+                <TabItem.Header>
+                    <TextBlock Text="Ping Graph" />
+                </TabItem.Header>
+                <TabItem.Content>
+                    <oxy:PlotView Model="{Binding GraphModel}" VerticalAlignment="Stretch"
+                                  HorizontalAlignment="Stretch" Margin="10" Padding="10" />
+                </TabItem.Content>
+            </TabItem>
+            <TabItem>
+                <TabItem.Header>
+                    <TextBlock Text="Status Graph" />
+                </TabItem.Header>
+                <oxy:PlotView Model="{Binding StatusModel}" VerticalAlignment="Stretch" />
+            </TabItem>
+        </TabControl>
+        <Button Grid.Column="3" Grid.Row="4" x:Name="PingWindowToggle" HorizontalAlignment="Stretch"
+                HorizontalContentAlignment="Center"
+                VerticalContentAlignment="Center" VerticalAlignment="Stretch" FontSize="14"
+                Command="{Binding WindowExpanderCommand}">
+            <material:MaterialIcon Kind="{Binding Path=ExpanderIcon}"></material:MaterialIcon>
+        </Button>
+        <Label Grid.Row="1" Grid.Column="0" Content="Host Name:" HorizontalAlignment="Stretch" Margin="0"
+               VerticalAlignment="Stretch"
+               HorizontalContentAlignment="Right" VerticalContentAlignment="Center" FontSize="12" />
+        <Label Grid.Row="2" Grid.Column="0" Content="IP Address:" HorizontalAlignment="Stretch" Margin="0"
+               VerticalAlignment="Stretch"
+               HorizontalContentAlignment="Right" VerticalContentAlignment="Center" FontSize="12" />
+        <Label Grid.Row="3" Grid.Column="0" Content="Interval:" HorizontalAlignment="Stretch" Margin="0"
+               VerticalAlignment="Stretch"
+               HorizontalContentAlignment="Right" VerticalContentAlignment="Center" FontSize="12" />
+        <Label Grid.Row="4" Grid.Column="0" Content="Warning Threshold:" HorizontalAlignment="Stretch" Margin="0"
+               VerticalAlignment="Stretch"
+               HorizontalContentAlignment="Right" VerticalContentAlignment="Center" FontSize="12" />
+        <Label Grid.Row="5" Grid.Column="0" Content="Timeout Threshold:" HorizontalAlignment="Stretch" Margin="0"
+               VerticalAlignment="Stretch"
+               HorizontalContentAlignment="Right" VerticalContentAlignment="Center" FontSize="12" />
+        <Label Grid.Row="6" Grid.Column="0" Content="Packet Size:" HorizontalAlignment="Stretch" Margin="0"
+               VerticalAlignment="Stretch"
+               HorizontalContentAlignment="Right" VerticalContentAlignment="Center" FontSize="12" />
+        <TextBox Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" x:Name="HostNameBox" HorizontalAlignment="Stretch"
+                 Margin="3" Text="{Binding HostName}"
+                 TextWrapping="NoWrap" VerticalAlignment="Stretch" VerticalContentAlignment="Center"
+                 HorizontalContentAlignment="Center" FontSize="16"
+                 Padding="0" IsEnabled="{Binding HostNameBoxEnabled}" />
+        <TextBox Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" x:Name="IPAddressBox" HorizontalAlignment="Stretch"
+                 Margin="3" Text="{Binding IPAddress}"
+                 TextWrapping="NoWrap" VerticalAlignment="Stretch" VerticalContentAlignment="Center"
+                 HorizontalContentAlignment="Center" FontSize="16"
+                 Padding="0" IsReadOnly="True" IsEnabled="{Binding IPEnabled}" />
+        <TextBox Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2" x:Name="IntervalBox" HorizontalAlignment="Stretch"
+                 Margin="3" Text="{Binding Interval}"
+                 TextWrapping="NoWrap" VerticalAlignment="Stretch" VerticalContentAlignment="Center"
+                 HorizontalContentAlignment="Center" FontSize="16"
+                 Padding="0" IsEnabled="{Binding IntervalBoxEnabled}" />
+        <TextBox Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="2" x:Name="WarningBox" HorizontalAlignment="Stretch"
+                 Margin="3" Text="{Binding WarningThreshold}"
+                 TextWrapping="NoWrap" VerticalAlignment="Stretch" VerticalContentAlignment="Center"
+                 HorizontalContentAlignment="Center" FontSize="16"
+                 Padding="0" IsEnabled="{Binding WarningBoxEnabled}" />
+        <TextBox Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="2" x:Name="TimeoutBox" HorizontalAlignment="Stretch"
+                 Margin="3" Text="{Binding Timeout}"
+                 TextWrapping="NoWrap" VerticalAlignment="Stretch" VerticalContentAlignment="Center"
+                 HorizontalContentAlignment="Center" FontSize="16"
+                 Padding="0" IsEnabled="{Binding TimeoutBoxEnabled}" />
+        <TextBox Grid.Row="6" Grid.Column="1" Grid.ColumnSpan="2" x:Name="PacketSizeBox" HorizontalAlignment="Stretch"
+                 Margin="3" Text="{Binding PacketSize}"
+                 TextWrapping="NoWrap" VerticalAlignment="Stretch" VerticalContentAlignment="Center"
+                 HorizontalContentAlignment="Center" FontSize="16"
+                 Padding="0" IsEnabled="{Binding PacketSizeBoxEnabled}" />
+        <Grid Grid.Row="8" Grid.Column="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="76" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Label Grid.Row="0" Grid.Column="0" Content="Average Ping:" FontSize="11"
+                   HorizontalContentAlignment="Right" HorizontalAlignment="Stretch" Margin="0,0,0,0"
+                   VerticalAlignment="Stretch" VerticalContentAlignment="Center" />
+            <Label Grid.Row="0" Grid.Column="1" x:Name="avgPingLbl" Content="{Binding AveragePing}" FontSize="11"
+                   HorizontalAlignment="Stretch" Margin="0,0,0,0" VerticalAlignment="Stretch"
+                   VerticalContentAlignment="Center" />
+        </Grid>
+        <Grid Grid.Row="7" Grid.Column="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="76" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Label Grid.Column="0" HorizontalContentAlignment="Right" FontSize="11" Content="Packet Loss:"
+                   HorizontalAlignment="Stretch" Margin="0" VerticalAlignment="Stretch"
+                   VerticalContentAlignment="Center" />
+            <Label Grid.Column="1" x:Name="PacketLossLbl" Content="{Binding PacketLoss}" FontSize="11"
+                   HorizontalAlignment="Stretch" Margin="0" VerticalAlignment="Stretch"
+                   VerticalContentAlignment="Center" />
+        </Grid>
+        <Grid Grid.Row="7" Grid.Column="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="76" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Label Grid.Column="0" HorizontalContentAlignment="Right" FontSize="11" Content="Timeouts:"
+                   HorizontalAlignment="Stretch" Margin="0" VerticalAlignment="Stretch"
+                   VerticalContentAlignment="Center" />
+            <Label Grid.Column="1" x:Name="timeoutLbl" Content="{Binding TimeoutCount}" FontSize="11"
+                   HorizontalAlignment="Stretch" Margin="0" VerticalAlignment="Stretch"
+                   VerticalContentAlignment="Center" />
+        </Grid>
+        <Grid Grid.Row="7" Grid.Column="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="76" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Label Grid.Column="0" HorizontalContentAlignment="Right" FontSize="11" Content="Warnings:"
+                   HorizontalAlignment="Stretch" Margin="0" VerticalAlignment="Stretch"
+                   VerticalContentAlignment="Center" />
+            <Label Grid.Column="1" x:Name="warningLbl" Content="{Binding WarningCount}" FontSize="11"
+                   HorizontalAlignment="Stretch" Margin="0" VerticalAlignment="Stretch"
+                   VerticalContentAlignment="Center" />
+        </Grid>
+        <Button Grid.Row="8" Grid.Column="0" x:Name="StartBtn" Content="Start Pinging" HorizontalAlignment="Stretch"
+                Margin="3" FontSize="15"
+                VerticalAlignment="Stretch" HorizontalContentAlignment="Center"
+                IsEnabled="{Binding StartButtonEnabled}" Command="{Binding PingCommand}"
+                CommandParameter="{StaticResource True}" />
+
+        <Button Grid.Row="8" Grid.Column="2" x:Name="StopBtn" Content="Stop Pinging" HorizontalAlignment="Stretch"
+                Margin="3" FontSize="15" Classes="Accent"
+                VerticalAlignment="Stretch" HorizontalContentAlignment="Center" IsEnabled="{Binding StopButtonEnabled}"
+                Command="{Binding PingCommand}" CommandParameter="{StaticResource False}" />
+    </Grid>
 </UserControl>
