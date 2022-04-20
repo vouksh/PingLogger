@@ -54,7 +54,7 @@ namespace PingLogger
 					if (Config.UpdateLastChecked.Date >= DateTime.Today)
 					{
 						Log.Information("Application already checked for update today, skipping.");
-						//return true;
+						return true;
 					}
 					SplashScreenViewModel = new ViewModels.SplashScreenViewModel();
 					SplashScreen = new Views.SplashScreen()

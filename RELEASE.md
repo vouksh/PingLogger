@@ -1,2 +1,3 @@
-﻿ClickOnce version availble from [Here](https://pinglogger.lexdysia.com/clickonce)
-* Unify full CI/CD pipeline into one YML file. 
+﻿* Converted UI to Material design
+* Fixed deprecated WebClient reference.
+* Due to using Material Design, users are able to change colors of app. 

@@ -39,6 +39,7 @@
 		<PackageReference Include="Avalonia.ReactiveUI" Version="0.10.13" />
 		<PackageReference Include="Material.Avalonia" Version="2.5.1" />
 		<PackageReference Include="Material.WindowStyle" Version="0.10.9" />
+		<PackageReference Include="Microsoft.NETCore.Platforms" Version="6.0.3" />
 		<PackageReference Include="Mono.TextTemplating" Version="2.2.1" />
 		<PackageReference Include="OxyPlot.Avalonia" Version="2.1.0-20201211.2" />
 		<PackageReference Include="Serilog" Version="2.10.0" />
