@@ -1,8 +1,11 @@
 ﻿using PingLogger.Models;
 using PingLogger.Workers;
 using System;
+using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 
 namespace PingLogger
 {
@@ -29,6 +32,27 @@ namespace PingLogger
 #elif OSX
 			PingLogger.Views.MessageBox.ShowAsError("Error", "This option is not avaiable on MacOS");
 #endif
+		}
+
+		public static Dictionary<string, string> GetOSInfo()
+		{
+			var values = new Dictionary<string, string>();
+			if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+			{
+				values.Add("OperatingSystem", "Windows");
+			}
+			if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+			{
+				values.Add("OperatingSystem", "Linux");
+			}
+			if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+			{
+				values.Add("OperatingSystem", "Linux");
+			}
+			values.Add("OSVersion", Environment.OSVersion.VersionString);
+			values.Add("CountryCode", RegionInfo.CurrentRegion.TwoLetterISORegionName);
+
+			return values;
 		}
 
 		public static string FileBasePath

@@ -3,28 +3,58 @@
         xmlns:vm="using:PingLogger.ViewModels"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-		xmlns:i="clr-namespace:Projektanker.Icons.Avalonia;assembly=Projektanker.Icons.Avalonia"
-        mc:Ignorable="d" d:DesignWidth="805" d:DesignHeight="420"
+        xmlns:chrome="clr-namespace:Material.WindowStyle.Chrome;assembly=Material.WindowStyle"
+        xmlns:material="using:Material.Icons.Avalonia"
+        xmlns:assists="clr-namespace:Material.Styles.Assists;assembly=Material.Styles"
+        mc:Ignorable="d" d:DesignWidth="805" d:DesignHeight="500"
         x:Class="PingLogger.Views.MainWindow"
         Icon="/AppIcon.ico"
         Title="{Binding Title}"
-		Width="{Binding WindowWidth}" Height="420"
+		Width="{Binding WindowWidth}" Height="500"
         CanResize="false" Closing="Window_Closing"
-		TransparencyLevelHint="Transparent">
-    <Design.DataContext>
+        SystemDecorations="BorderOnly" ExtendClientAreaToDecorationsHint="True"
+		TransparencyLevelHint="Transparent" BorderBrush="Black" BorderThickness="1">
+	<Window.Styles>
+		<Style Selector="chrome|MaterialTitleBar /template/ chrome|MaterialTitleBarButtons 
+                                                 /template/ TemplatedControl#PART_FullScreenButton">
+            <Setter Property="IsEnabled" Value="False"/>
+            <Setter Property="IsVisible" Value="False"/>
+        </Style>
+		<Style Selector="chrome|MaterialTitleBar /template/ chrome|MaterialTitleBarButtons 
+                                                 /template/ TemplatedControl#PART_RestoreButton">
+			<Setter Property="IsEnabled" Value="False"/>
+			<Setter Property="IsVisible" Value="False"/>
+		</Style>
+		<Style Selector="TabControl.MainTab">
+			<Setter Property="TabStripPlacement" Value="Bottom" />
+			<Setter Property="Padding" Value="0" />
+		</Style>
+		<Style Selector="Button.TabClose">
+			<Setter Property="Background" Value="Transparent" />
+			<Setter Property="assists:ShadowAssist.ShadowDepth" Value="Depth0" />
+			<Setter Property="assists:ShadowAssist.Darken" Value="False" />
+		</Style>
+	</Window.Styles>
+	<Design.DataContext>
         <vm:MainWindowViewModel/>
     </Design.DataContext>
 	<Grid VerticalAlignment="Top">
-	    <TabControl Padding="0" Items="{Binding TabItems}" FontSize="12" Classes="MainTab" SelectedIndex="{Binding SelectedTabIndex}" />
-		<StackPanel Orientation="Horizontal" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="4">
-		    <Button HorizontalAlignment="Right" VerticalAlignment="Top" Margin="6"
-				    i:Attached.Icon="fas fa-plus-square" FontSize="16" Command="{Binding AddTabCommand}" />
-            <Button HorizontalAlignment="Right" VerticalAlignment="Top" Margin="6" 
-				    i:Attached.Icon="fas fa-cogs" FontSize="16" Command="{Binding OpenOptionsCommand}" />
-			<Button HorizontalAlignment="Right" VerticalAlignment="Top" Margin="6"
-				    i:Attached.Icon="fas fa-question-circle" FontSize="16" Command="{Binding OpenHelpCommand}" />
-			
-	    </StackPanel>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="40" />
+			<RowDefinition Height="*" />
+		</Grid.RowDefinitions>
+		<StackPanel Grid.Row="0" Orientation="Horizontal" VerticalAlignment="Top" HorizontalAlignment="Stretch" Margin="4">
+		    <Button HorizontalAlignment="Right" VerticalAlignment="Top" Margin="6" FontSize="16" Command="{Binding AddTabCommand}">
+			    <material:MaterialIcon Kind="Plus" />
+		    </Button>
+            <Button HorizontalAlignment="Right" VerticalAlignment="Top" Margin="6" FontSize="16" Command="{Binding OpenOptionsCommand}">
+	            <material:MaterialIcon Kind="Gear" />
+            </Button>
+			<Button HorizontalAlignment="Right" VerticalAlignment="Top" Margin="6" FontSize="16" Command="{Binding OpenHelpCommand}">
+				<material:MaterialIcon Kind="Help" />
+			</Button>
+		</StackPanel>
 		
+		<TabControl x:Name="HostTabs" Grid.Row="1" Width="{Binding WindowWidth}" Items="{Binding TabItems}" Classes="MainTab" SelectedIndex="{Binding SelectedTabIndex}" />
 	</Grid>
 </Window>

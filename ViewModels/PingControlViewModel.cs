@@ -17,6 +17,8 @@ using System.Net;
 using System.Reactive;
 using System.Text;
 using System.Threading.Tasks;
+using Material.Icons;
+using Material.Icons.Avalonia;
 
 namespace PingLogger.ViewModels
 {
@@ -64,7 +66,7 @@ namespace PingLogger.ViewModels
 			_updateIPTimer.Tick += UpdateIPTimer_Tick;
 			SetupGraphs();
 			showRightTabs = Config.WindowExpanded;
-			expanderIcon = Config.WindowExpanded ? "fas fa-angle-double-left" : "fas fa-angle-double-right";
+			expanderIcon = Config.WindowExpanded ? MaterialIconKind.CollapseVertical : MaterialIconKind.ExpandVertical;
 
 			_checkValueTimer = new DispatcherTimer()
 			{
@@ -77,7 +79,7 @@ namespace PingLogger.ViewModels
 		private async void ToggleWindow()
 		{
 			Config.WindowExpanded = !Config.WindowExpanded;
-			ExpanderIcon = Config.WindowExpanded ? "fas fa-angle-double-left" : "fas fa-angle-double-right";
+			ExpanderIcon = Config.WindowExpanded ? MaterialIconKind.CollapseVertical : MaterialIconKind.ExpandVertical;
 			WindowExpandedEvent?.Invoke(this, Config.WindowExpanded);
 			await Task.Delay(10);
 			ShowRightTabs = Config.WindowExpanded;
@@ -637,8 +639,8 @@ namespace PingLogger.ViewModels
 			set => this.RaiseAndSetIfChanged(ref showRightTabs, value);
 		}
 
-		private string expanderIcon = "fas fa-angle-double-left";
-		public string ExpanderIcon
+		private MaterialIconKind expanderIcon = MaterialIconKind.ExpandHorizontal;
+		public MaterialIconKind ExpanderIcon
 		{
 			get => expanderIcon;
 			set => this.RaiseAndSetIfChanged(ref expanderIcon, value);
