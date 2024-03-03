@@ -38,11 +38,6 @@ steps:
     version: 8.x
     performMultiLevelLookup: true
 
-- task: AssembyInfoReader@3
-  displayName: 'Read Assembly version'
-  inputs:
-    searchPattern: '**\AssemblyInfo.cs'
-
 - task: NuGetToolInstaller@1
 
 - task: NuGetCommand@2
