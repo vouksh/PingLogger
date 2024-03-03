@@ -1,0 +1,10 @@
+# Desktop Entry Specification: https://standards.freedesktop.org/desktop-entry-spec/desktop-entry-spec-latest.html
+[Desktop Entry]
+Type=Application
+Name=PingLogger
+Comment=Advanced multi-threaded ping logging application
+Icon=PingLogger
+Exec=PingLogger
+Path=~
+Terminal=true
+Categories=Internet;Utilites;

@@ -1,0 +1,62 @@
+trigger:
+- master
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  solution: '**/*.sln'
+  project: 'PingLogger.csproj'
+  buildPlatform: 'Any CPU'
+  buildConfiguration: 'Release'
+  linuxOutputDirectory: '$(Pipeline.Workspace)/s/bin/Release/net8.0/Linux/'
+  linuxAppImageOutputDirectory: '$(Pipeline.Workspace)/s/bin/Release/net8.0/LinuxAppImage/'
+  
+steps:
+
+- task: CopyFiles@2
+  displayName: 'Copy AppImage build files to staging'
+  inputs:
+    SourceFolder: '$(Build.SourcesDirectory)/build/AppDir/'
+    Contents: '**'
+    TargetFolder: '$(linuxAppImageOutputDirectory)/AppDir/'
+
+- task: CmdLine@2
+  inputs:
+    script: |
+      #!/bin/sh
+      mkdir -p ./AppDir/usr/bin
+      chmod 0755 ./AppDir/AppRun
+      chmod +x ./AppDir/AppRun
+      wget "https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage"
+      chmod a+x appimagetool-x86_64.AppImage
+    workingDirectory: '$(linuxAppImageOutputDirectory)'
+
+- task: UseDotNet@2
+  displayName: 'Install .NET Core SDK'
+  inputs:
+    version: 8.x
+    performMultiLevelLookup: true
+
+- task: AssembyInfoReader@3
+  displayName: 'Read Assembly version'
+  inputs:
+    searchPattern: '**\AssemblyInfo.cs'
+
+- task: NuGetToolInstaller@1
+
+- task: NuGetCommand@2
+  inputs:
+    restoreSolution: '$(solution)'
+    
+- script: dotnet build --configuration $(buildConfiguration) /p:LINUX_BUILD=true
+  displayName: 'Build Application for linux'
+
+- script: dotnet publish $(project) --configuration $(buildConfiguration) /p:LINUX_BUILD=true;PublishProfile=Linux-AppImage-x64 -o $(linuxAppImageOutputDirectory)/AppDir/usr/bin
+  displayName: 'Generate Linux binaries for AppImage'
+
+- task: CmdLine@2
+  displayName: 'Generate AppImage'
+  inputs:
+    script: './appimagetool-x86_64.AppImage ./AppDir'
+    workingDirectory: '$(linuxAppImageOutputDirectory)'

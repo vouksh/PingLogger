@@ -1,55 +1,53 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-	<PropertyGroup>
-		<OutputType>WinExe</OutputType>
-		<TargetFramework>net6.0</TargetFramework>
-		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-		<ApplicationIcon>AppIcon.ico</ApplicationIcon>
-		<IsWindows Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::Windows)))' == 'true' AND '$(LINUX_BUILD)' !='true'">true</IsWindows>
-		<IsOSX Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::OSX)))' == 'true'">true</IsOSX>
-		<IsLinux Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::Linux)))' == 'true' OR '$(LINUX_BUILD)'=='true'">true</IsLinux>
-	</PropertyGroup>
-	<PropertyGroup Condition="'$(IsWindows)'=='true'">
-		<DefineConstants>Windows</DefineConstants>
-	</PropertyGroup>
-	<PropertyGroup Condition="'$(IsOSX)'=='true'">
-		<DefineConstants>OSX</DefineConstants>
-	</PropertyGroup>
-	<PropertyGroup Condition="'$(IsLinux)'=='true'">
-		<DefineConstants>Linux</DefineConstants>
-	</PropertyGroup>
-	<ItemGroup>
-		<None Remove="AppIcon.ico" />
-	</ItemGroup>
-	<ItemGroup>
-		<AvaloniaResource Include="AppIcon.ico" />
-	</ItemGroup>
-	<ItemGroup Condition="'$(IsWindows)'=='true'">
-		<PackageReference Include="Microsoft.Win32.Registry" Version="5.0.0" />
-	</ItemGroup>
-	<ItemGroup Condition="'$(IsLinux)'=='true'">
-		<PackageReference Include="Mono.Posix.NETStandard" Version="1.0.0-beta1" />
-	</ItemGroup>
-	<ItemGroup>
-		<PackageReference Include="Aigio.Avalonia.AppCenter" Version="4.5.0" />
-		<PackageReference Include="Aigio.Avalonia.AppCenter.Analytics" Version="4.5.0" />
-		<PackageReference Include="Aigio.Avalonia.AppCenter.Crashes" Version="4.5.0" />
-		<PackageReference Include="Avalonia" Version="0.10.13" />
-		<PackageReference Include="Avalonia.Desktop" Version="0.10.13" />
-		<PackageReference Include="Avalonia.Diagnostics" Version="0.10.13" />
-		<PackageReference Include="Avalonia.ReactiveUI" Version="0.10.13" />
-		<PackageReference Include="Material.Avalonia" Version="2.5.1" />
-		<PackageReference Include="Material.WindowStyle" Version="0.10.9" />
-		<PackageReference Include="Microsoft.NETCore.Platforms" Version="6.0.3" />
-		<PackageReference Include="Mono.TextTemplating" Version="2.2.1" />
-		<PackageReference Include="OxyPlot.Avalonia" Version="2.1.0-20201211.2" />
-		<PackageReference Include="Serilog" Version="2.10.0" />
-		<PackageReference Include="Serilog.Sinks.Console" Version="4.0.1" />
-		<PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
-	</ItemGroup>
-	<ItemGroup>
-		<Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
-	</ItemGroup>
-	<Target Name="PreBuild" BeforeTargets="PreBuildEvent" Condition="'$(ConfigurationName)'=='Debug'">
-		<Exec Command="t4 -u System.IO -u System.Text.RegularExpressions -o &quot;$(ProjectDir)AssemblyInfo.cs&quot; -I &quot;$(ProjectDir)&quot; -P &quot;$(ProjectDir)&quot; &quot;$(ProjectDir)AssemblyInfo.tt&quot;" />
-	</Target>
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <ApplicationIcon>AppIcon.ico</ApplicationIcon>
+    <IsWindows Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::Windows)))' == 'true' AND '$(LINUX_BUILD)' !='true'">true</IsWindows>
+    <IsOSX Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::OSX)))' == 'true'">true</IsOSX>
+    <IsLinux Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::Linux)))' == 'true' OR '$(LINUX_BUILD)'=='true'">true</IsLinux>
+    <Platforms>AnyCPU</Platforms>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(IsWindows)'=='true'">
+    <DefineConstants>Windows</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(IsOSX)'=='true'">
+    <DefineConstants>OSX</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(IsLinux)'=='true'">
+    <DefineConstants>Linux</DefineConstants>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Remove="AppIcon.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <AvaloniaResource Include="AppIcon.ico" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(IsLinux)'=='true'">
+    <PackageReference Include="Mono.Posix.NETStandard" Version="1.0.0" />
+    <PackageReference Include="Microsoft.NETCore.Platforms" Version="8.0.0-preview.7.23375.6" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Aigio.Avalonia.AppCenter" Version="4.5.3" />
+    <PackageReference Include="Aigio.Avalonia.AppCenter.Analytics" Version="4.5.3" />
+    <PackageReference Include="Aigio.Avalonia.AppCenter.Crashes" Version="4.5.3" />
+    <PackageReference Include="Avalonia" Version="0.10.13" />
+    <PackageReference Include="Avalonia.Desktop" Version="0.10.13" />
+    <PackageReference Include="Avalonia.Diagnostics" Version="0.10.13" />
+    <PackageReference Include="Avalonia.ReactiveUI" Version="0.10.13" />
+    <PackageReference Include="Material.Avalonia" Version="2.5.1" />
+    <PackageReference Include="Material.WindowStyle" Version="0.10.9" />
+    <PackageReference Include="Mono.TextTemplating" Version="2.2.1" />
+    <PackageReference Include="OxyPlot.Avalonia" Version="2.1.0-20201211.2" />
+    <PackageReference Include="Serilog" Version="3.1.1" />
+    <PackageReference Include="Serilog.Sinks.Console" Version="5.0.1" />
+    <PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
+  </ItemGroup>
+  <Target Name="PreBuild" BeforeTargets="PreBuildEvent" Condition="'$(ConfigurationName)'=='Debug'">
+    <Exec Command="t4 -u System.IO -u System.Text.RegularExpressions -o &quot;$(ProjectDir)AssemblyInfo.cs&quot; -I &quot;$(ProjectDir)&quot; -P &quot;$(ProjectDir)&quot; &quot;$(ProjectDir)AssemblyInfo.tt&quot;" />
+  </Target>
 </Project>

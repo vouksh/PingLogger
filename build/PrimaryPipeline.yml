@@ -14,16 +14,16 @@ variables:
   project: 'PingLogger.csproj'
   buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
-  sfOutputDirectory: '$(Pipeline.Workspace)/s/bin/Release/net6.0/Win64-SF/'
-  installerOutputDirectory: '$(Pipeline.Workspace)/s/bin/Release/net6.0/Win64'
-  clickOnceOutputDirectory: '$(Pipeline.Workspace)/s/bin/Release/net6.0/app.publish/'
-  linuxOutputDirectory: '$(Pipeline.Workspace)/s/bin/Release/net6.0/Linux/'
+  sfOutputDirectory: '$(Pipeline.Workspace)/s/bin/Release/net8.0/Win64-SF/'
+  installerOutputDirectory: '$(Pipeline.Workspace)/s/bin/Release/net8.0/Win64'
+  clickOnceOutputDirectory: '$(Pipeline.Workspace)/s/bin/Release/net8.0/app.publish/'
+  linuxOutputDirectory: '$(Pipeline.Workspace)/s/bin/Release/net8.0/Linux/'
 
 steps:
 - task: UseDotNet@2
   displayName: 'Install .NET Core SDK'
   inputs:
-    version: 6.0.x
+    version: 8.x
     performMultiLevelLookup: true
 
 - task: AssembyInfoReader@3
@@ -63,7 +63,6 @@ steps:
     archiveType: 'zip'
     archiveFile: '$(Build.ArtifactStagingDirectory)/$(AssemblyInfo.AssemblyVersion.Major).$(AssemblyInfo.AssemblyVersion.Minor).$(AssemblyInfo.AssemblyVersion.Build)/win/sf/PingLogger.zip'
     replaceExistingArchive: true
-    
 
 - task: ArchiveFiles@2
   displayName: 'Compress Linux binaries'
