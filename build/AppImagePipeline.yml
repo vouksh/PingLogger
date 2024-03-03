@@ -11,6 +11,7 @@ variables:
   buildConfiguration: 'Release'
   linuxOutputDirectory: '$(Pipeline.Workspace)/s/bin/Release/net8.0/Linux/'
   linuxAppImageOutputDirectory: '$(Pipeline.Workspace)/s/bin/Release/net8.0/LinuxAppImage/'
+  binaryOutputDir: '$(linuxAppImageOutputDirectory)AppDir/usr/bin'
   
 steps:
 
@@ -47,7 +48,7 @@ steps:
 - script: dotnet build --configuration $(buildConfiguration) /p:LINUX_BUILD=true
   displayName: 'Build Application for linux'
 
-- script: dotnet publish $(project) --configuration $(buildConfiguration) /p:LINUX_BUILD=true;PublishProfile=Linux-AppImage-x64 -o $(linuxAppImageOutputDirectory)/AppDir/usr/bin
+- script: dotnet publish $(project) --configuration $(buildConfiguration) /p:LINUX_BUILD=true;PublishProfile=Linux-AppImage-x64 -o $(binaryOutputDir)
   displayName: 'Generate Linux binaries for AppImage'
 
 - task: CmdLine@2
